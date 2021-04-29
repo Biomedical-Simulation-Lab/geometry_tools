@@ -17,6 +17,8 @@ import numpy as np
 from scipy.spatial import cKDTree as KDTree 
 from scipy.optimize import least_squares
 import networkx as nx
+import gzip
+
 
 def clipper(surf):
     """ Interactively clip branches """
@@ -575,9 +577,13 @@ def write_mesh(mesh, outfile):
     """
     writer = vmtkscripts.vmtkMeshWriter()
     writer.Mesh = mesh 
-    # writer.Format = 'dolfin'
-    writer.Compressed = 1
+    writer.Format = 'dolfin'
+    writer.Compressed = 0
     writer.Mode = 'binary'
     writer.CellEntityIdsArrayName = 'CellEntityIds'
-    writer.OutputFileName = outfile
+    writer.OutputFileName = str(outfile)
     writer.Execute()
+
+    # Then open the file and gzip it
+    # 
+
