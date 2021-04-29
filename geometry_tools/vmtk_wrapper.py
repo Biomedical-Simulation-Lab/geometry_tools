@@ -592,3 +592,13 @@ def write_mesh(mesh, outfile):
     f_out.writelines(f_in)
     f_out.close()
     f_in.close()
+
+def surface_array_smoothing(surf, array_name='Size', connexity=1, relaxation=1.0, iterations=1):
+    sm = vmtkscripts.vmtkSurfaceArraySmoothing()
+    sm.Surface = surf 
+    sm.SurfaceArrayName = array_name
+    sm.Connexity = connexity 
+    sm.Relaxation = relaxation 
+    sm.Iterations = iterations
+    sm.Execute()
+    return pv.wrap(sm.Surface)
