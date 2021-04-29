@@ -575,11 +575,9 @@ def write_mesh(mesh, outfile):
     Used for writing dolfin-format XML with
     cellEntityIds array.
     """
-    print('New way')
-
     writer = vmtkscripts.vmtkMeshWriter()
     writer.Mesh = mesh 
-    # writer.Format = 'dolfin'
+    writer.Format = 'dolfin'
     writer.Compressed = 0
     writer.Mode = 'binary'
     writer.CellEntityIdsArrayName = 'CellEntityIds'
@@ -592,6 +590,8 @@ def write_mesh(mesh, outfile):
     with open(outfile, 'rb') as orig_file:
         with gzip.open(gz_outfile, 'wb') as zipped_file:
             zipped_file.writelines(orig_file)
+    
+    outfile.unlink()
 
 def surface_array_smoothing(surf, array_name='Size', connexity=1, relaxation=1.0, iterations=1):
     sm = vmtkscripts.vmtkSurfaceArraySmoothing()
