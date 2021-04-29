@@ -579,7 +579,7 @@ def write_mesh(mesh, outfile):
 
     writer = vmtkscripts.vmtkMeshWriter()
     writer.Mesh = mesh 
-    writer.Format = 'dolfin'
+    # writer.Format = 'dolfin'
     writer.Compressed = 0
     writer.Mode = 'binary'
     writer.CellEntityIdsArrayName = 'CellEntityIds'
