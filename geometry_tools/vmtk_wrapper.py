@@ -586,4 +586,9 @@ def write_mesh(mesh, outfile):
 
     # Then open the file and gzip it
     # 
-
+    f_in = open(outfile)
+    gz_outfile = str(outfile) + '.gz'
+    f_out = gzip.open(gz_outfile, 'wb')
+    f_out.writelines(f_in)
+    f_out.close()
+    f_in.close()
