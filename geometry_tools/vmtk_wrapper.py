@@ -602,3 +602,8 @@ def surface_array_smoothing(surf, array_name='Size', connexity=1, relaxation=1.0
     sm.Iterations = iterations
     sm.Execute()
     return pv.wrap(sm.Surface)
+
+def vmtkdelaunayvoronoi(surf):
+    filt = vmtkscripts.vmtkDelaunayVoronoi()
+    filt.Surface = surf 
+    

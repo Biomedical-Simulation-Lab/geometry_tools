@@ -2,6 +2,9 @@ import vtk
 import numpy as np 
 import pyvista as pv 
 from scipy.spatial import cKDTree as KDTree 
+from pathlib import Path 
+import h5py 
+import ast 
 
 def vtk_generate_img_stencil(mesh, spacing=0.05):
     """ Resample surf mesh to image.
@@ -264,3 +267,5 @@ def check_mem_usage():
     p = psutil.Process(os.getpid())
     mem_usage = p.memory_info().rss / 1024 / 1024
     print("{} MB".format(mem_usage))
+
+
