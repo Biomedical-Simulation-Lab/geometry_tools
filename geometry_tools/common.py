@@ -89,6 +89,69 @@ def smooth_mesh_data(data_array, points, radius, func=np.mean, mask=None):
 
     return out_array
 
+def smooth_mesh_data_local(surf, array='GroupIds', 
+        func=np.median, neighbour_pt_ids=None, iterations=1):
+    """ Smooth mesh data based on local connectivity.
+
+    Args:
+        surf (polydata): Input surface.
+        array (str): Name of array to be smoothed.
+    Returns:
+        surf (polydata): Surface with smoothed array
+        neighbour_pt_ids (list of lists): list of neighbouring point ids,
+            index by point id.
+    """
+    cells = surf.faces.reshape(-1,4)[:, 1:]
+    # point_array = surf.point_arrays[array]#.copy()
+
+    if neighbour_pt_ids == None:
+        neighbour_pt_ids = get_neighbour_map(cells, surf.n_points) #len(point_array)) surf.point_arrays[array]
+    
+    neighbour_pt_ids = np.array(neighbour_pt_ids)
+
+    valid_ids = np.unique(surf.point_arrays[array])
+
+    tree = KDTree(surf.points)
+    # _, nearest = tree.query(surf.points, k=2)
+    
+    iii = 0
+    for idx in range(iterations):
+        for pt_id in list(range(surf.n_points)):
+            neighbours = neighbour_pt_ids[neighbour_pt_ids[pt_id]]
+            neighbours = np.unique([item for sublist in neighbours for item in sublist])
+            # neighbours = neighbour_pt_ids[pt_id]
+
+            # Unfortunately, np.median has the undesired "fallback" 
+            # that uses the mean when the array is even. This is bad for 
+            # data like GroupIds.
+
+            num_neighbours = len(neighbours)
+            neighbour_vals = np.sort(surf.point_arrays[array][neighbours])
+            center_index = int(np.ceil(num_neighbours / 2) - 1)
+            new_val = neighbour_vals[center_index]
+
+            surf.point_arrays[array][pt_id] = new_val
+
+    return surf, neighbour_pt_ids
+
+def get_neighbour_map(cells, n_points):
+    """ Get full list of adjacent neighbour pts.
+
+    Args:
+        cells (array): Cell connectivity, shape (n_cells, 3).
+        n_pts (int): Number of point ids.
+    
+    Returns:
+        neighbour_pt_ids (list): List of lists containing neighbour pt ids.
+    """
+    neighbour_pt_ids = []
+    for pt_id in range(n_points):
+        cell_ids = np.where(np.any(cells == pt_id, axis=1))[0]
+        pt_ids = np.unique(cells[cell_ids])
+        neighbour_pt_ids.append(pt_ids)
+
+    return neighbour_pt_ids
+
 def create_edge_size_array(surf, max_size=0.3, min_size=0.18, curvature_percentile=80, name='Size'):
     """ Create "Size" array incorporating distance to centerlines and curvature.
 

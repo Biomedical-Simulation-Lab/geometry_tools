@@ -1,8 +1,8 @@
 """ Wrapper for vmtkscripts.
 
 Most functions correspond to a particular item in vmtkscripts,
-but some are just used in similar ways. Moving forward, this 
-should eventually start using vtkvmtk directly rather than 
+but some are just used in similar ways. Eventually, it would be nice to 
+start using vtkvmtk directly rather than 
 vmtkscripts.
 
 Functions often provide a simplified input; feel free to add 
@@ -10,7 +10,6 @@ optional arguments.
 """
 
 from vmtk import vmtkscripts
-import pyvista 
 from geometry_tools import utils 
 import pyvista as pv
 import numpy as np 
@@ -18,7 +17,7 @@ from scipy.spatial import cKDTree as KDTree
 from scipy.optimize import least_squares
 import networkx as nx
 import gzip
-
+from geometry_tools import common as cc
 
 def clipper(surf):
     """ Interactively clip branches """
@@ -393,6 +392,68 @@ def surface_centerline_projection(surf, centerlines, pass_arrays=None):
     proj.Execute()
     return pv.wrap(proj.Surface)
 
+
+def surface_centerline_projection_MISR(surf, centerlines, arrays=['GroupIds'], sm_iterations=1):
+    """ Inflate centerlines based on MISR, project arrays to surfacre.
+
+    A better recipe for projecting centerline data to the surface.
+    """
+    # Cell-to-point; get relevant sections of centerlines
+    mask = centerlines.cell_arrays['Blanking'] == 0
+    centerlines = centerlines.extract_cells(mask)
+
+    centerlines = centerlines.ctp()
+    centerlines.set_active_scalars('MaximumInscribedSphereRadius')
+
+
+    sphere = pv.Sphere(
+        radius=0.5, 
+        center=(0, 0, 0), 
+        direction=(1, 0, 0), 
+        theta_resolution=7, 
+        phi_resolution=7, 
+        start_theta=0, 
+        end_theta=360, 
+        start_phi=0, 
+        end_phi=180,
+        )
+
+    # Create MISR test object
+    test_object = centerlines.glyph(
+        geom=sphere, 
+        scale='MaximumInscribedSphereRadius', 
+        orient='FrenetTangent',
+        factor=2.0,
+        )
+        
+    # Create smooth surf
+    surf_smooth = surf.smooth(n_iter=20, relaxation_factor=1.0)
+
+    # For point in surf_smooth, find nearest in test_object
+    # Could really speed up code by triming down the test_object
+    tree = KDTree(test_object.points)
+    _, ii = tree.query(surf_smooth.points, k=1)
+
+    # Assign values to surf and smooth array based on median filtering
+    neighbour_pt_ids = None
+
+    mask = np.invert(centerlines.point_arrays['Blanking'].astype(bool))
+    valid_ids = np.unique(centerlines.point_arrays['GroupIds'][mask])
+
+    for arr in arrays:
+        group_ids = test_object.point_arrays[arr][ii]
+        surf.point_arrays[arr] = group_ids
+
+        surf, neighbour_pt_ids = cc.smooth_mesh_data_local(
+            surf, 
+            array=arr, 
+            func=np.median, 
+            neighbour_pt_ids=neighbour_pt_ids, 
+            iterations=sm_iterations,
+        )
+
+    return surf, neighbour_pt_ids
+
 def kite_removal(surf, factor=0.1):
     kite = vmtkscripts.vmtkSurfaceKiteRemoval()
     kite.Surface = surf 
@@ -559,7 +620,11 @@ def extract_group_adjacency(centerlines):
     edges = []
     G = nx.DiGraph()
     for cline in centerlines_split:
-        groups = np.unique([x for x in cline.point_arrays['GroupIds'] if x in valid_ids])
+        # groups = np.unique([x for x in cline.point_arrays['GroupIds'] if x in valid_ids])
+        a = np.array([x for x in cline.point_arrays['GroupIds'] if x in valid_ids])
+        _, idx = np.unique(a, return_index=True)
+        groups = a[np.sort(idx)]
+
         pairs = [(groups[i-1], groups[i]) for i in range(1, len(groups))]
         for p in pairs:
             edges.append(p)
@@ -607,3 +672,71 @@ def vmtkdelaunayvoronoi(surf):
     filt = vmtkscripts.vmtkDelaunayVoronoi()
     filt.Surface = surf 
     
+def centerline_geometry(centerlines):
+    geo = vmtkscripts.vmtkCenterlineGeometry()
+    geo.Centerlines = centerlines
+    geo.LineSmoothing = False 
+    geo.Execute()
+    return pv.wrap(geo.Centerlines)
+
+def bifurcation_sections(surf, centerlines, n_spheres=4):
+    bi = vmtkscripts.vmtkBifurcationSections()
+    bi.Surface = surf
+    bi.Centerlines = centerlines 
+    bi.NumberOfDistanceSpheres = n_spheres
+    bi.Execute()
+    return pv.wrap(bi.BifurcationSections)
+
+def bifurcation_profiles(surf, centerlines):
+    bi = vmtkscripts.vmtkBifurcationProfiles()
+    bi.Surface = surf 
+    bi.Centerlines = centerlines 
+    bi.Execute()
+    return pv.wrap(bi.BifurcationProfiles)
+
+def centerline_mesh_sections(mesh, centerlines):
+    ms = vmtkscripts.vmtkCenterlineMeshSections()
+    ms.Mesh = mesh 
+    ms.Centerlines = centerlines 
+    ms.Execute()
+    return pv.wrap(ms.CenterlineSections)
+
+def branch_sections(surf, centerlines, n_spheres=1):
+    bs = vmtkscripts.vmtkBranchSections()
+    bs.Surface = surf 
+    bs.Centerlines = centerlines
+    bs.NumberOfDistanceSpheres = n_spheres
+    bs.Execute()
+    return pv.wrap(bs.BranchSections)
+
+def centerline_attributes(centerlines):
+    ca = vmtkscripts.vmtkCenterlineAttributes()
+    ca.Centerlines = centerlines
+    ca.Execute()
+    return pv.wrap(ca.Centerlines)
+
+def centerline_offset_attributes(centerlines, ref, ref_id):
+    ca = vmtkscripts.vmtkCenterlineOffsetAttributes()
+    ca.Centerlines = centerlines
+    ca.ReferenceSystems = ref
+    ca.ReferenceGroupId = ref_id 
+    ca.Execute()
+    return pv.wrap(ca.Centerlines)
+
+def surface_end_clipper(surf, centerlines=None):
+    sc = vmtkscripts.vmtkSurfaceEndClipper()
+    sc.Surface = surf 
+    sc.Centerlines = centerlines
+    if centerlines is not None:
+        use_normals = 0
+    else:
+        use_normals = 1
+    sc.CenterlineNormals = use_normals
+    sc.Execute()
+    return pv.wrap(sc.Surface)
+
+def delaunay_voronoi(surf):
+    alg = vmtkscripts.vmtkDelaunayVoronoi()
+    alg.Surface = surf
+    alg.Execute()
+    return pv.wrap(alg.VoronoiDiagram), pv.wrap(alg.Mesh), pv.wrap(alg.Surface), pv.wrap(alg.PoleIds)

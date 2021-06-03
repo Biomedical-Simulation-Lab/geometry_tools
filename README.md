@@ -7,3 +7,12 @@ to re-write this using `vtkvmtk` and `PyVista` directly, but wrapping
 `vmtkscripts` works for now. `common` contains some useful odds and ends.
 `tubeclipper` contains an experimental script for clipping a mesh "locally"
 while maintaining continuity elsewhere. 
+
+* NEW (may 31 2021)
+
+Merged my "meshing_tools" repo into this one. The Surfer class was becoming 
+more geometry-analysis oriented instead of just a basis for mesher. This may
+introduce some complexity with imports and dependancies, but it should
+be nice to have everything in one place. Note, you'll probably have to update
+some script imports (previously `from meshing_tools import x` to 
+`from geometry_tools import x`).
