@@ -706,6 +706,7 @@ def get_mean_radii(centerlines_branched, grouplist):
 
     # Get mean radii
     for node in grouplist:
+        print(node)
         mask = centerlines_branched.cell_arrays['GroupIds'] == node 
 
         branch_segments = centerlines_branched.extract_cells(mask)

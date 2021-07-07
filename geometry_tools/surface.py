@@ -374,6 +374,7 @@ class Surfer():
         where self.centerlines is overridden with centerlines_branched. 
         """
         self.edges, self.G = vmtk.extract_group_adjacency(self.centerlines_aneurysm)
+        _, self.G_no_aneurysm = vmtk.extract_group_adjacency(self.centerlines)
 
     def get_bifurcation_ref_systems_vectors(self):
         # self.ref = vmtk.bifurcation_ref_systems(self.centerlines_branched)
