@@ -47,18 +47,52 @@ class Surfer():
         self._picked_id = None
 
         p = pv.Plotter()
-        p.add_mesh(self.surf, color='w', opacity=1.0)
+        p.add_mesh(self.surf, color='w', opacity=1.0, pickable=False)
 
         if mesh is not None:
             p.add_mesh(mesh, color='b', point_size=30)
-        p.add_text(text, position='upper_right')
-        p.enable_point_picking(callback=_point_picker_cb, show_message=True, 
+        p.add_text(text, position='upper_left')
+        p.enable_point_picking(callback=_point_picker_cb, show_message=False, 
                             color='r', point_size=30, 
                             use_mesh=True, show_point=True, 
                             render_points_as_spheres=render_points_as_spheres)
+        p.add_text('p: pick point', position=(0.05, 0.05), font_size=12)
         p.add_key_event('u', _reset_picked_cb)
         p.show()
         return [self._picked_id]
+
+    def copy_structure(self):
+        surf_new = pv.PolyData()
+        surf_new.copy_structure(self.surf)
+        self.surf = surf_new
+
+    def copy_arrays(self, src, dst):
+        tree = KDTree(src.points)
+        _, ii = tree.query(dst.points, k=1)
+        for arr in src.point_arrays:
+            dst.point_arrays[arr] = src.point_arrays[arr][ii]
+        for arr in src.cell_arrays:
+            dst.cell_arrays[arr] = src.cell_arrays[arr][ii]
+        return dst
+
+    def decimate_surface(self, target_edge_length):
+        edges = self.surf.extract_all_edges()
+        mean_el = edges.compute_cell_sizes().cell_arrays['Length'].mean()
+        target_el = target_edge_length
+        target_reduction = 1 - (mean_el / target_el)
+        surf_d = self.surf.decimate(target_reduction, volume_preservation=True)
+        self.surf = self.copy_arrays(self.surf, surf_d)
+
+    def clip_endpoints_with_spheres(self, factor=1.3):
+        endpoints = np.concatenate([self.inlet_points, self.outlet_points], axis=0)
+        endlets = pv.wrap(endpoints)
+        tree = KDTree(self.centerlines_aneurysm.points)
+        _, ii = tree.query(endlets.points)
+        misr = self.centerlines_aneurysm.point_arrays['MaximumInscribedSphereRadius'][ii]
+        endlets.point_arrays['MaximumInscribedSphereRadius'] = misr
+        outlet_clip = endlets.glyph(geom=pv.Sphere(1.0), factor=factor)
+
+        self.surf = self.surf.clip_surface(outlet_clip, invert=False)
 
     def set_inlets_outlets(self):
         """ Interactively choose inlet point.
@@ -109,7 +143,7 @@ class Surfer():
 
         return centers 
 
-    def generate_centerlines(self, seed_selector='idlist'):
+    def generate_centerlines(self, include_aneurysms=True, seed_selector='idlist'):
         """ Generate centerlines using VMTK.
 
         Consider moving this into vmtk_wrapper, the nearest ids works well.
@@ -124,16 +158,29 @@ class Surfer():
         self.outlet_ids = outlet_ids
 
         self.aneurysm_ids = [tree.query(i, k=1)[1] for i in self.aneurysm_points]
-        target_ids = self.outlet_ids + self.aneurysm_ids
+        
+        if include_aneurysms == True:
+            target_ids = self.outlet_ids + self.aneurysm_ids
 
-        centerlines = vmtk.centerlines(
-            surf_capped, 
-            seed_selector=seed_selector, 
-            src_ids=self.inlet_ids,
-            target_ids=target_ids,
-            )
-        self.centerlines_aneurysm = centerlines
-        self.centerlines_aneurysm = vmtk.centerline_geometry(self.centerlines_aneurysm)
+            centerlines = vmtk.centerlines(
+                surf_capped, 
+                seed_selector=seed_selector, 
+                src_ids=self.inlet_ids,
+                target_ids=target_ids,
+                )
+            self.centerlines_aneurysm = centerlines
+            self.centerlines_aneurysm = vmtk.centerline_geometry(self.centerlines_aneurysm)
+        else:
+            target_ids = self.outlet_ids 
+
+            centerlines = vmtk.centerlines(
+                surf_capped, 
+                seed_selector=seed_selector, 
+                src_ids=self.inlet_ids,
+                target_ids=target_ids,
+                )
+            self.centerlines = centerlines
+            self.centerlines = vmtk.centerline_geometry(self.centerlines)
 
     def _project_centerline_attrs(self, centerlines, centerlines_branched):
             centerlines_og = centerlines.copy()
@@ -163,6 +210,7 @@ class Surfer():
             self.centerlines_aneurysm_split = self._project_centerline_attrs(
                 self.centerlines_aneurysm, self.centerlines_aneurysm_branched)
         
+        # This is the really slow step because of the glyphs.
         self.surf, self.neighbour_pt_ids = vmtk.surface_centerline_projection_MISR(
             self.surf, self.centerlines_aneurysm_branched, sm_iterations=1)
 
@@ -231,17 +279,30 @@ class Surfer():
 
             # x = x.subdivide(2)
                 
-    def clip_boundaries(self):
+    def clip_boundaries(self, method='select'):
         """ Interactively clip branches then fix clip to normal 
-        """
-        surf = self.surf.fill_holes(10.0)
-        surf.clean()
 
-        surf = vmtk.clipper(surf)
+        Args:
+            method (str): 'select' uses common.ClickDragDelete tool,
+                          'box' uses vmtk.clipper tool.
+        """
+        self.surf.clean()
+        if method == 'select':
+            cb = cc.ClickDragDelete(self.surf, title='Clip boundaries')
+            surf = cb.mesh 
+            surf = surf.triangulate()
+            if type(surf) != pv.core.pointset.PolyData:
+                surf = pv.PolyData(surf.points, surf.cells)
+        
+        else:   
+            surf = self.surf.fill_holes(10.0)
+            surf = vmtk.clipper(surf)
+
         surf = surf.connectivity(largest=True)
         surf = surf.clean() 
 
-        self.surf = surf     
+        self.surf = surf    
+        return cb.flag_inspect 
 
     def save_inlet_outlet_points(self, points_file):
         """ Save inlet_points and outlet_points to a single h5 file.
@@ -289,9 +350,10 @@ class Surfer():
         p = pv.Plotter()
         p.add_mesh(self.surf, color='w', opacity=1.0)
 
-        p.add_text(text, position='upper_right')
-        p.add_text('Press u to reset all picks.', position='lower_right')
-        p.enable_point_picking(callback=_point_picker_cb, show_message=True, 
+        p.add_text(text, position='upper_left')
+        p.add_text('p: pick points', position=(0.05, 0.25), font_size=12)
+        p.add_text('u: reset all picks', position=(0.05, 0.05), font_size=12)
+        p.enable_point_picking(callback=_point_picker_cb, show_message=False, 
                             color='r', point_size=30, 
                             use_mesh=True, show_point=False, 
                             render_points_as_spheres=True)

@@ -24,7 +24,7 @@ class Resampler():
 
         # Resample the surface to a grid, recontour
         grid = cc.vtk_generate_img_stencil(surf.fill_holes(15.), spacing=self.resample_spacing)
-        
+
         surf_r = grid.contour([0.5])
         surf_smooth = cc.vtk_taubin_smooth(surf_r, pass_band=0.03, iterations=100)
 

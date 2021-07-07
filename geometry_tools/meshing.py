@@ -20,14 +20,17 @@ class Mesher(Surfer):
         centerlines_branched : PolyData centerlines of surf with branch IDs
     """
 
-    def __init__(self, surf=None, mesh=None, inlet_points=None, outlet_points=None):
+    def __init__(self, surf=None, mesh=None, inlet_points=None, outlet_points=None, aneurysm_points=None):
         """ Init the mesher instance.
 
         Either surf or mesh must be given. If mesh, surf will be extracted 
         based on CellEntityIds.
         """
-        super().__init__(surf=surf, inlet_points=inlet_points, outlet_points=outlet_points)
         self.mesh = mesh
+        super().__init__(surf=surf, 
+            inlet_points=inlet_points, 
+            outlet_points=outlet_points, 
+            aneurysm_points=aneurysm_points)
 
         if (self.mesh is not None) and (self.surf is None):
             # Extract surface using entity ids
@@ -109,17 +112,30 @@ class Mesher(Surfer):
         surf_og = pv.PolyData()
         surf_og.copy_structure(self.surf)
         surf_og.point_arrays['Mask'] = self.surf.point_arrays['Mask']
-        
+        surf_og.point_arrays['GroupIds'] = self.surf.point_arrays['GroupIds']
+
         surf = pv.PolyData(self.surf.points, self.surf.faces)
         surf = surf.clean()
 
+        # Use centerlines without aneurysm
         centerlines = self.centerlines
 
         centerlines = vmtk.centerline_endpoint_extractor(
             centerlines, num_endpoint_spheres=0, num_gap_sphere=0)
         centerlines = vmtk.centerline_endpoint_masking(centerlines)
 
-        surf = vmtk.surface_remeshing(surf, element_size_mode='edgelength')
+        # surf, centerlines = vmtk.flow_extensions(surf, centerlines)
+        # Decimate 
+        # edges = surf.extract_all_edges()
+        # mean_el = edges.compute_cell_sizes().cell_arrays['Length'].mean()
+        # target_el = 0.4
+        # target_reduction = 1 - (mean_el / target_el)
+        # surf = surf.decimate(target_reduction, volume_preservation=True)
+        surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
+        surf = cc.create_edge_size_array(surf, max_size=0.4, min_size=0.18, curvature_percentile=75)
+        surf = vmtk.surface_remeshing(surf, element_size_mode='edgelengtharray', edgearray='Size')
+        # surf = vmtk.surface_remeshing(surf, element_size_mode='edgelength')
+
         surf = vmtk.surface_centerline_projection(
             surf, centerlines, pass_arrays=['EndCells', 'GroupIds'])
         
@@ -130,11 +146,12 @@ class Mesher(Surfer):
         surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
         surf = surf.clean()
 
-        surf = cc.create_edge_size_array(surf, max_size=0.4, min_size=0.18, curvature_percentile=80)
+        surf = cc.create_edge_size_array(surf, max_size=0.4, min_size=0.18, curvature_percentile=75)
+        surf, _ = cc.smooth_mesh_data_local(surf, 'Size', np.min, iterations=2)
         surf = vmtk.surface_remeshing(surf, element_size_mode='edgelengtharray', edgearray='Size')
         surf = surf.clean()
 
-        surf = surf.interpolate(surf_og, radius=1.0)
+        surf = surf.interpolate(surf_og, radius=0.5)
 
         self.surf = surf 
         self.centerlines = centerlines
@@ -148,11 +165,20 @@ class Mesher(Surfer):
         select.select()
         self.surf = select.surf 
 
+    def mark_refinement_regions(self):
+        """ Automatically mark refinement region based on GroupIds.
+        To mark manually, use select_refinement_regions.
+        """
+        self.surf.point_arrays['Mask'] = np.zeros(self.surf.n_points)
+        for an_id in self.aneurysm_group_ids:
+            mask = self.surf.point_arrays['GroupIds'] == an_id
+            self.surf.point_arrays['Mask'][mask] = 1
+
     def refine_picked_regions(self):
         """ Update point array "Size" of surf using chosen refinement regions.
         """
         surf = self.surf 
-        centerlines = self.centerlines
+        centerlines = self.centerlines_aneurysm
 
         surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
         surf = cc.create_edge_size_array(surf, max_size=0.4, min_size=0.18, curvature_percentile=80)
@@ -162,7 +188,7 @@ class Mesher(Surfer):
         surf.set_active_scalars('Mask')
         
         self.surf = surf
-        self.centerlines = centerlines
+        self.centerlines_aneurysm = centerlines
 
     def generate_flow_rates_legacy(self):
         """ Generate flow rates using Christophe's old code.

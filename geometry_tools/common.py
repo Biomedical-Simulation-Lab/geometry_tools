@@ -30,8 +30,9 @@ def vtk_generate_img_stencil(mesh, spacing=0.05):
     image.dimensions = dimensions 
     image.origin = origin
     image.spacing = spacing
-    image.SetScalarType(vtk.VTK_UNSIGNED_CHAR,image.GetInformation())
-    image.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 3)    
+    # image.SetScalarType(vtk.VTK_UNSIGNED_CHAR,image.GetInformation())
+    # image.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)    # 3
+    image.point_arrays['ImageScalars'] = np.zeros(np.prod(image.dimensions), dtype=bool)
 
     pol2Stenc = vtk.vtkPolyDataToImageStencil()
     pol2Stenc.SetTolerance(0.5) 
@@ -47,12 +48,16 @@ def vtk_generate_img_stencil(mesh, spacing=0.05):
     stencil.Update()
 
     newImage = pv.wrap(stencil.GetOutput())
-    newImage.point_arrays['ImageScalars'] = newImage.point_arrays['ImageScalars'][:,0]
+    newImage.point_arrays['ImageScalars'] = newImage.point_arrays['ImageScalars']#[:,0]
     
     return newImage
 
 def vtk_taubin_smooth(mesh, pass_band=0.1, feature_angle=60.0, iterations=20):
-    """ Smooth mesh using Taubin method. """
+    """ Smooth mesh using Taubin method. 
+    
+    Note:
+    This also exists in bsl.common. 
+    """
     smoother = vtk.vtkWindowedSincPolyDataFilter()
     smoother.SetInputData(mesh) 
     smoother.SetNumberOfIterations(iterations)
@@ -90,7 +95,7 @@ def smooth_mesh_data(data_array, points, radius, func=np.mean, mask=None):
     return out_array
 
 def smooth_mesh_data_local(surf, array='GroupIds', 
-        func=np.median, neighbour_pt_ids=None, iterations=1):
+        func='median', neighbour_pt_ids=None, iterations=1):
     """ Smooth mesh data based on local connectivity.
 
     Args:
@@ -113,9 +118,11 @@ def smooth_mesh_data_local(surf, array='GroupIds',
 
     tree = KDTree(surf.points)
     # _, nearest = tree.query(surf.points, k=2)
-    
-    iii = 0
+    surf = surf.copy()
+    new_array = surf.point_arrays[array].copy()
+
     for idx in range(iterations):
+        old_array = new_array.copy()
         for pt_id in list(range(surf.n_points)):
             neighbours = neighbour_pt_ids[neighbour_pt_ids[pt_id]]
             neighbours = np.unique([item for sublist in neighbours for item in sublist])
@@ -124,13 +131,18 @@ def smooth_mesh_data_local(surf, array='GroupIds',
             # Unfortunately, np.median has the undesired "fallback" 
             # that uses the mean when the array is even. This is bad for 
             # data like GroupIds.
+            if func == 'median':
+                num_neighbours = len(neighbours)
+                neighbour_vals = np.sort(old_array[neighbours])
+                center_index = int(np.ceil(num_neighbours / 2) - 1)
+                new_val = neighbour_vals[center_index]
 
-            num_neighbours = len(neighbours)
-            neighbour_vals = np.sort(surf.point_arrays[array][neighbours])
-            center_index = int(np.ceil(num_neighbours / 2) - 1)
-            new_val = neighbour_vals[center_index]
+            else:
+                new_val = func(old_array[neighbours])
 
-            surf.point_arrays[array][pt_id] = new_val
+            new_array[pt_id] = new_val                        
+
+    surf.point_arrays[array] = new_array
 
     return surf, neighbour_pt_ids
 
@@ -229,6 +241,421 @@ class SacSelectTool():
 
         if np.all(self.surf.point_arrays['Mask'] == 0):
             self.surf.point_arrays['Mask'] = self.surf.point_arrays['TempMask']
+
+    
+
+class SelectGeodesic():
+    def __init__(self, mesh, scalars='Mask'):
+        self.mesh = mesh
+        self.scalars = scalars
+        if self.scalars not in mesh.point_arrays:
+            self.mesh.point_arrays[self.scalars] = np.zeros(self.mesh.n_points)
+
+        self.current_mask = np.zeros_like(self.mesh.point_arrays[self.scalars])
+
+        self.picked_points = []
+        self.picked_ids = []
+        self.lines = []
+        self.interactive = False
+        self.tree = KDTree(self.mesh.points)
+        
+    def interact(self, title='Isolate aneurysms.'):
+        self.interactive = True
+        self.p = pv.Plotter() 
+        self.p.add_mesh(self.mesh, name='mesh', scalars=self.scalars, cmap='coolwarm')
+        self.p.enable_point_picking(
+            show_point=False,
+            show_message=False,
+            callback=self._cb,
+            color='red',
+            font_size=12,
+            point_size=12)
+
+        self.p.add_text(title, position='upper_left', font_size=18)
+        msg = 'Keys:'
+        self.p.add_text(msg, position=(0.05, 175), font_size=12)   
+        msg = 'f: select points'
+        self.p.add_text(msg, position=(0.05, 150), font_size=12)
+        msg = 'u: undo'
+        self.p.add_text(msg, position=(0.05, 125), font_size=12)
+        msg = 'space: complete loop'
+        self.p.add_text(msg, position=(0.05, 100), font_size=12)
+        msg = 'a: append mask'
+        self.p.add_text(msg, position=(0.05, 75), font_size=12)
+        msg = 'x: delete section'
+        self.p.add_text(msg, position=(0.05, 50), font_size=12)
+        msg = 'q: quit'
+        self.p.add_text(msg, position=(0.05, 25), font_size=12)
+
+        self.p.add_key_event('u', self._undo)
+        self.p.add_key_event('space', self._finish)
+        self.p.add_key_event('a', self.append)
+        self.p.add_key_event('x', self.delete_section)
+        self.p.show()
+
+    def _undo(self):
+        self.picked_points.pop()
+        self.picked_ids.pop() 
+        self.display()
+
+    def _finish(self):
+        self.picked_points.append(self.picked_points[0])
+        self.picked_ids.append(self.picked_ids[0])
+        self.display()
+        self.update_mesh()
+
+    def append(self):
+        # Stored existing mask array
+        # When calling update_mesh, logical or with existing
+        self.current_mask = self.mesh.point_arrays[self.scalars].copy() 
+        self.picked_points = []
+        self.picked_ids = []
+        self.lines = []
+        if self.interactive:
+            self.display()
+
+    def _cb(self, pt):
+        self.picked_points.append(pt)
+        self.update_points()
+        self.display()
+
+    def update_points(self):
+        _, self.picked_ids = self.tree.query(self.picked_points, k=1)
+        self.picked_ids = list(self.picked_ids)
+        if self.interactive:
+            self.display()
+
+    def update_geodesic(self):
+        if len(self.picked_ids) > 1:
+            pairwise = zip(self.picked_ids, self.picked_ids[1:])
+            self.lines = [self.mesh.geodesic(a, b) for a, b in pairwise]
+       
+        if len(self.lines) > 0:
+            lines = pv.PolyData() 
+            self.merged = lines.merge(self.lines)
+
+    def update_mesh(self):
+        # Split the mesh
+        self.mesh = self.mesh.triangulate()
+        tree = KDTree(self.mesh.points)
+        _, ii = tree.query(self.merged.points, k=1)
+        split, rdx = self.mesh.remove_points(ii)
+        split.point_arrays['vtkOGIds'] = rdx
+        
+        split = split.connectivity()
+        region_ids = split.point_arrays['RegionId']
+        regions = np.unique(region_ids)
+        r_masks = [region_ids == r_id for r_id in regions]
+        split = [split.extract_points(r_m, adjacent_cells=False) for r_m in r_masks]
+        split = sorted(split, key=lambda x: x.n_points, reverse=True)
+
+        split_pd = [pv.PolyData(s.points, s.cells) for s in split]
+        for s, s_pd in zip(split, split_pd):
+            for arr in self.mesh.point_arrays:
+                s_pd.point_arrays[arr] = s.point_arrays[arr]
+            for arr in self.mesh.cell_arrays:
+                s_pd.cell_arrays[arr] = s.cell_arrays[arr]
+
+        # Smaller one mark 1, bigger 
+        mask = np.ones(self.mesh.n_points, dtype=bool)
+        mask[split[0].point_arrays['vtkOGIds']] = 0
+        temp_mask = self.mesh.point_arrays[self.scalars]
+        temp_mask[mask] = 1
+        temp_mask[~mask] = 0
+        new_mask = np.logical_or(temp_mask, self.current_mask)
+        self.mesh.point_arrays[self.scalars] = new_mask
+
+        if self.interactive:
+            self.p.add_mesh(self.mesh, name='mesh', scalars=self.scalars, cmap='coolwarm')
+
+    def display(self):
+
+        self.update_geodesic()
+        if len(self.lines) > 0:
+
+            self.p.add_mesh(self.merged, name='lines', color='b')
+
+        if len(self.picked_points) > 0:
+            points = pv.wrap(np.array(self.picked_points))
+
+            self.p.add_mesh(points, 
+                render_points_as_spheres=True, 
+                color='r',
+                name='points',
+                )
+    
+    def delete_section(self):
+        mask = self.mesh.point_arrays[self.scalars] == 0
+        self.mesh = self.mesh.extract_points(mask, adjacent_cells=False)
+        new_mesh = pv.PolyData(self.mesh.points, self.mesh.cells)
+        for arr in self.mesh.point_arrays:
+            new_mesh.point_arrays[arr] = self.mesh.point_arrays[arr]
+        for arr in self.mesh.cell_arrays:
+            new_mesh.cell_arrays[arr] = self.mesh.cell_arrays[arr]
+        self.mesh = new_mesh
+        self.mesh = self.mesh.fill_holes(20.0)
+        if self.interactive:
+            self.p.add_mesh(self.mesh, name='mesh', scalars=self.scalars, cmap='coolwarm')
+
+
+
+# class SelectGeodesic():
+#     def __init__(self, mesh, scalars='Mask', title='Isolate aneurysms.'):
+#         self.mesh = mesh
+#         self.p = pv.Plotter() 
+#         self.scalars = scalars
+#         if self.scalars not in mesh.point_arrays:
+#             self.mesh.point_arrays[self.scalars] = np.zeros(self.mesh.n_points)
+
+#         self.current_mask = np.zeros_like(self.mesh.point_arrays[self.scalars])
+#         self.p.add_mesh(mesh, name='mesh', scalars=self.scalars, cmap='coolwarm')
+#         self.p.enable_point_picking(
+#             show_point=False,
+#             show_message=False,
+#             callback=self.cb,
+#             color='red',
+#             font_size=12,
+#             point_size=12)
+
+#         self.p.add_text(title, position='upper_left', font_size=18)
+#         msg = 'Keys:'
+#         self.p.add_text(msg, position=(0.05, 175), font_size=12)   
+#         msg = 'f: select points'
+#         self.p.add_text(msg, position=(0.05, 150), font_size=12)
+#         msg = 'u: undo'
+#         self.p.add_text(msg, position=(0.05, 125), font_size=12)
+#         msg = 'space: complete loop'
+#         self.p.add_text(msg, position=(0.05, 100), font_size=12)
+#         msg = 'a: append mask'
+#         self.p.add_text(msg, position=(0.05, 75), font_size=12)
+#         msg = 'x: delete section'
+#         self.p.add_text(msg, position=(0.05, 50), font_size=12)
+#         msg = 'q: quit'
+#         self.p.add_text(msg, position=(0.05, 25), font_size=12)
+
+#         self.p.add_key_event('u', self.undo)
+#         self.p.add_key_event('space', self.finish)
+#         self.p.add_key_event('a', self.append)
+#         self.p.add_key_event('x', self.delete_section)
+
+#         self.picked_points = []
+#         self.picked_ids = []
+#         self.lines = []
+        
+#         self.p.show()
+
+#     def undo(self):
+#         self.picked_points.pop()
+#         self.picked_ids.pop() 
+#         self.display()
+
+#     def finish(self):
+#         self.picked_points.append(self.picked_points[0])
+#         self.picked_ids.append(self.picked_ids[0])
+#         self.display()
+#         self.update_mesh()
+
+#     def append(self):
+#         # Stored existing mask array
+#         # When calling update_mesh, logical or with existing
+#         self.current_mask = self.mesh.point_arrays[self.scalars].copy() 
+#         self.picked_points = []
+#         self.picked_ids = []
+#         self.lines = []
+#         self.display()
+
+#     def cb(self, pt):
+#         self.picked_points.append(pt)
+#         self.picked_ids.append(self.mesh.find_closest_point(pt))
+#         self.display()
+
+#     def update_mesh(self):
+#         # Split the mesh
+#         self.mesh = self.mesh.triangulate()
+#         tree = KDTree(self.mesh.points)
+#         dd, ii = tree.query(self.merged.points, k=1)
+#         split, rdx = self.mesh.remove_points(ii)
+#         split.point_arrays['vtkOGIds'] = rdx
+#         # split = sorted(split.split_bodies(), key=lambda x : x.n_points, reverse=True)
+        
+#         split = split.connectivity()
+#         region_ids = split.point_arrays['RegionId']
+#         regions = np.unique(region_ids)
+#         r_masks = [region_ids == r_id for r_id in regions]
+#         split = [split.extract_points(r_m, adjacent_cells=False) for r_m in r_masks]
+#         split = sorted(split, key=lambda x: x.n_points, reverse=True)
+
+#         split_pd = [pv.PolyData(s.points, s.cells) for s in split]
+#         for s, s_pd in zip(split, split_pd):
+#             for arr in self.mesh.point_arrays:
+#                 s_pd.point_arrays[arr] = s.point_arrays[arr]
+#             for arr in self.mesh.cell_arrays:
+#                 s_pd.cell_arrays[arr] = s.cell_arrays[arr]
+
+#         # Smaller one mark 1, bigger 
+#         mask = np.ones(self.mesh.n_points, dtype=bool)
+#         mask[split[0].point_arrays['vtkOGIds']] = 0
+#         temp_mask = self.mesh.point_arrays[self.scalars]
+#         temp_mask[mask] = 1
+#         temp_mask[~mask] = 0
+#         new_mask = np.logical_or(temp_mask, self.current_mask)
+#         self.mesh.point_arrays[self.scalars] = new_mask
+#         self.p.add_mesh(self.mesh, name='mesh', scalars=self.scalars, cmap='coolwarm')
+
+#     def display(self):
+#         if len(self.picked_ids) > 1:
+#             pairwise = zip(self.picked_ids, self.picked_ids[1:])
+#             self.lines = [self.mesh.geodesic(a, b) for a, b in pairwise]
+
+#         if len(self.lines) > 0:
+#             lines = pv.PolyData() 
+#             self.merged = lines.merge(self.lines)
+#             self.p.add_mesh(self.merged, name='lines', color='b')
+
+#         if len(self.picked_points) > 0:
+#             points = pv.wrap(np.array(self.picked_points))
+
+#             self.p.add_mesh(points, 
+#                 render_points_as_spheres=True, 
+#                 color='r',
+#                 name='points',
+#                 )
+    
+#     def delete_section(self):
+#         mask = self.mesh.point_arrays[self.scalars] == 0
+#         self.mesh = self.mesh.extract_points(mask, adjacent_cells=False)
+#         new_mesh = pv.PolyData(self.mesh.points, self.mesh.cells)
+#         for arr in self.mesh.point_arrays:
+#             new_mesh.point_arrays[arr] = self.mesh.point_arrays[arr]
+#         for arr in self.mesh.cell_arrays:
+#             new_mesh.cell_arrays[arr] = self.mesh.cell_arrays[arr]
+#         self.mesh = new_mesh
+#         self.mesh = self.mesh.fill_holes(20.0)
+#         self.p.add_mesh(self.mesh, name='mesh', scalars=self.scalars, cmap='coolwarm')
+
+
+
+class ClickDragDelete:
+    """ Click and drag to select, space to delete.
+
+    Clip meshes based on cell picking routines.
+    Input surface must be vtkPolyData.
+    
+    Instructions:
+    - Press "r" to toggle between selection/interaction.
+    - Press "c" to clear selection.
+    - Press "space" to delete cells.
+    
+    Based on example here:
+    https://github.com/pyvista/pyvista/pull/281
+    """
+    def __init__(self, mesh, title='Clip mesh'):
+        self.plotter = pv.Plotter()
+        self.plotter.add_text(title, position='upper_left', font_size=18)
+        msg = 'r: toggle selection mode'
+        self.plotter.add_text(msg, position=(0.05, 75), font_size=12)
+        msg = 'c: clear selection'
+        self.plotter.add_text(msg, position=(0.05, 50), font_size=12)
+        msg = 'space: clip '
+        self.plotter.add_text(msg, position=(0.05, 25), font_size=12)
+        msg = 'k: flag mesh'
+        self.plotter.add_text(msg, position=(0.05, 0.05), font_size=12)
+
+        self.mesh = mesh
+        self.clear()
+
+        self.plotter.enable_cell_picking(callback=self, show=False, show_message=False)
+        self.plotter.add_key_event('c', callback=self.clear)
+        self.plotter.add_key_event('space', callback=self.clip)
+        self.plotter.add_key_event('k', callback=self.flag)
+
+        self.flag_inspect = False
+
+        self.plotter.show()
+
+    def display(self):
+        if self.mesh.n_points > 0:
+            self.plotter.add_mesh(self.mesh,
+                scalars='DelMask',
+                name='mesh',
+                show_scalar_bar=False,
+                cmap='Reds')
+        else:
+            self.plotter.remove_actor('mesh')
+        
+    def __call__(self, picked_cells):
+        self.picked.merge(picked_cells, inplace=True)
+        if self.picked.n_cells > 0:
+            self.mesh['DelMask'][self.picked.cell_arrays['orig_extract_id']] = 1
+        self.display()
+
+        return
+    
+    def clear(self):
+        self.picked = pv.UnstructuredGrid()
+        self.mesh.cell_arrays['DelMask'] = np.zeros(self.mesh.n_cells, dtype=bool)
+
+        self.plotter.add_mesh(self.mesh, 
+            color='w', 
+            scalars='DelMask', 
+            name='mesh',
+            show_scalar_bar=False)
+        self.display()
+
+    def clip(self):
+        if self.picked.n_points > 0:
+            cells = np.invert(self.mesh.cell_arrays['DelMask'])
+            self.mesh = self.mesh.extract_cells(cells)
+            self.mesh.cell_arrays['DelMask'] = np.zeros(self.mesh.n_cells, dtype=bool)
+            self.plotter.enable_cell_picking(self.mesh, callback=self, show=False, show_message=False)
+            self.clear()
+            self.display()
+        
+    def flag(self):
+        print('Meshed flagged for further inspection.')
+        self.flag_inspect = True
+
+class ClickToDelete():
+    """ Click a point, cells that contain it will be deleted.
+    """
+    def __init__(self, mesh):
+        self.p = pv.Plotter()
+        msg = 'Press f to select point'
+        self.p.add_text(msg, position=(0.05, 50), font_size=12)
+        msg = 'Press x to delete cells'
+        self.p.add_text(msg, position=(0.05, 25), font_size=12)
+        msg = 'Press u to udno'
+        self.p.add_text(msg, position=(0.05, 0), font_size=12)
+        
+        self.mesh = mesh
+        self.prev_mesh = self.mesh.copy()
+
+        self.p.add_mesh(self.mesh, color='w', name='mesh')
+        self.p.enable_point_picking(callback=self, show_message=False)
+        self.p.enable_cell_picking()
+        self.p.add_key_event('x', callback=self)
+        self.p.add_key_event('u', callback=self.undo)
+
+        self.p.show()
+
+    def __call__(self, picked_cells):
+        pt = self.p.picked_point_id
+        self.prev_mesh = self.mesh.copy()
+        self.mesh, _ = self.mesh.remove_points([pt], mode='any')
+        self.display()
+
+    def display(self):
+        if self.mesh.n_points > 0:
+            self.p.add_mesh(self.mesh,
+                color='w',
+                name='mesh',
+            )
+        else:
+            self.p.remove_actor('mesh')
+
+    def undo(self):
+        self.mesh = self.prev_mesh
+        self.display()
 
 def get_network_endpoints(network):
     """ Get terminal points of network
@@ -332,3 +759,4 @@ def check_mem_usage():
     print("{} MB".format(mem_usage))
 
 
+    
