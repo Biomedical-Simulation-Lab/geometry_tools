@@ -236,16 +236,17 @@ class Mesher(Surfer):
         """ 
         self.get_group_adjacency()
 
+        nodes = [x for x in self.G.nodes if x not in self.aneurysm_group_ids]
         centerlines_branched = vmtk.centerline_branches_ids(self.centerlines)
         self.centerlines_branched = centerlines_branched
-        mean_radii = cc.get_mean_radii(centerlines_branched, self.G.nodes)
+        mean_radii = cc.get_mean_radii(centerlines_branched, nodes)
         beta_values = {}
         beta_values[0] = 1.
 
         outlet_flow_divisions = {}
 
-        for node in self.G.nodes:
-            children = [x for x in self.G.successors(node)]
+        for node in nodes:
+            children = [x for x in self.G.successors(node) if x not in self.aneurysm_group_ids]
             if len(children) > 0:
                 node_radii = mean_radii[node]
                 children_radii = np.array([mean_radii[x] for x in children])
