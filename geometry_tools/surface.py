@@ -214,6 +214,9 @@ class Surfer():
         self.surf, self.neighbour_pt_ids = vmtk.surface_centerline_projection_MISR(
             self.surf, self.centerlines_aneurysm_branched, sm_iterations=1)
 
+        self.update_aneurysm_group_ids()
+
+    def update_aneurysm_group_ids(self):    
         tree = KDTree(self.surf.points)
         nearest_temp_idx = tree.query(self.aneurysm_points, k=1)[1]
         self.aneurysm_group_ids = self.surf.point_arrays['GroupIds'][nearest_temp_idx]
