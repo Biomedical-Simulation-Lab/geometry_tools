@@ -269,7 +269,8 @@ class SelectGeodesic():
             callback=self._cb,
             color='red',
             font_size=12,
-            point_size=12)
+            point_size=12,
+            tolerance=0.75)
 
         self.p.add_text(title, position='upper_left', font_size=18)
         msg = 'Keys:'

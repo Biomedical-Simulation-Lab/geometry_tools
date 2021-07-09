@@ -51,7 +51,7 @@ def centerlines(surf, seed_selector='pickpoint', resampling=1,
         )
     surf_perturb.points = surf_perturb.points + perturbed_vec
     centerline_filt = vmtkscripts.vmtkCenterlines()
-    centerline_filt.Surface = surf
+    centerline_filt.Surface = surf_perturb
     centerline_filt.SeedSelectorName = seed_selector
     centerline_filt.Resampling = resampling
     centerline_filt.ResamplingStepLength = resampling_step_length
@@ -391,6 +391,48 @@ def surface_centerline_projection(surf, centerlines, pass_arrays=None):
     proj.RadiusArrayName = utils.radiusArrayName
     proj.Execute()
     return pv.wrap(proj.Surface)
+
+def surface_centerline_projection_VOR(surf, centerlines, arrays=['GroupIds'], sm_iterations=1):
+    """ Instead of glyphing, use Voronoi diagram.
+    NOT WORKING -- still need to project GroupIds onto voronoi, so
+    doesn't really solve the issue.
+    """
+    # Cell-to-point; get relevant sections of centerlines
+    mask = centerlines.cell_arrays['Blanking'] == 0
+    centerlines = centerlines.extract_cells(mask)
+
+    centerlines = centerlines.ctp()
+    centerlines.set_active_scalars('MaximumInscribedSphereRadius')
+
+    test_object = delaunay_voronoi(surf)
+        
+    # Create smooth surf
+    surf_smooth = surf.smooth(n_iter=20, relaxation_factor=1.0)
+
+    # For point in surf_smooth, find nearest in test_object
+    # Could really speed up code by triming down the test_object
+    tree = KDTree(test_object.points)
+    _, ii = tree.query(surf_smooth.points, k=1)
+
+    # Assign values to surf and smooth array based on median filtering
+    neighbour_pt_ids = None
+
+    mask = np.invert(centerlines.point_arrays['Blanking'].astype(bool))
+    valid_ids = np.unique(centerlines.point_arrays['GroupIds'][mask])
+
+    for arr in arrays:
+        group_ids = test_object.point_arrays[arr][ii]
+        surf.point_arrays[arr] = group_ids
+
+        surf, neighbour_pt_ids = cc.smooth_mesh_data_local(
+            surf, 
+            array=arr, 
+            func=np.median, 
+            neighbour_pt_ids=neighbour_pt_ids, 
+            iterations=sm_iterations,
+        )
+
+    return surf, neighbour_pt_ids
 
 
 def surface_centerline_projection_MISR(surf, centerlines, arrays=['GroupIds'], sm_iterations=1):
@@ -736,7 +778,18 @@ def surface_end_clipper(surf, centerlines=None):
     return pv.wrap(sc.Surface)
 
 def delaunay_voronoi(surf):
+    # Perturb the surf a bit first
+    surf = surf.compute_normals()
+    surf_perturb = surf.copy()
+    perturbed_vec = np.einsum(
+        'ij,i->ij', 
+        surf_perturb.point_arrays['Normals'], 
+        np.random.normal(0, 0.01, surf_perturb.n_points)
+        )
+    surf_perturb.points = surf_perturb.points + perturbed_vec
+
     alg = vmtkscripts.vmtkDelaunayVoronoi()
-    alg.Surface = surf
+    alg.Surface = surf_perturb
     alg.Execute()
-    return pv.wrap(alg.VoronoiDiagram), pv.wrap(alg.Mesh), pv.wrap(alg.Surface), pv.wrap(alg.PoleIds)
+    return pv.wrap(alg.VoronoiDiagram)
+

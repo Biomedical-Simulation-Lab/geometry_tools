@@ -1,4 +1,3 @@
-from numpy.core.fromnumeric import clip
 import pyvista as pv 
 import numpy as np
 from geometry_tools import vmtk_wrapper as vmtk
@@ -38,10 +37,11 @@ class Surfer():
 
         def _point_picker_cb(mm, pid):
             point = mm.points[pid]
-            print('Picked point', point)
+            # print('Picked point', point)
             self._picked_id = pid
 
         def _reset_picked_cb():
+            print('reset')
             self._picked_id = None
 
         self._picked_id = None
@@ -359,7 +359,8 @@ class Surfer():
         p.enable_point_picking(callback=_point_picker_cb, show_message=False, 
                             color='r', point_size=30, 
                             use_mesh=True, show_point=False, 
-                            render_points_as_spheres=True)
+                            render_points_as_spheres=True,
+                            tolerance=0.75)
         p.add_key_event('u', _reset_picked_cb)
         p.show()
         # print('picked', self._picked_ids)
@@ -373,8 +374,10 @@ class Surfer():
         If getting errors, try recomputing centerlines -- there might be a bug
         where self.centerlines is overridden with centerlines_branched. 
         """
-        self.edges, self.G = vmtk.extract_group_adjacency(self.centerlines_aneurysm)
-        _, self.G_no_aneurysm = vmtk.extract_group_adjacency(self.centerlines)
+        if hasattr(self, 'centerlines'):
+            self.edges, self.G = vmtk.extract_group_adjacency(self.centerlines_aneurysm)
+        if hasattr(self, 'centerlines'):
+            _, self.G_no_aneurysm = vmtk.extract_group_adjacency(self.centerlines)
 
     def get_bifurcation_ref_systems_vectors(self):
         # self.ref = vmtk.bifurcation_ref_systems(self.centerlines_branched)
