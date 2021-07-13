@@ -115,45 +115,49 @@ class Mesher(Surfer):
         surf_og.point_arrays['GroupIds'] = self.surf.point_arrays['GroupIds']
 
         surf = pv.PolyData(self.surf.points, self.surf.faces)
+        surf.point_arrays['Mask'] = surf_og.point_arrays['Mask'].copy()
         surf = surf.clean()
 
         # Use centerlines without aneurysm
         centerlines = self.centerlines
 
-        centerlines = vmtk.centerline_endpoint_extractor(
-            centerlines, num_endpoint_spheres=0, num_gap_sphere=0)
-        centerlines = vmtk.centerline_endpoint_masking(centerlines)
+        # centerlines = vmtk.centerline_endpoint_extractor(
+        #     centerlines, num_endpoint_spheres=0, num_gap_sphere=0)
+        # centerlines = vmtk.centerline_endpoint_masking(centerlines)
 
-        # surf, centerlines = vmtk.flow_extensions(surf, centerlines)
-        # Decimate 
-        # edges = surf.extract_all_edges()
-        # mean_el = edges.compute_cell_sizes().cell_arrays['Length'].mean()
-        # target_el = 0.4
-        # target_reduction = 1 - (mean_el / target_el)
-        # surf = surf.decimate(target_reduction, volume_preservation=True)
-        surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
-        surf = cc.create_edge_size_array(surf, max_size=0.4, min_size=0.18, curvature_percentile=75)
-        surf = vmtk.surface_remeshing(surf, element_size_mode='edgelengtharray', edgearray='Size')
-        # surf = vmtk.surface_remeshing(surf, element_size_mode='edgelength')
+        # surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
+        # surf = cc.create_edge_size_array(surf, max_size=0.4, min_size=0.14,)
+        # surf = vmtk.surface_remeshing(surf, element_size_mode='edgelengtharray', edgearray='Size')
 
-        surf = vmtk.surface_centerline_projection(
-            surf, centerlines, pass_arrays=['EndCells', 'GroupIds'])
+        # surf = vmtk.surface_centerline_projection(
+        #     surf, centerlines, pass_arrays=['EndCells', 'GroupIds'])
         
-        surf, centerlines = vmtk.centerline_branch_clipper_checker(surf, centerlines)
-        surf = vmtk.surface_connectivity(surf, group_ids_name='EndCells', group_id=0)
+        # surf, centerlines = vmtk.centerline_branch_clipper_checker(surf, centerlines)
+        # surf = vmtk.surface_connectivity(surf, group_ids_name='EndCells', group_id=0)
 
         surf, centerlines = vmtk.flow_extensions(surf, centerlines)
-        surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
         surf = surf.clean()
-
-        surf = cc.create_edge_size_array(surf, max_size=0.4, min_size=0.18, curvature_percentile=75)
-        surf, _ = cc.smooth_mesh_data_local(surf, 'Size', np.min, iterations=2)
-        surf = vmtk.surface_remeshing(surf, element_size_mode='edgelengtharray', edgearray='Size')
-        surf = surf.clean()
+        
+        self.update_inlets_outlets()
+        self.generate_centerlines(include_aneurysms=False)
+        centerlines = self.centerlines
 
         surf = surf.interpolate(surf_og, radius=0.5)
+        surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
+        surf = cc.create_edge_size_array(surf, max_size=0.4, min_size=0.14,)
 
-        self.surf = surf 
+        # surf, n_ids = cc.smooth_mesh_data_local(surf, 'Size', np.min, iterations=2)
+        surf, n_ids = cc.smooth_mesh_data_local(surf, 'Size', np.mean, 
+            iterations=1,
+            )
+        
+        surf_rm = vmtk.surface_remeshing(surf, element_size_mode='edgelengtharray', edgearray='Size')
+        surf_rm = surf_rm.clean()
+
+        surf_rm = surf_rm.interpolate(surf_og, radius=0.5)
+        surf_rm = surf_rm.interpolate(surf, radius=0.5)
+
+        self.surf = surf_rm 
         self.centerlines = centerlines
 
     def select_refinement_regions(self):
@@ -181,7 +185,7 @@ class Mesher(Surfer):
         centerlines = self.centerlines_aneurysm
 
         surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
-        surf = cc.create_edge_size_array(surf, max_size=0.4, min_size=0.18, curvature_percentile=80)
+        surf = cc.create_edge_size_array(surf, max_size=0.4, min_size=0.18,)
         surf.point_arrays['Size'][surf.point_arrays['Mask'] > 0.99] = 0.18
         # surf.point_arrays['Size'] = cc.smooth_mesh_data(surf.point_arrays['Size'], surf.points, 1.0, func=np.mean)
         surf = vmtk.surface_array_smoothing(surf, array_name='Size', iterations=5)

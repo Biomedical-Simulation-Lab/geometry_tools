@@ -83,7 +83,7 @@ class Surfer():
         surf_d = self.surf.decimate(target_reduction, volume_preservation=True)
         self.surf = self.copy_arrays(self.surf, surf_d)
 
-    def clip_endpoints_with_spheres(self, factor=1.3):
+    def clip_endpoints_with_spheres(self, factor=1.4):
         endpoints = np.concatenate([self.inlet_points, self.outlet_points], axis=0)
         endlets = pv.wrap(endpoints)
         tree = KDTree(self.centerlines_aneurysm.points)
@@ -107,6 +107,8 @@ class Surfer():
         inlet_ids = self._pick_points(centers_m, text=text)
         outlet_ids = list(set(range(centers_m.n_points)) - set(inlet_ids))
         
+        assert inlet_ids[0] is not None, "No inlet selected."
+
         self.inlet_points = [centers[i] for i in inlet_ids]
         self.outlet_points = [centers[i] for i in outlet_ids]
         return centers_m, inlet_ids, outlet_ids
@@ -354,7 +356,7 @@ class Surfer():
         p.add_mesh(self.surf, color='w', opacity=1.0)
 
         p.add_text(text, position='upper_left')
-        p.add_text('p: pick points', position=(0.05, 0.25), font_size=12)
+        p.add_text('p: pick points', position=(0.05, 25), font_size=12)
         p.add_text('u: reset all picks', position=(0.05, 0.05), font_size=12)
         p.enable_point_picking(callback=_point_picker_cb, show_message=False, 
                             color='r', point_size=30, 

@@ -2,6 +2,7 @@ import vtk
 import numpy as np 
 import pyvista as pv 
 from scipy.spatial import cKDTree as KDTree 
+from scipy.interpolate import interp1d
 from pathlib import Path 
 import h5py 
 import ast 
@@ -110,13 +111,13 @@ def smooth_mesh_data_local(surf, array='GroupIds',
     # point_array = surf.point_arrays[array]#.copy()
 
     if neighbour_pt_ids == None:
-        neighbour_pt_ids = get_neighbour_map(cells, surf.n_points) #len(point_array)) surf.point_arrays[array]
+        neighbour_pt_ids = get_neighbour_map(surf) #len(point_array)) surf.point_arrays[array]
     
     neighbour_pt_ids = np.array(neighbour_pt_ids)
 
     valid_ids = np.unique(surf.point_arrays[array])
 
-    tree = KDTree(surf.points)
+    # tree = KDTree(surf.points)
     # _, nearest = tree.query(surf.points, k=2)
     surf = surf.copy()
     new_array = surf.point_arrays[array].copy()
@@ -146,7 +147,7 @@ def smooth_mesh_data_local(surf, array='GroupIds',
 
     return surf, neighbour_pt_ids
 
-def get_neighbour_map(cells, n_points):
+def get_neighbour_map(surf):#, n_points):
     """ Get full list of adjacent neighbour pts.
 
     Args:
@@ -155,32 +156,68 @@ def get_neighbour_map(cells, n_points):
     
     Returns:
         neighbour_pt_ids (list): List of lists containing neighbour pt ids.
+        * Trying with numpy array.
     """
-    neighbour_pt_ids = []
-    for pt_id in range(n_points):
-        cell_ids = np.where(np.any(cells == pt_id, axis=1))[0]
-        pt_ids = np.unique(cells[cell_ids])
-        neighbour_pt_ids.append(pt_ids)
+    # neighbour_pt_ids = []
+    # for pt_id in range(n_points):
+    #     if pt_id % 1000 == 0:
+    #         print(pt_id)
+    #     cell_ids = np.where(np.any(cells == pt_id, axis=1))[0]
+    #     pt_ids = np.unique(cells[cell_ids])
+    #     neighbour_pt_ids.append(pt_ids)
+
+    # return neighbour_pt_ids
+
+    neighbour_pt_ids = [[] for _ in range(surf.n_points)]
+    edges = surf.extract_all_edges()
+    ee = edges.lines.reshape(-1, 3)[:,1:]
+    for e in ee:
+        neighbour_pt_ids[e[0]].append(e[1])
+        neighbour_pt_ids[e[1]].append(e[0])
+
+    neighbour_pt_ids = np.array([np.unique(x) for x in neighbour_pt_ids])
 
     return neighbour_pt_ids
 
-def create_edge_size_array(surf, max_size=0.3, min_size=0.18, curvature_percentile=80, name='Size'):
+def create_edge_size_array(surf, max_size=0.3, min_size=0.18, name='Size'):
     """ Create "Size" array incorporating distance to centerlines and curvature.
 
     This will likely be refined moving forward.
+
+    Based on DistanceToCenterlinesArray, interpolate between 3 mm rad as max, 0.5 mm rad min
+    Based on Curvature, interpolate between 0.3 as min, 0.5 as max
+    Based on Mask, set to min value where Mask == 1.
+    Then take min of each.
+
     """
-    surf.point_arrays['Curvature'] = np.abs(surf.curvature())
-    curvature_threshold = np.percentile(surf.point_arrays['Curvature'], curvature_percentile)
-    
-    surf.point_arrays[name] = np.ones(surf.n_points) 
-    
-    surf.point_arrays[name] = surf.point_arrays['DistanceToCenterlinesArray'] / 4.0
-    surf.point_arrays[name][surf.point_arrays['Curvature'] > curvature_threshold] = min_size
+    distance_interp = interp1d([0.5, 3.0], [min_size, max_size], 
+        kind='linear',
+        bounds_error=False,
+        fill_value=(min_size, max_size),
+        )
+    curv_interp = interp1d([0.3, 0.8], [max_size, min_size], 
+        kind='linear',
+        bounds_error=False,
+        fill_value=(max_size, min_size),
+        )
 
-    surf.point_arrays[name][surf.point_arrays[name] < min_size] = min_size
-    surf.point_arrays[name][surf.point_arrays[name] > max_size] = max_size
+    surf.point_arrays['Curvature'] = np.abs(surf.curvature('Minimum'))
+    
+    surf.point_arrays['SizeDistanceToCenterlinesArray'] = distance_interp(surf.point_arrays['DistanceToCenterlinesArray']) #np.ones(surf.n_points) 
+    surf.point_arrays['SizeCurvature'] = curv_interp(surf.point_arrays['Curvature']) #np.ones(surf.n_points)
 
-    surf.point_arrays[name] = smooth_mesh_data(surf.point_arrays[name], surf.points, 0.5)
+    surf.point_arrays[name] = np.minimum(surf.point_arrays['SizeDistanceToCenterlinesArray'], surf.point_arrays['SizeCurvature'])
+
+    if 'Mask' in surf.point_arrays:
+        # First dilate mask to include nearby regions
+        surf.point_arrays['MaskDilate'] = surf.point_arrays['Mask'].copy()
+        surf, _ = smooth_mesh_data_local(surf, 'MaskDilate', np.max, iterations=3)
+
+        sac_mask = surf.point_arrays['MaskDilate'] == 1
+        surf.point_arrays[name][sac_mask] = min_size
+    else:
+        print('No mask in create_edge_size_array.')
+
     return surf
 
 
