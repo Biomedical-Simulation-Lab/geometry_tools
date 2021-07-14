@@ -201,7 +201,19 @@ def create_edge_size_array(surf, max_size=0.3, min_size=0.18, name='Size'):
         fill_value=(max_size, min_size),
         )
 
-    surf.point_arrays['Curvature'] = np.abs(surf.curvature('Minimum'))
+    # The perfectly straight flow extensions end up having high curvature 
+    # unless they are perturbed slightly
+    surf = surf.compute_normals()
+    surf_perturb = surf.copy()
+    perturbed_vec = np.einsum(
+        'ij,i->ij', 
+        surf_perturb.point_arrays['Normals'], 
+        np.random.normal(0, 0.0001, surf_perturb.n_points)
+        )
+    surf_perturb.points = surf_perturb.points + perturbed_vec
+    surf_perturb.point_arrays['Curvature'] = np.abs(surf_perturb.curvature('Minimum'))
+    
+    surf.point_arrays['Curvature'] = surf_perturb.point_arrays['Curvature'] #np.abs(surf.curvature('Minimum'))
     
     surf.point_arrays['SizeDistanceToCenterlinesArray'] = distance_interp(surf.point_arrays['DistanceToCenterlinesArray']) #np.ones(surf.n_points) 
     surf.point_arrays['SizeCurvature'] = curv_interp(surf.point_arrays['Curvature']) #np.ones(surf.n_points)
@@ -211,7 +223,7 @@ def create_edge_size_array(surf, max_size=0.3, min_size=0.18, name='Size'):
     if 'Mask' in surf.point_arrays:
         # First dilate mask to include nearby regions
         surf.point_arrays['MaskDilate'] = surf.point_arrays['Mask'].copy()
-        surf, _ = smooth_mesh_data_local(surf, 'MaskDilate', np.max, iterations=3)
+        surf, _ = smooth_mesh_data_local(surf, 'MaskDilate', np.max, iterations=5)
 
         sac_mask = surf.point_arrays['MaskDilate'] == 1
         surf.point_arrays[name][sac_mask] = min_size

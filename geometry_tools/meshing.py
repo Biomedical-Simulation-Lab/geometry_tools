@@ -138,6 +138,7 @@ class Mesher(Surfer):
         surf, centerlines = vmtk.flow_extensions(surf, centerlines)
         surf = surf.clean()
         
+        self.surf = surf
         self.update_inlets_outlets()
         self.generate_centerlines(include_aneurysms=False)
         centerlines = self.centerlines
@@ -148,7 +149,7 @@ class Mesher(Surfer):
 
         # surf, n_ids = cc.smooth_mesh_data_local(surf, 'Size', np.min, iterations=2)
         surf, n_ids = cc.smooth_mesh_data_local(surf, 'Size', np.mean, 
-            iterations=1,
+            iterations=1, 
             )
         
         surf_rm = vmtk.surface_remeshing(surf, element_size_mode='edgelengtharray', edgearray='Size')
