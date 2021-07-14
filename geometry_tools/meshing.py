@@ -126,7 +126,7 @@ class Mesher(Surfer):
         # centerlines = vmtk.centerline_endpoint_masking(centerlines)
 
         surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
-        surf = cc.create_edge_size_array(surf, max_size=0.4, min_size=0.14,)
+        surf = cc.create_edge_size_array(surf, max_size=0.4, min_size=0.18,)
         surf = vmtk.surface_remeshing(surf, element_size_mode='edgelengtharray', edgearray='Size')
 
         # surf = vmtk.surface_centerline_projection(
@@ -137,7 +137,7 @@ class Mesher(Surfer):
 
         surf, centerlines = vmtk.flow_extensions(surf, centerlines)
         surf = surf.clean()
-        
+
         self.surf = surf
         self.update_inlets_outlets()
         self.generate_centerlines(include_aneurysms=False)
@@ -145,11 +145,10 @@ class Mesher(Surfer):
 
         surf = surf.interpolate(surf_og, radius=0.5)
         surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
-        surf = cc.create_edge_size_array(surf, max_size=0.4, min_size=0.14,)
+        surf = cc.create_edge_size_array(surf, max_size=0.4, min_size=0.18,)
 
-        # surf, n_ids = cc.smooth_mesh_data_local(surf, 'Size', np.min, iterations=2)
-        surf, n_ids = cc.smooth_mesh_data_local(surf, 'Size', np.mean, 
-            iterations=1, 
+        surf, _ = cc.smooth_mesh_data_local(surf, 'Size', np.mean, 
+            iterations=2, 
             )
         
         surf_rm = vmtk.surface_remeshing(surf, element_size_mode='edgelengtharray', edgearray='Size')

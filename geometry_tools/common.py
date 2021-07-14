@@ -184,13 +184,13 @@ def create_edge_size_array(surf, max_size=0.3, min_size=0.18, name='Size'):
 
     This will likely be refined moving forward.
 
-    Based on DistanceToCenterlinesArray, interpolate between 3 mm rad as max, 0.5 mm rad min
-    Based on Curvature, interpolate between 0.3 as min, 0.5 as max
+    Based on DistanceToCenterlinesArray, interpolate between 2.5 mm rad as max, 0.5 mm rad min
+    Based on Curvature, interpolate between 0.3 as min, 0.8 as max
     Based on Mask, set to min value where Mask == 1.
     Then take min of each.
 
     """
-    distance_interp = interp1d([0.5, 3.0], [min_size, max_size], 
+    distance_interp = interp1d([0.5, 2.5], [min_size, max_size], 
         kind='linear',
         bounds_error=False,
         fill_value=(min_size, max_size),
@@ -223,7 +223,7 @@ def create_edge_size_array(surf, max_size=0.3, min_size=0.18, name='Size'):
     if 'Mask' in surf.point_arrays:
         # First dilate mask to include nearby regions
         surf.point_arrays['MaskDilate'] = surf.point_arrays['Mask'].copy()
-        surf, _ = smooth_mesh_data_local(surf, 'MaskDilate', np.max, iterations=5)
+        surf, _ = smooth_mesh_data_local(surf, 'MaskDilate', np.max, iterations=6)
 
         sac_mask = surf.point_arrays['MaskDilate'] == 1
         surf.point_arrays[name][sac_mask] = min_size
@@ -471,141 +471,6 @@ class SelectGeodesic():
             self.update_geodesic()
             self.update_mesh()
             self.append()
-
-
-# class SelectGeodesic():
-#     def __init__(self, mesh, scalars='Mask', title='Isolate aneurysms.'):
-#         self.mesh = mesh
-#         self.p = pv.Plotter() 
-#         self.scalars = scalars
-#         if self.scalars not in mesh.point_arrays:
-#             self.mesh.point_arrays[self.scalars] = np.zeros(self.mesh.n_points)
-
-#         self.current_mask = np.zeros_like(self.mesh.point_arrays[self.scalars])
-#         self.p.add_mesh(mesh, name='mesh', scalars=self.scalars, cmap='coolwarm')
-#         self.p.enable_point_picking(
-#             show_point=False,
-#             show_message=False,
-#             callback=self.cb,
-#             color='red',
-#             font_size=12,
-#             point_size=12)
-
-#         self.p.add_text(title, position='upper_left', font_size=18)
-#         msg = 'Keys:'
-#         self.p.add_text(msg, position=(0.05, 175), font_size=12)   
-#         msg = 'f: select points'
-#         self.p.add_text(msg, position=(0.05, 150), font_size=12)
-#         msg = 'u: undo'
-#         self.p.add_text(msg, position=(0.05, 125), font_size=12)
-#         msg = 'space: complete loop'
-#         self.p.add_text(msg, position=(0.05, 100), font_size=12)
-#         msg = 'a: append mask'
-#         self.p.add_text(msg, position=(0.05, 75), font_size=12)
-#         msg = 'x: delete section'
-#         self.p.add_text(msg, position=(0.05, 50), font_size=12)
-#         msg = 'q: quit'
-#         self.p.add_text(msg, position=(0.05, 25), font_size=12)
-
-#         self.p.add_key_event('u', self.undo)
-#         self.p.add_key_event('space', self.finish)
-#         self.p.add_key_event('a', self.append)
-#         self.p.add_key_event('x', self.delete_section)
-
-#         self.picked_points = []
-#         self.picked_ids = []
-#         self.lines = []
-        
-#         self.p.show()
-
-#     def undo(self):
-#         self.picked_points.pop()
-#         self.picked_ids.pop() 
-#         self.display()
-
-#     def finish(self):
-#         self.picked_points.append(self.picked_points[0])
-#         self.picked_ids.append(self.picked_ids[0])
-#         self.display()
-#         self.update_mesh()
-
-#     def append(self):
-#         # Stored existing mask array
-#         # When calling update_mesh, logical or with existing
-#         self.current_mask = self.mesh.point_arrays[self.scalars].copy() 
-#         self.picked_points = []
-#         self.picked_ids = []
-#         self.lines = []
-#         self.display()
-
-#     def cb(self, pt):
-#         self.picked_points.append(pt)
-#         self.picked_ids.append(self.mesh.find_closest_point(pt))
-#         self.display()
-
-#     def update_mesh(self):
-#         # Split the mesh
-#         self.mesh = self.mesh.triangulate()
-#         tree = KDTree(self.mesh.points)
-#         dd, ii = tree.query(self.merged.points, k=1)
-#         split, rdx = self.mesh.remove_points(ii)
-#         split.point_arrays['vtkOGIds'] = rdx
-#         # split = sorted(split.split_bodies(), key=lambda x : x.n_points, reverse=True)
-        
-#         split = split.connectivity()
-#         region_ids = split.point_arrays['RegionId']
-#         regions = np.unique(region_ids)
-#         r_masks = [region_ids == r_id for r_id in regions]
-#         split = [split.extract_points(r_m, adjacent_cells=False) for r_m in r_masks]
-#         split = sorted(split, key=lambda x: x.n_points, reverse=True)
-
-#         split_pd = [pv.PolyData(s.points, s.cells) for s in split]
-#         for s, s_pd in zip(split, split_pd):
-#             for arr in self.mesh.point_arrays:
-#                 s_pd.point_arrays[arr] = s.point_arrays[arr]
-#             for arr in self.mesh.cell_arrays:
-#                 s_pd.cell_arrays[arr] = s.cell_arrays[arr]
-
-#         # Smaller one mark 1, bigger 
-#         mask = np.ones(self.mesh.n_points, dtype=bool)
-#         mask[split[0].point_arrays['vtkOGIds']] = 0
-#         temp_mask = self.mesh.point_arrays[self.scalars]
-#         temp_mask[mask] = 1
-#         temp_mask[~mask] = 0
-#         new_mask = np.logical_or(temp_mask, self.current_mask)
-#         self.mesh.point_arrays[self.scalars] = new_mask
-#         self.p.add_mesh(self.mesh, name='mesh', scalars=self.scalars, cmap='coolwarm')
-
-#     def display(self):
-#         if len(self.picked_ids) > 1:
-#             pairwise = zip(self.picked_ids, self.picked_ids[1:])
-#             self.lines = [self.mesh.geodesic(a, b) for a, b in pairwise]
-
-#         if len(self.lines) > 0:
-#             lines = pv.PolyData() 
-#             self.merged = lines.merge(self.lines)
-#             self.p.add_mesh(self.merged, name='lines', color='b')
-
-#         if len(self.picked_points) > 0:
-#             points = pv.wrap(np.array(self.picked_points))
-
-#             self.p.add_mesh(points, 
-#                 render_points_as_spheres=True, 
-#                 color='r',
-#                 name='points',
-#                 )
-    
-#     def delete_section(self):
-#         mask = self.mesh.point_arrays[self.scalars] == 0
-#         self.mesh = self.mesh.extract_points(mask, adjacent_cells=False)
-#         new_mesh = pv.PolyData(self.mesh.points, self.mesh.cells)
-#         for arr in self.mesh.point_arrays:
-#             new_mesh.point_arrays[arr] = self.mesh.point_arrays[arr]
-#         for arr in self.mesh.cell_arrays:
-#             new_mesh.cell_arrays[arr] = self.mesh.cell_arrays[arr]
-#         self.mesh = new_mesh
-#         self.mesh = self.mesh.fill_holes(20.0)
-#         self.p.add_mesh(self.mesh, name='mesh', scalars=self.scalars, cmap='coolwarm')
 
 
 
