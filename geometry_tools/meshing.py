@@ -125,9 +125,9 @@ class Mesher(Surfer):
         #     centerlines, num_endpoint_spheres=0, num_gap_sphere=0)
         # centerlines = vmtk.centerline_endpoint_masking(centerlines)
 
-        # surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
-        # surf = cc.create_edge_size_array(surf, max_size=0.4, min_size=0.14,)
-        # surf = vmtk.surface_remeshing(surf, element_size_mode='edgelengtharray', edgearray='Size')
+        surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
+        surf = cc.create_edge_size_array(surf, max_size=0.4, min_size=0.14,)
+        surf = vmtk.surface_remeshing(surf, element_size_mode='edgelengtharray', edgearray='Size')
 
         # surf = vmtk.surface_centerline_projection(
         #     surf, centerlines, pass_arrays=['EndCells', 'GroupIds'])

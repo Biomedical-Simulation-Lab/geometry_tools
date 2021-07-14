@@ -314,26 +314,32 @@ class Surfer():
 
         File keys will be "inlets" and "outlets"
         """
-        points_f = h5py.File(points_file, 'w')
-        points_f.create_dataset('inlets', 
-            data=self.inlet_points, 
-            compression="gzip", 
-            compression_opts=9
-            )
-        points_f.create_dataset('outlets', 
-            data=self.outlet_points, 
-            compression="gzip", 
-            compression_opts=9
-            )
+        # points_f = h5py.File(points_file, 'w')
+        # points_f.create_dataset('inlets', 
+        #     data=self.inlet_points, 
+        #     compression="gzip", 
+        #     compression_opts=9
+        #     )
+        # points_f.create_dataset('outlets', 
+        #     data=self.outlet_points, 
+        #     compression="gzip", 
+        #     compression_opts=9
+        #     )
         
-        if hasattr(self, 'aneurysm_points'):
-            points_f.create_dataset('aneurysms',
-            data=self.aneurysm_points,
-            compression="gzip", 
-            compression_opts=9
-            )
+        # if hasattr(self, 'aneurysm_points'):
+        #     points_f.create_dataset('aneurysms',
+        #     data=self.aneurysm_points,
+        #     compression="gzip", 
+        #     compression_opts=9
+        #     )
 
-        points_f.close()  
+        # points_f.close()  
+        points = pv.MultiBlock()
+        points['inlets'] = pv.wrap(np.array(self.inlet_points))
+        points['outlets'] = pv.wrap(np.array(self.outlet_points))
+        points['aneurysms'] = pv.wrap(np.array(self.aneurysm_points))
+        points.save(points_file)
+
 
     def pick_aneurysm(self, text='Pick aneurysm'):
         """ Pick a point on the dome.

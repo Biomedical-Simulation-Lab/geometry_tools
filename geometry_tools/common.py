@@ -290,6 +290,7 @@ class SelectGeodesic():
 
         self.current_mask = np.zeros_like(self.mesh.point_arrays[self.scalars])
 
+        self.stored_points = []
         self.picked_points = []
         self.picked_ids = []
         self.lines = []
@@ -330,6 +331,7 @@ class SelectGeodesic():
         self.p.add_key_event('a', self.append)
         self.p.add_key_event('x', self.delete_section)
         self.p.show()
+        self.stored_points.append(self.picked_points)
 
     def _undo(self):
         self.picked_points.pop()
@@ -346,6 +348,8 @@ class SelectGeodesic():
         # Stored existing mask array
         # When calling update_mesh, logical or with existing
         self.current_mask = self.mesh.point_arrays[self.scalars].copy() 
+        self.stored_points.append(self.picked_points)
+
         self.picked_points = []
         self.picked_ids = []
         self.lines = []
@@ -435,6 +439,26 @@ class SelectGeodesic():
         if self.interactive:
             self.p.add_mesh(self.mesh, name='mesh', scalars=self.scalars, cmap='coolwarm')
 
+    def save_stored_points(self, outfile):
+        # neck_ids = [np.zeros(len(ll), dtype=int) + idx for idx, ll in enumerate(self.stored_points)]
+        # neck_ids = [item for sublist in neck_ids for item in sublist]
+
+        # points = pv.wrap(np.concatenate(self.stored_points, axis=0))
+        # points.point_arrays['NeckIds'] = neck_ids
+
+        points = pv.MultiBlock()
+        for pts in self.stored_points:
+            points.append(pv.wrap(np.array(pts)))
+
+        points.save(outfile)       
+
+    def use_stored_points(self, points):
+        for pts in points:
+            self.picked_points = pts.points
+            self.update_points()
+            self.update_geodesic()
+            self.update_mesh()
+            self.append()
 
 
 # class SelectGeodesic():
