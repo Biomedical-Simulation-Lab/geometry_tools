@@ -78,12 +78,18 @@ class Mesher(Surfer):
         caps = [self.mesh.extract_cells(em) for em in entity_masks]
         cap_centers = [c.points.mean(axis=0) for c in caps]
 
+        self.caps = dict(zip(valid_entity_ids, caps))
+
         tree = KDTree(cap_centers)
-        inlet_ids = [tree.query(i)[1] for i in self.inlet_points]
-        outlet_ids = list(set(range(centers_m.n_points)) - set(inlet_ids))
         
-        self.inlet_entity_ids = [valid_entity_ids[x] for x in inlet_ids]
-        self.outlet_entity_ids = [valid_entity_ids[x] for x in outlet_ids]
+        inlet_points = centers_m.points[inlet_ids]
+        outlet_points = centers_m.points[outlet_ids]
+
+        inlet_temp_ids = tree.query(inlet_points)[1]
+        outlet_temp_ids = tree.query(outlet_points)[1]
+
+        self.inlet_entity_ids = [valid_entity_ids[x] for x in inlet_temp_ids]
+        self.outlet_entity_ids = [valid_entity_ids[x] for x in outlet_temp_ids]
 
         if hasattr(self, 'centerlines_branched'): 
             # Match inlet/outlet points with a group id
@@ -91,14 +97,13 @@ class Mesher(Surfer):
             c_branch = c_branch.ctp()
 
             tree = KDTree(c_branch.points)
-            ii = [tree.query(pt, k=1)[1] for pt in self.inlet_points]
-            ei = [tree.query(pt, k=1)[1] for pt in self.outlet_points]
-            group_ids_in = [c_branch.point_arrays['GroupIds'][i] for i in ii]
-            group_ids_out = [c_branch.point_arrays['GroupIds'][i] for i in ei]
-        
-            self.inlet_group_ids = group_ids_in
-            self.outlet_group_ids = group_ids_out
+            ii = tree.query(cap_centers)[1]
 
+            group_ids = [c_branch.point_arrays['GroupIds'][i] for i in ii]
+
+            self.inlet_group_ids = [group_ids[x] for x in inlet_temp_ids]
+            self.outlet_group_ids = [group_ids[x] for x in outlet_temp_ids]
+            
     def surface_preparation(self,):
         """ Refine surface, add flow extensions. 
 
@@ -235,8 +240,6 @@ class Mesher(Surfer):
         Gives equivalent values as legacy call, just rewritten.
         The centerlines should be passed before calling centerline branch ids.
 
-        WARING! outlet flow divisions is not indexed by CellEntityIds. Fix!
-        Need to match G.nodes to a CellEntityId value.
         """ 
         self.get_group_adjacency()
 
@@ -244,6 +247,7 @@ class Mesher(Surfer):
 
         centerlines_branched = vmtk.centerline_branches_ids(self.centerlines)
         self.centerlines_branched = centerlines_branched
+        self.update_inlets_outlets()
         mean_radii = cc.get_mean_radii(centerlines_branched, nodes)
         beta_values = {}
         beta_values[0] = 1.
@@ -264,8 +268,16 @@ class Mesher(Surfer):
             else:
                 outlet_flow_divisions[node] = beta_values[node]
 
-        print('\n' + 'Outlet_flow_divisions', outlet_flow_divisions)
-        self.outlet_flow_divisions = outlet_flow_divisions
+        # print('\n' + 'Outlet_flow_divisions', outlet_flow_divisions)
+
+        # Replace GroupIds keys with EntityIds 
+        translate_out = dict(zip(self.outlet_group_ids, self.outlet_entity_ids))
+
+        out_flow_keys = outlet_flow_divisions.keys()
+        new_out_flow_keys = [translate_out[x] for x in out_flow_keys]
+        out_flow_div_values = [outlet_flow_divisions[x] for x in out_flow_keys]
+
+        self.outlet_flow_divisions = dict(zip(new_out_flow_keys, out_flow_div_values))
 
     def generate_volume_mesh(self):
         mesh = vmtk.volume_meshing(self.surf)
@@ -392,24 +404,25 @@ class Mesher(Surfer):
         Formats a bunch of values into strings, including 
         area, radius, flow divisions, etc of inlet/outlet
         """
-        # Get branch center, normal, rad, area
+        # # Get branch center, normal, rad, area
         center_points = vmtk.branch_center_normal_rad_area(self.mesh)
      
-        # Match GroupIds from self.centerlines_branched to CellEntityIds
-        # Or match GroupIds with inlet points, inlets points is matched with entity ids
+        # # Match GroupIds from self.centerlines_branched to CellEntityIds
+        # # Or match GroupIds with inlet points, inlets points is matched with entity ids
 
-        # Extract caps   
-        entity_ids = np.unique(self.mesh.cell_arrays['CellEntityIds'])
-        valid_entity_ids = sorted(set(entity_ids) - set([0, 1]))
-        entity_masks = [self.mesh.cell_arrays['CellEntityIds'] == i for i in valid_entity_ids]
-        caps = [self.mesh.extract_cells(em) for em in entity_masks]
+        # # Extract caps   
+        # entity_ids = np.unique(self.mesh.cell_arrays['CellEntityIds'])
+        # valid_entity_ids = sorted(set(entity_ids) - set([0, 1]))
+        # entity_masks = [self.mesh.cell_arrays['CellEntityIds'] == i for i in valid_entity_ids]
+        # caps = [self.mesh.extract_cells(em) for em in entity_masks]
 
         info_data = {}
 
-        entity_id_group_id_matcher = dict(zip(self.outlet_entity_ids, self.outlet_group_ids))
+        # entity_id_group_id_matcher = dict(zip(self.outlet_entity_ids, self.outlet_group_ids))
+        # entity_id_group_id_matcher = dict(zip(self.outlet_group_ids, self.outlet_entity_ids))
 
-        for cdx in range(len(caps)):
-            entity_id = valid_entity_ids[cdx]
+        for cdx, entity_id in enumerate(self.caps):
+            #     entity_id = valid_entity_ids[cdx]
             center = center_points[entity_id]
 
             c = center.points[0]
@@ -433,7 +446,7 @@ class Mesher(Surfer):
 
             elif entity_id in self.outlet_entity_ids:
                 # FIX! Need to match GroupIds with CellEntityIds
-                flow_division = self.outlet_flow_divisions[entity_id_group_id_matcher[entity_id]]
+                flow_division = self.outlet_flow_divisions[entity_id]
                 dataline.append("{:.12f}".format(flow_division))
 
             else:
