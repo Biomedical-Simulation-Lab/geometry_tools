@@ -29,3 +29,6 @@ Then
 `conda install -c conda-forge pyvista networkx scipy ipython h5py matplotlib`
 
 Then clone and install `tubeclipper` using pip. 
+
+# Meshing
+For an example of using this for meshing, see the `meshing_example.sh` file in `scripts`.
