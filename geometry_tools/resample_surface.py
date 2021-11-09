@@ -11,6 +11,11 @@ class Resampler():
         self.surf = surf 
         self.resample_spacing = resample_spacing
 
+    def remove_junk_points(self, thresh=1e4):
+        junk_points = np.unique(np.where(np.abs(self.surf.points) > thresh)[0])
+        self.surf, _ = self.surf.remove_points(junk_points)
+        self.surf = self.surf.extract_largest()
+
     def fix(self):
         # Decimate the surface
         surf = self.surf 
@@ -23,9 +28,9 @@ class Resampler():
         surf = surf.clean(tolerance=1e-4)
 
         # Resample the surface to a grid, recontour
-        grid = cc.vtk_generate_img_stencil(surf.fill_holes(15.), spacing=self.resample_spacing)
+        self.grid = cc.vtk_generate_img_stencil(surf.fill_holes(15.), spacing=self.resample_spacing)
 
-        surf_r = grid.contour([0.5])
+        surf_r = self.grid.contour([0.5])
         surf_smooth = cc.vtk_taubin_smooth(surf_r, pass_band=0.03, iterations=100)
 
         # Decimate again

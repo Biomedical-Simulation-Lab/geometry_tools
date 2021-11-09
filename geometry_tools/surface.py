@@ -71,8 +71,13 @@ class Surfer():
         _, ii = tree.query(dst.points, k=1)
         for arr in src.point_arrays:
             dst.point_arrays[arr] = src.point_arrays[arr][ii]
+
+        centers = src.cell_centers()
+        tree = KDTree(centers.points)
+        _, ii = tree.query(dst.cell_centers().points, k=1)
         for arr in src.cell_arrays:
             dst.cell_arrays[arr] = src.cell_arrays[arr][ii]
+            
         return dst
 
     def decimate_surface(self, target_edge_length):

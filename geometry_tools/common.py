@@ -312,6 +312,7 @@ class SelectGeodesic():
     def interact(self, title='Isolate aneurysms.'):
         self.interactive = True
         self.p = pv.Plotter() 
+        self.mesh = self.mesh.compute_normals()
         self.p.add_mesh(self.mesh, name='mesh', scalars=self.scalars, cmap='coolwarm')
         self.p.enable_point_picking(
             show_point=False,
@@ -319,8 +320,9 @@ class SelectGeodesic():
             callback=self._cb,
             color='red',
             font_size=12,
-            point_size=12,
-            tolerance=0.75)
+            point_size=20,
+            tolerance=0.025
+            )
 
         self.p.add_text(title, position='upper_left', font_size=18)
         msg = 'Keys:'
