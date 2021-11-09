@@ -1,10 +1,10 @@
 import pyvista as pv 
 import numpy as np
 from geometry_tools import vmtk_wrapper as vmtk
-from pathlib import Path 
+# from pathlib import Path 
 from geometry_tools import common as cc 
 from scipy.spatial import cKDTree as KDTree 
-import h5py 
+# import h5py 
 from tubeclipper import TubeClipper
 import networkx as nx 
 

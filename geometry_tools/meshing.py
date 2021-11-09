@@ -277,6 +277,10 @@ class Mesher(Surfer):
         new_out_flow_keys = [translate_out[x] for x in out_flow_keys]
         out_flow_div_values = [outlet_flow_divisions[x] for x in out_flow_keys]
 
+        print('*****dan*******'*5)
+        print(out_flow_div_values)
+        print('*****dan*******'*5)
+
         self.outlet_flow_divisions = dict(zip(new_out_flow_keys, out_flow_div_values))
 
     def generate_volume_mesh(self):

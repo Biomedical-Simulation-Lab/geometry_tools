@@ -3,9 +3,9 @@ import numpy as np
 import pyvista as pv 
 from scipy.spatial import cKDTree as KDTree 
 from scipy.interpolate import interp1d
-from pathlib import Path 
-import h5py 
-import ast 
+# from pathlib import Path 
+# import h5py 
+# import ast 
 
 def vtk_generate_img_stencil(mesh, spacing=0.05):
     """ Resample surf mesh to image.
@@ -645,7 +645,7 @@ def get_mean_radii(centerlines_branched, grouplist):
 
     # Get mean radii
     for node in grouplist:
-        print(node)
+        # print(node)
         mask = centerlines_branched.cell_arrays['GroupIds'] == node 
 
         branch_segments = centerlines_branched.extract_cells(mask)
