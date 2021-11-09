@@ -16,3 +16,21 @@ introduce some complexity with imports and dependancies, but it should
 be nice to have everything in one place. Note, you'll probably have to update
 some script imports (previously `from meshing_tools import x` to 
 `from geometry_tools import x`).
+
+Requirements:
+- vtk
+- numpy
+- pyvista=0.29
+- scipy
+- h5py
+- pymeshfix
+- TubeClipper
+- vmtk
+- networkx
+- matplotlib
+
+# Environment
+First, conda env as here: http://www.vmtk.org/download/
+
+Then 
+`conda install -c conda-forge pyvista networkx scipy ipython h5py`
