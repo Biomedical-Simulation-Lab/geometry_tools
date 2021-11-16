@@ -162,6 +162,20 @@ class Mesher(Surfer):
         # surf_rm = surf_rm.interpolate(surf_og, radius=0.5)
         # surf_rm = surf_rm.interpolate(surf, radius=0.5)
 
+        if neck_points is not None:
+            s = cc.SelectGeodesic(surf_rm, scalars='Mask')
+            s.use_stored_points(neck_points)
+            surf_rm = s.mesh
+        else:
+            surf_rm = surf_rm.interpolate(surf_og, n_points=1) #radius=0.5, strategy='null_value', null_value=0)
+
+        surf_rm = surf_rm.interpolate(surf, radius=0.5)
+
+        # print('*'*50)
+        # print(surf.point_arrays)
+        # print('*'*50)
+        # print(surf_og.point_arrays)
+
         self.surf = surf_rm 
         self.centerlines = centerlines
 
