@@ -20,7 +20,7 @@ Requirements:
 - vmtk
 - networkx
 - matplotlib
-- TubeClipper
+- TubeClipper (https://github.com/Biomedical-Simulation-Lab/tubeclipper)
 
 # Environment
 First, conda env as here: http://www.vmtk.org/download/
@@ -29,6 +29,8 @@ Then
 `conda install -c conda-forge pyvista networkx scipy ipython h5py matplotlib`
 
 Then clone and install `tubeclipper` using pip. 
+
+When installing on workstation (ubuntu), also had to `conda install llvm=3.3` and make sure `pyvista=0.29`
 
 # Meshing
 For an example of using this for meshing, see the `meshing_example.sh` file in `scripts`.

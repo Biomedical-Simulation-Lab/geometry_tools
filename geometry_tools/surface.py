@@ -1,3 +1,4 @@
+from networkx.algorithms.distance_measures import center
 import pyvista as pv 
 import numpy as np
 from geometry_tools import vmtk_wrapper as vmtk
@@ -88,16 +89,74 @@ class Surfer():
         surf_d = self.surf.decimate(target_reduction, volume_preservation=True)
         self.surf = self.copy_arrays(self.surf, surf_d)
 
-    def clip_endpoints_with_spheres(self, factor=1.4):
-        endpoints = np.concatenate([self.inlet_points, self.outlet_points], axis=0)
-        endlets = pv.wrap(endpoints)
-        tree = KDTree(self.centerlines_aneurysm.points)
-        _, ii = tree.query(endlets.points)
-        misr = self.centerlines_aneurysm.point_arrays['MaximumInscribedSphereRadius'][ii]
-        endlets.point_arrays['MaximumInscribedSphereRadius'] = misr
-        outlet_clip = endlets.glyph(geom=pv.Sphere(1.0), factor=factor)
+    def clip_endpoints_with_spheres(self, factor=1.4, outlet_clip=None):
+        
+        if outlet_clip is None:
+            endpoints = np.concatenate([self.inlet_points, self.outlet_points], axis=0)
+            endlets = pv.wrap(endpoints)
+
+            tree = KDTree(self.centerlines_aneurysm.points)
+            _, ii = tree.query(endlets.points, k=3)
+            ii = np.array(ii)[:,-1]
+            
+            misr = self.centerlines_aneurysm.point_arrays['MaximumInscribedSphereRadius'][ii]
+            
+            endlets.point_arrays['MaximumInscribedSphereRadius'] = misr
+            outlet_clip = endlets.glyph(geom=pv.Sphere(1.0), factor=factor)
 
         self.surf = self.surf.clip_surface(outlet_clip, invert=False)
+        self.surf = self.surf.extract_largest()
+        return outlet_clip
+
+    def clip_endpoints_with_tubeclipper(self, endpoints_pv=None):
+        """ Can introduce buggy mesh! Beware!
+        """
+        if endpoints_pv is None:
+            endpoints = np.concatenate([self.inlet_points, self.outlet_points], axis=0)
+
+            tree = KDTree(self.centerlines_aneurysm.points)
+            _, ii_inlets = tree.query(self.inlet_points, k=3)
+            _, ii_outlets = tree.query(self.outlet_points, k=3)
+
+            ii_inlets_n = np.array(ii_inlets)[:,-1]
+            ii_outlets_n = np.array(ii_outlets)[:,-1]
+
+            ii_inlets = np.array(ii_inlets)[:,0]
+            ii_outlets = np.array(ii_outlets)[:,0]
+
+            # Get points at those points
+            in_points = self.centerlines_aneurysm.points[ii_inlets]
+            out_points = self.centerlines_aneurysm.points[ii_outlets]
+            
+            # Get normal at those points
+            in_normals = self.centerlines_aneurysm.point_arrays['FrenetTangent'][ii_inlets_n]
+            out_normals = -self.centerlines_aneurysm.point_arrays['FrenetTangent'][ii_outlets_n]
+            
+            points = np.concatenate([in_points, out_points], axis=0)
+            normals = np.concatenate([in_normals, out_normals], axis=0)
+
+            endpoints_pv = pv.wrap(points)
+            endpoints_pv.point_arrays['Normals'] = normals
+
+        for origin, normal in zip(endpoints_pv.points, endpoints_pv.point_arrays['Normals']):
+            t = TubeClipper(self.surf)
+            t.clip(origin, normal)
+
+            # Extract the actual clipped section -- could be messy if 
+            # mesh quality is bad!
+            self.surf = t.far_side
+            # self.surf = t.clipped
+
+        old_surf = self.surf.copy()
+        # self.surf = self.surf.triangulate()
+        # self.surf = pv.PolyData(self.surf.points, self.surf.cells)
+        self.surf = self.surf.interpolate(old_surf)
+
+        return endpoints_pv
+
+    def clip_endpoints_with_vmtk(self):
+        surf = vmtk.surface_end_clipper(self.surf, centerlines=self.centerlines)
+        return surf
 
     def set_inlets_outlets(self):
         """ Interactively choose inlet point.
@@ -175,6 +234,7 @@ class Surfer():
                 src_ids=self.inlet_ids,
                 target_ids=target_ids,
                 )
+            centerlines = vmtk.centerlines_smooth(centerlines, iterations=100, sm_factor=0.1)
             self.centerlines_aneurysm = centerlines
             self.centerlines_aneurysm = vmtk.centerline_geometry(self.centerlines_aneurysm)
         else:
@@ -186,6 +246,8 @@ class Surfer():
                 src_ids=self.inlet_ids,
                 target_ids=target_ids,
                 )
+            centerlines = vmtk.centerlines_smooth(centerlines, iterations=100, sm_factor=0.1)
+
             self.centerlines = centerlines
             self.centerlines = vmtk.centerline_geometry(self.centerlines)
 

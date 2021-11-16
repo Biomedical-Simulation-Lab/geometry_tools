@@ -13,10 +13,6 @@ if __name__ == "__main__":
     surf_file = Path(sys.argv[1])
     proj_dir = Path(sys.argv[2])
 
-    # proj_dir = surf_file.parents[1]
-
-    # print(surf_file.stem)
-
     surf_output_dir = proj_dir / '01_clipped' 
     points_output_dir = proj_dir / '01_points' 
     neckpoints_output_dir = proj_dir / '01_neckpoints' 
@@ -38,12 +34,15 @@ if __name__ == "__main__":
         surf = surf.compute_normals(auto_orient_normals=False)
         
         m = Mesher(surf)
+
+        # Uses m.clip_boundaries uses cc.ClickDragDelete to delete boundaries.
         flag_inspect = m.clip_boundaries()
 
         while flag_inspect == True:
-            s = cc.SelectGeodesic(m.surf, scalars='Delete', title='Isolate region to delete.')
+            s = cc.SelectGeodesic(m.surf, scalars='Delete', )
+            s.interact(title='Isolate region to delete and fill.')
             m.surf = s.mesh
-            flag_inspect = m.clip_boundaries()
+            # flag_inspect = m.clip_boundaries()
 
         m.set_inlets_outlets()
         m.pick_aneurysm()

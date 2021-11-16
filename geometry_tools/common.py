@@ -7,13 +7,17 @@ from scipy.interpolate import interp1d
 # import h5py 
 # import ast 
 
-def vtk_generate_img_stencil(mesh, spacing=0.05):
+def vtk_generate_img_stencil(mesh, spacing=0.05, bounds=None):
     """ Resample surf mesh to image.
 
     This function has memory problems, something isn't freed at end,
     so running it in a loop causes problems.
     """
-    bounds = np.array(mesh.bounds)
+    if bounds is None:
+        bounds = np.array(mesh.bounds)
+    else:
+        bounds = np.array(bounds)
+
     bounds_lengths = np.diff(bounds.reshape(3,2)).T[0]
 
     # Inflate bounds
@@ -68,6 +72,7 @@ def vtk_taubin_smooth(mesh, pass_band=0.1, feature_angle=60.0, iterations=20):
     smoother.SetPassBand(pass_band)
     smoother.NonManifoldSmoothingOn()
     smoother.NormalizeCoordinatesOn()
+    # smoother.GenerateErrorScalarsOn() s
     smoother.Update()
     return pv.wrap(smoother.GetOutput())
 
@@ -313,14 +318,14 @@ class SelectGeodesic():
         self.interactive = True
         self.p = pv.Plotter() 
         self.mesh = self.mesh.compute_normals()
-        self.p.add_mesh(self.mesh, name='mesh', scalars=self.scalars, cmap='coolwarm')
+        self.p.add_mesh(self.mesh, name='mesh', scalars=self.scalars, cmap='Reds', show_edges=True)
         self.p.enable_point_picking(
-            show_point=False,
+            show_point=True,
             show_message=False,
             callback=self._cb,
             color='red',
             font_size=12,
-            point_size=20,
+            point_size=10,
             tolerance=0.025
             )
 
@@ -335,7 +340,7 @@ class SelectGeodesic():
         self.p.add_text(msg, position=(0.05, 100), font_size=12)
         msg = 'a: append mask'
         self.p.add_text(msg, position=(0.05, 75), font_size=12)
-        msg = 'x: delete section'
+        msg = 'x: smooth section'
         self.p.add_text(msg, position=(0.05, 50), font_size=12)
         msg = 'q: quit'
         self.p.add_text(msg, position=(0.05, 25), font_size=12)
@@ -343,13 +348,20 @@ class SelectGeodesic():
         self.p.add_key_event('u', self._undo)
         self.p.add_key_event('space', self._finish)
         self.p.add_key_event('a', self.append)
-        self.p.add_key_event('x', self.delete_section)
+        self.p.add_key_event('x', self.refill_section)
+        self.p.add_key_event('c', self._clear)
         self.p.show()
         self.stored_points.append(self.picked_points)
 
     def _undo(self):
         self.picked_points.pop()
         self.picked_ids.pop() 
+        self.display()
+
+    def _clear(self):
+        self.picked_points = []
+        self.picked_ids = []
+        self.lines = []
         self.display()
 
     def _finish(self):
@@ -418,15 +430,24 @@ class SelectGeodesic():
         temp_mask = self.mesh.point_arrays[self.scalars]
         temp_mask[mask] = 1
         temp_mask[~mask] = 0
-        new_mask = np.logical_or(temp_mask, self.current_mask)
-        self.mesh.point_arrays[self.scalars] = new_mask
+
+        # DM 11 11 21
+        # Commented out the logical or, just used temp_mask
+        # new_mask = np.logical_or(temp_mask, self.current_mask)
+        # self.mesh.point_arrays[self.scalars] = new_mask
+
+        self.mesh.point_arrays[self.scalars] = temp_mask
 
         if self.interactive:
             self.p.add_mesh(self.mesh, name='mesh', scalars=self.scalars, cmap='coolwarm')
 
     def display(self):
-
+        
+        # DEM 16 11 21 
+        self.update_points()
         self.update_geodesic()
+        self.update_mesh()
+        
         if len(self.lines) > 0:
 
             self.p.add_mesh(self.merged, name='lines', color='b')
@@ -441,6 +462,8 @@ class SelectGeodesic():
                 )
     
     def delete_section(self):
+        """ Deletes and fills holes.
+        """
         mask = self.mesh.point_arrays[self.scalars] == 0
         self.mesh = self.mesh.extract_points(mask, adjacent_cells=False)
         new_mesh = pv.PolyData(self.mesh.points, self.mesh.cells)
@@ -452,6 +475,67 @@ class SelectGeodesic():
         self.mesh = self.mesh.fill_holes(20.0)
         if self.interactive:
             self.p.add_mesh(self.mesh, name='mesh', scalars=self.scalars, cmap='coolwarm')
+
+        self._clear()
+
+    def smooth_section(self):
+        """ Smoothes section with Laplacian filtering.
+        """
+        mask = self.mesh.point_arrays[self.scalars] == 1
+        submesh = self.mesh.extract_points(mask, adjacent_cells=False)
+        submesh = pv.PolyData(submesh.points, submesh.cells)
+        submesh = submesh.smooth(n_iter=100, boundary_smoothing=False)
+        self.mesh.points[mask] = submesh.points
+
+        # new_mesh = pv.PolyData(self.mesh.points, self.mesh.cells)
+        # for arr in self.mesh.point_arrays:
+            # new_mesh.point_arrays[arr] = self.mesh.point_arrays[arr]
+        # for arr in self.mesh.cell_arrays:
+            # new_mesh.cell_arrays[arr] = self.mesh.cell_arrays[arr]
+        # self.mesh = new_mesh
+        # self.mesh = self.mesh.fill_holes(20.0)
+        if self.interactive:
+            self.p.add_mesh(self.mesh, name='mesh', scalars=self.scalars, cmap='coolwarm')
+
+    def refill_section(self):
+        """ Cut a hole and fill it.
+        """
+        mask = self.mesh.point_arrays[self.scalars] == 0
+        mask_sub = self.mesh.point_arrays[self.scalars] == 1
+
+        mesh = self.mesh.extract_points(mask, adjacent_cells=False)
+        submesh = self.mesh.extract_points(mask_sub)
+        submesh = pv.PolyData(submesh.points, submesh.cells)
+        edges = submesh.extract_feature_edges(boundary_edges=True, 
+            non_manifold_edges=False, feature_edges=False, manifold_edges=False)
+        submesh = pv.wrap(edges.points).delaunay_2d()
+        # submesh = submesh.decimate(0.7)
+
+        mesh = mesh.merge(submesh)
+        mesh = pv.PolyData(mesh.points, mesh.cells)
+        # mesh = mesh.boolean_union(submesh)
+
+        # mesh = pv.PolyData(mesh.points, mesh.cells)
+        self.mesh = mesh
+        self.mesh.point_arrays[self.scalars] = np.zeros(self.mesh.n_points)
+
+        self.mesh = self.mesh.clean()
+        self.mesh = self.mesh.fill_holes(20.0)
+
+        # new_mesh = pv.PolyData(self.mesh.points, self.mesh.cells)
+        
+        # for arr in self.mesh.point_arrays:
+            # new_mesh.point_arrays[arr] = self.mesh.point_arrays[arr]
+        # for arr in self.mesh.cell_arrays:
+            # new_mesh.cell_arrays[arr] = self.mesh.cell_arrays[arr]
+        # self.mesh = new_mesh
+        # self.mesh = self.mesh.fill_holes(20.0)
+        
+        self.tree = KDTree(self.mesh.points)
+
+        if self.interactive:
+            self.p.add_mesh(self.mesh, name='mesh', scalars=self.scalars, cmap='coolwarm')
+
 
     def save_stored_points(self, outfile):
         # neck_ids = [np.zeros(len(ll), dtype=int) + idx for idx, ll in enumerate(self.stored_points)]
@@ -558,6 +642,8 @@ class ClickDragDelete:
 
 class ClickToDelete():
     """ Click a point, cells that contain it will be deleted.
+    
+    I don't think this works?
     """
     def __init__(self, mesh):
         self.p = pv.Plotter()
@@ -579,7 +665,7 @@ class ClickToDelete():
 
         self.p.show()
 
-    def __call__(self, picked_cells):
+    def __call__(self): # picked_cells
         pt = self.p.picked_point_id
         self.prev_mesh = self.mesh.copy()
         self.mesh, _ = self.mesh.remove_points([pt], mode='any')

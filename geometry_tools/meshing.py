@@ -104,7 +104,7 @@ class Mesher(Surfer):
             self.inlet_group_ids = [group_ids[x] for x in inlet_temp_ids]
             self.outlet_group_ids = [group_ids[x] for x in outlet_temp_ids]
             
-    def surface_preparation(self,):
+    def surface_preparation(self, neck_points=None):
         """ Refine surface, add flow extensions. 
 
         Remeshes surface, clips endpoints normal to centerlines,
@@ -117,7 +117,7 @@ class Mesher(Surfer):
         surf_og = pv.PolyData()
         surf_og.copy_structure(self.surf)
         surf_og.point_arrays['Mask'] = self.surf.point_arrays['Mask']
-        surf_og.point_arrays['GroupIds'] = self.surf.point_arrays['GroupIds']
+        # surf_og.point_arrays['GroupIds'] = self.surf.point_arrays['GroupIds']
 
         surf = pv.PolyData(self.surf.points, self.surf.faces)
         surf.point_arrays['Mask'] = surf_og.point_arrays['Mask'].copy()
@@ -126,19 +126,12 @@ class Mesher(Surfer):
         # Use centerlines without aneurysm
         centerlines = self.centerlines
 
-        # centerlines = vmtk.centerline_endpoint_extractor(
-        #     centerlines, num_endpoint_spheres=0, num_gap_sphere=0)
-        # centerlines = vmtk.centerline_endpoint_masking(centerlines)
-
         surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
         surf = cc.create_edge_size_array(surf, max_size=0.4, min_size=0.18,)
         surf = vmtk.surface_remeshing(surf, element_size_mode='edgelengtharray', edgearray='Size')
-
-        # surf = vmtk.surface_centerline_projection(
-        #     surf, centerlines, pass_arrays=['EndCells', 'GroupIds'])
         
-        # surf, centerlines = vmtk.centerline_branch_clipper_checker(surf, centerlines)
-        # surf = vmtk.surface_connectivity(surf, group_ids_name='EndCells', group_id=0)
+        # DM 11 11 21
+        # surf = cc.vtk_taubin_smooth(surf, pass_band=0.05, iterations=50)
 
         surf, centerlines = vmtk.flow_extensions(surf, centerlines)
         surf = surf.clean()
@@ -148,7 +141,13 @@ class Mesher(Surfer):
         self.generate_centerlines(include_aneurysms=False)
         centerlines = self.centerlines
 
-        surf = surf.interpolate(surf_og, radius=0.5)
+        if neck_points is not None:
+            s = cc.SelectGeodesic(surf, scalars='Mask')
+            s.use_stored_points(neck_points)
+            surf = s.mesh
+        else:
+            surf = surf.interpolate(surf_og, n_points=1) #radius=0.5, strategy='null_value', null_value=0)
+
         surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
         surf = cc.create_edge_size_array(surf, max_size=0.4, min_size=0.18,)
 
@@ -157,10 +156,11 @@ class Mesher(Surfer):
             )
         
         surf_rm = vmtk.surface_remeshing(surf, element_size_mode='edgelengtharray', edgearray='Size')
+
         surf_rm = surf_rm.clean()
 
-        surf_rm = surf_rm.interpolate(surf_og, radius=0.5)
-        surf_rm = surf_rm.interpolate(surf, radius=0.5)
+        # surf_rm = surf_rm.interpolate(surf_og, radius=0.5)
+        # surf_rm = surf_rm.interpolate(surf, radius=0.5)
 
         self.surf = surf_rm 
         self.centerlines = centerlines

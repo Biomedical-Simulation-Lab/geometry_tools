@@ -62,7 +62,9 @@ if __name__ == "__main__":
             m.generate_centerlines()
             m.generate_centerlines(include_aneurysms=False)
             m.branch_centerlines()
-            m.clip_endpoints_with_spheres()
+
+            outlet_clip = m.clip_endpoints_with_spheres()
+            
             m.update_inlets_outlets()
             
             m.get_bifurcation_ref_systems_vectors()

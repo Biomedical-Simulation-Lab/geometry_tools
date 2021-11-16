@@ -9,6 +9,7 @@ Functions often provide a simplified input; feel free to add
 optional arguments.
 """
 
+from networkx.algorithms.distance_measures import center
 from vmtk import vmtkscripts
 from geometry_tools import utils 
 import pyvista as pv
@@ -47,7 +48,7 @@ def centerlines(surf, seed_selector='pickpoint', resampling=1,
     perturbed_vec = np.einsum(
         'ij,i->ij', 
         surf_perturb.point_arrays['Normals'], 
-        np.random.normal(0, 0.01, surf_perturb.n_points)
+        np.random.normal(0, 0.005, surf_perturb.n_points)
         )
     surf_perturb.points = surf_perturb.points + perturbed_vec
     centerline_filt = vmtkscripts.vmtkCenterlines()
@@ -65,6 +66,14 @@ def centerlines(surf, seed_selector='pickpoint', resampling=1,
     centerline_filt.Execute()
     centerlines = centerline_filt.Centerlines
     return pv.wrap(centerlines)
+
+def centerlines_smooth(centerlines, iterations, sm_factor):
+    alg = vmtkscripts.vmtkCenterlineSmoothing()
+    alg.Centerlines = centerlines
+    alg.iterations = iterations
+    alg.factor = sm_factor
+    alg.Execute()
+    return pv.wrap(alg.Centerlines)
 
 def centerline_branches_ids(centerlines):
     """ Identify centerline branches. """
@@ -264,7 +273,8 @@ def flow_extensions(surf, centerlines):
     extender.ExtensionRatio = 4
     extender.CenterlineNormalEstimationDistanceRatio = 1
     extender.Interactive = 0
-    extender.ExtensionMode = 'boundarynormal'
+    extender.ExtensionMode = 'boundarynormal' # 'centerlinedirection' # 
+    extender.InterpolationMode = 'thinplatespline' #'linear' # 
     extender.Execute()
     surf = pv.wrap(extender.Surface)
     centerlines = pv.wrap(extender.Centerlines)
@@ -793,3 +803,10 @@ def delaunay_voronoi(surf):
     alg.Execute()
     return pv.wrap(alg.VoronoiDiagram)
 
+def vmtkcenterlinemodeller(centerlines, arr, dims):
+    alg = vmtkscripts.vmtkCenterlineModeller()
+    alg.Centerlines = centerlines
+    alg.RadiusArrayName = arr
+    alg.SampleDimensions = dims
+    alg.Execute()
+    return pv.wrap(alg.Image)

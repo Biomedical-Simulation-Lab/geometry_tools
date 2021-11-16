@@ -47,3 +47,70 @@ class Resampler():
         surf = meshfix.mesh
         surf = surf.clean()
         self.surf = surf
+
+def combine_surfaces_as_image(surf, roi, spacing=0.05, bounds=None):
+    """ Resample surfs as img then merge and contour.
+    """
+    if bounds is None:
+        roi_bounds = roi.bounds
+    else:
+        roi_bounds = bounds
+
+    grid = cc.vtk_generate_img_stencil(surf.fill_holes(15.), spacing=spacing, 
+        bounds=surf.bounds)
+    grid_roi = cc.vtk_generate_img_stencil(roi.fill_holes(15.), spacing=spacing,
+        bounds=surf.bounds)
+    
+    ii = bounds_to_indicies(roi_bounds, grid.origin, spacing)
+
+    # Replace
+    img = grid.point_arrays['ImageScalars'].reshape(grid.dimensions, order='F')
+    img_roi = grid_roi.point_arrays['ImageScalars'].reshape(grid_roi.dimensions, order='F')
+
+    img[ii[0]:ii[1], ii[2]:ii[3], ii[4]:ii[5]] = img_roi[ii[0]:ii[1], ii[2]:ii[3], ii[4]:ii[5]]
+
+    merged = pv.wrap(img)
+    merged.origin = grid.origin
+    merged.dimensions = grid.dimensions
+    merged.spacing = grid.spacing
+
+    surf_r = merged.contour([0.5])
+    surf_r = cc.vtk_taubin_smooth(surf_r, pass_band=0.03, iterations=100)
+
+    return surf_r
+
+def bounds_to_indicies(bounds, origin, spacing):
+    """ Convert vtk bounds to array indicies.
+
+    Args:
+        bound (array) : bound of ROI
+        origin (array) : origin of full image
+        spacing (array) : spacing of full image
+
+    Say you have a small box B inside a bigger box A, 
+    and you want to get the indicies of A that
+    correspond to B.
+
+    "bounds" are the bounds of box B
+    "origin" is the origin of box A
+    "spacing" is the spacing of box A
+
+    For reverse operation, see indicies_to_bounds.
+
+    Note: originally from the surge_3 project.
+    """
+
+    # Shift bounding box to origin
+    bounds = np.array(bounds).astype(float)
+    origin = np.array(origin).astype(float)
+    spacing = np.array(spacing).astype(float)
+
+    bounds[0:2] -= origin[0]
+    bounds[2:4] -= origin[1]
+    bounds[4:6] -= origin[2]
+
+    bounds = bounds.reshape(3,2)
+
+    # Then scale mm to unit 1 (pixels)
+    indicies = np.round(bounds / np.array(spacing).reshape(-1,1), 0)
+    return indicies.flatten().astype(int)
