@@ -52,7 +52,7 @@ def combine_surfaces_as_image(surf, roi, spacing=0.05, bounds=None):
     """ Resample surfs as img then merge and contour.
     """
     if bounds is None:
-        roi_bounds = roi.bounds
+        roi_bounds = [roi.bounds]
     else:
         roi_bounds = bounds
 
@@ -61,23 +61,30 @@ def combine_surfaces_as_image(surf, roi, spacing=0.05, bounds=None):
     grid_roi = cc.vtk_generate_img_stencil(roi.fill_holes(15.), spacing=spacing,
         bounds=surf.bounds)
     
-    ii = bounds_to_indicies(roi_bounds, grid.origin, spacing)
+    bounds_idx = []
+    for bound in roi_bounds:
+        ii = bounds_to_indicies(bound, grid.origin, spacing)
+        bounds_idx.append(ii)
 
     # Replace
-    img = grid.point_arrays['ImageScalars'].reshape(grid.dimensions, order='F')
+    img = grid.point_arrays['ImageScalars'].reshape(grid.dimensions, order='F').copy()
     img_roi = grid_roi.point_arrays['ImageScalars'].reshape(grid_roi.dimensions, order='F')
 
-    img[ii[0]:ii[1], ii[2]:ii[3], ii[4]:ii[5]] = img_roi[ii[0]:ii[1], ii[2]:ii[3], ii[4]:ii[5]]
+    for ii in bounds_idx:
+        img[ii[0]:ii[1], ii[2]:ii[3], ii[4]:ii[5]] = img_roi[ii[0]:ii[1], ii[2]:ii[3], ii[4]:ii[5]]
 
     merged = pv.wrap(img)
     merged.origin = grid.origin
     merged.dimensions = grid.dimensions
     merged.spacing = grid.spacing
 
+    surf = grid.contour([0.5])
+    surf = cc.vtk_taubin_smooth(surf, pass_band=0.03, iterations=100)
+
     surf_r = merged.contour([0.5])
     surf_r = cc.vtk_taubin_smooth(surf_r, pass_band=0.03, iterations=100)
 
-    return surf_r
+    return surf, surf_r
 
 def bounds_to_indicies(bounds, origin, spacing):
     """ Convert vtk bounds to array indicies.

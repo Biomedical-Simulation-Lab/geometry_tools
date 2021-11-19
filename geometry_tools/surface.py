@@ -415,7 +415,7 @@ class Surfer():
                             color='r', point_size=30, 
                             use_mesh=True, show_point=False, 
                             render_points_as_spheres=True,
-                            tolerance=0.75)
+                            tolerance=0.005)
         p.add_key_event('u', _reset_picked_cb)
         p.show()
         # print('picked', self._picked_ids)
