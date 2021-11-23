@@ -112,24 +112,18 @@ def smooth_mesh_data_local(surf, array='GroupIds',
         neighbour_pt_ids (list of lists): list of neighbouring point ids,
             index by point id.
     """
-    cells = surf.faces.reshape(-1,4)[:, 1:]
-    # point_array = surf.point_arrays[array]#.copy()
-
     if neighbour_pt_ids == None:
-        neighbour_pt_ids = get_neighbour_map(surf) #len(point_array)) surf.point_arrays[array]
+        neighbour_pt_ids = get_neighbour_map(surf) 
     
     neighbour_pt_ids = np.array(neighbour_pt_ids)
 
-    valid_ids = np.unique(surf.point_arrays[array])
-
-    # tree = KDTree(surf.points)
-    # _, nearest = tree.query(surf.points, k=2)
     surf = surf.copy()
     new_array = surf.point_arrays[array].copy()
 
     for idx in range(iterations):
         old_array = new_array.copy()
         for pt_id in list(range(surf.n_points)):
+            # Uses 2 connexity by default
             neighbours = neighbour_pt_ids[neighbour_pt_ids[pt_id]]
             neighbours = np.unique([item for sublist in neighbours for item in sublist])
             # neighbours = neighbour_pt_ids[pt_id]
@@ -175,10 +169,16 @@ def get_neighbour_map(surf):#, n_points):
 
     neighbour_pt_ids = [[] for _ in range(surf.n_points)]
     edges = surf.extract_all_edges()
+
+    # edges.points does not neccesarily == surf.points!!
+    # create a map between them
+    tree = KDTree(surf.points)
+    _, ii = tree.query(edges.points, k=1)
+
     ee = edges.lines.reshape(-1, 3)[:,1:]
     for e in ee:
-        neighbour_pt_ids[e[0]].append(e[1])
-        neighbour_pt_ids[e[1]].append(e[0])
+        neighbour_pt_ids[ii[e[0]]].append(ii[e[1]])
+        neighbour_pt_ids[ii[e[1]]].append(ii[e[0]])
 
     neighbour_pt_ids = np.array([np.unique(x) for x in neighbour_pt_ids])
 

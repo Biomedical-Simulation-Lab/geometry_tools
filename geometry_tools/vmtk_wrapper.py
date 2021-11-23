@@ -9,7 +9,9 @@ Functions often provide a simplified input; feel free to add
 optional arguments.
 """
 
+from networkx.algorithms.centrality import group
 from networkx.algorithms.distance_measures import center
+from numpy import testing
 from vmtk import vmtkscripts
 from geometry_tools import utils 
 import pyvista as pv
@@ -454,44 +456,34 @@ def surface_centerline_projection_MISR(surf, centerlines, arrays=['GroupIds'], s
     mask = centerlines.cell_arrays['Blanking'] == 0
     centerlines = centerlines.extract_cells(mask)
 
-    centerlines = centerlines.ctp()
-    centerlines.set_active_scalars('MaximumInscribedSphereRadius')
+    group_ids = np.unique(centerlines.cell_arrays['GroupIds'])
+    g_masks = [centerlines.cell_arrays['GroupIds'] == g for g in group_ids]
+
+    centerlines_list = [centerlines.extract_cells(gm).connectivity(largest=True) for gm in g_masks]
+    centerlines_pd = [pv.PolyData(c.points, lines=c.cells) for c in centerlines_list]
+    
+    for cline, u_cline in zip(centerlines_pd, centerlines_list):
+        u_cline = u_cline.ctp()
+        cline.point_arrays['GroupIds'] = u_cline.point_arrays['GroupIds']
+        cline.point_arrays['MaximumInscribedSphereRadius'] = u_cline.point_arrays['MaximumInscribedSphereRadius']
+
+    centerlines_pd = np.sum(centerlines_pd)
 
 
-    sphere = pv.Sphere(
-        radius=0.5, 
-        center=(0, 0, 0), 
-        direction=(1, 0, 0), 
-        theta_resolution=7, 
-        phi_resolution=7, 
-        start_theta=0, 
-        end_theta=360, 
-        start_phi=0, 
-        end_phi=180,
-        )
-
-    # Create MISR test object
-    test_object = centerlines.glyph(
-        geom=sphere, 
-        scale='MaximumInscribedSphereRadius', 
-        orient='FrenetTangent',
-        factor=2.0,
-        )
+    test_object = centerlines_pd.tube(scalars='MaximumInscribedSphereRadius', radius_factor=4, n_sides=20)
         
     # Create smooth surf
     surf_smooth = surf.smooth(n_iter=20, relaxation_factor=1.0)
 
     # For point in surf_smooth, find nearest in test_object
-    # Could really speed up code by triming down the test_object
     tree = KDTree(test_object.points)
     _, ii = tree.query(surf_smooth.points, k=1)
 
     # Assign values to surf and smooth array based on median filtering
     neighbour_pt_ids = None
 
-    mask = np.invert(centerlines.point_arrays['Blanking'].astype(bool))
-    valid_ids = np.unique(centerlines.point_arrays['GroupIds'][mask])
-
+    surf = surf.clean()
+    
     for arr in arrays:
         group_ids = test_object.point_arrays[arr][ii]
         surf.point_arrays[arr] = group_ids
@@ -499,12 +491,64 @@ def surface_centerline_projection_MISR(surf, centerlines, arrays=['GroupIds'], s
         surf, neighbour_pt_ids = cc.smooth_mesh_data_local(
             surf, 
             array=arr, 
-            func=np.median, 
+            func='median', 
             neighbour_pt_ids=neighbour_pt_ids, 
             iterations=sm_iterations,
         )
 
     return surf, neighbour_pt_ids
+
+def mesh_centerline_projection_MISR(mesh, centerlines, arrays=['GroupIds'], sm_iterations=1):
+    """ Inflate centerlines based on MISR, project arrays to mesh.
+
+    Based on method in surface.py.
+    """
+    # Cell-to-point; get relevant sections of centerlines
+    mask = centerlines.cell_arrays['Blanking'] == 0
+    centerlines = centerlines.extract_cells(mask)
+
+    group_ids = np.unique(centerlines.cell_arrays['GroupIds'])
+    g_masks = [centerlines.cell_arrays['GroupIds'] == g for g in group_ids]
+
+    centerlines_list = [centerlines.extract_cells(gm).connectivity(largest=True) for gm in g_masks]
+    centerlines_pd = [pv.PolyData(c.points, lines=c.cells) for c in centerlines_list]
+    
+    for cline, u_cline in zip(centerlines_pd, centerlines_list):
+        u_cline = u_cline.ctp()
+        cline.point_arrays['GroupIds'] = u_cline.point_arrays['GroupIds']
+        cline.point_arrays['MaximumInscribedSphereRadius'] = u_cline.point_arrays['MaximumInscribedSphereRadius']
+
+    centerlines_pd = np.sum(centerlines_pd)
+
+    MISR = 'MaximumInscribedSphereRadius'
+    rads = np.linspace(0.1, 4, 10)
+    test_object = np.sum([centerlines_pd.tube(scalars=MISR, radius_factor=i, n_sides=20) for i in rads])
+
+    # Create smooth surf
+    # surf_smooth = surf.smooth(n_iter=20, relaxation_factor=1.0)
+
+    # For point in surf_smooth, find nearest in test_object
+    tree = KDTree(test_object.points)
+    _, ii = tree.query(mesh.points, k=1)
+
+    # Assign values to surf and smooth array based on median filtering
+    # neighbour_pt_ids = None
+
+    # surf = surf.clean()
+    
+    for arr in arrays:
+        group_ids = test_object.point_arrays[arr][ii]
+        mesh.point_arrays[arr] = group_ids
+
+        # surf, neighbour_pt_ids = cc.smooth_mesh_data_local(
+        #     surf, 
+        #     array=arr, 
+        #     func='median', 
+        #     neighbour_pt_ids=neighbour_pt_ids, 
+        #     iterations=sm_iterations,
+        # )
+
+    return mesh
 
 def kite_removal(surf, factor=0.1):
     kite = vmtkscripts.vmtkSurfaceKiteRemoval()

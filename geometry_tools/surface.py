@@ -1,4 +1,3 @@
-from networkx.algorithms.distance_measures import center
 import pyvista as pv 
 import numpy as np
 from geometry_tools import vmtk_wrapper as vmtk
@@ -251,23 +250,54 @@ class Surfer():
             self.centerlines = centerlines
             self.centerlines = vmtk.centerline_geometry(self.centerlines)
 
+    # def _project_centerline_attrs(self, centerlines, centerlines_branched):
+    #         centerlines_og = centerlines.copy()
+    #         centerlines_branched = centerlines_branched.copy()
+
+    #         # Convert cell data to point data
+    #         centerlines_branched = centerlines_branched.ctp()
+
+    #         # Create search tree for centerlines with GroupIds
+    #         tree = KDTree(centerlines_branched.points)
+
+    #         # Prepare points from original structure to query 
+    #         q_points = centerlines_og.points
+    #         dd, ii = tree.query(q_points, k=1)
+
+    #         # Project onto centerlines_og
+    #         centerlines_og.point_arrays['GroupIds'] = np.round(centerlines_branched.point_arrays['GroupIds'][ii]).astype(int)
+    #         centerlines_og.point_arrays['Blanking'] = np.round(centerlines_branched.point_arrays['Blanking'][ii]).astype(int)
+
+    #         return centerlines_og    
+    
     def _project_centerline_attrs(self, centerlines, centerlines_branched):
             centerlines_og = centerlines.copy()
             centerlines_branched = centerlines_branched.copy()
 
-            # Convert cell data to point data
-            centerlines_branched = centerlines_branched.ctp()
+            # Want a map from centerlines_og to centerlines_branched
+            # But have to get cell data from the destination 
 
-            # Create search tree for centerlines with GroupIds
+            group_ids = np.unique(centerlines_branched.cell_arrays['GroupIds'])
+            segments = [centerlines_branched.extract_cells(centerlines_branched.cell_arrays['GroupIds'] == g) for g in group_ids]
+
+            group_ids_interp = np.zeros(centerlines_branched.n_points, dtype=int)
+            blanking_interp = np.zeros(centerlines_branched.n_points, dtype=int)
+
             tree = KDTree(centerlines_branched.points)
 
-            # Prepare points from original structure to query 
-            q_points = centerlines_og.points
-            dd, ii = tree.query(q_points, k=1)
+            for g, s in zip(group_ids,segments):
+                # This will default rounding to higher GroupIds
+                _, ii = tree.query(s.points, k=1)
+                group_ids_interp[ii] = g
+                blanking_interp[ii] = s['Blanking'][0]
+
+            _, ii = tree.query(centerlines_og.points, k=1)
+            centerlines_og.point_arrays['GroupIds'] = group_ids_interp[ii]
+            centerlines_og.point_arrays['Blanking'] = blanking_interp[ii]
 
             # Project onto centerlines_og
-            centerlines_og.point_arrays['GroupIds'] = np.round(centerlines_branched.point_arrays['GroupIds'][ii]).astype(int)
-            centerlines_og.point_arrays['Blanking'] = np.round(centerlines_branched.point_arrays['Blanking'][ii]).astype(int)
+            # centerlines_og.point_arrays['GroupIds'] = np.round(centerlines_branched.point_arrays['GroupIds'][ii]).astype(int)
+            # centerlines_og.point_arrays['Blanking'] = np.round(centerlines_branched.point_arrays['Blanking'][ii]).astype(int)
 
             return centerlines_og    
     
@@ -282,7 +312,7 @@ class Surfer():
         # This is the really slow step because of the glyphs.
         self.surf, self.neighbour_pt_ids = vmtk.surface_centerline_projection_MISR(
             self.surf, self.centerlines_aneurysm_branched, sm_iterations=1)
-
+        
         self.update_aneurysm_group_ids()
 
     def update_aneurysm_group_ids(self):    
@@ -293,63 +323,21 @@ class Surfer():
         # self.check_group_id_integrity()
 
            
-    def extract_sacs_and_necks(self):
+    def extract_sacs(self):
         """ Redux based on new vmtk.surface_centerline_projection_MISR.
         """
-        # Extract the ostium planes
-        self.neck_planes = {}
         self.sacs = {}
 
         for g in self.aneurysm_group_ids:
             sac_mask = self.surf.point_arrays['GroupIds'] == g
             sac = self.surf.extract_points(sac_mask)
-            self.sacs[g] = sac
+            sac_pd = pv.PolyData(sac.points, sac.cells)
+            for arr in sac.point_arrays:
+                sac_pd.point_arrays[arr] = sac.point_arrays[arr]
+            for arr in sac.cell_arrays:
+                sac_pd.cell_arrays[arr] = sac.cell_arrays[arr]
+            self.sacs[g] = sac_pd
 
-            neck = sac.extract_feature_edges(
-                feature_angle=60,
-                boundary_edges=True,
-                non_manifold_edges=False,
-                feature_edges=False,
-                manifold_edges=False,
-                ).extract_largest()
-            neck = neck.clean()
-            neck_plane = neck.delaunay_2d()                    
-            neck_plane = neck_plane.triangulate()
-            # for n in range(100):
-            #     neck_plane =  neck_plane.subdivide(2)
-            #     neck_plane = neck_plane.smooth(1000)
-            #     if neck_plane.n_points > 100:
-            #         decimate_factor = 1 - 100 / neck_plane.n_points 
-            #         neck_plane = neck_plane.decimate(decimate_factor)
-
-            self.neck_planes[g] = neck_plane
-            
-            # lines = neck.lines.reshape(-1,3)[:,1:]
-            # lines_new = []
-            # lines_new.append(lines[0])
-            # used_index = []
-            # used_index.append(0)
-
-            # for idx in range(1, len(lines)):
-            #     key = lines_new[idx-1][1]
-            #     locations = np.where(np.any(lines == key, axis=1))[0]
-            #     locations = [x for x in locations if x not in used_index]
-            #     locations = locations[0]
-
-            #     if lines[locations][0] == key:
-            #         lines_new.append(lines[locations])
-            #     else:
-            #         lines_new.append(np.flip(lines[locations], axis=0))
-                    
-            #     used_index.append(locations)
-
-            # lines_new = np.array(lines_new)
-            # pt_index = lines_new[:,0]
-
-            # x = pv.Polygon(n_sides = len(pt_index))
-            # x.points = neck.points[pt_index]
-
-            # x = x.subdivide(2)
                 
     def clip_boundaries(self, method='select'):
         """ Interactively clip branches then fix clip to normal 
@@ -769,11 +757,11 @@ class Surfer():
             self.sac_zones[an_id][parent][n_spheres] = origin
             self.sac_zones[an_id][parent][n_spheres].relation = 'parent'
 
-    def mark_near_vessel_regions(self, n_spheres):
+    def mark_near_vessel_regions(self, mesh, n_spheres):
         for an_id in self.aneurysm_group_ids:
             # First mask n_spheres away
-            far = TubeClipper(self.surf)
-            near = TubeClipper(self.surf)
+            far = TubeClipper(mesh)
+            near = TubeClipper(mesh)
 
             for s in self.sac_zones[an_id].keys():
                 pt_far = self.sac_zones[an_id][s][n_spheres]
@@ -792,14 +780,14 @@ class Surfer():
             near.point_arrays['Side'] = ~near.point_arrays['Side'] 
             region = near.point_arrays['Side'] * far.point_arrays['Side'] 
 
-            self.surf.point_arrays['sac_zone_{:02d}'.format(an_id)] = region
+            mesh.point_arrays['sac_zone_{:02d}'.format(an_id)] = region
 
-        zone_arr_names = [x for x in self.surf.point_arrays if 'sac_zone_' in x]
-        zone_arrs = [self.surf.point_arrays[a] for a in zone_arr_names]
-        self.surf.point_arrays['sac_zones'] = np.sum(zone_arrs, axis=0)
+        zone_arr_names = [x for x in mesh.point_arrays if 'sac_zone_' in x]
+        zone_arrs = [mesh.point_arrays[a] for a in zone_arr_names]
+        mesh.point_arrays['sac_zones'] = np.sum(zone_arrs, axis=0)
 
-        for idx, an_id in enumerate(self.aneurysm_group_ids):
-            self.surf.point_arrays['sac_zones'][self.surf.point_arrays['GroupIds'] == an_id] = idx + 3
+        # for idx, an_id in enumerate(self.aneurysm_group_ids):
+            # mesh.point_arrays['sac_zones'][mesh.point_arrays['GroupIds'] == an_id] = idx + 3
 
 
 if __name__ == "__main__":
