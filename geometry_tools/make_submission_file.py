@@ -1,8 +1,5 @@
-#///////////////////////////////////////////////////////////////
-#// CFD job script wrapper
-#// Copyright (C) 2018 Mehdi Najafi (mnuoft@gmail.com)
-#// Distribution of this file is not allowed in any form.
-#///////////////////////////////////////////////////////////////
+""" CFD job script template.
+"""
 
 class SubmissionTemplate():
     def __init__(self, case_name, cycles=2, timesteps_per_cycle=9600,

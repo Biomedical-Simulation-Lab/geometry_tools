@@ -42,4 +42,4 @@ python surface_prep.py $surf_resampled $proj_dir
 python surface_process.py $proj_dir
 
 # Volume mesh and generate submission files.
-python surface_process.py $proj_dir
+# python surface_process.py $proj_dir

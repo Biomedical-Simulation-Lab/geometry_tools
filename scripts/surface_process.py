@@ -63,7 +63,8 @@ if __name__ == "__main__":
             m.generate_centerlines(include_aneurysms=False)
             m.branch_centerlines()
 
-            outlet_clip = m.clip_endpoints_with_spheres()
+            # outlet_clip = m.clip_endpoints_with_spheres()
+            m.clip_endpoints_with_tubeclipper()
             
             m.update_inlets_outlets()
             
@@ -77,7 +78,7 @@ if __name__ == "__main__":
 
             # m.get_mean_segments()
 
-            m.surface_preparation()
+            m.surface_preparation(neck_geodesic_points)
             m.update_inlets_outlets()
 
             m.surf.save(surf_output_file)
