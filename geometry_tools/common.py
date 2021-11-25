@@ -807,6 +807,6 @@ def get_sac_surface_mask(mesh, sac):
     mesh_sac_array = np.zeros(mesh.n_points, dtype=int)
     mesh_sac_array[mesh_sac_ids] = 1
 
-    mesh.point_arrays['SurfaceSacMask'] = mesh_sac_array
+    mesh.point_arrays['SurfaceSacMask'] = mesh_sac_array.astype(bool)
 
     return mesh
