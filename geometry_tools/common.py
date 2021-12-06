@@ -146,6 +146,59 @@ def smooth_mesh_data_local(surf, array='GroupIds',
 
     return surf, neighbour_pt_ids
 
+# def get_neighbour_map_broken(surf):#, n_points):
+#     """ Get full list of adjacent neighbour pts.
+
+#     Args:
+#         cells (array): Cell connectivity, shape (n_cells, 3).
+#         n_pts (int): Number of point ids.
+    
+#     Returns:
+#         neighbour_pt_ids (list): List of lists containing neighbour pt ids.
+#         * Trying with numpy array.
+#     """
+#     # neighbour_pt_ids = [[] for _ in range(surf.n_points)]
+#     edges = surf.extract_all_edges()
+
+#     # edges.points does not neccesarily == surf.points!!
+#     # create a map between them
+#     tree = KDTree(surf.points)
+#     _, ii = tree.query(edges.points, k=1)
+
+#     ee = edges.lines.reshape(-1, 3)[:,1:]
+    
+#     ee = ee[np.argsort(ee[:, 0])]
+    
+#     diff = np.diff(ee[:,0])
+    
+#     upper = np.argwhere(diff) + 1
+#     upper = np.concatenate([upper.flatten(), [len(ee)]], axis=0)
+#     lower = np.roll(upper,1)
+#     lower[0] = 0
+
+#     max_connect = np.diff(upper).max()
+#     index = np.zeros((len(upper), 2), dtype=int)
+#     neighbour_pt_ids = np.empty((surf.n_points, max_connect), dtype=np.int)
+#     neighbour_pt_ids.fill(np.nan)
+
+#     index[:, 0] = lower.flatten()
+#     index[:, 1] = upper.flatten()
+#     # index[-1] = [upper[-1], len(ee)]    
+
+#     for e, i in enumerate(index): #(surf.n_points):
+#         sub = ee[i[0]:i[1]]
+#         unique = np.unique(sub[:,1])
+#         # print(unique)
+#         neighbour_pt_ids[ii[e]][:len(unique)] = unique
+#         # neighbour_pt_ids[ii[unique]] = e
+#         for u in unique:
+#             neighbour_pt_ids[ii[u]] = e
+
+#     neighbour_pt_ids = [x[~np.isnan(x)] for x in neighbour_pt_ids]
+#     neighbour_pt_ids = np.array([np.unique(x) for x in neighbour_pt_ids], dtype='object')
+
+#     return neighbour_pt_ids
+
 def get_neighbour_map(surf):#, n_points):
     """ Get full list of adjacent neighbour pts.
 
@@ -166,6 +219,7 @@ def get_neighbour_map(surf):#, n_points):
     _, ii = tree.query(edges.points, k=1)
 
     ee = edges.lines.reshape(-1, 3)[:,1:]
+    
     for e in ee:
         neighbour_pt_ids[ii[e[0]]].append(ii[e[1]])
         neighbour_pt_ids[ii[e[1]]].append(ii[e[0]])
@@ -173,6 +227,7 @@ def get_neighbour_map(surf):#, n_points):
     neighbour_pt_ids = np.array([np.unique(x) for x in neighbour_pt_ids], dtype='object')
 
     return neighbour_pt_ids
+
 
 def create_edge_size_array(surf, max_size=0.3, min_size=0.18, name='Size'):
     """ Create "Size" array incorporating distance to centerlines and curvature.
