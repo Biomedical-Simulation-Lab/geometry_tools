@@ -22,17 +22,24 @@ class VolumeMesh(Surfer):
     def __init__(self, surf=None, mesh=None, inlet_points=None, outlet_points=None, aneurysm_points=None):
         self.mesh = mesh
 
-        entity_ids = np.unique(self.mesh.cell_arrays['CellEntityIds'])
-        pieces = [self.mesh.extract_cells(self.mesh['CellEntityIds']==v) for v in entity_ids]
+        if 'CellEntityIds' in self.mesh.cell_arrays.keys():
+            entity_ids = np.unique(self.mesh.cell_arrays['CellEntityIds'])
+            pieces = [self.mesh.extract_cells(self.mesh['CellEntityIds']==v) for v in entity_ids]
 
-        self.pieces = dict(zip(entity_ids, pieces))
-        surf = self.pieces[1]
-        assert np.all(surf.cells.reshape(-1,4)[:,0] == 3), 'Surface is not triangulated'
-        self.surf = pv.PolyData(surf.points, surf.cells)
-        self.surf = self.surf.clean()
-        self.surf = self.surf.compute_normals(auto_orient_normals=True)
+            self.pieces = dict(zip(entity_ids, pieces))
+            surf = self.pieces[1]
+            assert np.all(surf.cells.reshape(-1,4)[:,0] == 3), 'Surface is not triangulated'
+            self.surf = pv.PolyData(surf.points, surf.cells)
+            self.surf = self.surf.clean()
+            self.surf = self.surf.compute_normals(auto_orient_normals=True)
 
-        self.inner_mesh = self.pieces[0]
+            self.inner_mesh = self.pieces[0]
+        
+        else:
+            self.surf = self.mesh.extract_surface()
+            self.surf = self.surf.clean()
+            self.surf = self.surf.compute_normals(auto_orient_normals=True)
+            self.inner_mesh = mesh
 
     def create_sac_mask(self, hole_size=20.0):
         """ Create sac mask array in mesh and surf.
