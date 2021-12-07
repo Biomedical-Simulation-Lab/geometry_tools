@@ -81,6 +81,15 @@ if __name__ == "__main__":
             m.surface_preparation(neck_geodesic_points)
             m.update_inlets_outlets()
 
+            m.get_mean_segments()
+            m.update_aneurysm_group_ids()
+            m.get_branch_endpoints()
+
+            n_spheres=4
+            m.mark_distance_from_sacs(n_spheres)
+            m.mark_near_vessel_regions(m.mesh, n_spheres=n_spheres)
+            plc_points = m.get_plc_points() # MAKE THIS!!!!!!!!!!!!!!!!!!!!!!
+
             m.surf.save(surf_output_file)
             m.save_inlet_outlet_points(points_output_file)
 

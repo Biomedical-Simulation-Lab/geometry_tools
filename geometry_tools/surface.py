@@ -796,6 +796,24 @@ class Surfer():
         # for idx, an_id in enumerate(self.aneurysm_group_ids):
             # mesh.point_arrays['sac_zones'][mesh.point_arrays['GroupIds'] == an_id] = idx + 3
 
+    def get_plc_points(self, n_spheres):
+        """ Get PLC points based on mark_near_vessel_regions.
+        """
+        self.plc_points = {}
+
+        for an_id in self.aneurysm_group_ids:
+            plc_pts = pv.MultiBlock()
+            for relative in self.sac_zones[an_id].keys():
+                pt_far = self.sac_zones[an_id][relative][n_spheres]
+
+                if pt_far.relation == 'parent':
+                    pt_near = self.clipping_points[relative]['end']
+                else:
+                    pt_near = self.clipping_points[relative]['start']
+
+                plc_pts[relative] = pt_near #.append(pt_near)
+
+            self.plc_pts = plc_pts# = pv.MultiBlock(plc_pts)
 
 if __name__ == "__main__":
     print('See example scripts directory')
