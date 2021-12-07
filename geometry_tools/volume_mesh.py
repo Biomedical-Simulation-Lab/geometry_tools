@@ -21,7 +21,10 @@ class VolumeMesh(Surfer):
 
     def __init__(self, surf=None, mesh=None, inlet_points=None, outlet_points=None, aneurysm_points=None):
         self.mesh = mesh
-
+        self.inlet_points = inlet_points
+        self.outlet_points = outlet_points
+        self.aneurysm_points = aneurysm_points
+        
         if 'CellEntityIds' in self.mesh.cell_arrays.keys():
             entity_ids = np.unique(self.mesh.cell_arrays['CellEntityIds'])
             pieces = [self.mesh.extract_cells(self.mesh['CellEntityIds']==v) for v in entity_ids]
