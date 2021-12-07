@@ -250,6 +250,8 @@ class Surfer():
             self.centerlines = centerlines
             self.centerlines = vmtk.centerline_geometry(self.centerlines)
 
+        return self 
+        
     # def _project_centerline_attrs(self, centerlines, centerlines_branched):
     #         centerlines_og = centerlines.copy()
     #         centerlines_branched = centerlines_branched.copy()
@@ -315,6 +317,8 @@ class Surfer():
         
         self.update_aneurysm_group_ids()
 
+        return self
+
     def update_aneurysm_group_ids(self):    
         tree = KDTree(self.surf.points)
         nearest_temp_idx = tree.query(self.aneurysm_points, k=1)[1]
@@ -322,6 +326,7 @@ class Surfer():
         self.get_group_adjacency()
         # self.check_group_id_integrity()
 
+        return self
            
     def extract_sacs(self):
         """ Redux based on new vmtk.surface_centerline_projection_MISR.
@@ -544,6 +549,8 @@ class Surfer():
         Want to get start/end points where, if you clipped the plane
         normal to the centerline, it would contain none of the children, 
         siblings, or parents.
+
+        This is a very slow function, but robust.
         """
         self.clipping_points = {}
         

@@ -36,6 +36,8 @@ class VolumeMesh(Surfer):
 
     def create_sac_mask(self, hole_size=20.0):
         """ Create sac mask array in mesh and surf.
+
+        # See get_sac_surface_mask in common also.
         """
         self.extract_sacs()
 
