@@ -78,7 +78,7 @@ if __name__ == "__main__":
 
             # m.get_mean_segments()
 
-            m.surface_preparation(neck_geodesic_points)
+            m.surface_preparation(neck_geodesic_points, max_size=0.4, min_size=0.15)
             m.update_inlets_outlets()
 
             m.get_mean_segments()

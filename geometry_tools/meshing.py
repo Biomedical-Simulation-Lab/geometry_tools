@@ -104,7 +104,7 @@ class Mesher(Surfer):
             self.inlet_group_ids = [group_ids[x] for x in inlet_temp_ids]
             self.outlet_group_ids = [group_ids[x] for x in outlet_temp_ids]
             
-    def surface_preparation(self, neck_points=None):
+    def surface_preparation(self, neck_points=None, max_size=0.4, min_size=0.18):
         """ Refine surface, add flow extensions. 
 
         Remeshes surface, clips endpoints normal to centerlines,
@@ -127,7 +127,7 @@ class Mesher(Surfer):
         centerlines = self.centerlines
 
         surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
-        surf = cc.create_edge_size_array(surf, max_size=0.4, min_size=0.18,)
+        surf = cc.create_edge_size_array(surf, max_size=max_size, min_size=min_size,)
         surf = vmtk.surface_remeshing(surf, element_size_mode='edgelengtharray', edgearray='Size')
         
         # DM 11 11 21
@@ -143,6 +143,7 @@ class Mesher(Surfer):
 
         if neck_points is not None:
             s = cc.SelectGeodesic(surf, scalars='Mask')
+            print('neck', neck_points)
             s.use_stored_points(neck_points)
             surf = s.mesh
         else:
@@ -258,13 +259,14 @@ class Mesher(Surfer):
         self.get_group_adjacency()
 
         nodes = [x for x in self.G_no_aneurysm.nodes] 
+        print(nodes)
 
         centerlines_branched = vmtk.centerline_branches_ids(self.centerlines)
         self.centerlines_branched = centerlines_branched
         self.update_inlets_outlets()
         mean_radii = cc.get_mean_radii(centerlines_branched, nodes)
         beta_values = {}
-        beta_values[0] = 1.
+        beta_values['0'] = 1.
 
         outlet_flow_divisions = {}
 

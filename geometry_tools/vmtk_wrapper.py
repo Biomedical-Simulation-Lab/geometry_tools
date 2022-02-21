@@ -408,6 +408,9 @@ def surface_centerline_projection_VOR(surf, centerlines, arrays=['GroupIds'], sm
     """ Instead of glyphing, use Voronoi diagram.
     NOT WORKING -- still need to project GroupIds onto voronoi, so
     doesn't really solve the issue.
+
+    But the idea would be to progressively "inflate" the voronoi 
+    from the centerlines, projecting the group ids onto the surface.
     """
     # Cell-to-point; get relevant sections of centerlines
     mask = centerlines.cell_arrays['Blanking'] == 0
@@ -473,7 +476,9 @@ def surface_centerline_projection_MISR(surf, centerlines, arrays=['GroupIds'], s
     test_object = centerlines_pd.tube(scalars='MaximumInscribedSphereRadius', radius_factor=4, n_sides=20)
         
     # Create smooth surf
-    surf_smooth = surf.smooth(n_iter=20, relaxation_factor=1.0)
+    # params used to be n_iter=20, relaxation=1.0, but was running into a bug
+    # where surf_smooth.n_points < surf.n_points
+    surf_smooth = surf.smooth(n_iter=40, relaxation_factor=0.8)
 
     # For point in surf_smooth, find nearest in test_object
     tree = KDTree(test_object.points)
@@ -724,7 +729,7 @@ def extract_group_adjacency(centerlines):
         pairs = [(groups[i-1], groups[i]) for i in range(1, len(groups))]
         for p in pairs:
             edges.append(p)
-            G.add_edge(p[0], p[1])
+            G.add_edge(str(p[0]), str(p[1]))
     
     edges = sorted(set(edges))
 

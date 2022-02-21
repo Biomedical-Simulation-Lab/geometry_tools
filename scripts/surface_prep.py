@@ -30,7 +30,6 @@ if __name__ == "__main__":
         case_start = time.time()
 
         surf = pv.read(surf_file)
-        # surf = mesh.extract_surface()
         surf = surf.compute_normals(auto_orient_normals=False)
         
         m = Mesher(surf)
@@ -38,16 +37,17 @@ if __name__ == "__main__":
         # Uses m.clip_boundaries uses cc.ClickDragDelete to delete boundaries.
         flag_inspect = m.clip_boundaries()
 
+        # Delete any sharp edges or small branches
         while flag_inspect == True:
             s = cc.SelectGeodesic(m.surf, scalars='Delete', )
             s.interact(title='Isolate region to delete and fill.')
             m.surf = s.mesh
-            # flag_inspect = m.clip_boundaries()
 
         m.set_inlets_outlets()
         m.pick_aneurysm()
         m.copy_structure()
 
+        # Select aneurysms
         s = cc.SelectGeodesic(m.surf)
         s.interact(title='Isolate aneurysms.')
         s.save_stored_points(neck_file_out)
