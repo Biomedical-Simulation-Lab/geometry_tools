@@ -86,6 +86,29 @@ def combine_surfaces_as_image(surf, roi, spacing=0.05, bounds=None):
 
     return surf, surf_r
 
+def combine_surfaces(surf, roi, bounds=None):
+    """ Merge two surfaces.
+    """
+    if bounds is None:
+        roi_bounds = [roi.bounds]
+    else:
+        roi_bounds = bounds
+
+    surf_rois = [roi.clip_box(bounds, invert=False) for bounds in roi_bounds]
+    surf_r = surf.copy()
+
+    for bounds in roi_bounds:
+        surf_r = surf_r.clip_box(bounds, invert=True)
+    
+    for roi in surf_rois:
+        surf_r = surf_r.merge(roi)
+    
+    surf_r = surf_r.triangulate()
+    surf_r = pv.PolyData(surf_r.points, faces=surf_r.cells)
+    surf_r = surf_r.clean(tolerance=0.05)
+    
+    return surf, surf_r
+
 def bounds_to_indicies(bounds, origin, spacing):
     """ Convert vtk bounds to array indicies.
 

@@ -400,7 +400,9 @@ class SelectGeodesic():
         self.p.add_key_event('x', self.refill_section)
         self.p.add_key_event('c', self._clear)
         self.p.show()
-        self.stored_points.append(self.picked_points)
+        self.stored_points.append(np.array(self.picked_points))
+
+        return self._get_points()
 
     def _cb(self, pt):
         """ CB for picking points. """
@@ -589,8 +591,21 @@ class SelectGeodesic():
             # self.p.add_mesh(self.mesh, name='mesh', scalars=self.scalars, cmap='coolwarm')
             self.p.add_mesh(self.mesh, name='mesh', scalars=self.scalars, cmap='Reds', show_edges=True)
 
+    def _get_points(self):
+        """ Put the points in a geometry.
+        """
+        print("TEST", self.stored_points)
+        self.stored_points = [x for x in self.stored_points if len(x) > 1]
+        points = pv.MultiBlock()
+        if len(self.stored_points) > 0:
+            for pts in self.stored_points:
+                points.append(pv.wrap(np.array(pts)))
+            return points
+        else:
+            return []
 
-    def save_stored_points(self, outfile):
+
+    def save_stored_points(self, outfile=None):
         """ Save stored points for later use. """
         # neck_ids = [np.zeros(len(ll), dtype=int) + idx for idx, ll in enumerate(self.stored_points)]
         # neck_ids = [item for sublist in neck_ids for item in sublist]
@@ -602,7 +617,9 @@ class SelectGeodesic():
         for pts in self.stored_points:
             points.append(pv.wrap(np.array(pts)))
 
-        points.save(outfile)       
+        if outfile is not None:
+            points.save(outfile)       
+        return points
 
     def use_stored_points(self, points):
         for pts in points:
@@ -787,7 +804,7 @@ def get_mean_radii(centerlines_branched, grouplist):
     # Get mean radii
     for node in grouplist:
         # print(node)
-        mask = centerlines_branched.cell_arrays['GroupIds'] == node 
+        mask = centerlines_branched.cell_arrays['GroupIds'] == int(node)
 
         branch_segments = centerlines_branched.extract_cells(mask)
         branch = branch_segments.split_bodies()[0]
@@ -865,3 +882,27 @@ def get_sac_surface_mask(mesh, sac):
     mesh.point_arrays['SurfaceSacMask'] = mesh_sac_array.astype(bool)
 
     return mesh
+
+    
+def decimate_edge_length(surf, target_edge_length):
+    edges = surf.extract_all_edges()
+    mean_el = edges.compute_cell_sizes().cell_arrays['Length'].mean()
+    target_el = target_edge_length
+    target_reduction = 1 - (mean_el / target_el)
+    surf_d = surf.decimate(target_reduction, volume_preservation=True)
+    surf = copy_arrays(surf, surf_d)
+    return surf
+
+def copy_arrays(src, dst):
+    tree = KDTree(src.points)
+    _, ii = tree.query(dst.points, k=1)
+    for arr in src.point_arrays:
+        dst.point_arrays[arr] = src.point_arrays[arr][ii]
+
+    centers = src.cell_centers()
+    tree = KDTree(centers.points)
+    _, ii = tree.query(dst.cell_centers().points, k=1)
+    for arr in src.cell_arrays:
+        dst.cell_arrays[arr] = src.cell_arrays[arr][ii]
+        
+    return dst

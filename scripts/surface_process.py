@@ -78,8 +78,22 @@ if __name__ == "__main__":
 
             # m.get_mean_segments()
 
-            m.surface_preparation(neck_geodesic_points)
+            m.surface_preparation(neck_geodesic_points, max_size=0.4, min_size=0.15)
             m.update_inlets_outlets()
+
+            # # This stuff is for getting plc points and 
+            # # parent regions for SCI
+            # m.get_mean_segments()
+            # m.branch_centerlines()
+            # m.update_aneurysm_group_ids()
+            # m.get_branch_endpoints()
+
+            # n_spheres=4
+            # m.mark_distance_from_sacs(n_spheres)
+            # m.mark_near_vessel_regions(m.surf, n_spheres=n_spheres)
+            # plc_points = m.get_plc_points() 
+
+            # # Save plc_points and make sure surf has sac_zone_* masks.
 
             m.surf.save(surf_output_file)
             m.save_inlet_outlet_points(points_output_file)
