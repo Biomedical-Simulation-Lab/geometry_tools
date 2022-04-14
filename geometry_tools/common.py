@@ -3,7 +3,6 @@ import numpy as np
 import pyvista as pv 
 from scipy.spatial import cKDTree as KDTree 
 from scipy.interpolate import interp1d
-import pygeodesic.geodesic as geodesic
 
 # from pathlib import Path 
 # import h5py 
@@ -21,6 +20,8 @@ def fix_vmtk_group_ids(surf):
     VMTK groups IDs are often buggy, this fixes them
     based on connectivity.
     """
+    import pygeodesic.geodesic as geodesic
+
     g_ids = np.unique(surf.point_arrays['GroupIds'])
 
     # Break into pieces, find which have broken ids
