@@ -9,10 +9,11 @@ import time
 from datetime import timedelta
 import sys 
 
-if __name__ == "__main__":
-    surf_file = Path(sys.argv[1])
-    proj_dir = Path(sys.argv[2])
-
+def surface_prep(surf_file, proj_dir):
+    """ Basic surface prep.
+    """
+    surf_file = Path(surf_file)
+    proj_dir = Path(proj_dir)
     surf_output_dir = proj_dir / '01_clipped' 
     points_output_dir = proj_dir / '01_points' 
     neckpoints_output_dir = proj_dir / '01_neckpoints' 
@@ -54,6 +55,7 @@ if __name__ == "__main__":
 
         m.surf = s.mesh 
         m.surf.save(surf_file_out)
+        m.generate_centerlines()
         m.save_inlet_outlet_points(points_file_out)
 
         time_spent = time.time() - case_start
@@ -62,3 +64,8 @@ if __name__ == "__main__":
     else:
         print('Output file exists.')
 
+
+if __name__ == "__main__":
+    surf_file = sys.argv[1]
+    proj_dir = sys.argv[2]
+    surface_prep(surf_file, proj_dir)

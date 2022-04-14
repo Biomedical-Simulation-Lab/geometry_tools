@@ -168,6 +168,8 @@ class Surfer():
 
         # self.surf = self.surf.interpolate(old_surf)
         self.copy_arrays(old_surf, self.surf)
+
+        self.surf = cc.fix_vmtk_group_ids(self.surf)
         return endpoints_pv
 
     def clip_endpoints_with_vmtk(self):
@@ -349,7 +351,11 @@ class Surfer():
         self.surf, self.neighbour_pt_ids = vmtk.surface_centerline_projection_MISR(
             self.surf, self.centerlines_aneurysm_branched, sm_iterations=1)
         
+        # Check if this line is now redundant after adding new fix function.
         self.update_aneurysm_group_ids()
+
+        # New fix function:
+        self.surf = cc.fix_vmtk_group_ids(self.surf)
 
         return self
 
@@ -403,7 +409,7 @@ class Surfer():
         self.surf = surf    
         return cb.flag_inspect 
 
-    def save_inlet_outlet_points(self, points_file):
+    def save_inlet_outlet_points(self, points_file, centerlines='centerlines'):
         """ Save inlet_points and outlet_points to a single h5 file.
 
         File keys will be "inlets" and "outlets"
@@ -412,6 +418,14 @@ class Surfer():
         points['inlets'] = pv.wrap(np.array(self.inlet_points))
         points['outlets'] = pv.wrap(np.array(self.outlet_points))
         points['aneurysms'] = pv.wrap(np.array(self.aneurysm_points))
+
+        if hasattr(self, centerlines):
+            tree = KDTree(self.centerlines.points)
+            _, ii = tree.query(self.inlet_points)
+            points['inlets'].point_arrays['normals'] = self.centerlines.point_arrays['FrenetTangent'][ii]
+            _, ii = tree.query(self.outlet_points)
+            points['outlets'].point_arrays['normals'] = self.centerlines.point_arrays['FrenetTangent'][ii]
+
         points.save(points_file)
 
 
@@ -482,6 +496,9 @@ class Surfer():
         mask = np.invert(centerlines_split.point_arrays['Blanking'].astype(bool))
         all_ids = np.unique(centerlines_split.point_arrays['GroupIds'])
         valid_ids = np.unique(centerlines_split.point_arrays['GroupIds'][mask])
+        print('valid:', len(valid_ids), valid_ids)
+        valid_ids = [x for x in valid_ids if str(x) in self.G.nodes]
+        print('valid2:', len(valid_ids), valid_ids)
         blanking_ids = np.unique(centerlines_split.point_arrays['GroupIds'][~mask])
 
         # Split each centerline into segments based on groupIds
@@ -612,8 +629,8 @@ class Surfer():
                 sub.point_arrays['arc_length'] = sub.point_arrays['arc_length'] - sub.point_arrays['arc_length'][0]
 
                 # Just not starting at endpoint
-                new_start_index = 5 
-                new_end_index = len(sub.points) - 5 
+                new_start_index = 1
+                new_end_index = len(sub.points) - 2
 
                 # Extract slices of the part based on the centerline and normal.
                 # If n_points == n_cells, the slice forms a loop
@@ -622,18 +639,29 @@ class Surfer():
                 new_start_index -= 1
                 while not slice_condition:
                     new_start_index += 1
-                    slice1 = part.slice(normal=sub.point_arrays['FrenetTangent'][new_start_index],origin=sub.points[new_start_index])
+                    if new_start_index < sub.n_points:
+                        slice1 = part.slice(normal=sub.point_arrays['FrenetTangent'][new_start_index],origin=sub.points[new_start_index])
+                    else:
+                        break
+
                     if slice1.n_points == 0:
                         slice_condition = False
                     else:
                         slice_condition = slice1.n_points == slice1.n_cells
+
+                    if new_start_index > len(sub.points):
+                        print('Broken loop!')
 
                 # Then for the other end
                 slice_condition = False
                 new_end_index += 1
                 while not slice_condition:
                     new_end_index -= 1
-                    slice2 = part.slice(normal=sub.point_arrays['FrenetTangent'][new_end_index],origin=sub.points[new_end_index])
+                    if new_end_index > 0:
+                        slice2 = part.slice(normal=sub.point_arrays['FrenetTangent'][new_end_index],origin=sub.points[new_end_index])
+                    else:
+                        break
+
                     if slice2.n_points == 0:
                         slice_condition = False
                     else:
@@ -1094,8 +1122,8 @@ class Surfer():
 
                 plc_pts[relative] = pt_near #.append(pt_near)
 
-            self.plc_pts = plc_pts# = pv.MultiBlock(plc_pts)
-            
+            self.plc_pts = plc_pts # = pv.MultiBlock(plc_pts)
+
     def get_mutual_ancestors(self):
         """ For landmarking a given bifurcation. 
         """
@@ -1113,9 +1141,6 @@ class Surfer():
         fam = list(ancestors) + [lowest_common]
         artery = self.mean_segments[[str(x) for x in fam]]
         return artery, fam
-
-
-
 
 if __name__ == "__main__":
     print('See example scripts directory')

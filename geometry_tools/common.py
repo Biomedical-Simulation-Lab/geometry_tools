@@ -3,9 +3,68 @@ import numpy as np
 import pyvista as pv 
 from scipy.spatial import cKDTree as KDTree 
 from scipy.interpolate import interp1d
+import pygeodesic.geodesic as geodesic
+
 # from pathlib import Path 
 # import h5py 
 # import ast 
+
+def fix_vmtk_group_ids(surf):
+    """ Fix group IDs.
+
+    Args:
+        surf (PolyData) : Surface with array GroupIds (optional: Mask)
+
+    Returns:
+        PolyData with fixed GroupIds
+
+    VMTK groups IDs are often buggy, this fixes them
+    based on connectivity.
+    """
+    g_ids = np.unique(surf.point_arrays['GroupIds'])
+
+    # Break into pieces, find which have broken ids
+    masks = [surf.point_arrays['GroupIds'] == g for g in g_ids]
+    groups = [surf.extract_points(m) for m in masks]
+
+    # Find which id has most mutual with sac, overwrite
+    if 'Mask' in surf.point_arrays:
+        check_sac = [g.point_arrays['Mask'].sum()/g.n_points for g in groups]
+        surf.point_arrays['GroupIds'][surf.point_arrays['Mask'] == 1] = g_ids[np.argmax(check_sac)]
+
+    # Break into pieces, find which have broken ids
+    masks = [surf.point_arrays['GroupIds'] == g for g in g_ids]
+    groups = [surf.extract_points(m) for m in masks]
+    n_parts = np.array([g.split_bodies().n_blocks for g in groups])
+
+    # Broken groups:
+    split_idx = [idx for idx, x in enumerate(n_parts > 1) if x == True]
+    split_g_ids = g_ids[split_idx]
+
+    if len(split_idx) > 0:
+
+        tree = KDTree(surf.points)
+        surf.point_arrays['GroupError'] = np.zeros(surf.n_points, dtype=int)
+
+        for idx in split_idx:
+            parts = list(groups[idx].split_bodies())
+            small_parts = parts[1:]
+            error_points = np.concatenate([x.points for x in small_parts], axis=0)
+
+            _, ii = tree.query(error_points)
+            surf.point_arrays['GroupError'][ii] = 1
+
+        target_indices = [idx for idx, x in enumerate(surf.point_arrays['GroupError'] == 1) if x == True]
+        source_indices = [idx for idx, x in enumerate(surf.point_arrays['GroupError'] == 0) if x == True]
+
+        target_indices = np.array(target_indices)
+        source_indices = np.array(source_indices)
+
+        geoalg = geodesic.PyGeodesicAlgorithmExact(surf.points, surf.faces.reshape(-1, 4)[:, 1:])
+        distances, best_source = geoalg.geodesicDistances(source_indices, target_indices)
+
+        surf.point_arrays['GroupIds'][target_indices] = surf.point_arrays['GroupIds'][source_indices[best_source]]
+    return surf 
 
 def vtk_generate_img_stencil(mesh, spacing=0.05, bounds=None):
     """ Resample surf mesh to image.

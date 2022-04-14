@@ -478,7 +478,7 @@ def surface_centerline_projection_MISR(surf, centerlines, arrays=['GroupIds'], s
     # Create smooth surf
     # params used to be n_iter=20, relaxation=1.0, but was running into a bug
     # where surf_smooth.n_points < surf.n_points
-    surf_smooth = surf.smooth(n_iter=40, relaxation_factor=0.8)
+    surf_smooth = surf.smooth(n_iter=30, relaxation_factor=0.7)
 
     # For point in surf_smooth, find nearest in test_object
     tree = KDTree(test_object.points)
