@@ -297,7 +297,7 @@ class Mesher(Surfer):
         translate_out = dict(zip(self.outlet_group_ids, self.outlet_entity_ids))
 
         out_flow_keys = outlet_flow_divisions.keys()
-        new_out_flow_keys = [translate_out[x] for x in out_flow_keys]
+        new_out_flow_keys = [translate_out[int(x)] for x in out_flow_keys]
         out_flow_div_values = [outlet_flow_divisions[x] for x in out_flow_keys]
 
         # print('*****dan*******'*5)

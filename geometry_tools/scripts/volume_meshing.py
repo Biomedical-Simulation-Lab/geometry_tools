@@ -37,7 +37,7 @@ def volume_meshing(proj_dir):
     start = time.time()
     print('\n' + surf_file.stem)
 
-    if not vtufile.exists():
+    if not xmlgzfile.exists():
         # try:
         surf = pv.read(surf_file)
 
@@ -54,10 +54,13 @@ def volume_meshing(proj_dir):
             )
         m.update_inlets_outlets()
 
-        m.generate_volume_mesh()
-        m.update_inlets_outlets()
+        if not vtufile.exists():
+            m.generate_volume_mesh()
+            m.mesh.save(vtufile)
+        else:
+            m.mesh = pv.read(vtufile)
 
-        m.mesh.save(vtufile)
+        m.update_inlets_outlets()
 
         m.generate_centerlines()
         m.generate_centerlines(include_aneurysms=False)
