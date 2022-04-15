@@ -164,7 +164,7 @@ def surface_process(proj_dir, endpoints_pv=None):
 if __name__ == "__main__":
     proj_dir = Path(sys.argv[1])
 
-    if len(sys.argv > 2):
+    if len(sys.argv) > 2:
         endpoints_f = Path(sys.argv[2])
         endpoints_pv = pv.read(endpoints_f)
     else:
