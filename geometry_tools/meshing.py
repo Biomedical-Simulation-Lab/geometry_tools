@@ -104,7 +104,7 @@ class Mesher(Surfer):
             self.inlet_group_ids = [group_ids[x] for x in inlet_temp_ids]
             self.outlet_group_ids = [group_ids[x] for x in outlet_temp_ids]
             
-    def surface_preparation(self, neck_points=None, max_size=0.4, min_size=0.18, smooth=False):
+    def surface_preparation(self, neck_points=None, min_edge_size=0.15, max_edge_size=0.4, sac_size=0.15, misr_min=0.5, misr_max=2.5):
         """ Refine surface, add flow extensions. 
 
         Remeshes surface, clips endpoints normal to centerlines,
@@ -127,7 +127,9 @@ class Mesher(Surfer):
         centerlines = self.centerlines
 
         surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
-        surf = cc.create_edge_size_array(surf, max_size=max_size, min_size=min_size,)
+        # surf = cc.create_edge_size_array(surf, max_size=max_size, min_size=min_size, sac_size=sac_size, misr_min=misr_min, misr_max=misr_max)
+        surf = cc.create_edge_size_array(surf, min_edge_size=min_edge_size, max_edge_size=max_edge_size, sac_size=sac_size, 
+            misr_min=misr_min, misr_max=misr_max, name='Size',)
         surf = vmtk.surface_remeshing(surf, element_size_mode='edgelengtharray', edgearray='Size')
         
         # DM 22 02 22
@@ -156,8 +158,9 @@ class Mesher(Surfer):
             surf = surf.interpolate(surf_og, n_points=1) #radius=0.5, strategy='null_value', null_value=0)
 
         surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
-        surf = cc.create_edge_size_array(surf, max_size=0.4, min_size=0.18,)
-
+        surf = cc.create_edge_size_array(surf, min_edge_size=min_edge_size, max_edge_size=max_edge_size, sac_size=sac_size, 
+            misr_min=misr_min, misr_max=misr_max, name='Size',)
+            
         surf, _ = cc.smooth_mesh_data_local(surf, 'Size', np.mean, 
             iterations=2, 
             )

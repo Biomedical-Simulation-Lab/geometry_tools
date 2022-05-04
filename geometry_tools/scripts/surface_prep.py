@@ -35,14 +35,15 @@ def surface_prep(surf_file, proj_dir):
         
         m = Mesher(surf)
 
+        # Delete any sharp edges or small branches
+        # if flag_inspect == True:
+        # s = cc.SelectGeodesic(m.surf, scalars='Delete', )
+        # s.interact(title='Isolate region to delete and fill.')
+        # m.surf = s.mesh
+        # m.surf = m.surf.fill_holes(10.0)
+
         # Uses m.clip_boundaries uses cc.ClickDragDelete to delete boundaries.
         flag_inspect = m.clip_boundaries()
-
-        # Delete any sharp edges or small branches
-        while flag_inspect == True:
-            s = cc.SelectGeodesic(m.surf, scalars='Delete', )
-            s.interact(title='Isolate region to delete and fill.')
-            m.surf = s.mesh
 
         m.set_inlets_outlets()
         m.pick_aneurysm()

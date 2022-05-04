@@ -22,7 +22,6 @@ def surface_process(proj_dir, endpoints_pv=None):
 
     point_file = points_dir / (surf_file.stem + '_endpoints.vtm')
     neckpoints_file = neckpoints_dir / (surf_file.stem + '_neckpoints.vtm')
-    print(point_file)
     assert point_file.exists()
     assert neckpoints_file.exists()
 
@@ -39,7 +38,7 @@ def surface_process(proj_dir, endpoints_pv=None):
     endpoints_output_file = endpoints_output_dir / (surf_file.stem + '_pr_endpoints.vtp')
 
     start = time.time()
-    # print('\n' + surf_file.stem)
+    print('\n' + surf_file.stem)
 
     if not surf_output_file.exists():
         surf = pv.read(surf_file)
@@ -111,7 +110,7 @@ def surface_process(proj_dir, endpoints_pv=None):
         
         m.get_bifurcation_ref_systems_vectors()
 
-        m.surface_preparation(neck_points=neck_geodesic_points, max_size=0.4, min_size=0.15)
+        m.surface_preparation(neck_points=neck_geodesic_points, min_edge_size=0.1, max_edge_size=0.4, sac_size=0.15, misr_min=0.1, misr_max=2.5)
         m.update_inlets_outlets()
 
         m.surf.save(surf_output_file)
