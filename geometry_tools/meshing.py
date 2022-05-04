@@ -104,7 +104,7 @@ class Mesher(Surfer):
             self.inlet_group_ids = [group_ids[x] for x in inlet_temp_ids]
             self.outlet_group_ids = [group_ids[x] for x in outlet_temp_ids]
             
-    def surface_preparation(self, neck_points=None, max_size=0.4, min_size=0.18):
+    def surface_preparation(self, neck_points=None, min_edge_size=0.15, max_edge_size=0.4, sac_size=0.15, misr_min=0.5, misr_max=2.5):
         """ Refine surface, add flow extensions. 
 
         Remeshes surface, clips endpoints normal to centerlines,
@@ -127,11 +127,19 @@ class Mesher(Surfer):
         centerlines = self.centerlines
 
         surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
-        surf = cc.create_edge_size_array(surf, max_size=max_size, min_size=min_size,)
+        # surf = cc.create_edge_size_array(surf, max_size=max_size, min_size=min_size, sac_size=sac_size, misr_min=misr_min, misr_max=misr_max)
+        surf = cc.create_edge_size_array(surf, min_edge_size=min_edge_size, max_edge_size=max_edge_size, sac_size=sac_size, 
+            misr_min=misr_min, misr_max=misr_max, name='Size',)
         surf = vmtk.surface_remeshing(surf, element_size_mode='edgelengtharray', edgearray='Size')
         
-        # DM 11 11 21
-        # surf = cc.vtk_taubin_smooth(surf, pass_band=0.05, iterations=50)
+        # DM 22 02 22
+        # NOTE
+        # Smoothing here is a BAD idea because you get "ringing" artifacts at the boundaries. 
+        # You should smooth earlier in the pipeline to avoid this.
+        # Leaving this line here, commented out, to remind you next time you think 
+        # it's a good idea.
+        # if smooth:
+        #     surf = cc.vtk_taubin_smooth(surf, pass_band=0.05, iterations=100)
 
         surf, centerlines = vmtk.flow_extensions(surf, centerlines)
         surf = surf.clean()
@@ -150,8 +158,9 @@ class Mesher(Surfer):
             surf = surf.interpolate(surf_og, n_points=1) #radius=0.5, strategy='null_value', null_value=0)
 
         surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
-        surf = cc.create_edge_size_array(surf, max_size=0.4, min_size=0.18,)
-
+        surf = cc.create_edge_size_array(surf, min_edge_size=min_edge_size, max_edge_size=max_edge_size, sac_size=sac_size, 
+            misr_min=misr_min, misr_max=misr_max, name='Size',)
+            
         surf, _ = cc.smooth_mesh_data_local(surf, 'Size', np.mean, 
             iterations=2, 
             )
@@ -159,6 +168,7 @@ class Mesher(Surfer):
         surf_rm = vmtk.surface_remeshing(surf, element_size_mode='edgelengtharray', edgearray='Size')
 
         surf_rm = surf_rm.clean()
+        surf_rm = surf_rm.triangulate()
 
         # surf_rm = surf_rm.interpolate(surf_og, radius=0.5)
         # surf_rm = surf_rm.interpolate(surf, radius=0.5)
@@ -290,7 +300,7 @@ class Mesher(Surfer):
         translate_out = dict(zip(self.outlet_group_ids, self.outlet_entity_ids))
 
         out_flow_keys = outlet_flow_divisions.keys()
-        new_out_flow_keys = [translate_out[x] for x in out_flow_keys]
+        new_out_flow_keys = [translate_out[int(x)] for x in out_flow_keys]
         out_flow_div_values = [outlet_flow_divisions[x] for x in out_flow_keys]
 
         # print('*****dan*******'*5)
@@ -315,6 +325,9 @@ class Mesher(Surfer):
                     - cellIds, coordinates, pointIds, topology
                 - Wall
                     - cellIds, coordinates, normal, pointIds, topology
+
+        NOTE unexpected behaviour observed 2022-02-28:
+        Is the wall being appended to the mesh?
         """
         case_name = outfile.stem
 

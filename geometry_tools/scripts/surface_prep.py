@@ -9,10 +9,11 @@ import time
 from datetime import timedelta
 import sys 
 
-if __name__ == "__main__":
-    surf_file = Path(sys.argv[1])
-    proj_dir = Path(sys.argv[2])
-
+def surface_prep(surf_file, proj_dir):
+    """ Basic surface prep.
+    """
+    surf_file = Path(surf_file)
+    proj_dir = Path(proj_dir)
     surf_output_dir = proj_dir / '01_clipped' 
     points_output_dir = proj_dir / '01_points' 
     neckpoints_output_dir = proj_dir / '01_neckpoints' 
@@ -34,14 +35,15 @@ if __name__ == "__main__":
         
         m = Mesher(surf)
 
+        # Delete any sharp edges or small branches
+        # if flag_inspect == True:
+        # s = cc.SelectGeodesic(m.surf, scalars='Delete', )
+        # s.interact(title='Isolate region to delete and fill.')
+        # m.surf = s.mesh
+        # m.surf = m.surf.fill_holes(10.0)
+
         # Uses m.clip_boundaries uses cc.ClickDragDelete to delete boundaries.
         flag_inspect = m.clip_boundaries()
-
-        # Delete any sharp edges or small branches
-        while flag_inspect == True:
-            s = cc.SelectGeodesic(m.surf, scalars='Delete', )
-            s.interact(title='Isolate region to delete and fill.')
-            m.surf = s.mesh
 
         m.set_inlets_outlets()
         m.pick_aneurysm()
@@ -54,6 +56,7 @@ if __name__ == "__main__":
 
         m.surf = s.mesh 
         m.surf.save(surf_file_out)
+        m.generate_centerlines()
         m.save_inlet_outlet_points(points_file_out)
 
         time_spent = time.time() - case_start
@@ -62,3 +65,8 @@ if __name__ == "__main__":
     else:
         print('Output file exists.')
 
+
+if __name__ == "__main__":
+    surf_file = sys.argv[1]
+    proj_dir = sys.argv[2]
+    surface_prep(surf_file, proj_dir)

@@ -3,9 +3,69 @@ import numpy as np
 import pyvista as pv 
 from scipy.spatial import cKDTree as KDTree 
 from scipy.interpolate import interp1d
+
 # from pathlib import Path 
 # import h5py 
 # import ast 
+
+def fix_vmtk_group_ids(surf):
+    """ Fix group IDs.
+
+    Args:
+        surf (PolyData) : Surface with array GroupIds (optional: Mask)
+
+    Returns:
+        PolyData with fixed GroupIds
+
+    VMTK groups IDs are often buggy, this fixes them
+    based on connectivity.
+    """
+    import pygeodesic.geodesic as geodesic
+
+    g_ids = np.unique(surf.point_arrays['GroupIds'])
+
+    # Break into pieces, find which have broken ids
+    masks = [surf.point_arrays['GroupIds'] == g for g in g_ids]
+    groups = [surf.extract_points(m) for m in masks]
+
+    # Find which id has most mutual with sac, overwrite
+    if 'Mask' in surf.point_arrays:
+        check_sac = [g.point_arrays['Mask'].sum()/g.n_points for g in groups]
+        surf.point_arrays['GroupIds'][surf.point_arrays['Mask'] == 1] = g_ids[np.argmax(check_sac)]
+
+    # Break into pieces, find which have broken ids
+    masks = [surf.point_arrays['GroupIds'] == g for g in g_ids]
+    groups = [surf.extract_points(m) for m in masks]
+    n_parts = np.array([g.split_bodies().n_blocks for g in groups])
+
+    # Broken groups:
+    split_idx = [idx for idx, x in enumerate(n_parts > 1) if x == True]
+    split_g_ids = g_ids[split_idx]
+
+    if len(split_idx) > 0:
+
+        tree = KDTree(surf.points)
+        surf.point_arrays['GroupError'] = np.zeros(surf.n_points, dtype=int)
+
+        for idx in split_idx:
+            parts = list(groups[idx].split_bodies())
+            small_parts = parts[1:]
+            error_points = np.concatenate([x.points for x in small_parts], axis=0)
+
+            _, ii = tree.query(error_points)
+            surf.point_arrays['GroupError'][ii] = 1
+
+        target_indices = [idx for idx, x in enumerate(surf.point_arrays['GroupError'] == 1) if x == True]
+        source_indices = [idx for idx, x in enumerate(surf.point_arrays['GroupError'] == 0) if x == True]
+
+        target_indices = np.array(target_indices)
+        source_indices = np.array(source_indices)
+
+        geoalg = geodesic.PyGeodesicAlgorithmExact(surf.points, surf.faces.reshape(-1, 4)[:, 1:])
+        distances, best_source = geoalg.geodesicDistances(source_indices, target_indices)
+
+        surf.point_arrays['GroupIds'][target_indices] = surf.point_arrays['GroupIds'][source_indices[best_source]]
+    return surf 
 
 def vtk_generate_img_stencil(mesh, spacing=0.05, bounds=None):
     """ Resample surf mesh to image.
@@ -229,7 +289,7 @@ def get_neighbour_map(surf):#, n_points):
     return neighbour_pt_ids
 
 
-def create_edge_size_array(surf, max_size=0.3, min_size=0.18, name='Size'):
+def create_edge_size_array(surf, min_edge_size=0.1, max_edge_size=0.4, sac_size=0.15, misr_min=0.1, misr_max=2.5, name='Size',):
     """ Create "Size" array incorporating distance to centerlines and curvature.
 
     This will likely be refined moving forward.
@@ -240,15 +300,15 @@ def create_edge_size_array(surf, max_size=0.3, min_size=0.18, name='Size'):
     Then take min of each.
 
     """
-    distance_interp = interp1d([0.5, 2.5], [min_size, max_size], 
+    distance_interp = interp1d([misr_min, misr_max], [min_edge_size, max_edge_size], 
         kind='linear',
         bounds_error=False,
-        fill_value=(min_size, max_size),
+        fill_value=(min_edge_size, max_edge_size),
         )
-    curv_interp = interp1d([0.3, 0.8], [max_size, min_size], 
+    curv_interp = interp1d([0.3, 0.8], [max_edge_size, min_edge_size], 
         kind='linear',
         bounds_error=False,
-        fill_value=(max_size, min_size),
+        fill_value=(max_edge_size, min_edge_size),
         )
 
     # The perfectly straight flow extensions end up having high curvature 
@@ -269,16 +329,23 @@ def create_edge_size_array(surf, max_size=0.3, min_size=0.18, name='Size'):
     surf.point_arrays['SizeCurvature'] = curv_interp(surf.point_arrays['Curvature']) #np.ones(surf.n_points)
 
     surf.point_arrays[name] = np.minimum(surf.point_arrays['SizeDistanceToCenterlinesArray'], surf.point_arrays['SizeCurvature'])
+    surf, n_ids = smooth_mesh_data_local(surf, name, np.mean, iterations=1)
 
     if 'Mask' in surf.point_arrays:
         # First dilate mask to include nearby regions
         surf.point_arrays['MaskDilate'] = surf.point_arrays['Mask'].copy()
-        surf, _ = smooth_mesh_data_local(surf, 'MaskDilate', np.max, iterations=6)
+        surf, _ = smooth_mesh_data_local(surf, 'MaskDilate', np.max, iterations=6, neighbour_pt_ids=n_ids)
 
         sac_mask = surf.point_arrays['MaskDilate'] == 1
-        surf.point_arrays[name][sac_mask] = min_size
+        # sac_size_array = sac_size * np.ones(len(sac_mask))
+        current_size_array = surf.point_arrays[name][sac_mask]
+
+        surf.point_arrays[name][sac_mask] = np.minimum(sac_size, current_size_array)
+
     else:
         print('No mask in create_edge_size_array.')
+
+    surf, n_ids = smooth_mesh_data_local(surf, name, np.mean, iterations=2)
 
     return surf
 
