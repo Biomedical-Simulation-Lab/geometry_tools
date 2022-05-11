@@ -991,6 +991,6 @@ def get_nearest_slice(mesh, origin, normal):
     dd, ii  = tree.query(origin)
     closest_ring_id = ring_centers.point_arrays['RegionId'][ii]
 
-    mask = sl.cell_data['RegionId'] == closest_ring_id
+    mask = sl.cell_arrays['RegionId'] == closest_ring_id
     closest_ring = sl.extract_cells(mask)
     return closest_ring
