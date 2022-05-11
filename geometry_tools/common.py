@@ -973,3 +973,24 @@ def copy_arrays(src, dst):
         dst.cell_arrays[arr] = src.cell_arrays[arr][ii]
         
     return dst
+
+def get_nearest_slice(mesh, origin, normal):
+    """ Get nearest slice from surface or mesh.
+    Could be used for tubeclipper 2.0.
+    Originated from DEM `scraps` file `2022-04-27.py`
+    """
+    sl = mesh.slice(normal=normal, origin=origin, generate_triangles=False)
+
+    sl = sl.connectivity()
+    regions = np.unique(sl.point_data['RegionId'])
+    rings = [sl.extract_points(sl.point_data['RegionId'] == x) for x in regions]
+    ring_centers = pv.PolyData(np.array([x.center for x in rings]))
+    ring_centers.point_data['RegionId'] = regions
+
+    tree = KDTree(ring_centers.points)
+    dd, ii  = tree.query(origin)
+    closest_ring_id = ring_centers.point_data['RegionId'][ii]
+
+    mask = sl.cell_data['RegionId'] == closest_ring_id
+    closest_ring = sl.extract_cells(mask)
+    return closest_ring
