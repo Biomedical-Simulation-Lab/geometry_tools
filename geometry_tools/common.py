@@ -995,11 +995,13 @@ def get_nearest_slice(mesh, origin, normal):
     closest_ring = sl.extract_cells(mask)
     return closest_ring
 
-def get_parent_slices(surf, key=None):
+def get_parent_slice_location_from_sac_zones(surf, key=None):
     """ Get slices of the parent to calc flowrate.
 
     Used to calc parent flowrate for ICI.
     Definitely hacky, but fine for now.
+
+    Hyper-specific to ICI, changed name to reflect.
 
     key is the dict key to a surface array.
     """
@@ -1031,8 +1033,8 @@ def get_parent_slices(surf, key=None):
     normals = np.array(normals)
     origins.point_arrays['Normals'] = normals
     
-    slices = [get_nearest_slice(surf, o, n) for o, n in zip(origins.points, normals)]
-    return slices
+    # slices = [get_nearest_slice(surf, o, n) for o, n in zip(origins.points, normals)]
+    return origins
 
 def get_normal_component(surf, array='u', normals='Normals',):
     """ Get normal component of vector "array" wrt "normals".
