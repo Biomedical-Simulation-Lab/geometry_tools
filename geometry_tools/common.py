@@ -1031,7 +1031,7 @@ def get_parent_slices(surf, key=None):
     normals = np.array(normals)
     origins.point_arrays['Normals'] = normals
     
-    slices = [cc.get_nearest_slice(dd.mesh, o, n) for o, n in zip(origins.points, normals)]
+    slices = [get_nearest_slice(surf, o, n) for o, n in zip(origins.points, normals)]
     return slices
 
 def get_normal_component(surf, array='u', normals='Normals',):
