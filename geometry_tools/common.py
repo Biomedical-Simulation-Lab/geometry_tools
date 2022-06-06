@@ -973,3 +973,77 @@ def copy_arrays(src, dst):
         dst.cell_arrays[arr] = src.cell_arrays[arr][ii]
         
     return dst
+
+def get_nearest_slice(mesh, origin, normal):
+    """ Get nearest slice from surface or mesh.
+    Could be used for tubeclipper 2.0.
+    Originated from DEM `scraps` file `2022-04-27.py`
+    """
+    sl = mesh.slice(normal=normal, origin=origin, generate_triangles=False)
+
+    sl = sl.connectivity()
+    regions = np.unique(sl.point_arrays['RegionId'])
+    rings = [sl.extract_points(sl.point_arrays['RegionId'] == x) for x in regions]
+    ring_centers = pv.PolyData(np.array([x.center for x in rings]))
+    ring_centers.point_arrays['RegionId'] = regions
+
+    tree = KDTree(ring_centers.points)
+    dd, ii  = tree.query(origin)
+    closest_ring_id = ring_centers.point_arrays['RegionId'][ii]
+
+    mask = sl.cell_arrays['RegionId'] == closest_ring_id
+    closest_ring = sl.extract_cells(mask)
+    return closest_ring
+
+def get_parent_slice_location_from_sac_zones(surf, key=None):
+    """ Get slices of the parent to calc flowrate.
+
+    Used to calc parent flowrate for ICI.
+    Definitely hacky, but fine for now.
+
+    Hyper-specific to ICI, changed name to reflect.
+
+    key is the dict key to a surface array.
+    """
+    if key is None:
+        sac_zone_keys = [x for x in surf.point_arrays if 'sac_zone_' in x]
+
+        if len(sac_zone_keys) > 1:
+            print("Multiple zones present!")
+        
+        key = sac_zone_keys[0]
+
+    mask = surf.point_arrays[key] == 1
+    regions = surf.extract_points(mask)
+    r_split = regions.split_bodies()
+    g_ids = [np.median(x.point_arrays['GroupIds']) for x in r_split]
+    min_g_id_index = np.argmin(g_ids)
+    min_g_id = g_ids[min_g_id_index]
+    parent_zone = r_split[min_g_id_index]
+    edges = parent_zone.extract_feature_edges(45)
+    edges = edges.split_bodies()
+    edges = [pv.PolyData(e.points, lines=e.cells) for e in edges]
+    caps = [e.delaunay_2d() for e in edges]
+    caps = [c.compute_normals() for c in caps]
+    caps = [c.compute_cell_sizes() for c in caps]
+    caps = [c.ptc() for c in caps]
+    origins = [c.center for c in caps]
+    origins = pv.wrap(np.array(origins))
+    normals = [np.average(c.cell_arrays['Normals'], axis=0, weights=c.cell_arrays['Area']) for c in caps]
+    normals = np.array(normals)
+    origins.point_arrays['Normals'] = normals
+    
+    # slices = [get_nearest_slice(surf, o, n) for o, n in zip(origins.points, normals)]
+    return origins
+
+def get_normal_component(surf, array='u', normals='Normals',):
+    """ Get normal component of vector "array" wrt "normals".
+
+    Creates array named array + '_normal' on surf.
+    """
+    surf.point_arrays[f'{array}_normal'] = np.einsum(
+        'ij,ij->i', 
+        surf.point_arrays[normals], 
+        surf.point_arrays[array],
+        )
+    return surf

@@ -10,6 +10,8 @@ Moving forward, it would be nice to re-write this using `vtkvmtk` and `PyVista` 
 - `make_submission_file` makes the bash submission file formatted for the BSL solver on Mehdi's niagara.
 - `common` contains some useful odds and ends.
 
+VMTK has a lot of out-of-date requirements, so `surface`, `meshing`, and `vmtk_wrapper` rely on VMTK, but `common` and `resample_surface` may have different requirements. 
+
 Requirements:
 - vtk
 - numpy
