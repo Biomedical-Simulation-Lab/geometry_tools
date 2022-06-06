@@ -9,7 +9,7 @@ Functions often provide a simplified input; feel free to add
 optional arguments.
 """
 
-from networkx.algorithms.centrality import group
+#from networkx.algorithms.centrality import group
 from networkx.algorithms.distance_measures import center
 from numpy import testing
 from vmtk import vmtkscripts
