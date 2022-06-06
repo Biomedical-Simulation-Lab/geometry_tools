@@ -37,7 +37,8 @@ When installing on workstation (ubuntu), also had to `conda install llvm=3.3` an
 # Meshing
 For an example of using this for meshing, see the `meshing_example.sh` file in `scripts`.
 
-TO INSTALL VMTK 1.5 ON UBUNTU (WARNING: There are issues with the rendering)
+# TO INSTALL VMTK 1.5 ON UBUNTU 
+(WARNING: There are issues with the rendering)
 ______________________________________
 1) clean up tarballs and unused packages
 conda clean -a
