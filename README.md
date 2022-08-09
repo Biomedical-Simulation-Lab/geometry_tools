@@ -23,6 +23,7 @@ Requirements:
 - networkx
 - matplotlib
 - TubeClipper (https://github.com/Biomedical-Simulation-Lab/tubeclipper)
+- pygeodesic
 
 # Environment
 First, conda env as here: http://www.vmtk.org/download/
@@ -37,7 +38,7 @@ When installing on workstation (ubuntu), also had to `conda install llvm=3.3` an
 # Meshing
 For an example of using this for meshing, see the `meshing_example.sh` file in `scripts`.
 
-# TO INSTALL VMTK 1.5 ON UBUNTU 
+# TO INSTALL with VMTK 1.5 ON UBUNTU 
 (WARNING: There are issues with the rendering)
 
 1) clean up tarballs and unused packages
@@ -50,6 +51,7 @@ For an example of using this for meshing, see the `meshing_example.sh` file in `
 
 3) install some packages
 `conda install -c conda-forge scipy ipython pyvista networkx matplotlib`
+`pip install pygeodesic`
 
 4) install tubeclipper
 `cd /path/to/tubeclipper`
@@ -61,5 +63,5 @@ For an example of using this for meshing, see the `meshing_example.sh` file in `
 
 6) comment unavailable/unused module in vmtk_wrapper.py
 comment the following line
-from networkx.algorithms.centrality import group
+`from networkx.algorithms.centrality import group`
 

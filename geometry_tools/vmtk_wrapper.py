@@ -301,7 +301,7 @@ def assert_all_quads(mesh):
     """ Remove triangles from mesh.
 
     VMTK's volume mesh will have a surface of triangles.
-    This function removes them and returns the quad-only mesh.
+    This function removes them and returns the tetrahedral-only (four nodes) mesh.
     """
 
     cell_types = np.zeros(mesh.n_cells)
@@ -309,12 +309,15 @@ def assert_all_quads(mesh):
 
     i = 0
     idx = 0
+    print(mesh.cells)
+
     while i < len(mesh.cells):
         cell_types[idx] = cells[i]
+        print(cells[i])
         plus = cells[i]
         i = i + plus  + 1
         idx += 1
-    
+    print("completed loop")
     quad_mask = np.array(cell_types) == 4
     mesh_quad = mesh.extract_cells(quad_mask)
     return mesh_quad
@@ -379,6 +382,7 @@ def distance_to_centerlines(surf, centerlines, use_radius=1, project_point_array
     dist.ProjectPointArrays = project_point_arrays
     dist.DistanceToCenterlinesArrayName = utils.distanceToCenterlinesArrayName
     dist.RadiusArrayName = utils.radiusArrayName
+    dist.UseRadiusThreshold = 0
     dist.Execute()
     return pv.wrap(dist.Surface), pv.wrap(dist.Centerlines)
 

@@ -20,7 +20,7 @@ class Mesher(Surfer):
         centerlines_branched : PolyData centerlines of surf with branch IDs
     """
 
-    def __init__(self, surf=None, mesh=None, inlet_points=None, outlet_points=None, aneurysm_points=None):
+    def __init__(self, surf=None, mesh=None, inlet_points=None, outlet_points=None, aneurysm_points=None, include_aneurysms=False):
         """ Init the mesher instance.
 
         Either surf or mesh must be given. If mesh, surf will be extracted 
@@ -30,11 +30,12 @@ class Mesher(Surfer):
         super().__init__(surf=surf, 
             inlet_points=inlet_points, 
             outlet_points=outlet_points, 
-            aneurysm_points=aneurysm_points)
+            aneurysm_points=aneurysm_points,
+            include_aneurysms=include_aneurysms)
 
         if (self.mesh is not None) and (self.surf is None):
             # Extract surface using entity ids
-            surf_mask = self.mesh.cell_arrays['CellEntityIds'] == 1
+            surf_mask = self.mesh.cell_data['CellEntityIds'] == 1
             surf = self.mesh.extract_cells(surf_mask)
             surf_pt_ids = surf.point_arrays['vtkOriginalPointIds']
             surf = pv.PolyData(surf.points, surf.cells)
@@ -72,9 +73,9 @@ class Mesher(Surfer):
             outlet_entity_ids : list of outlet entity ids
 
         """
-        entity_ids = np.unique(self.mesh.cell_arrays['CellEntityIds'])
+        entity_ids = np.unique(self.mesh.cell_data['CellEntityIds'])
         valid_entity_ids = sorted(set(entity_ids) - set([0, 1]))
-        entity_masks = [self.mesh.cell_arrays['CellEntityIds'] == i for i in valid_entity_ids]
+        entity_masks = [self.mesh.cell_data['CellEntityIds'] == i for i in valid_entity_ids]
         caps = [self.mesh.extract_cells(em) for em in entity_masks]
         cap_centers = [c.points.mean(axis=0) for c in caps]
 
@@ -116,11 +117,13 @@ class Mesher(Surfer):
         # array "Mask" though.
         surf_og = pv.PolyData()
         surf_og.copy_structure(self.surf)
-        surf_og.point_arrays['Mask'] = self.surf.point_arrays['Mask']
+        if neck_points is not None: 
+            surf_og.point_arrays['Mask'] = self.surf.point_arrays['Mask']
         # surf_og.point_arrays['GroupIds'] = self.surf.point_arrays['GroupIds']
 
         surf = pv.PolyData(self.surf.points, self.surf.faces)
-        surf.point_arrays['Mask'] = surf_og.point_arrays['Mask'].copy()
+        if neck_points is not None: 
+            surf.point_arrays['Mask'] = surf_og.point_arrays['Mask'].copy()
         surf = surf.clean()
 
         # Use centerlines without aneurysm
@@ -254,7 +257,7 @@ class Mesher(Surfer):
         new_centerlines = pv.wrap(centerlinesBranches)
 
         for b in betas.keys():
-            mask = new_centerlines.cell_arrays['GroupIds'] == b 
+            mask = new_centerlines.cell_data['GroupIds'] == b 
             branch_segments = new_centerlines.extract_cells(mask)
             branch = branch_segments.split_bodies()[0]
             radius = branch.point_arrays['MaximumInscribedSphereRadius']
@@ -304,7 +307,7 @@ class Mesher(Surfer):
         out_flow_div_values = [outlet_flow_divisions[x] for x in out_flow_keys]
 
         # print('*****dan*******'*5)
-        # print(out_flow_div_values)
+        #print(out_flow_div_values)
         # print('*****dan*******'*5)
 
         self.outlet_flow_divisions = dict(zip(new_out_flow_keys, out_flow_div_values))
@@ -328,14 +331,18 @@ class Mesher(Surfer):
 
         NOTE unexpected behaviour observed 2022-02-28:
         Is the wall being appended to the mesh?
+        NOTE I don't observe this behaviour, cellentityid=0 is all tetrahedrons for me. 
+        I will comment this out - AH
         """
         case_name = outfile.stem
 
         # Quads only
-        mesh_quad = vmtk.assert_all_quads(self.mesh)
+        #mesh_quad = vmtk.assert_all_quads(self.mesh)
+        mesh_volume = self.mesh.cell_data['CellEntityIds'] == 0
+        mesh_quad = self.mesh.extract_cells(mesh_volume)
 
         # Get surf
-        surf_mask = self.mesh.cell_arrays['CellEntityIds'] == 1
+        surf_mask = self.mesh.cell_data['CellEntityIds'] == 1
         surf = self.mesh.extract_cells(surf_mask)
         surf_pt_ids = surf.point_arrays['vtkOriginalPointIds']
         surf = pv.PolyData(surf.points, surf.cells)
@@ -350,17 +357,18 @@ class Mesher(Surfer):
         wall_normals = surf.point_arrays['Normals']
         
         # Extract caps        
-        entity_ids = np.unique(self.mesh.cell_arrays['CellEntityIds'])
+        entity_ids = np.unique(self.mesh.cell_data['CellEntityIds'])
         valid_entity_ids = sorted(set(entity_ids) - set([0, 1]))
-        entity_masks = [self.mesh.cell_arrays['CellEntityIds'] == i for i in valid_entity_ids]
+        entity_masks = [self.mesh.cell_data['CellEntityIds'] == i for i in valid_entity_ids]
         caps = [self.mesh.extract_cells(em) for em in entity_masks]
 
         # Make sure points are duplicate
+        '''
         tree = KDTree(mesh_quad.points)
         inds = [tree.query(c.points, k=1)[1] == 0 for c in caps]
         dists = np.all([np.all(tree.query(c.points, k=1)[0] == 0) for c in caps])
         assert dists, 'Cap points are not in quad mesh'
-
+        '''
         # Get relevant cap quantities
         caps_coordinates = [c.points for c in caps]
         caps_pointIds = [c.point_arrays['vtkOriginalPointIds'] for c in caps]
@@ -444,9 +452,9 @@ class Mesher(Surfer):
         # # Or match GroupIds with inlet points, inlets points is matched with entity ids
 
         # # Extract caps   
-        # entity_ids = np.unique(self.mesh.cell_arrays['CellEntityIds'])
+        # entity_ids = np.unique(self.mesh.cell_data['CellEntityIds'])
         # valid_entity_ids = sorted(set(entity_ids) - set([0, 1]))
-        # entity_masks = [self.mesh.cell_arrays['CellEntityIds'] == i for i in valid_entity_ids]
+        # entity_masks = [self.mesh.cell_data['CellEntityIds'] == i for i in valid_entity_ids]
         # caps = [self.mesh.extract_cells(em) for em in entity_masks]
 
         info_data = {}
@@ -479,8 +487,12 @@ class Mesher(Surfer):
 
             elif entity_id in self.outlet_entity_ids:
                 # FIX! Need to match GroupIds with CellEntityIds
-                flow_division = self.outlet_flow_divisions[entity_id]
-                dataline.append("{:.12f}".format(flow_division))
+                if len(self.outlet_flow_divisions) != 0: #ie. if there is only one outlet
+                    flow_division = self.outlet_flow_divisions[entity_id]
+                    dataline.append("{:.12f}".format(flow_division))
+                else:
+                    flow_division = 1.00
+                    dataline.append("{:.12f}".format(flow_division))
 
             else:
                 print('Check inlets outlets')

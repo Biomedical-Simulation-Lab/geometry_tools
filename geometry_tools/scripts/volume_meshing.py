@@ -9,21 +9,21 @@ import sys
 import time
 from datetime import timedelta
 
-def volume_meshing(proj_dir):
-    proj_dir = Path(proj_dir)
-    clipped_dir = proj_dir / '02_processed' 
-    surf_file = sorted(clipped_dir.glob('*.vtp'))[0]
+def volume_meshing(proj_dir, surf_type):
+    
+    if surf_type == 'pt':
+        anubool=False
+    else:
+        anubool = True
+        
+    surf_file = sorted(proj_dir.glob('*_pr.vtp'))[0]
 
-    proj_dir = surf_file.parents[1]
-
-    points_dir = proj_dir / '02_points' 
-
-    point_file = points_dir / (surf_file.stem + '_endpoints.vtm') 
+    point_file = proj_dir / (surf_file.stem + '_endpoints.vtm') 
     assert point_file.exists()
 
-    mesh_out_dir = proj_dir / '03_mesh' 
-    data_out_dir = proj_dir / '03_data'  
-    submission_out_dir = proj_dir / '03_submissions' 
+    mesh_out_dir = proj_dir / 'mesh' 
+    data_out_dir = proj_dir / 'data'  
+    submission_out_dir = proj_dir / 'submissions' 
 
     for f in [mesh_out_dir, data_out_dir, submission_out_dir]:
         if not f.exists():
@@ -44,13 +44,17 @@ def volume_meshing(proj_dir):
         points = pv.read(point_file)
         in_points = points['inlets'].points
         out_points = points['outlets'].points
-        an_points = points['aneurysms'].points
+        if surf_type == 'a':
+            an_points = points['aneurysms'].points
+        else:
+            an_points = None
 
         m = Mesher(
             surf,
             inlet_points=in_points, 
             outlet_points=out_points,
             aneurysm_points=an_points,
+            include_aneurysms=anubool
             )
         m.update_inlets_outlets()
 
@@ -61,13 +65,13 @@ def volume_meshing(proj_dir):
             m.mesh = pv.read(vtufile)
 
         m.update_inlets_outlets()
-
-        m.generate_centerlines()
+        if surf_type == 'a':
+            m.generate_centerlines()
         m.generate_centerlines(include_aneurysms=False)
 
         m.generate_flow_rates()
         m.generate_h5_file(meshfile)
-        m.generate_flow_rates_legacy()
+        #m.generate_flow_rates_legacy() #why call again?
         m.update_inlets_outlets()
         m.generate_info_file(infofile,)  
         m.generate_xml_gz_file(xmlgzfile)
@@ -85,4 +89,5 @@ def volume_meshing(proj_dir):
 
 if __name__ == "__main__":
     proj_dir = Path(sys.argv[1]) 
-    volume_meshing(proj_dir=proj_dir)
+    surf_type = sys.argv[2]
+    volume_meshing(proj_dir=proj_dir, surf_type=surf_type)

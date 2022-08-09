@@ -21,7 +21,7 @@ def fix_vmtk_group_ids(surf):
     based on connectivity.
     """
     import pygeodesic.geodesic as geodesic
-
+    print(surf.point_arrays)
     g_ids = np.unique(surf.point_arrays['GroupIds'])
 
     # Break into pieces, find which have broken ids
