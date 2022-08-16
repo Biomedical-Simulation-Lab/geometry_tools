@@ -9,6 +9,7 @@ from geometry_tools import common as cc
 import time
 from datetime import timedelta
 import sys 
+import numpy as np
 
 def surface_prep(surf_file, proj_dir, surf_type):
     """ Basic surface prep.
@@ -28,7 +29,7 @@ def surface_prep(surf_file, proj_dir, surf_type):
             f.mkdir(parents=True)
     '''
     # Output files
-    surf_file_out = proj_dir / (surf_file.stem + '_cl.stl')
+    surf_file_out = proj_dir / (surf_file.stem + '_cl.vtp')
     if surf_type=='a':
         neck_file_out = proj_dir / (surf_file.stem + '_cl_neckpoints.vtm')
     #else:
@@ -51,24 +52,25 @@ def surface_prep(surf_file, proj_dir, surf_type):
         # s.interact(title='Isolate region to delete and fill.')
         # m.surf = s.mesh
         # m.surf = m.surf.fill_holes(10.0)
-
+ 
         # Uses m.clip_boundaries uses cc.ClickDragDelete to delete boundaries.
         flag_inspect = m.clip_boundaries()
 
         m.set_inlets_outlets()
         if surf_type=='a':
             m.pick_aneurysm()
-        m.copy_structure() #this makes the surface mesh (m.surf) into a pv.PolyData object
+            m.copy_structure() #this makes the surface mesh (m.surf) into a pv.PolyData object    
+        
         m.surf.save(surf_file_out) #can only save in vtk, ply, or stl format (not vtp)
-                
+           
         if surf_type=='a':
             # Select aneurysms
             s = cc.SelectGeodesic(m.surf)
             s.interact(title='Isolate aneurysms.')
             s.save_stored_points(neck_file_out)
             m.surf = s.mesh 
-            #probably need something here for torcula or weird geometry
-        
+            
+
         if surf_type=='a':
             anubool=True
         else:

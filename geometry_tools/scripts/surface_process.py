@@ -7,15 +7,16 @@ from pathlib import Path
 import pyvista as pv 
 from geometry_tools.meshing import Mesher
 from geometry_tools import common as cc
+import numpy as np
 
 import time
 from datetime import timedelta
 from tubeclipper import TubeClipper
 
-def surface_process(proj_dir, surf_type, endpoints_pv=None):
+def surface_process(proj_dir, surf_type, ref, fix_centerline, endpoints_pv=None):
     proj_dir = Path(proj_dir)
 
-    surf_file = sorted(proj_dir.glob('*.stl'))[0]
+    surf_file = sorted(proj_dir.glob('*.vtp'))[0]
 
     point_file = proj_dir / (surf_file.stem + '_endpoints.vtm')
     #print(point_file)
@@ -29,6 +30,7 @@ def surface_process(proj_dir, surf_type, endpoints_pv=None):
     surf_output_file = proj_dir / (surf_file.stem + '_pr.vtp')
     points_output_file = proj_dir / (surf_file.stem + '_pr_endpoints.vtm')
     endpoints_output_file = proj_dir / (surf_file.stem + '_pr_endpoints.vtp')
+    centerlines_output_file=proj_dir / (surf_file.stem + '_pr_centerlines.vtp')
 
     start = time.time()
     #print('\n' + surf_file.stem)
@@ -98,7 +100,27 @@ def surface_process(proj_dir, surf_type, endpoints_pv=None):
 
         if m.surf.n_points > 1000:
             m.decimate_surface(target_edge_length=0.5)
-        
+
+        #Get any refinement regions for the PT mesh
+        if (surf_type=='pt') and (ref == 'refine'):
+            s_pt = cc.RefinementSelection(m.surf, title='Clip Refinement Zone')
+            s_pt.select() #Selects the region of interest
+            s_pt.define_surface() #Adds data attribute to point array called 'RefinementPoints'            
+            m.surf.point_arrays['vtkOGIds'] = list(range(m.surf.n_points))
+            submesh = m.surf.extract_points(s_pt.surf.point_arrays['RefinementPoints']==1)
+            
+            #Check that the ids still match
+            #p=pv.Plotter()
+            #p.add_mesh(m.surf,color = 'blue', style='wireframe', show_edges=True)
+            #p.add_points(submesh, color='r')
+            #p.show()
+
+            submesh_ids = submesh.point_arrays['vtkOGIds'].copy()
+            submesh_array = np.zeros(m.surf.n_points, dtype=int)
+            submesh_array[submesh_ids] = 1
+            m.surf.point_arrays['RefinementPoints'] = submesh_array.astype(bool)
+            #print(m.surf.point_arrays)
+
         if surf_type=='a': 
             m.generate_centerlines()
         m.generate_centerlines(include_aneurysms=False)
@@ -112,10 +134,13 @@ def surface_process(proj_dir, surf_type, endpoints_pv=None):
         m.update_inlets_outlets()
         if surf_type=='a': 
             m.get_bifurcation_ref_systems_vectors()
-        m.surface_preparation(neck_points=neck_geodesic_points, min_edge_size=0.1, max_edge_size=0.4, sac_size=0.15, misr_min=0.1, misr_max=2.5)
+
+        #These need to be optional, based on the flowrate and the size of the vessel
+        #For Dan's aneurysm cases, he appears to have used the following, which is probably too fine for the PT cases:
+        # min_edge_size=0.1, max_edge_size=0.4, sac_size=0.15, misr_min=0.1, misr_max=2.5
+        #I am going to mess with the defaults here, but keep the aneurysm defaults on the actual function
+        m.surface_preparation(ref, fix_centerline, neck_points=neck_geodesic_points, min_edge_size=0.25, max_edge_size=1.0, sac_size=0.15, misr_min=1.3, misr_max=5)
         m.update_inlets_outlets()
-            
-            #going to need to alter surface_preparation to accomodate PT, but maybe already good?
 
         m.surf.save(surf_output_file)
 
@@ -148,6 +173,8 @@ def surface_process(proj_dir, surf_type, endpoints_pv=None):
             m.mark_near_vessel_regions(m.surf, n_spheres=n_spheres)
 
         # m.surf.plot(scalars='sac_zones')
+        
+        m.centerlines.save(centerlines_output_file)
         m.surf.save(surf_output_file)
         m.update_inlets_outlets()
         m.save_inlet_outlet_points(points_output_file, include_aneurysms=anubool)
@@ -165,14 +192,23 @@ if __name__ == "__main__":
 
     if len(sys.argv) == 3:
         endpoints_f = Path(sys.argv[2])
+        ref = 'no_ref' 
         if endpoints_f.exists():
             endpoints_pv = pv.read(endpoints_f) #have to be PolyData type (vtp) to work?
         else:
             endpoints_pv = None
-            surf_type=sys.argv[2]    
+            surf_type=sys.argv[2] 
     elif len(sys.argv) > 3:
         endpoints_f = Path(sys.argv[2])
-        endpoints_pv = pv.read(endpoints_f)
-        surf_type=sys.argv[3]
+        if endpoints_f.exists():
+            endpoints_pv = pv.read(endpoints_f) #have to be PolyData type (vtp) to work?
+            surf_type=sys.argv[3]
+            ref = sys.argv[4] #options are 'refine' or 'no_ref' 
+            fix_centerline = sys.argv[5] #options are 'regular' or 'dan'
+        else:
+            endpoints_pv = None
+            surf_type=sys.argv[2] 
+            ref = sys.argv[3] #options are 'refine' or 'no_ref' 
+            fix_centerline = sys.argv[4] #options are 'reg' or 'dan'
 
-    surface_process(proj_dir, surf_type, endpoints_pv)
+    surface_process(proj_dir, surf_type, ref, fix_centerline, endpoints_pv)

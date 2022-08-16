@@ -3,10 +3,15 @@ import numpy as np
 import pyvista as pv 
 from scipy.spatial import cKDTree as KDTree 
 from scipy.interpolate import interp1d
-
+import warnings
+        
 # from pathlib import Path 
 # import h5py 
 # import ast 
+
+def warning_on_one_line(message, category, filename, lineno, file=None, line=None):
+    return '%s:%s: %s: %s\n' % (filename, lineno, category.__name__, message)
+
 
 def fix_vmtk_group_ids(surf):
     """ Fix group IDs.
@@ -289,16 +294,21 @@ def get_neighbour_map(surf):#, n_points):
     return neighbour_pt_ids
 
 
-def create_edge_size_array(surf, min_edge_size=0.1, max_edge_size=0.4, sac_size=0.15, misr_min=0.1, misr_max=2.5, name='Size',):
+def create_edge_size_array(surf, fix_centerline, min_edge_size=0.1, max_edge_size=0.4, sac_size=0.15, misr_min=0.1, misr_max=2.5, name='Size', ref_edge_ratio=0.5):
     """ Create "Size" array incorporating distance to centerlines and curvature.
 
     This will likely be refined moving forward.
-
-    Based on DistanceToCenterlinesArray, interpolate between 2.5 mm rad as max, 0.5 mm rad min
+    Optional:
+        Based on DistanceToCenterlinesArray, interpolate between 2.5 mm rad as max, 0.5 mm rad min
+        OR
+        Based on Dan's method (fix_centerline='dan'): map the vertices to the centerline points, then use a proportion of 
+        the MISR as the edge length at that point.
     Based on Curvature, interpolate between 0.3 as min, 0.8 as max
     Based on Mask, set to min value where Mask == 1.
     Then take min of each.
 
+    Refinement regions incorporated:
+    Assume everywhere within the refinement region will be assigned an edge length that is 0.5x what it would be with regular remeshing
     """
     distance_interp = interp1d([misr_min, misr_max], [min_edge_size, max_edge_size], 
         kind='linear',
@@ -328,7 +338,12 @@ def create_edge_size_array(surf, min_edge_size=0.1, max_edge_size=0.4, sac_size=
     surf.point_arrays['SizeDistanceToCenterlinesArray'] = distance_interp(surf.point_arrays['DistanceToCenterlinesArray']) #np.ones(surf.n_points) 
     surf.point_arrays['SizeCurvature'] = curv_interp(surf.point_arrays['Curvature']) #np.ones(surf.n_points)
 
-    surf.point_arrays[name] = np.minimum(surf.point_arrays['SizeDistanceToCenterlinesArray'], surf.point_arrays['SizeCurvature'])
+    #Dan's method:
+    if fix_centerline == 'dan':
+        surf.point_arrays['SizeMISR'] = distance_interp(surf.point_arrays['misr'])
+        surf.point_arrays[name] = surf.point_arrays['SizeMISR']
+    else:
+        surf.point_arrays[name] = np.minimum(surf.point_arrays['SizeDistanceToCenterlinesArray'], surf.point_arrays['SizeCurvature'])
     surf, n_ids = smooth_mesh_data_local(surf, name, np.mean, iterations=1)
 
     if 'Mask' in surf.point_arrays:
@@ -341,13 +356,53 @@ def create_edge_size_array(surf, min_edge_size=0.1, max_edge_size=0.4, sac_size=
         current_size_array = surf.point_arrays[name][sac_mask]
 
         surf.point_arrays[name][sac_mask] = np.minimum(sac_size, current_size_array)
+    elif 'RefinementPoints' in surf.point_arrays:
+        ref_reg = surf.point_arrays['RefinementPoints'] == 1
+        current_size_array = surf.point_arrays[name][ref_reg]
 
+        surf.point_arrays[name][ref_reg] = current_size_array*ref_edge_ratio
     else:
-        print('No mask in create_edge_size_array.')
+        print('No mask or refinement region defined in create_edge_size_array.')
 
     surf, n_ids = smooth_mesh_data_local(surf, name, np.mean, iterations=2)
 
     return surf
+
+
+class RefinementSelection():
+    """ Interactively create a refinement region by clipping away 
+    parts of a surface mesh that are not required to be refined, then storing a boolean at 
+    the selected surface points on the original mesh. 
+    
+    Later, these booleans will be used to assign a target edge length that will 
+    remesh the surface, and ultimately the volumetric mesh.
+    """ 
+    def __init__(self, surf, title='Clip Refinement Zone'):
+        self.surf = surf.fill_holes(100)
+        self.title = title
+        
+    def select(self):
+        #Define the surface we want to refine by clipping the surface
+        warnings.formatwarning = warning_on_one_line
+        warnings.warn("Holes from clipping must be fillable. May result in inability to close surface!")
+        new_surf = ClickDragDelete(self.surf, title=self.title)
+        temprefsurf=new_surf.mesh.triangulate()
+        if type(temprefsurf) != pv.core.pointset.PolyData:
+                temprefsurf = pv.PolyData(temprefsurf.points, temprefsurf.cells)
+        self.temprefsurf=temprefsurf.fill_holes(100)
+        self.temprefsurf = self.temprefsurf.connectivity(largest=True)
+
+    def define_surface(self):
+        self.refsurf=self.surf.select_enclosed_points(self.temprefsurf, tolerance=0.1)
+        self.pts = self.surf.extract_points(self.refsurf['SelectedPoints'].view(bool),
+                           adjacent_cells=False)
+        
+        p = pv.Plotter()
+        p.add_text('Red points are the selected refinement region', position='upper_left')
+        p.add_mesh(self.surf,color = 'blue', style='wireframe', show_edges=True)
+        p.add_points(self.pts, color='r')
+        p.show()
+        self.surf.point_arrays['RefinementPoints']=self.refsurf.point_arrays['SelectedPoints']
 
 
 class SacSelectTool():

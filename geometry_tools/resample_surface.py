@@ -67,8 +67,8 @@ def combine_surfaces_as_image(surf, roi, spacing=0.05, bounds=None):
         bounds_idx.append(ii)
 
     # Replace
-    img = grid.point_arrays['ImageScalars'].reshape(grid.dimensions, order='F').copy()
-    img_roi = grid_roi.point_arrays['ImageScalars'].reshape(grid_roi.dimensions, order='F')
+    img = grid.point_data['ImageScalars'].reshape(grid.dimensions, order='F').copy()
+    img_roi = grid_roi.point_data['ImageScalars'].reshape(grid_roi.dimensions, order='F')
 
     for ii in bounds_idx:
         img[ii[0]:ii[1], ii[2]:ii[3], ii[4]:ii[5]] = img_roi[ii[0]:ii[1], ii[2]:ii[3], ii[4]:ii[5]]
