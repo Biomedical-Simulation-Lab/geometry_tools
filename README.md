@@ -45,9 +45,9 @@ For an example of using this for meshing, see the `meshing_example.sh` file in `
 `conda clean -a`
 
 2) create conda environment for vmtk=1.5.0 (NOTE: IT IS VERY IMPORTANT THAT THE PACKAGES ARE INSTALLED IN THE ORDER 1) ITK, 2) VTK, 3) VMTK otherwise the viewers might not work!!)
-`conda create -n vmtk15 -c conda-forge python=3.7 itk vtk` 
-`conda install -c conda-forge vmtk` 
+`conda create -n vmtk15 -c conda-forge python=3.7 itk vtk`  
 `conda activate vmtk15`
+`conda install -c conda-forge vmtk`
 
 3) install some packages
 `conda install -c conda-forge scipy ipython pyvista networkx matplotlib`
