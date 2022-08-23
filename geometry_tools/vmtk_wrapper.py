@@ -697,6 +697,8 @@ def extract_group_adjacency(centerlines):
     Note: centerlines must not be branched, must 
     have 1 cell per endpoint (the default format for 
     fresh centerlines).
+
+    NOTE: This does not currently work if you have two or more inlets!!
     """
     centerlines_og = centerlines.copy()
     centerlines = centerline_branches_ids(centerlines)
@@ -717,8 +719,10 @@ def extract_group_adjacency(centerlines):
 
     mask = np.invert(centerlines_og.point_arrays['Blanking'].astype(bool))
     valid_ids = np.unique(centerlines_og.point_arrays['GroupIds'][mask])
+    #print(valid_ids)
 
     # Split by endpoint
+    # This is the part that does not work with two or more inlets...
     centerlines_split = centerlines_og.split_bodies()
 
     # Get adj list
@@ -726,17 +730,21 @@ def extract_group_adjacency(centerlines):
     G = nx.DiGraph()
     for cline in centerlines_split:
         # groups = np.unique([x for x in cline.point_arrays['GroupIds'] if x in valid_ids])
+        #return an array of group associations for the portion ot the centerline that are only valid groupids
         a = np.array([x for x in cline.point_arrays['GroupIds'] if x in valid_ids])
+        #returns the ids where the first instance of a unique value for valid groupids is found
         _, idx = np.unique(a, return_index=True)
-        groups = a[np.sort(idx)]
 
+        groups = a[np.sort(idx)]
+        #print(groups)
+        #establishes adjacency to other groups by pairs
         pairs = [(groups[i-1], groups[i]) for i in range(1, len(groups))]
         for p in pairs:
             edges.append(p)
             G.add_edge(str(p[0]), str(p[1]))
     
     edges = sorted(set(edges))
-
+    #print(G.nodes)
     return edges, G
 
 def write_mesh(mesh, outfile):

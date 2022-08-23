@@ -377,6 +377,20 @@ class Surfer():
 
         return self
 
+    def branch_centerlines_pt(self, project_back=True):
+        print("\nBranching centerlines...")
+        self.centerlines_branched = vmtk.centerline_branches_ids(self.centerlines)
+
+        if project_back:
+            self.centerlines_split = self._project_centerline_attrs(
+                self.centerlines, self.centerlines_branched)
+        
+        self.surf, self.neighbour_pt_ids = vmtk.surface_centerline_projection_MISR(
+            self.surf, self.centerlines_branched, sm_iterations=1)
+        
+        #print(self.surf.point_arrays)
+        return self
+
     def update_aneurysm_group_ids(self):    
         tree = KDTree(self.surf.points)
         nearest_temp_idx = tree.query(self.aneurysm_points, k=1)[1]
@@ -414,8 +428,8 @@ class Surfer():
             cb = cc.ClickDragDelete(self.surf, title='Clip boundaries')
             surf = cb.mesh 
             surf = surf.triangulate()
-            print(surf.point_arrays)
-            
+            #print(surf.point_arrays)
+
             if type(surf) != pv.core.pointset.PolyData:
                 surf = pv.PolyData(surf.points, surf.cells)
 
@@ -494,16 +508,23 @@ class Surfer():
         if self.include_aneurysms==True:
             if hasattr(self, 'centerlines'):
                 self.edges, self.G = vmtk.extract_group_adjacency(self.centerlines_aneurysm)
-        if hasattr(self, 'centerlines'):
-            _, self.G_no_aneurysm = vmtk.extract_group_adjacency(self.centerlines)
+            if hasattr(self, 'centerlines'):
+                _, self.G_no_aneurysm = vmtk.extract_group_adjacency(self.centerlines)
+        else:
+            if hasattr(self, 'centerlines'):
+                self.edges, self.G = vmtk.extract_group_adjacency(self.centerlines)
 
     def get_bifurcation_ref_systems_vectors(self):
         # self.ref = vmtk.bifurcation_ref_systems(self.centerlines_branched)
         # self.bif_vec = vmtk.get_bifurcation_vectors(self.centerlines_branched, self.ref)
 
         # if hasattr(self, 'centerlines_aneurysm_branched'):
-        self.ref_aneurysm = vmtk.bifurcation_ref_systems(self.centerlines_aneurysm_branched)
-        self.bif_vec_aneurysm = vmtk.get_bifurcation_vectors(self.centerlines_aneurysm_branched, self.ref_aneurysm)
+        if self.include_aneurysms==True:
+            self.ref_aneurysm = vmtk.bifurcation_ref_systems(self.centerlines_aneurysm_branched)
+            self.bif_vec_aneurysm = vmtk.get_bifurcation_vectors(self.centerlines_aneurysm_branched, self.ref_aneurysm)
+        else: #May need this for inclusions
+            self.ref = vmtk.bifurcation_ref_systems(self.centerlines_branched)
+            self.bif_vec = vmtk.get_bifurcation_vectors(self.centerlines_branched, self.ref)
 
         # for b in self.bif_vec_aneurysm:
 
@@ -520,9 +541,9 @@ class Surfer():
         valid_ids = np.unique(centerlines_split.point_arrays['GroupIds'][mask])
         print('valid:', len(valid_ids), valid_ids)
         valid_ids = [x for x in valid_ids if str(x) in self.G.nodes]
-        print('valid2:', len(valid_ids), valid_ids)
+        #print('valid2:', len(valid_ids), valid_ids)
         blanking_ids = np.unique(centerlines_split.point_arrays['GroupIds'][~mask])
-
+        print("blankingids: ", len(blanking_ids), blanking_ids)
         # Split each centerline into segments based on groupIds
         segments = {key : [] for key in valid_ids}
         centerlines_multi = centerlines_split.split_bodies()
@@ -620,6 +641,7 @@ class Surfer():
 
         self.mean_segments = dict(zip(keys, items))
         self.mean_segments = pv.MultiBlock(self.mean_segments)
+        print(self.mean_segments)
 
     def get_branch_endpoints(self):
         """ Get endpoints by splitting up the surface.
@@ -627,9 +649,11 @@ class Surfer():
         self.clipping_points = {}
 
         groups = np.unique(self.surf.point_arrays['GroupIds'])
+        #print(groups)
         masks = [self.surf.point_arrays['GroupIds'] == int(g) for g in groups]
 
-        keys = [str(g) for g in groups]
+        keys = [int(g) for g in groups]
+        #print(keys)
         parts = [self.surf.extract_points(m) for m in masks]
         parts = [p.extract_largest() for p in parts]
         parts = [p.triangulate() for p in parts]

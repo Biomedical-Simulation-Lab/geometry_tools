@@ -9,7 +9,7 @@ import sys
 import time
 from datetime import timedelta
 
-def volume_meshing(proj_dir, surf_type):
+def volume_meshing(proj_dir, surf_type, multi_inlets):
     
     if surf_type == 'pt':
         anubool=False
@@ -68,12 +68,13 @@ def volume_meshing(proj_dir, surf_type):
         if surf_type == 'a':
             m.generate_centerlines()
         m.generate_centerlines(include_aneurysms=False)
-
-        m.generate_flow_rates()
+        #WARNING: does not work with multiple inlets
+        if multi_inlets == 'single':
+            m.generate_flow_rates()
         m.generate_h5_file(meshfile)
-        #m.generate_flow_rates_legacy() #why call again?
+        #m.generate_flow_rates_legacy() #why call?
         m.update_inlets_outlets()
-        m.generate_info_file(infofile,)  
+        m.generate_info_file(infofile, multi_inlets, inlet_vel=0.27, waveform='FC_MCA_10')  
         m.generate_xml_gz_file(xmlgzfile)
 
         # Create submission file
@@ -90,4 +91,8 @@ def volume_meshing(proj_dir, surf_type):
 if __name__ == "__main__":
     proj_dir = Path(sys.argv[1]) 
     surf_type = sys.argv[2]
-    volume_meshing(proj_dir=proj_dir, surf_type=surf_type)
+    if len(sys.argv) > 3:
+        multi_inlets = sys.argv[3]
+    else:
+        multi_inlets = 'single'
+    volume_meshing(proj_dir=proj_dir, surf_type=surf_type, multi_inlets=multi_inlets)

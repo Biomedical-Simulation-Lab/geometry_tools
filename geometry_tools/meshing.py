@@ -132,21 +132,20 @@ class Mesher(Surfer):
         surf = surf.clean()
 
         # Use centerlines without aneurysm
-        centerlines = self.centerlines
+        centerlines1 = self.centerlines
 
-        surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
+        surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines1)
         surf = surf.clean()
-        #Dan's solution to the off-centre centrelines. This might be a dog...
+        #AH's implementation of Dan's solution to the off-centre centrelines. There is no use for this atm
         if fix_centerline == 'dan':
             surf.point_arrays['centerline_map']=np.array(surf.n_points)
             surf.point_arrays['misr']=np.array(surf.n_points)
-            tree = KDTree(centerlines.points)
-            for idx, pt in enumerate(surf.points):
-                idx_c = tree.query(surf.points[idx])
-                #this assigns the closest centerline point id to each point on the surf
-                surf.point_arrays['centerline_map'][idx]=idx_c[1] 
-                #this assigns the misr associated with the centerline to each point
-                surf.point_arrays['misr'][idx]=centerlines.point_arrays['MaximumInscribedSphereRadius'][idx_c[1]] 
+            tree = KDTree(centerlines1.points)
+            pt, idx_c = tree.query(surf.points)
+            #this assigns the closest centerline point id to each point on the surf
+            surf.point_arrays['centerline_map']=idx_c 
+            #this assigns the misr associated with the centerline to each point
+            surf.point_arrays['misr']=centerlines1.point_arrays['MaximumInscribedSphereRadius'][idx_c] 
 
         # surf = cc.create_edge_size_array(surf, max_size=max_size, min_size=min_size, sac_size=sac_size, misr_min=misr_min, misr_max=misr_max)
         surf = cc.create_edge_size_array(surf, fix_centerline, min_edge_size=min_edge_size, max_edge_size=max_edge_size, sac_size=sac_size, 
@@ -169,7 +168,7 @@ class Mesher(Surfer):
         self.surf = surf
         self.update_inlets_outlets()
         self.generate_centerlines(include_aneurysms=False)
-        centerlines = self.centerlines
+        centerlines1 = self.centerlines
 
         if neck_points is not None:
             s = cc.SelectGeodesic(surf, scalars='Mask')
@@ -179,18 +178,18 @@ class Mesher(Surfer):
         else:
             surf = surf.interpolate(surf_og, n_points=1, pass_point_data=True) #radius=0.5, strategy='null_value', null_value=0)
         #print(surf.point_arrays)
-        surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
+        surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines1)
         surf = surf.clean()
         if fix_centerline == 'dan':
             surf.point_arrays['centerline_map']=np.array(surf.n_points)
             surf.point_arrays['misr']=np.array(surf.n_points)
-            tree = KDTree(centerlines.points)
+            tree = KDTree(centerlines1.points)
             for idx, pt in enumerate(surf.points):
                 idx_c = tree.query(surf.points[idx])
                 #this assigns the closest centerline point id to each point on the surf
                 surf.point_arrays['centerline_map'][idx]=idx_c[1] 
                 #this assigns the misr associated with the centerline to each point
-                surf.point_arrays['misr'][idx]=centerlines.point_arrays['MaximumInscribedSphereRadius'][idx_c[1]] 
+                surf.point_arrays['misr'][idx]=centerlines1.point_arrays['MaximumInscribedSphereRadius'][idx_c[1]] 
 
         surf = cc.create_edge_size_array(surf, fix_centerline, min_edge_size=min_edge_size, max_edge_size=max_edge_size, sac_size=sac_size, 
             misr_min=misr_min, misr_max=misr_max, name='Size', ref_edge_ratio=0.5)
@@ -299,12 +298,15 @@ class Mesher(Surfer):
 
         Gives equivalent values as legacy call, just rewritten.
         The centerlines should be passed before calling centerline branch ids.
-
+        NOTE: does not work for multiple inlets!!
         """ 
         self.get_group_adjacency()
-
-        nodes = [x for x in self.G_no_aneurysm.nodes] 
-        print(nodes)
+        if self.include_aneurysms==True:
+            nodes = [x for x in self.G_no_aneurysm.nodes] 
+            print(nodes)
+        else:
+            nodes = [x for x in self.G.nodes] 
+            print(nodes)
 
         centerlines_branched = vmtk.centerline_branches_ids(self.centerlines)
         self.centerlines_branched = centerlines_branched
@@ -471,7 +473,7 @@ class Mesher(Surfer):
 
         f.close()
 
-    def generate_info_file(self, outfile, inlet_vel=0.27, waveform='FC_MCA_10'):
+    def generate_info_file(self, outfile,multi_inlets, inlet_vel=0.27, waveform='FC_MCA_10'):
         """ Generate lab-specific info file.
 
         Formats a bunch of values into strings, including 
@@ -479,7 +481,11 @@ class Mesher(Surfer):
         """
         # # Get branch center, normal, rad, area
         center_points = vmtk.branch_center_normal_rad_area(self.mesh)
-     
+        if multi_inlets !='single':
+            inlet_area = 0
+            for cdx, entity_id in enumerate(self.caps):
+                if entity_id in self.inlet_entity_ids:
+                    inlet_area += center_points[entity_id].point_arrays['Area'][0]
         # # Match GroupIds from self.centerlines_branched to CellEntityIds
         # # Or match GroupIds with inlet points, inlets points is matched with entity ids
 
@@ -517,7 +523,7 @@ class Mesher(Surfer):
                 dataline[1] = waveform
                 dataline.append("{:.12f}".format(inflowrate))
 
-            elif entity_id in self.outlet_entity_ids:
+            elif (entity_id in self.outlet_entity_ids) and multi_inlets=='single':
                 # FIX! Need to match GroupIds with CellEntityIds
                 if len(self.outlet_flow_divisions) != 0: #ie. if there is only one outlet
                     flow_division = self.outlet_flow_divisions[entity_id]
@@ -525,7 +531,10 @@ class Mesher(Surfer):
                 else:
                     flow_division = 1.00
                     dataline.append("{:.12f}".format(flow_division))
-
+            elif (entity_id in self.outlet_entity_ids) and multi_inlets!='single':
+                #WARNING: Not the greatest!
+                flow_division = (area_/inlet_area)**(3/2)
+                dataline.append("{:.12f}".format(flow_division))
             else:
                 print('Check inlets outlets')
 

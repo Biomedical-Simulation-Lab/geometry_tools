@@ -29,7 +29,7 @@ def surface_process(proj_dir, surf_type, ref, fix_centerline, endpoints_pv=None)
 
     surf_output_file = proj_dir / (surf_file.stem + '_pr.vtp')
     points_output_file = proj_dir / (surf_file.stem + '_pr_endpoints.vtm')
-    endpoints_output_file = proj_dir / (surf_file.stem + '_pr_endpoints.vtp')
+    #endpoints_output_file = proj_dir / (surf_file.stem + '_pr_endpoints.vtp')
     centerlines_output_file=proj_dir / (surf_file.stem + '_pr_centerlines.vtp')
 
     start = time.time()
@@ -126,14 +126,15 @@ def surface_process(proj_dir, surf_type, ref, fix_centerline, endpoints_pv=None)
         m.generate_centerlines(include_aneurysms=False)
         if surf_type=='a': 
             m.branch_centerlines()
+        else:
+            m.branch_centerlines_pt()
 
         # outlet_clip = m.clip_endpoints_with_spheres()
         endpoints_pv = m.clip_endpoints_with_tubeclipper(endpoints_pv=endpoints_pv, include_aneurysms=anubool) #includes aneurysms by default
-        endpoints_pv.save(endpoints_output_file)
+        #endpoints_pv.save(endpoints_output_file)
 
         m.update_inlets_outlets()
-        if surf_type=='a': 
-            m.get_bifurcation_ref_systems_vectors()
+        m.get_bifurcation_ref_systems_vectors()
 
         #These need to be optional, based on the flowrate and the size of the vessel
         #For Dan's aneurysm cases, he appears to have used the following, which is probably too fine for the PT cases:
@@ -141,8 +142,6 @@ def surface_process(proj_dir, surf_type, ref, fix_centerline, endpoints_pv=None)
         #I am going to mess with the defaults here, but keep the aneurysm defaults on the actual function
         m.surface_preparation(ref, fix_centerline, neck_points=neck_geodesic_points, min_edge_size=0.25, max_edge_size=1.0, sac_size=0.15, misr_min=1.3, misr_max=5)
         m.update_inlets_outlets()
-
-        m.surf.save(surf_output_file)
 
         # # This stuff is for getting plc points and 
         # # parent regions for SCI
@@ -159,24 +158,29 @@ def surface_process(proj_dir, surf_type, ref, fix_centerline, endpoints_pv=None)
         # m.surf.save(surf_output_file)
 
         m.generate_centerlines(include_aneurysms=anubool)
+
         if surf_type=='a': 
             m.generate_centerlines(include_aneurysms=False)
             m.branch_centerlines()
-            m.update_inlets_outlets()
+        else:
+            m.branch_centerlines_pt()
+        m.update_inlets_outlets()
+
+        if surf_type=='a':                            
             m.get_bifurcation_ref_systems_vectors()
             m.update_inlets_outlets()
             m.get_mean_segments()
-            m.update_aneurysm_group_ids()
+            m.update_aneurysm_group_ids()        
             m.get_branch_endpoints()
             n_spheres=4
             m.mark_distance_from_sacs(n_spheres)
             m.mark_near_vessel_regions(m.surf, n_spheres=n_spheres)
+            m.update_inlets_outlets()
 
         # m.surf.plot(scalars='sac_zones')
         
         m.centerlines.save(centerlines_output_file)
         m.surf.save(surf_output_file)
-        m.update_inlets_outlets()
         m.save_inlet_outlet_points(points_output_file, include_aneurysms=anubool)
 
 
