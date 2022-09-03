@@ -8,6 +8,7 @@ from geometry_tools.make_submission_file import SubmissionTemplate
 import sys
 import time
 from datetime import timedelta
+import numpy as np
 
 def volume_meshing(proj_dir, surf_type, multi_inlets):
     
@@ -32,6 +33,7 @@ def volume_meshing(proj_dir, surf_type, multi_inlets):
     vtufile = mesh_out_dir / (surf_file.stem + '.vtu')
     meshfile = data_out_dir / (surf_file.stem + '.h5')
     infofile = data_out_dir / (surf_file.stem + '.info')
+    fcoeffsfile = data_out_dir / ('FC_VENOUS')
     xmlgzfile = data_out_dir / (surf_file.stem + '.xml.gz')
 
     start = time.time()
@@ -63,22 +65,31 @@ def volume_meshing(proj_dir, surf_type, multi_inlets):
             m.mesh.save(vtufile)
         else:
             m.mesh = pv.read(vtufile)
-
+        
         m.update_inlets_outlets()
         if surf_type == 'a':
             m.generate_centerlines()
-        m.generate_centerlines(include_aneurysms=False)
+            m.generate_centerlines(include_aneurysms=False)
+
+        if multi_inlets == 'multi':
+            m.generate_centerlines_multi(proj_dir)
+        else:
+            m.generate_centerlines(include_aneurysms=False)
         #WARNING: does not work with multiple inlets
         if multi_inlets == 'single':
             m.generate_flow_rates()
         m.generate_h5_file(meshfile)
         #m.generate_flow_rates_legacy() #why call?
         m.update_inlets_outlets()
-        m.generate_info_file(infofile, multi_inlets, inlet_vel=0.27, waveform='FC_MCA_10')  
+        #NOTE: INLET FLOWRATES ARE SUBJECT TO CHANGE AND NEED TO BE INSPECTED BEFORE RUN!!
+        m.generate_info_file(infofile, fcoeffsfile, multi_inlets, inlet_vel=False, inlet_flowrates=[5.578888889,	2.034444444, 0.63534717171], waveform='FC_VENOUS')  
         m.generate_xml_gz_file(xmlgzfile)
 
         # Create submission file
-        s = SubmissionTemplate(meshfile.stem)
+        if surf_type == 'pt':
+            min_EL = np.min(surf.point_arrays['SizeDistanceToCenterlinesArray'][np.nonzero(surf.point_arrays['SizeDistanceToCenterlinesArray'])])
+            tstep_per_cycle = int(951/(min_EL/2)) #assuming 2 mm/ms is the max velocity
+        s = SubmissionTemplate(meshfile.stem, timesteps_per_cycle=tstep_per_cycle)
         s.save_script(submission_out_dir)
 
         print('\n Case done', timedelta(seconds=time.time() - start))

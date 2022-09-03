@@ -305,7 +305,59 @@ class Surfer():
             self.centerlines = vmtk.centerline_geometry(self.centerlines)
         
         return self 
+
+    def generate_centerlines_multi(self, proj_dir, seed_selector='idlist'):
+        """ Generate centerlines using VMTK.
+
+        Consider moving this into vmtk_wrapper, the nearest ids works well.
+        """
+        print("Generating multiple centerlines")
+        surf_capped = pv.PolyData()
+        surf_capped.copy_structure(vmtk.surface_capper(self.surf))
+        tree = KDTree(surf_capped.points)
+        inlet_ids = [tree.query(i, k=1)[1] for i in self.inlet_points]
+        outlet_ids = [tree.query(o, k=1)[1] for o in self.outlet_points]
+    
+        self.inlet_ids = inlet_ids 
+        self.outlet_ids = outlet_ids
+        target_ids = self.outlet_ids 
         
+        centerlines_unmerged_blocks = pv.MultiBlock()
+
+        for idx,i_id in enumerate(inlet_ids):
+            
+            if idx<1:
+                centerlines_unmerged = vmtk.centerlines(
+                    surf_capped, 
+                    seed_selector=seed_selector, 
+                    src_ids=[i_id],
+                    target_ids=target_ids,
+                    )
+                centerlines_unmerged.save(proj_dir/('centerline{}.vtp'.format(idx)))
+                centerlines_unmerged_blocks.append(centerlines_unmerged)
+            else:
+                centerlines_unmerged = vmtk.centerlines(
+                    surf_capped, 
+                    seed_selector=seed_selector, 
+                    src_ids=[i_id],
+                    #NOTE: this might create better centerlines if you try switching this to
+                    #different outlet targets. Try a few and look at the output first.
+                    target_ids=[target_ids[0]],
+                    )
+                centerlines_unmerged.save(proj_dir/('centerline{}.vtp'.format(idx)))
+                centerlines_unmerged_blocks.append(vmtk.surface_append(centerlines_unmerged_blocks[idx-1],centerlines_unmerged))
+                centerlines_appended = centerlines_unmerged_blocks[idx]
+                centerlines_appended.save(proj_dir/('appended_cl.vtp'))
+
+        centerlines_branched = vmtk.centerline_branches_ids(centerlines_appended)
+        centerlines_merged = vmtk.merge_centerlines(centerlines_branched)
+        centerlines_total = vmtk.centerlines_smooth(centerlines_merged, iterations=100, sm_factor=0.1)
+
+        self.centerlines = centerlines_total
+        centerlines_total.save(proj_dir/('merged_centerlines.vtp'))
+        self.centerlines = vmtk.centerline_geometry(self.centerlines)
+        
+        return self         
     # def _project_centerline_attrs(self, centerlines, centerlines_branched):
     #         centerlines_og = centerlines.copy()
     #         centerlines_branched = centerlines_branched.copy()

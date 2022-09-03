@@ -10,6 +10,7 @@ optional arguments.
 """
 
 #from networkx.algorithms.centrality import group
+from email.utils import collapse_rfc2231_value
 from networkx.algorithms.distance_measures import center
 from numpy import testing
 from vmtk import vmtkscripts
@@ -68,6 +69,24 @@ def centerlines(surf, seed_selector='pickpoint', resampling=1,
     centerline_filt.Execute()
     centerlines = centerline_filt.Centerlines
     return pv.wrap(centerlines)
+
+def merge_centerlines(centerlines):
+    merged = vmtkscripts.vmtkCenterlineMerge()
+    merged.Centerlines = centerlines
+    merged.RadiusArrayName = 'MaximumInscribedSphereRadius'
+    merged.GroupIdsArrayName = 'GroupIds'
+    merged.CenterlineIdsArrayName = 'CenterlineIds'
+    merged.BlankingArrayName = 'Blanking'
+    merged.TractIdsArrayName = 'TractIds'
+    merged.Execute()
+    return pv.wrap(merged.Centerlines)
+
+def surface_append(cl1, cl2):
+    append_cl=vmtkscripts.vmtkSurfaceAppend()
+    append_cl.Surface = cl1
+    append_cl.Surface2 = cl2
+    append_cl.Execute()
+    return pv.wrap(append_cl.Surface)
 
 def centerlines_smooth(centerlines, iterations, sm_factor):
     alg = vmtkscripts.vmtkCenterlineSmoothing()
@@ -330,6 +349,7 @@ def volume_meshing(surf):
 
     meshgen = vmtkscripts.vmtkMeshGenerator()
     meshgen.Surface = surf
+    #meshgen.SkipRemeshing = 1
     meshgen.ElementSizeMode = "edgelengtharray"
     meshgen.TargetEdgeLengthArrayName = "Size"
     meshgen.BoundaryLayer = 1

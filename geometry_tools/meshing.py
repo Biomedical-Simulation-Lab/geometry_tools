@@ -105,7 +105,7 @@ class Mesher(Surfer):
             self.inlet_group_ids = [group_ids[x] for x in inlet_temp_ids]
             self.outlet_group_ids = [group_ids[x] for x in outlet_temp_ids]
             
-    def surface_preparation(self, ref, fix_centerline, neck_points=None, min_edge_size=0.1, max_edge_size=0.4, sac_size=0.15, misr_min=0.1, misr_max=2.5):
+    def surface_preparation(self, proj_dir, multi_inlets, ref, fix_centerline, neck_points=None, min_edge_size=0.1, max_edge_size=0.4, sac_size=0.15, misr_min=0.1, misr_max=2.5):
         """ Refine surface, add flow extensions. 
 
         Remeshes surface, clips endpoints normal to centerlines,
@@ -136,6 +136,7 @@ class Mesher(Surfer):
 
         surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines1)
         surf = surf.clean()
+
         #AH's implementation of Dan's solution to the off-centre centrelines. There is no use for this atm
         if fix_centerline == 'dan':
             surf.point_arrays['centerline_map']=np.array(surf.n_points)
@@ -152,7 +153,7 @@ class Mesher(Surfer):
             misr_min=misr_min, misr_max=misr_max, name='Size', ref_edge_ratio=0.5)
         surf = vmtk.surface_remeshing(surf, element_size_mode='edgelengtharray', edgearray='Size')
         #print(surf.point_arrays)
-
+        
         # DM 22 02 22
         # NOTE
         # Smoothing here is a BAD idea because you get "ringing" artifacts at the boundaries. 
@@ -167,7 +168,10 @@ class Mesher(Surfer):
 
         self.surf = surf
         self.update_inlets_outlets()
-        self.generate_centerlines(include_aneurysms=False)
+        if multi_inlets == 'multi':
+            self.generate_centerlines_multi(proj_dir)
+        else:
+            self.generate_centerlines(include_aneurysms=False)
         centerlines1 = self.centerlines
 
         if neck_points is not None:
@@ -202,7 +206,7 @@ class Mesher(Surfer):
 
         surf_rm = surf_rm.clean()
         surf_rm = surf_rm.triangulate()
-
+        
         # surf_rm = surf_rm.interpolate(surf_og, radius=0.5)
         # surf_rm = surf_rm.interpolate(surf, radius=0.5)
 
@@ -219,7 +223,6 @@ class Mesher(Surfer):
         # print(surf.point_arrays)
         # print('*'*50)
         # print(surf_og.point_arrays)
-
         self.surf = surf_rm 
         self.centerlines = centerlines
 
@@ -473,19 +476,28 @@ class Mesher(Surfer):
 
         f.close()
 
-    def generate_info_file(self, outfile,multi_inlets, inlet_vel=0.27, waveform='FC_MCA_10'):
+    def generate_info_file(self, outfile, fcoeffsfile, multi_inlets, inlet_vel, inlet_flowrates, waveform='FC_MCA_10'):
         """ Generate lab-specific info file.
 
         Formats a bunch of values into strings, including 
         area, radius, flow divisions, etc of inlet/outlet
+
+        Outflow divisions for PT are based on a Di^2/sum(Di^2) approximation
         """
+
+        #Print FC_VENOUS file
+        if waveform == 'FC_VENOUS':
+            fcoeffsfile = open(fcoeffsfile, "w")
+            fcoeffsfile.write("# Qavg_mls= 6.7 period_ms= 915\n")
+            fcoeffsfile.write('1 0\n-0.146846 0.079431\n-0.129927 0.015974')
+            fcoeffsfile.close()
         # # Get branch center, normal, rad, area
         center_points = vmtk.branch_center_normal_rad_area(self.mesh)
         if multi_inlets !='single':
-            inlet_area = 0
+            outlet_area = 0
             for cdx, entity_id in enumerate(self.caps):
-                if entity_id in self.inlet_entity_ids:
-                    inlet_area += center_points[entity_id].point_arrays['Area'][0]
+                if entity_id in self.outlet_entity_ids:
+                    outlet_area += center_points[entity_id].point_arrays['Area'][0]
         # # Match GroupIds from self.centerlines_branched to CellEntityIds
         # # Or match GroupIds with inlet points, inlets points is matched with entity ids
 
@@ -499,7 +511,7 @@ class Mesher(Surfer):
 
         # entity_id_group_id_matcher = dict(zip(self.outlet_entity_ids, self.outlet_group_ids))
         # entity_id_group_id_matcher = dict(zip(self.outlet_group_ids, self.outlet_entity_ids))
-
+        inlet_FR_id=0
         for cdx, entity_id in enumerate(self.caps):
             #     entity_id = valid_entity_ids[cdx]
             center = center_points[entity_id]
@@ -519,7 +531,11 @@ class Mesher(Surfer):
             dataline = [str(cdx + 1), str(None), c, normal, rad, area]
 
             if entity_id in self.inlet_entity_ids:
-                inflowrate = inlet_vel * area_
+                if inlet_vel != False:
+                    inflowrate = inlet_vel * area_
+                else:
+                    inflowrate = inlet_flowrates[inlet_FR_id]
+                    inlet_FR_id+=1
                 dataline[1] = waveform
                 dataline.append("{:.12f}".format(inflowrate))
 
@@ -533,13 +549,14 @@ class Mesher(Surfer):
                     dataline.append("{:.12f}".format(flow_division))
             elif (entity_id in self.outlet_entity_ids) and multi_inlets!='single':
                 #WARNING: Not the greatest!
-                flow_division = (area_/inlet_area)**(3/2)
+                flow_division = area_/outlet_area
                 dataline.append("{:.12f}".format(flow_division))
             else:
                 print('Check inlets outlets')
 
             info_data[entity_id] = dataline
-
+        if waveform=='FC_VENOUS':
+            print('Double-check the flowrates in Paraview before running!')
         infofile = open(outfile, "w")
         header = "# id, wave, center, normal, radius, area, FR(inlet)/AR(outlet)"
         infofile.write(header + 2*"\n")

@@ -61,7 +61,3 @@ For an example of using this for meshing, see the `meshing_example.sh` file in `
 `cd /path/to/geometry_tools/`
 `pip install -e .`
 
-6) comment unavailable/unused module in vmtk_wrapper.py
-comment the following line
-`from networkx.algorithms.centrality import group`
-

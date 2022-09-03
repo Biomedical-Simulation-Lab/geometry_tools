@@ -294,7 +294,7 @@ def get_neighbour_map(surf):#, n_points):
     return neighbour_pt_ids
 
 
-def create_edge_size_array(surf, fix_centerline, min_edge_size=0.1, max_edge_size=0.4, sac_size=0.15, misr_min=0.1, misr_max=2.5, name='Size', ref_edge_ratio=0.5):
+def create_edge_size_array(surf, fix_centerline, min_edge_size=0.1, max_edge_size=0.4, sac_size=0.15, misr_min=0.1, misr_max=2.5, name='Size', ref_edge_ratio=0.75):
     """ Create "Size" array incorporating distance to centerlines and curvature.
 
     This will likely be refined moving forward.
@@ -321,29 +321,30 @@ def create_edge_size_array(surf, fix_centerline, min_edge_size=0.1, max_edge_siz
         fill_value=(max_edge_size, min_edge_size),
         )
 
-    # The perfectly straight flow extensions end up having high curvature 
-    # unless they are perturbed slightly
     surf = surf.compute_normals()
-    surf_perturb = surf.copy()
-    perturbed_vec = np.einsum(
-        'ij,i->ij', 
-        surf_perturb.point_arrays['Normals'], 
-        np.random.normal(0, 0.0001, surf_perturb.n_points)
-        )
-    surf_perturb.points = surf_perturb.points + perturbed_vec
-    surf_perturb.point_arrays['Curvature'] = np.abs(surf_perturb.curvature('Minimum'))
-    
-    surf.point_arrays['Curvature'] = surf_perturb.point_arrays['Curvature'] #np.abs(surf.curvature('Minimum'))
-    
     surf.point_arrays['SizeDistanceToCenterlinesArray'] = distance_interp(surf.point_arrays['DistanceToCenterlinesArray']) #np.ones(surf.n_points) 
-    surf.point_arrays['SizeCurvature'] = curv_interp(surf.point_arrays['Curvature']) #np.ones(surf.n_points)
-
     #Dan's method:
     if fix_centerline == 'dan':
         surf.point_arrays['SizeMISR'] = distance_interp(surf.point_arrays['misr'])
         surf.point_arrays[name] = surf.point_arrays['SizeMISR']
     else:
+        # The perfectly straight flow extensions end up having high curvature 
+    # unless they are perturbed slightly
+        # Some PT meshes have areas of really high curvature that need extra refinement
+        surf_perturb = surf.copy()
+        perturbed_vec = np.einsum(
+            'ij,i->ij', 
+            surf_perturb.point_arrays['Normals'], 
+            np.random.normal(0, 0.0001, surf_perturb.n_points)
+            )
+        surf_perturb.points = surf_perturb.points + perturbed_vec
+        surf_perturb.point_arrays['Curvature'] = np.abs(surf_perturb.curvature('Minimum'))
+        
+        surf.point_arrays['Curvature'] = surf_perturb.point_arrays['Curvature'] #np.abs(surf.curvature('Minimum'))
+        surf.point_arrays['SizeCurvature'] = curv_interp(surf.point_arrays['Curvature']) #np.ones(surf.n_points)
+
         surf.point_arrays[name] = np.minimum(surf.point_arrays['SizeDistanceToCenterlinesArray'], surf.point_arrays['SizeCurvature'])
+
     surf, n_ids = smooth_mesh_data_local(surf, name, np.mean, iterations=1)
 
     if 'Mask' in surf.point_arrays:
@@ -378,7 +379,7 @@ class RefinementSelection():
     remesh the surface, and ultimately the volumetric mesh.
     """ 
     def __init__(self, surf, title='Clip Refinement Zone'):
-        self.surf = surf.fill_holes(100)
+        self.surf = surf.fill_holes(1000)
         self.title = title
         
     def select(self):
@@ -389,7 +390,7 @@ class RefinementSelection():
         temprefsurf=new_surf.mesh.triangulate()
         if type(temprefsurf) != pv.core.pointset.PolyData:
                 temprefsurf = pv.PolyData(temprefsurf.points, temprefsurf.cells)
-        self.temprefsurf=temprefsurf.fill_holes(100)
+        self.temprefsurf=temprefsurf.fill_holes(1000)
         self.temprefsurf = self.temprefsurf.connectivity(largest=True)
 
     def define_surface(self):

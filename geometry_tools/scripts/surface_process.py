@@ -13,12 +13,16 @@ import time
 from datetime import timedelta
 from tubeclipper import TubeClipper
 
-def surface_process(proj_dir, surf_type, ref, fix_centerline, endpoints_pv=None):
+def surface_process(proj_dir, proc_dir, surf_type, multi_inlets, min_EL, max_EL, ref, fix_centerline, endpoints_pv=None):
     proj_dir = Path(proj_dir)
+    if not proj_dir.exists():
+        proj_dir.mkdir()
 
-    surf_file = sorted(proj_dir.glob('*.vtp'))[0]
+    proc_dir = Path(proc_dir)
 
-    point_file = proj_dir / (surf_file.stem + '_endpoints.vtm')
+    surf_file = sorted(proc_dir.glob('*.vtp'))[0]
+    #print(proj_dir)
+    point_file = proc_dir / (surf_file.stem + '_endpoints.vtm')
     #print(point_file)
     assert point_file.exists()
     
@@ -31,6 +35,7 @@ def surface_process(proj_dir, surf_type, ref, fix_centerline, endpoints_pv=None)
     points_output_file = proj_dir / (surf_file.stem + '_pr_endpoints.vtm')
     #endpoints_output_file = proj_dir / (surf_file.stem + '_pr_endpoints.vtp')
     centerlines_output_file=proj_dir / (surf_file.stem + '_pr_centerlines.vtp')
+    #print(surf_output_file, points_output_file, centerlines_output_file)
 
     start = time.time()
     #print('\n' + surf_file.stem)
@@ -120,10 +125,17 @@ def surface_process(proj_dir, surf_type, ref, fix_centerline, endpoints_pv=None)
             submesh_array[submesh_ids] = 1
             m.surf.point_arrays['RefinementPoints'] = submesh_array.astype(bool)
             #print(m.surf.point_arrays)
-
+        
         if surf_type=='a': 
             m.generate_centerlines()
-        m.generate_centerlines(include_aneurysms=False)
+            m.generate_centerlines(include_aneurysms=False)
+
+        if multi_inlets == 'multi':
+            #NOTE: Always check the result of this!!!
+            m.generate_centerlines_multi(proj_dir)
+        else:
+            m.generate_centerlines(include_aneurysms=False)
+
         if surf_type=='a': 
             m.branch_centerlines()
         else:
@@ -140,7 +152,7 @@ def surface_process(proj_dir, surf_type, ref, fix_centerline, endpoints_pv=None)
         #For Dan's aneurysm cases, he appears to have used the following, which is probably too fine for the PT cases:
         # min_edge_size=0.1, max_edge_size=0.4, sac_size=0.15, misr_min=0.1, misr_max=2.5
         #I am going to mess with the defaults here, but keep the aneurysm defaults on the actual function
-        m.surface_preparation(ref, fix_centerline, neck_points=neck_geodesic_points, min_edge_size=0.25, max_edge_size=1.0, sac_size=0.15, misr_min=1.3, misr_max=5)
+        m.surface_preparation(proj_dir, multi_inlets, ref, fix_centerline, neck_points=neck_geodesic_points, min_edge_size=min_EL, max_edge_size=max_EL, sac_size=0.15, misr_min=1.3, misr_max=5)
         m.update_inlets_outlets()
 
         # # This stuff is for getting plc points and 
@@ -193,7 +205,9 @@ def surface_process(proj_dir, surf_type, ref, fix_centerline, endpoints_pv=None)
 
 if __name__ == "__main__":
     proj_dir = Path(sys.argv[1])
-
+    proc_dir = sys.argv[1].split('_')[0], '_', sys.argv[1].split('_')[1]
+    proc_dir = Path(''.join(str(i) for i in proc_dir))
+    #print(proc_dir)
     if len(sys.argv) == 3:
         endpoints_f = Path(sys.argv[2])
         ref = 'no_ref' 
@@ -202,17 +216,27 @@ if __name__ == "__main__":
         else:
             endpoints_pv = None
             surf_type=sys.argv[2] 
+        min_EL = 0.1
+        max_EL = 0.4
+        multi_inlets = 'single'
     elif len(sys.argv) > 3:
         endpoints_f = Path(sys.argv[2])
         if endpoints_f.exists():
             endpoints_pv = pv.read(endpoints_f) #have to be PolyData type (vtp) to work?
             surf_type=sys.argv[3]
-            ref = sys.argv[4] #options are 'refine' or 'no_ref' 
-            fix_centerline = sys.argv[5] #options are 'regular' or 'dan'
+            multi_inlets = sys.argv[4] #options are 'single' and 'multi'
+            ref = sys.argv[5] #options are 'refine' or 'no_ref' 
+            fix_centerline = sys.argv[6] #options are 'regular' or 'dan'
+            min_EL = float(sys.argv[7])
+            max_EL = float(sys.argv[8])        
         else:
             endpoints_pv = None
             surf_type=sys.argv[2] 
-            ref = sys.argv[3] #options are 'refine' or 'no_ref' 
-            fix_centerline = sys.argv[4] #options are 'reg' or 'dan'
+            multi_inlets = sys.argv[3] #options are 'single' and 'multi'
+            ref = sys.argv[4] #options are 'refine' or 'no_ref' 
+            fix_centerline = sys.argv[5] #options are 'reg' or 'dan'
+            min_EL = float(sys.argv[6])
+            max_EL = float(sys.argv[7])
 
-    surface_process(proj_dir, surf_type, ref, fix_centerline, endpoints_pv)
+    #print(proc_dir, proj_dir, min_EL, max_EL)
+    surface_process(proj_dir, proc_dir, surf_type, multi_inlets, min_EL, max_EL, ref, fix_centerline, endpoints_pv)
