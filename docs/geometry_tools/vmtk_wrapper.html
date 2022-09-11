@@ -1,0 +1,2359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>geometry_tools.vmtk_wrapper API documentation</title>
+<meta name="description" content="Wrapper for vmtkscripts …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>geometry_tools.vmtk_wrapper</code></h1>
+</header>
+<section id="section-intro">
+<p>Wrapper for vmtkscripts.</p>
+<p>Most functions correspond to a particular item in vmtkscripts,
+but some are just used in similar ways. Eventually, it would be nice to
+start using vtkvmtk directly rather than
+vmtkscripts.</p>
+<p>Functions often provide a simplified input; feel free to add
+optional arguments.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34; Wrapper for vmtkscripts.
+
+Most functions correspond to a particular item in vmtkscripts,
+but some are just used in similar ways. Eventually, it would be nice to 
+start using vtkvmtk directly rather than 
+vmtkscripts.
+
+Functions often provide a simplified input; feel free to add 
+optional arguments.
+&#34;&#34;&#34;
+
+#from networkx.algorithms.centrality import group
+from email.utils import collapse_rfc2231_value
+from networkx.algorithms.distance_measures import center
+from numpy import testing
+from vmtk import vmtkscripts
+from geometry_tools import utils 
+import pyvista as pv
+import numpy as np 
+from scipy.spatial import cKDTree as KDTree 
+from scipy.optimize import least_squares
+import networkx as nx
+import gzip
+from geometry_tools import common as cc
+
+def clipper(surf):
+    &#34;&#34;&#34; Interactively clip branches &#34;&#34;&#34;
+
+    clipper = vmtkscripts.vmtkSurfaceClipper()
+    clipper.Surface = surf
+    clipper.WidgetType = &#39;box&#39;
+    clipper.CleanOutput = 1
+    clipper.Interactive = 1
+    clipper.Execute()
+    surf = pv.wrap(clipper.Surface)
+    return surf
+
+def centerlines(surf, seed_selector=&#39;pickpoint&#39;, resampling=1, 
+                resampling_step_length=0.05, smoothing=True, 
+                iterations=100, sm_factor=0.1, src_ids=[], 
+                target_ids=[], src_pts=[], target_pts=[]):
+    &#34;&#34;&#34; Generate centerlines from a surface with open profiles.
+
+    Before generating the centerlines, the surface is slightly 
+    perturbed to avoid a bug in vmtkCenterlines that occurs
+    with perfectly straight flow extensions.
+    &#34;&#34;&#34;
+
+    surf = surf.compute_normals()
+    surf_perturb = surf.copy()
+    perturbed_vec = np.einsum(
+        &#39;ij,i-&gt;ij&#39;, 
+        surf_perturb.point_arrays[&#39;Normals&#39;], 
+        np.random.normal(0, 0.005, surf_perturb.n_points)
+        )
+    surf_perturb.points = surf_perturb.points + perturbed_vec
+    centerline_filt = vmtkscripts.vmtkCenterlines()
+    centerline_filt.Surface = surf_perturb
+    centerline_filt.SeedSelectorName = seed_selector
+    centerline_filt.Resampling = resampling
+    centerline_filt.ResamplingStepLength = resampling_step_length
+    centerline_filt.smoothing = smoothing
+    centerline_filt.iterations = iterations
+    centerline_filt.factor = sm_factor
+    centerline_filt.SourceIds = src_ids
+    centerline_filt.TargetIds = target_ids
+    centerline_filt.SourcePoints = src_pts
+    centerline_filt.TargetPoints = target_pts
+    centerline_filt.Execute()
+    centerlines = centerline_filt.Centerlines
+    return pv.wrap(centerlines)
+
+def merge_centerlines(centerlines):
+    merged = vmtkscripts.vmtkCenterlineMerge()
+    merged.Centerlines = centerlines
+    merged.MergeBlanked = 1
+    merged.RadiusArrayName = &#39;MaximumInscribedSphereRadius&#39;
+    merged.GroupIdsArrayName = &#39;GroupIds&#39;
+    merged.CenterlineIdsArrayName = &#39;CenterlineIds&#39;
+    merged.BlankingArrayName = &#39;Blanking&#39;
+    merged.TractIdsArrayName = &#39;TractIds&#39;
+    merged.Execute()
+    return pv.wrap(merged.Centerlines)
+
+def surface_append(cl1, cl2):
+    append_cl=vmtkscripts.vmtkSurfaceAppend()
+    append_cl.Surface = cl1
+    append_cl.Surface2 = cl2
+    append_cl.Execute()
+    return pv.wrap(append_cl.Surface)
+
+def centerlines_smooth(centerlines, iterations, sm_factor):
+    alg = vmtkscripts.vmtkCenterlineSmoothing()
+    alg.Centerlines = centerlines
+    alg.iterations = iterations
+    alg.factor = sm_factor
+    alg.Execute()
+    return pv.wrap(alg.Centerlines)
+
+def centerline_branches_ids(centerlines):
+    &#34;&#34;&#34; Identify centerline branches. &#34;&#34;&#34;
+
+    brancher = vmtkscripts.vmtkBranchExtractor()
+    brancher.Centerlines = centerlines
+    brancher.RadiusArrayName = utils.radiusArrayName
+    brancher.Execute()
+    centerlines_branched = brancher.Centerlines
+    return pv.wrap(centerlines_branched)
+
+def centerline_endpoint_extractor(centerlines, num_endpoint_spheres=1, num_gap_sphere=1):
+    &#34;&#34;&#34; Wrapper for vmtkEndpointExtractor &#34;&#34;&#34;
+
+    extractor = vmtkscripts.vmtkEndpointExtractor()
+    extractor.Centerlines = centerlines
+    extractor.RadiusArrayName = utils.radiusArrayName
+    extractor.GroupIdsArrayName = utils.groupIDsArrayName
+    extractor.BlankingArrayName = utils.blankingArrayName
+    extractor.NumberOfEndPointSpheres = num_endpoint_spheres
+    extractor.NumberOfGapSpheres = num_gap_sphere
+    extractor.Execute()
+    clipped_centerlines = extractor.Centerlines
+
+    return pv.wrap(clipped_centerlines)
+
+def centerline_endpoint_masking_old(centerlines):
+    &#34;&#34;&#34; Identify centerline endpoints.
+    Don&#39;t use, will be deleted.
+    &#34;&#34;&#34; 
+    print(&#39;Warning: using OLD centerline endpoint masking&#39;)
+    groups = np.unique(centerlines.cell_data[&#39;CenterlineIds&#39;])
+    ind = [np.where(centerlines.cell_data[&#39;CenterlineIds&#39;]==g) for g in groups]
+    clines = [centerlines.extract_cells(i) for i in ind]
+    end_arrays = [np.zeros(c.n_cells) for c in clines]
+    for e in end_arrays:
+        e[0] = 1
+        e[-1] = 1
+    centerlines.cell_data[&#39;EndCells&#39;] = np.zeros(centerlines.n_cells) 
+    for i, e in zip(ind, end_arrays):
+        centerlines.cell_data[&#39;EndCells&#39;][i] = e
+
+    return centerlines 
+
+def centerline_endpoint_masking(centerlines, central_group_id=2):
+    &#34;&#34;&#34; Identify centerline endpoints using GroupId.
+    
+    Marks centerline endpoints via a masking array &#39;EndCells&#39;.
+    &#34;&#34;&#34;
+    centerlines.cell_data[&#39;EndCells&#39;] = np.zeros_like(centerlines.cell_data[&#39;GroupIds&#39;])
+    centerlines.cell_data[&#39;EndCells&#39;] = [1 if x !=central_group_id else 0 for x in centerlines.cell_data[&#39;GroupIds&#39;]]
+    return centerlines 
+
+
+def centerline_branch_clipper_checker(surf, centerlines):
+    &#34;&#34;&#34; Check endpoints match with open profiles.
+
+    In some cases, VMTK may mistakenly mark a region as an 
+    endpoint if it&#39;s nearby. This double checks and fixes 
+    the masking if present.
+    &#34;&#34;&#34;
+    groups = np.unique(surf.point_arrays[&#39;GroupIds&#39;])
+
+    # Break surf into components based on GroupIds
+    surf_section_idx = [np.where(surf.point_arrays[&#39;GroupIds&#39;] == g)[0] for g in groups]
+    line_section_idx = [np.where(centerlines.cell_data[&#39;GroupIds&#39;] == g)[0] for g in groups]
+    
+    surf_sections = [surf.extract_points(i) for i in surf_section_idx]
+    line_sections = [centerlines.extract_cells(i) for i in line_section_idx]
+    line_end_bool = np.array([np.any(l.cell_data[&#39;EndCells&#39;] == 1) for l in line_sections])
+
+    end_sections = [x for b, x in zip(line_end_bool, surf_sections) if b == True]
+    end_lines = [x for b, x in zip(line_end_bool, line_sections) if b == True]
+
+    central_sections = [x for b, x in zip(line_end_bool, surf_sections) if b == False]
+    central_lines = [x for b, x in zip(line_end_bool, line_sections) if b == False]
+
+    central_group_id = np.median([x.point_arrays[&#39;GroupIds&#39;][0] for x in central_sections]).astype(int)
+
+    # Iterate through components, break into disconnected regions
+    for s, l in zip(end_sections, end_lines):
+        s = s.connectivity()
+        s.point_arrays[&#39;vtkOGIds&#39;] = s.point_arrays[&#39;vtkOriginalPointIds&#39;].copy()
+
+        component_ids = np.unique(s.cell_data[&#39;RegionId&#39;])
+        if len(component_ids) &gt; 1:
+            ind = [np.where(s.cell_data[&#39;RegionId&#39;] == c)[0] for c in component_ids]
+            comps = [s.extract_cells(i) for i in ind]
+
+            # Find which region is closest to centerline
+            dists = [np.linalg.norm(c.points.mean(axis=0) - l.points.mean(axis=0)) for c in comps]
+            nearest_comp = np.argmin(dists)
+
+            # Use remaining comps to un-mask the group id of that section
+            remaining_comps = [x for x in list(range(len(comps))) if x != nearest_comp]
+
+            # Find out what they will join to 
+            for r in remaining_comps:
+                surf.point_arrays[&#39;GroupIds&#39;][comps[r].point_arrays[&#39;vtkOGIds&#39;]] = central_group_id
+
+    # Unfinished -- iter through central sections
+    # If they contain subcomps, assign to end that connects
+
+    surf.point_arrays[&#39;EndCells&#39;] = np.zeros(surf.n_points)
+    surf.point_arrays[&#39;EndCells&#39;][surf.point_arrays[&#39;GroupIds&#39;] != 2] = 1
+    return surf, centerlines
+
+def get_centerline_endpoints(centerlines):
+    &#34;&#34;&#34; Get terminal points of centerlines. &#34;&#34;&#34;
+
+    groups = np.unique(centerlines.cell_data[&#39;CenterlineIds&#39;])
+    ind = [np.where(centerlines.cell_data[&#39;CenterlineIds&#39;]==g) for g in groups]
+    clines = [centerlines.extract_cells(i) for i in ind]
+    clines = [c.ctp() for c in clines]
+
+    origins = [] #np.zeros((2*len(clines), 3))
+
+    for idx in range(len(clines)):
+        if idx == 0:
+            # REMOVE DUPLICATE ORIGINS
+            cut_start_origin = clines[idx].points[0]
+            origins.append(cut_start_origin)
+
+        cut_end_origin = clines[idx].points[-1]
+        origins.append(cut_end_origin)
+
+    return origins
+
+def get_centerline_endpoints_clip(centerlines):
+    &#34;&#34;&#34; Get origin and approx normals of endpoints. &#34;&#34;&#34;
+
+    groups = np.unique(centerlines.cell_data[&#39;CenterlineIds&#39;])
+    ind = [np.where(centerlines.cell_data[&#39;CenterlineIds&#39;]==g) for g in groups]
+    clines = [centerlines.extract_cells(i) for i in ind]
+    clines = [c.ctp() for c in clines]
+
+    origins = [] #np.zeros((2*len(clines), 3))
+    normals = [] #np.zeros((2*len(clines), 3))
+
+    for idx in range(len(clines)):
+        clines[idx].point_arrays[&#39;EndPoints&#39;] = np.round(clines[idx].point_arrays[&#39;EndCells&#39;]).astype(int)
+        cut_mask = np.abs(np.diff(clines[idx].point_arrays[&#39;EndPoints&#39;]))
+        cut_index = np.where(cut_mask)[0]
+        # Get the point before/after
+        cut_start_index = [cut_index[0], cut_index[0]-5]
+        cut_end_index = [cut_index[1], cut_index[1]+5]
+
+        cut_start_normal = np.diff(clines[idx].points[cut_start_index], axis=0)
+        cut_end_normal = np.diff(clines[idx].points[cut_end_index], axis=0)
+
+        cut_start_origin = clines[idx].points[cut_start_index[0]]
+        cut_end_origin = clines[idx].points[cut_end_index[0]]
+
+        origins.append(cut_start_origin)
+        origins.append(cut_end_origin)
+        normals.append(cut_start_normal[0])
+        normals.append(cut_end_normal[0])
+
+    # inlet = clines[0].points[0]
+    # outlets = [c.points[-1] for c in clines]
+    return origins, normals #, outlets
+
+def centerline_branch_clipper(surf, centerlines):
+    &#34;&#34;&#34; Clip branches using centerlines with VMTK. &#34;&#34;&#34;
+    clipper = vmtkscripts.vmtkBranchClipper()
+    clipper.Surface = surf
+    clipper.Centerlines = centerlines
+    clipper.ClipValue = 0.0
+    clipper.RadiusArrayName = utils.radiusArrayName
+    clipper.GroupIdsArrayName = utils.groupIDsArrayName
+    clipper.BlankingArrayName = utils.blankingArrayName
+    clipper.UseRadiusInformation = 1
+    clipper.Execute()
+    surf = pv.wrap(clipper.Surface)
+    clines = pv.wrap(clipper.Centerlines)
+    return surf, clines 
+
+def surface_connectivity(surf, group_ids_name=utils.groupIDsArrayName, group_id=2):
+    &#34;&#34;&#34; Get largest connected region. &#34;&#34;&#34;
+
+    connector = vmtkscripts.vmtkSurfaceConnectivity()
+    connector.Surface = surf
+    connector.CleanOutput = 1
+    connector.GroupIdsArrayName = group_ids_name
+    connector.GroupId = group_id
+    connector.Execute()
+    surf = pv.wrap(connector.Surface)
+    return surf
+
+def flow_extensions(surf, centerlines):
+    &#34;&#34;&#34; Add flow extensions. &#34;&#34;&#34;
+
+    extender = vmtkscripts.vmtkFlowExtensions()
+    extender.Surface = surf
+    extender.Centerlines = centerlines
+    extender.AdaptiveExtensionLength = 1
+    extender.ExtensionRatio = 4
+    extender.CenterlineNormalEstimationDistanceRatio = 1
+    extender.Interactive = 0
+    extender.ExtensionMode = &#39;boundarynormal&#39; # &#39;centerlinedirection&#39; # 
+    extender.InterpolationMode = &#39;thinplatespline&#39; #&#39;linear&#39; # 
+    extender.Execute()
+    surf = pv.wrap(extender.Surface)
+    centerlines = pv.wrap(extender.Centerlines)
+    return surf, centerlines
+
+def surface_remeshing(surf, edgelength=0.3, element_size_mode=&#39;edgelength&#39;, edgearray=&#39;Size&#39;, iterations=10):
+    &#34;&#34;&#34; Surface remeshing with VMTK.
+    
+    If using element_size_mode=&#39;edgelengtharray&#39;, specify edgearray.
+    &#34;&#34;&#34;
+    remesher = vmtkscripts.vmtkSurfaceRemeshing()
+    remesher.Surface = surf
+    remesher.ElementSizeMode = element_size_mode
+    remesher.TargetEdgeLengthArrayName = edgearray
+    remesher.Iterations = iterations
+    remesher.TargetEdgeLength = edgelength
+    remesher.Execute()
+    surf = pv.wrap(remesher.Surface)
+    return surf 
+
+def assert_all_quads(mesh):
+    &#34;&#34;&#34; Remove triangles from mesh.
+
+    VMTK&#39;s volume mesh will have a surface of triangles.
+    This function removes them and returns the tetrahedral-only (four nodes) mesh.
+    &#34;&#34;&#34;
+
+    cell_types = np.zeros(mesh.n_cells)
+    cells = mesh.cells
+
+    i = 0
+    idx = 0
+    print(mesh.cells)
+
+    while i &lt; len(mesh.cells):
+        cell_types[idx] = cells[i]
+        print(cells[i])
+        plus = cells[i]
+        i = i + plus  + 1
+        idx += 1
+    print(&#34;completed loop&#34;)
+    quad_mask = np.array(cell_types) == 4
+    mesh_quad = mesh.extract_cells(quad_mask)
+    return mesh_quad
+
+def volume_meshing(surf):
+    &#34;&#34;&#34; VMTK volume meshing.
+    
+    More input options will be added.
+    &#34;&#34;&#34;
+
+    meshgen = vmtkscripts.vmtkMeshGenerator()
+    meshgen.Surface = surf
+    #meshgen.SkipRemeshing = 1
+    meshgen.ElementSizeMode = &#34;edgelengtharray&#34;
+    meshgen.TargetEdgeLengthArrayName = &#34;Size&#34;
+    meshgen.BoundaryLayer = 1
+    meshgen.NumberOfSubLayers = 4
+    meshgen.BoundaryLayerOnCaps = 0
+    meshgen.BoundaryLayerThicknessFactor = 0.85
+    meshgen.SubLayerRatio = 0.75
+    meshgen.Tetrahedralize = 1
+    meshgen.VolumeElementScaleFactor = 0.8
+    meshgen.EndcapsEdgeLengthFactor = 1.0
+    meshgen.Execute()
+    mesh = pv.wrap(meshgen.Mesh)
+    return mesh
+
+def bifurcation_ref_systems(centerlines):
+    &#34;&#34;&#34; Get bifurcation reference systems. &#34;&#34;&#34; 
+
+    ref = vmtkscripts.vmtkBifurcationReferenceSystems()
+    ref.Centerlines = centerlines
+    ref.RadiusArrayName = utils.radiusArrayName 
+    ref.Execute()
+    return pv.wrap(ref.ReferenceSystems)
+
+def get_bifurcation_vectors(centerlines, ref_systems):
+    &#34;&#34;&#34; Get bifurcation vectors. &#34;&#34;&#34;
+
+    bifvec = vmtkscripts.vmtkBifurcationVectors()
+    bifvec.Centerlines = centerlines
+    bifvec.ReferenceSystems = ref_systems
+    bifvec.Execute()
+    bif_vectors = pv.wrap(bifvec.BifurcationVectors)
+    bif_group_ids = np.unique(bif_vectors.point_arrays[&#39;BifurcationGroupIds&#39;])
+    bif_groups = []
+    for bb in bif_group_ids:
+        bif_ind = np.where(bif_vectors.point_arrays[&#39;BifurcationGroupIds&#39;]==bb)
+        bif_groups.append(bif_vectors.extract_points(bif_ind))
+
+    return pv.MultiBlock(bif_groups)
+
+def distance_to_centerlines(surf, centerlines, use_radius=1, project_point_arrays=0):
+    &#34;&#34;&#34; Get distance between surf and centerlines. &#34;&#34;&#34;
+
+    dist = vmtkscripts.vmtkDistanceToCenterlines()
+    dist.Surface = surf
+    dist.Centerlines = centerlines 
+    dist.UseRadiusInformation = use_radius
+    dist.EvaluateTubeFunction = 0
+    dist.EvaluateCenterlineRadius = 0 
+    dist.UseCombinedDistance = 0
+    dist.ProjectPointArrays = project_point_arrays
+    dist.DistanceToCenterlinesArrayName = utils.distanceToCenterlinesArrayName
+    dist.RadiusArrayName = utils.radiusArrayName
+    dist.UseRadiusThreshold = 0
+    dist.Execute()
+    return pv.wrap(dist.Surface), pv.wrap(dist.Centerlines)
+
+def surface_centerline_projection(surf, centerlines, pass_arrays=None):
+    &#34;&#34;&#34; Project centerline arrays onto surface &#34;&#34;&#34;
+
+    c2 = centerlines.ctp()
+    if pass_arrays is not None:
+        pass_arrays.append(&#39;MaximumInscribedSphereRadius&#39;)
+        arrs = [c2.point_arrays[x] for x in pass_arrays]
+        pts = c2.points 
+        cells = c2.lines 
+        c2 = pv.PolyData(pts, lines=cells)
+        
+        for a, x in zip(arrs, pass_arrays):
+            c2.point_arrays[x] = a
+
+    proj = vmtkscripts.vmtkSurfaceCenterlineProjection()
+    proj.Surface = surf
+    proj.Centerlines = c2
+    proj.UseRadiusInformation = 1
+    proj.RadiusArrayName = utils.radiusArrayName
+    proj.Execute()
+    return pv.wrap(proj.Surface)
+
+def surface_centerline_projection_VOR(surf, centerlines, arrays=[&#39;GroupIds&#39;], sm_iterations=1):
+    &#34;&#34;&#34; Instead of glyphing, use Voronoi diagram.
+    NOT WORKING -- still need to project GroupIds onto voronoi, so
+    doesn&#39;t really solve the issue.
+
+    But the idea would be to progressively &#34;inflate&#34; the voronoi 
+    from the centerlines, projecting the group ids onto the surface.
+    &#34;&#34;&#34;
+    # Cell-to-point; get relevant sections of centerlines
+    mask = centerlines.cell_data[&#39;Blanking&#39;] == 0
+    centerlines = centerlines.extract_cells(mask)
+
+    centerlines = centerlines.ctp()
+    centerlines.set_active_scalars(&#39;MaximumInscribedSphereRadius&#39;)
+
+    test_object = delaunay_voronoi(surf)
+        
+    # Create smooth surf
+    surf_smooth = surf.smooth(n_iter=20, relaxation_factor=1.0)
+
+    # For point in surf_smooth, find nearest in test_object
+    # Could really speed up code by triming down the test_object
+    tree = KDTree(test_object.points)
+    _, ii = tree.query(surf_smooth.points, k=1)
+
+    # Assign values to surf and smooth array based on median filtering
+    neighbour_pt_ids = None
+
+    mask = np.invert(centerlines.point_arrays[&#39;Blanking&#39;].astype(bool))
+    valid_ids = np.unique(centerlines.point_arrays[&#39;GroupIds&#39;][mask])
+
+    for arr in arrays:
+        group_ids = test_object.point_arrays[arr][ii]
+        surf.point_arrays[arr] = group_ids
+
+        surf, neighbour_pt_ids = cc.smooth_mesh_data_local(
+            surf, 
+            array=arr, 
+            func=np.median, 
+            neighbour_pt_ids=neighbour_pt_ids, 
+            iterations=sm_iterations,
+        )
+
+    return surf, neighbour_pt_ids
+
+
+def surface_centerline_projection_MISR(surf, centerlines, arrays=[&#39;GroupIds&#39;], sm_iterations=1):
+    &#34;&#34;&#34; Inflate centerlines based on MISR, project arrays to surfacre.
+
+    A better recipe for projecting centerline data to the surface.
+    &#34;&#34;&#34;
+    # Cell-to-point; get relevant sections of centerlines
+    mask = centerlines.cell_data[&#39;Blanking&#39;] == 0
+    centerlines = centerlines.extract_cells(mask)
+
+    group_ids = np.unique(centerlines.cell_data[&#39;GroupIds&#39;])
+    g_masks = [centerlines.cell_data[&#39;GroupIds&#39;] == g for g in group_ids]
+
+    centerlines_list = [centerlines.extract_cells(gm).connectivity(largest=True) for gm in g_masks]
+    centerlines_pd = [pv.PolyData(c.points, lines=c.cells) for c in centerlines_list]
+    
+    for cline, u_cline in zip(centerlines_pd, centerlines_list):
+        u_cline = u_cline.ctp()
+        cline.point_arrays[&#39;GroupIds&#39;] = u_cline.point_arrays[&#39;GroupIds&#39;]
+        cline.point_arrays[&#39;MaximumInscribedSphereRadius&#39;] = u_cline.point_arrays[&#39;MaximumInscribedSphereRadius&#39;]
+
+    centerlines_pd = np.sum(centerlines_pd)
+
+
+    test_object = centerlines_pd.tube(scalars=&#39;MaximumInscribedSphereRadius&#39;, radius_factor=4, n_sides=20)
+        
+    # Create smooth surf
+    # params used to be n_iter=20, relaxation=1.0, but was running into a bug
+    # where surf_smooth.n_points &lt; surf.n_points
+    surf_smooth = surf.smooth(n_iter=30, relaxation_factor=0.7)
+
+    # For point in surf_smooth, find nearest in test_object
+    tree = KDTree(test_object.points)
+    _, ii = tree.query(surf_smooth.points, k=1)
+
+    # Assign values to surf and smooth array based on median filtering
+    neighbour_pt_ids = None
+
+    surf = surf.clean()
+    
+    for arr in arrays:
+        group_ids = test_object.point_arrays[arr][ii]
+        surf.point_arrays[arr] = group_ids
+
+        surf, neighbour_pt_ids = cc.smooth_mesh_data_local(
+            surf, 
+            array=arr, 
+            func=&#39;median&#39;, 
+            neighbour_pt_ids=neighbour_pt_ids, 
+            iterations=sm_iterations,
+        )
+
+    return surf, neighbour_pt_ids
+
+def mesh_centerline_projection_MISR(mesh, centerlines, arrays=[&#39;GroupIds&#39;], sm_iterations=1):
+    &#34;&#34;&#34; Inflate centerlines based on MISR, project arrays to mesh.
+
+    Based on method in surface.py.
+    &#34;&#34;&#34;
+    # Cell-to-point; get relevant sections of centerlines
+    mask = centerlines.cell_data[&#39;Blanking&#39;] == 0
+    centerlines = centerlines.extract_cells(mask)
+
+    group_ids = np.unique(centerlines.cell_data[&#39;GroupIds&#39;])
+    g_masks = [centerlines.cell_data[&#39;GroupIds&#39;] == g for g in group_ids]
+
+    centerlines_list = [centerlines.extract_cells(gm).connectivity(largest=True) for gm in g_masks]
+    centerlines_pd = [pv.PolyData(c.points, lines=c.cells) for c in centerlines_list]
+    
+    for cline, u_cline in zip(centerlines_pd, centerlines_list):
+        u_cline = u_cline.ctp()
+        cline.point_arrays[&#39;GroupIds&#39;] = u_cline.point_arrays[&#39;GroupIds&#39;]
+        cline.point_arrays[&#39;MaximumInscribedSphereRadius&#39;] = u_cline.point_arrays[&#39;MaximumInscribedSphereRadius&#39;]
+
+    centerlines_pd = np.sum(centerlines_pd)
+
+    MISR = &#39;MaximumInscribedSphereRadius&#39;
+    rads = np.linspace(0.1, 4, 10)
+    test_object = np.sum([centerlines_pd.tube(scalars=MISR, radius_factor=i, n_sides=20) for i in rads])
+
+    # Create smooth surf
+    # surf_smooth = surf.smooth(n_iter=20, relaxation_factor=1.0)
+
+    # For point in surf_smooth, find nearest in test_object
+    tree = KDTree(test_object.points)
+    _, ii = tree.query(mesh.points, k=1)
+
+    # Assign values to surf and smooth array based on median filtering
+    # neighbour_pt_ids = None
+
+    # surf = surf.clean()
+    
+    for arr in arrays:
+        group_ids = test_object.point_arrays[arr][ii]
+        mesh.point_arrays[arr] = group_ids
+
+        # surf, neighbour_pt_ids = cc.smooth_mesh_data_local(
+        #     surf, 
+        #     array=arr, 
+        #     func=&#39;median&#39;, 
+        #     neighbour_pt_ids=neighbour_pt_ids, 
+        #     iterations=sm_iterations,
+        # )
+
+    return mesh
+
+def kite_removal(surf, factor=0.1):
+    kite = vmtkscripts.vmtkSurfaceKiteRemoval()
+    kite.Surface = surf 
+    kite.SizeFactor = factor 
+    kite.Execute()
+    return pv.wrap(kite.Surface)
+
+def network_extractor(surf):
+    &#34;&#34;&#34; Extract a basic network and graph layout of a surfaces. &#34;&#34;&#34;
+
+    ext = vmtkscripts.vmtkNetworkExtraction()
+    ext.Surface = surf 
+    ext.AdvancementRatio = 1.05
+    ext.RadiusArrayName = &#39;MaximumInscribedSphereRadius&#39;
+    ext.TopologyArrayName = &#39;Topology&#39;
+    ext.MarksArrayName = &#39;Marks&#39;
+    ext.Execute()
+
+    return pv.wrap(ext.Network), pv.wrap(ext.GraphLayout)
+
+def surface_capper(surf):
+    &#34;&#34;&#34; Add caps to surface. &#34;&#34;&#34;
+
+    capper = vmtkscripts.vmtkSurfaceCapper()
+    capper.Surface = surf
+    capper.Method =&#39;centerpoint&#39;
+    capper.Interactive = 0
+    capper.Execute()
+    return pv.wrap(capper.Surface)
+
+def renumber_entity_ids(mesh, inlet_id):
+    &#34;&#34;&#34; Renumber entity ids
+    -------- NOT YET FUNCTIONAL ---------
+
+    Default is the following:
+    0 is internal cells
+    1 is wall
+    2 is inlet
+    3, ... is outlets
+    &#34;&#34;&#34;
+    entity_ids = mesh.cell_data[&#39;CellEntityIds&#39;].copy()
+    valid_entity_ids = sorted(set(np.unique(entity_ids)) - set([0,1]))
+
+    entity_ids_renumbered = np.zeros_like(entity_ids)
+    
+    pairs = [[0,0],[1,1],[4,2],[2,4],[3,3]]
+    for p in pairs:
+        entity_ids_renumbered[entity_ids == p[0]] = p[1]
+    mesh.cell_data[&#39;CellEntityIds&#39;] = entity_ids_renumbered
+    return mesh 
+
+def branch_center_normal_rad_area(mesh):
+    &#34;&#34;&#34; Get center, normal, rad, and area of in/outlets.
+    &#34;&#34;&#34;
+
+    surf = mesh.extract_surface()
+    surf = surf.compute_normals(cell_normals=False, point_normals=True,)
+
+    entity_ids = np.unique(surf.cell_data[&#39;CellEntityIds&#39;])
+    
+    # entity_id = 0, 1 is internal, wall
+    entity_ids = sorted(set(entity_ids) - set([0, 1]))
+
+    points = {}
+
+    def _f(estimate, *real_points):
+        real_points = np.array(real_points).reshape(-1,3)
+        distance = np.linalg.norm(real_points - estimate, axis=1)
+        return distance 
+
+    for e in entity_ids:
+        # print(&#39;e&#39;, e)
+        mask = surf.cell_data[&#39;CellEntityIds&#39;] == e
+        cap = surf.extract_cells(mask)
+        edges = cap.extract_feature_edges(
+            boundary_edges=True, 
+            feature_edges=False, 
+            manifold_edges=False
+            )
+        cap = cap.compute_cell_sizes()
+        cap_mask = [True if cap.points[idx] not in edges.points else False for idx in range(cap.n_points)]
+
+        cap_pts = cap.extract_points(cap_mask, adjacent_cells=False)        
+        # cap_pts = cap_pts.compute_cell_sizes()
+
+        # cap_pts_ALT = cap.extract_points(cap_mask, adjacent_cells=True)        
+        # cap_pts_ALT = cap_pts_ALT.compute_cell_sizes()
+
+        center = edges.points.mean(axis=0)
+
+        center_robust_ = least_squares(_f, center, args=edges.points)
+        center_robust = center_robust_.x
+        radius_robust = center_robust_.fun.mean()
+
+
+        normal = cap_pts.point_arrays[&#39;Normals&#39;].mean(axis=0).reshape(1,-1)
+        normal = normal / np.linalg.norm(normal)
+        area = cap.cell_data[&#39;Area&#39;].sum()
+
+        # rad = np.linalg.norm(edges.points - center, axis=1).mean()
+        # area = np.pi*rad**2
+        # rad2 = (area / np.pi)**0.5
+        # print(&#39;rad&#39;, rad.mean())
+        # print(&#39;rad2&#39;, rad2)
+        # print(&#39;rad_robust&#39;, radius_robust)
+
+        c = pv.wrap(center)
+        c.point_arrays[&#39;Normal&#39;] = normal
+        c.point_arrays[&#39;CellEntityIds&#39;] = e
+        c.point_arrays[&#39;Area&#39;] = area 
+        c.point_arrays[&#39;Radius&#39;] = radius_robust
+
+        points[e] = c
+        
+    return points
+
+
+
+def sac_mask_tool(surf, centerlines):
+    &#34;&#34;&#34; ID sac based on centerline branches.
+
+    Sac must be last branch.
+    Not robust; only allows 1 sac.
+    &#34;&#34;&#34;
+    surf = surface_centerline_projection(surf, centerlines)
+
+    branch_ids = np.unique(surf.point_arrays[&#39;GroupIds&#39;])
+    sac_idx = branch_ids[-1]
+    mask = [0 if sac_idx != x else 1 for x in surf.point_arrays[&#39;GroupIds&#39;]]
+    surf.point_arrays[&#39;SacMask&#39;] = mask
+    return surf, centerlines 
+
+def extract_group_adjacency(centerlines):
+    &#34;&#34;&#34; Get adj list of group IDs.
+
+    Note: centerlines must not be branched, must 
+    have 1 cell per endpoint (the default format for 
+    fresh centerlines).
+
+    NOTE: This does not currently work if you have two or more inlets!!
+    &#34;&#34;&#34;
+    centerlines_og = centerlines.copy()
+    centerlines = centerline_branches_ids(centerlines)
+
+    # Convert cell data to point data
+    centerlines = centerlines.ctp()
+
+    # Create search tree for centerlines with GroupIds
+    tree = KDTree(centerlines.points)
+
+    # Prepare points from original structure to query 
+    q_points = centerlines_og.points
+    dd, ii = tree.query(q_points, k=1)
+
+    # Project onto centerlines_og
+    centerlines_og.point_arrays[&#39;GroupIds&#39;] = np.round(centerlines.point_arrays[&#39;GroupIds&#39;][ii]).astype(int)
+    centerlines_og.point_arrays[&#39;Blanking&#39;] = np.round(centerlines.point_arrays[&#39;Blanking&#39;][ii]).astype(int)
+
+    mask = np.invert(centerlines_og.point_arrays[&#39;Blanking&#39;].astype(bool))
+    valid_ids = np.unique(centerlines_og.point_arrays[&#39;GroupIds&#39;][mask])
+    #print(valid_ids)
+
+    # Split by endpoint
+    # This is the part that does not work with two or more inlets...
+    centerlines_split = centerlines_og.split_bodies()
+
+    # Get adj list
+    edges = []
+    G = nx.DiGraph()
+    for cline in centerlines_split:
+        # groups = np.unique([x for x in cline.point_arrays[&#39;GroupIds&#39;] if x in valid_ids])
+        #return an array of group associations for the portion ot the centerline that are only valid groupids
+        a = np.array([x for x in cline.point_arrays[&#39;GroupIds&#39;] if x in valid_ids])
+        #returns the ids where the first instance of a unique value for valid groupids is found
+        _, idx = np.unique(a, return_index=True)
+
+        groups = a[np.sort(idx)]
+        #print(groups)
+        #establishes adjacency to other groups by pairs
+        pairs = [(groups[i-1], groups[i]) for i in range(1, len(groups))]
+        for p in pairs:
+            edges.append(p)
+            G.add_edge(str(p[0]), str(p[1]))
+    
+    edges = sorted(set(edges))
+    #print(G.nodes)
+    return edges, G
+
+def write_mesh(mesh, outfile):
+    &#34;&#34;&#34; Write mesh using VMTK.
+
+    Used for writing dolfin-format XML with
+    cellEntityIds array.
+    &#34;&#34;&#34;
+    writer = vmtkscripts.vmtkMeshWriter()
+    writer.Mesh = mesh 
+    writer.Format = &#39;dolfin&#39;
+    writer.Compressed = 0
+    writer.Mode = &#39;binary&#39;
+    writer.CellEntityIdsArrayName = &#39;CellEntityIds&#39;
+    writer.OutputFileName = str(outfile)
+    writer.Execute()
+
+    # Then open the file and gzip it
+    gz_outfile = str(outfile) + &#39;.gz&#39;
+
+    with open(outfile, &#39;rb&#39;) as orig_file:
+        with gzip.open(gz_outfile, &#39;wb&#39;) as zipped_file:
+            zipped_file.writelines(orig_file)
+    
+    outfile.unlink()
+
+def surface_array_smoothing(surf, array_name=&#39;Size&#39;, connexity=1, relaxation=1.0, iterations=1):
+    sm = vmtkscripts.vmtkSurfaceArraySmoothing()
+    sm.Surface = surf 
+    sm.SurfaceArrayName = array_name
+    sm.Connexity = connexity 
+    sm.Relaxation = relaxation 
+    sm.Iterations = iterations
+    sm.Execute()
+    return pv.wrap(sm.Surface)
+
+def vmtkdelaunayvoronoi(surf):
+    filt = vmtkscripts.vmtkDelaunayVoronoi()
+    filt.Surface = surf 
+    
+def centerline_geometry(centerlines):
+    geo = vmtkscripts.vmtkCenterlineGeometry()
+    geo.Centerlines = centerlines
+    geo.LineSmoothing = False 
+    geo.Execute()
+    return pv.wrap(geo.Centerlines)
+
+def bifurcation_sections(surf, centerlines, n_spheres=4):
+    bi = vmtkscripts.vmtkBifurcationSections()
+    bi.Surface = surf
+    bi.Centerlines = centerlines 
+    bi.NumberOfDistanceSpheres = n_spheres
+    bi.Execute()
+    return pv.wrap(bi.BifurcationSections)
+
+def bifurcation_profiles(surf, centerlines):
+    bi = vmtkscripts.vmtkBifurcationProfiles()
+    bi.Surface = surf 
+    bi.Centerlines = centerlines 
+    bi.Execute()
+    return pv.wrap(bi.BifurcationProfiles)
+
+def centerline_mesh_sections(mesh, centerlines):
+    ms = vmtkscripts.vmtkCenterlineMeshSections()
+    ms.Mesh = mesh 
+    ms.Centerlines = centerlines 
+    ms.Execute()
+    return pv.wrap(ms.CenterlineSections)
+
+def branch_sections(surf, centerlines, n_spheres=1):
+    bs = vmtkscripts.vmtkBranchSections()
+    bs.Surface = surf 
+    bs.Centerlines = centerlines
+    bs.NumberOfDistanceSpheres = n_spheres
+    bs.Execute()
+    return pv.wrap(bs.BranchSections)
+
+def centerline_attributes(centerlines):
+    ca = vmtkscripts.vmtkCenterlineAttributes()
+    ca.Centerlines = centerlines
+    ca.Execute()
+    return pv.wrap(ca.Centerlines)
+
+def centerline_offset_attributes(centerlines, ref, ref_id):
+    ca = vmtkscripts.vmtkCenterlineOffsetAttributes()
+    ca.Centerlines = centerlines
+    ca.ReferenceSystems = ref
+    ca.ReferenceGroupId = ref_id 
+    ca.Execute()
+    return pv.wrap(ca.Centerlines)
+
+def surface_end_clipper(surf, centerlines=None):
+    sc = vmtkscripts.vmtkSurfaceEndClipper()
+    sc.Surface = surf 
+    sc.Centerlines = centerlines
+    if centerlines is not None:
+        use_normals = 0
+    else:
+        use_normals = 1
+    sc.CenterlineNormals = use_normals
+    sc.Execute()
+    return pv.wrap(sc.Surface)
+
+def delaunay_voronoi(surf):
+    # Perturb the surf a bit first
+    surf = surf.compute_normals()
+    surf_perturb = surf.copy()
+    perturbed_vec = np.einsum(
+        &#39;ij,i-&gt;ij&#39;, 
+        surf_perturb.point_arrays[&#39;Normals&#39;], 
+        np.random.normal(0, 0.01, surf_perturb.n_points)
+        )
+    surf_perturb.points = surf_perturb.points + perturbed_vec
+
+    alg = vmtkscripts.vmtkDelaunayVoronoi()
+    alg.Surface = surf_perturb
+    alg.Execute()
+    return pv.wrap(alg.VoronoiDiagram)
+
+def vmtkcenterlinemodeller(centerlines, arr, dims):
+    alg = vmtkscripts.vmtkCenterlineModeller()
+    alg.Centerlines = centerlines
+    alg.RadiusArrayName = arr
+    alg.SampleDimensions = dims
+    alg.Execute()
+    return pv.wrap(alg.Image)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="geometry_tools.vmtk_wrapper.assert_all_quads"><code class="name flex">
+<span>def <span class="ident">assert_all_quads</span></span>(<span>mesh)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Remove triangles from mesh.</p>
+<p>VMTK's volume mesh will have a surface of triangles.
+This function removes them and returns the tetrahedral-only (four nodes) mesh.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def assert_all_quads(mesh):
+    &#34;&#34;&#34; Remove triangles from mesh.
+
+    VMTK&#39;s volume mesh will have a surface of triangles.
+    This function removes them and returns the tetrahedral-only (four nodes) mesh.
+    &#34;&#34;&#34;
+
+    cell_types = np.zeros(mesh.n_cells)
+    cells = mesh.cells
+
+    i = 0
+    idx = 0
+    print(mesh.cells)
+
+    while i &lt; len(mesh.cells):
+        cell_types[idx] = cells[i]
+        print(cells[i])
+        plus = cells[i]
+        i = i + plus  + 1
+        idx += 1
+    print(&#34;completed loop&#34;)
+    quad_mask = np.array(cell_types) == 4
+    mesh_quad = mesh.extract_cells(quad_mask)
+    return mesh_quad</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.bifurcation_profiles"><code class="name flex">
+<span>def <span class="ident">bifurcation_profiles</span></span>(<span>surf, centerlines)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bifurcation_profiles(surf, centerlines):
+    bi = vmtkscripts.vmtkBifurcationProfiles()
+    bi.Surface = surf 
+    bi.Centerlines = centerlines 
+    bi.Execute()
+    return pv.wrap(bi.BifurcationProfiles)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.bifurcation_ref_systems"><code class="name flex">
+<span>def <span class="ident">bifurcation_ref_systems</span></span>(<span>centerlines)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get bifurcation reference systems.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bifurcation_ref_systems(centerlines):
+    &#34;&#34;&#34; Get bifurcation reference systems. &#34;&#34;&#34; 
+
+    ref = vmtkscripts.vmtkBifurcationReferenceSystems()
+    ref.Centerlines = centerlines
+    ref.RadiusArrayName = utils.radiusArrayName 
+    ref.Execute()
+    return pv.wrap(ref.ReferenceSystems)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.bifurcation_sections"><code class="name flex">
+<span>def <span class="ident">bifurcation_sections</span></span>(<span>surf, centerlines, n_spheres=4)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bifurcation_sections(surf, centerlines, n_spheres=4):
+    bi = vmtkscripts.vmtkBifurcationSections()
+    bi.Surface = surf
+    bi.Centerlines = centerlines 
+    bi.NumberOfDistanceSpheres = n_spheres
+    bi.Execute()
+    return pv.wrap(bi.BifurcationSections)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.branch_center_normal_rad_area"><code class="name flex">
+<span>def <span class="ident">branch_center_normal_rad_area</span></span>(<span>mesh)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get center, normal, rad, and area of in/outlets.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def branch_center_normal_rad_area(mesh):
+    &#34;&#34;&#34; Get center, normal, rad, and area of in/outlets.
+    &#34;&#34;&#34;
+
+    surf = mesh.extract_surface()
+    surf = surf.compute_normals(cell_normals=False, point_normals=True,)
+
+    entity_ids = np.unique(surf.cell_data[&#39;CellEntityIds&#39;])
+    
+    # entity_id = 0, 1 is internal, wall
+    entity_ids = sorted(set(entity_ids) - set([0, 1]))
+
+    points = {}
+
+    def _f(estimate, *real_points):
+        real_points = np.array(real_points).reshape(-1,3)
+        distance = np.linalg.norm(real_points - estimate, axis=1)
+        return distance 
+
+    for e in entity_ids:
+        # print(&#39;e&#39;, e)
+        mask = surf.cell_data[&#39;CellEntityIds&#39;] == e
+        cap = surf.extract_cells(mask)
+        edges = cap.extract_feature_edges(
+            boundary_edges=True, 
+            feature_edges=False, 
+            manifold_edges=False
+            )
+        cap = cap.compute_cell_sizes()
+        cap_mask = [True if cap.points[idx] not in edges.points else False for idx in range(cap.n_points)]
+
+        cap_pts = cap.extract_points(cap_mask, adjacent_cells=False)        
+        # cap_pts = cap_pts.compute_cell_sizes()
+
+        # cap_pts_ALT = cap.extract_points(cap_mask, adjacent_cells=True)        
+        # cap_pts_ALT = cap_pts_ALT.compute_cell_sizes()
+
+        center = edges.points.mean(axis=0)
+
+        center_robust_ = least_squares(_f, center, args=edges.points)
+        center_robust = center_robust_.x
+        radius_robust = center_robust_.fun.mean()
+
+
+        normal = cap_pts.point_arrays[&#39;Normals&#39;].mean(axis=0).reshape(1,-1)
+        normal = normal / np.linalg.norm(normal)
+        area = cap.cell_data[&#39;Area&#39;].sum()
+
+        # rad = np.linalg.norm(edges.points - center, axis=1).mean()
+        # area = np.pi*rad**2
+        # rad2 = (area / np.pi)**0.5
+        # print(&#39;rad&#39;, rad.mean())
+        # print(&#39;rad2&#39;, rad2)
+        # print(&#39;rad_robust&#39;, radius_robust)
+
+        c = pv.wrap(center)
+        c.point_arrays[&#39;Normal&#39;] = normal
+        c.point_arrays[&#39;CellEntityIds&#39;] = e
+        c.point_arrays[&#39;Area&#39;] = area 
+        c.point_arrays[&#39;Radius&#39;] = radius_robust
+
+        points[e] = c
+        
+    return points</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.branch_sections"><code class="name flex">
+<span>def <span class="ident">branch_sections</span></span>(<span>surf, centerlines, n_spheres=1)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def branch_sections(surf, centerlines, n_spheres=1):
+    bs = vmtkscripts.vmtkBranchSections()
+    bs.Surface = surf 
+    bs.Centerlines = centerlines
+    bs.NumberOfDistanceSpheres = n_spheres
+    bs.Execute()
+    return pv.wrap(bs.BranchSections)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.centerline_attributes"><code class="name flex">
+<span>def <span class="ident">centerline_attributes</span></span>(<span>centerlines)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def centerline_attributes(centerlines):
+    ca = vmtkscripts.vmtkCenterlineAttributes()
+    ca.Centerlines = centerlines
+    ca.Execute()
+    return pv.wrap(ca.Centerlines)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.centerline_branch_clipper"><code class="name flex">
+<span>def <span class="ident">centerline_branch_clipper</span></span>(<span>surf, centerlines)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Clip branches using centerlines with VMTK.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def centerline_branch_clipper(surf, centerlines):
+    &#34;&#34;&#34; Clip branches using centerlines with VMTK. &#34;&#34;&#34;
+    clipper = vmtkscripts.vmtkBranchClipper()
+    clipper.Surface = surf
+    clipper.Centerlines = centerlines
+    clipper.ClipValue = 0.0
+    clipper.RadiusArrayName = utils.radiusArrayName
+    clipper.GroupIdsArrayName = utils.groupIDsArrayName
+    clipper.BlankingArrayName = utils.blankingArrayName
+    clipper.UseRadiusInformation = 1
+    clipper.Execute()
+    surf = pv.wrap(clipper.Surface)
+    clines = pv.wrap(clipper.Centerlines)
+    return surf, clines </code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.centerline_branch_clipper_checker"><code class="name flex">
+<span>def <span class="ident">centerline_branch_clipper_checker</span></span>(<span>surf, centerlines)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check endpoints match with open profiles.</p>
+<p>In some cases, VMTK may mistakenly mark a region as an
+endpoint if it's nearby. This double checks and fixes
+the masking if present.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def centerline_branch_clipper_checker(surf, centerlines):
+    &#34;&#34;&#34; Check endpoints match with open profiles.
+
+    In some cases, VMTK may mistakenly mark a region as an 
+    endpoint if it&#39;s nearby. This double checks and fixes 
+    the masking if present.
+    &#34;&#34;&#34;
+    groups = np.unique(surf.point_arrays[&#39;GroupIds&#39;])
+
+    # Break surf into components based on GroupIds
+    surf_section_idx = [np.where(surf.point_arrays[&#39;GroupIds&#39;] == g)[0] for g in groups]
+    line_section_idx = [np.where(centerlines.cell_data[&#39;GroupIds&#39;] == g)[0] for g in groups]
+    
+    surf_sections = [surf.extract_points(i) for i in surf_section_idx]
+    line_sections = [centerlines.extract_cells(i) for i in line_section_idx]
+    line_end_bool = np.array([np.any(l.cell_data[&#39;EndCells&#39;] == 1) for l in line_sections])
+
+    end_sections = [x for b, x in zip(line_end_bool, surf_sections) if b == True]
+    end_lines = [x for b, x in zip(line_end_bool, line_sections) if b == True]
+
+    central_sections = [x for b, x in zip(line_end_bool, surf_sections) if b == False]
+    central_lines = [x for b, x in zip(line_end_bool, line_sections) if b == False]
+
+    central_group_id = np.median([x.point_arrays[&#39;GroupIds&#39;][0] for x in central_sections]).astype(int)
+
+    # Iterate through components, break into disconnected regions
+    for s, l in zip(end_sections, end_lines):
+        s = s.connectivity()
+        s.point_arrays[&#39;vtkOGIds&#39;] = s.point_arrays[&#39;vtkOriginalPointIds&#39;].copy()
+
+        component_ids = np.unique(s.cell_data[&#39;RegionId&#39;])
+        if len(component_ids) &gt; 1:
+            ind = [np.where(s.cell_data[&#39;RegionId&#39;] == c)[0] for c in component_ids]
+            comps = [s.extract_cells(i) for i in ind]
+
+            # Find which region is closest to centerline
+            dists = [np.linalg.norm(c.points.mean(axis=0) - l.points.mean(axis=0)) for c in comps]
+            nearest_comp = np.argmin(dists)
+
+            # Use remaining comps to un-mask the group id of that section
+            remaining_comps = [x for x in list(range(len(comps))) if x != nearest_comp]
+
+            # Find out what they will join to 
+            for r in remaining_comps:
+                surf.point_arrays[&#39;GroupIds&#39;][comps[r].point_arrays[&#39;vtkOGIds&#39;]] = central_group_id
+
+    # Unfinished -- iter through central sections
+    # If they contain subcomps, assign to end that connects
+
+    surf.point_arrays[&#39;EndCells&#39;] = np.zeros(surf.n_points)
+    surf.point_arrays[&#39;EndCells&#39;][surf.point_arrays[&#39;GroupIds&#39;] != 2] = 1
+    return surf, centerlines</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.centerline_branches_ids"><code class="name flex">
+<span>def <span class="ident">centerline_branches_ids</span></span>(<span>centerlines)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Identify centerline branches.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def centerline_branches_ids(centerlines):
+    &#34;&#34;&#34; Identify centerline branches. &#34;&#34;&#34;
+
+    brancher = vmtkscripts.vmtkBranchExtractor()
+    brancher.Centerlines = centerlines
+    brancher.RadiusArrayName = utils.radiusArrayName
+    brancher.Execute()
+    centerlines_branched = brancher.Centerlines
+    return pv.wrap(centerlines_branched)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.centerline_endpoint_extractor"><code class="name flex">
+<span>def <span class="ident">centerline_endpoint_extractor</span></span>(<span>centerlines, num_endpoint_spheres=1, num_gap_sphere=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Wrapper for vmtkEndpointExtractor</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def centerline_endpoint_extractor(centerlines, num_endpoint_spheres=1, num_gap_sphere=1):
+    &#34;&#34;&#34; Wrapper for vmtkEndpointExtractor &#34;&#34;&#34;
+
+    extractor = vmtkscripts.vmtkEndpointExtractor()
+    extractor.Centerlines = centerlines
+    extractor.RadiusArrayName = utils.radiusArrayName
+    extractor.GroupIdsArrayName = utils.groupIDsArrayName
+    extractor.BlankingArrayName = utils.blankingArrayName
+    extractor.NumberOfEndPointSpheres = num_endpoint_spheres
+    extractor.NumberOfGapSpheres = num_gap_sphere
+    extractor.Execute()
+    clipped_centerlines = extractor.Centerlines
+
+    return pv.wrap(clipped_centerlines)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.centerline_endpoint_masking"><code class="name flex">
+<span>def <span class="ident">centerline_endpoint_masking</span></span>(<span>centerlines, central_group_id=2)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Identify centerline endpoints using GroupId.</p>
+<p>Marks centerline endpoints via a masking array 'EndCells'.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def centerline_endpoint_masking(centerlines, central_group_id=2):
+    &#34;&#34;&#34; Identify centerline endpoints using GroupId.
+    
+    Marks centerline endpoints via a masking array &#39;EndCells&#39;.
+    &#34;&#34;&#34;
+    centerlines.cell_data[&#39;EndCells&#39;] = np.zeros_like(centerlines.cell_data[&#39;GroupIds&#39;])
+    centerlines.cell_data[&#39;EndCells&#39;] = [1 if x !=central_group_id else 0 for x in centerlines.cell_data[&#39;GroupIds&#39;]]
+    return centerlines </code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.centerline_endpoint_masking_old"><code class="name flex">
+<span>def <span class="ident">centerline_endpoint_masking_old</span></span>(<span>centerlines)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Identify centerline endpoints.
+Don't use, will be deleted.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def centerline_endpoint_masking_old(centerlines):
+    &#34;&#34;&#34; Identify centerline endpoints.
+    Don&#39;t use, will be deleted.
+    &#34;&#34;&#34; 
+    print(&#39;Warning: using OLD centerline endpoint masking&#39;)
+    groups = np.unique(centerlines.cell_data[&#39;CenterlineIds&#39;])
+    ind = [np.where(centerlines.cell_data[&#39;CenterlineIds&#39;]==g) for g in groups]
+    clines = [centerlines.extract_cells(i) for i in ind]
+    end_arrays = [np.zeros(c.n_cells) for c in clines]
+    for e in end_arrays:
+        e[0] = 1
+        e[-1] = 1
+    centerlines.cell_data[&#39;EndCells&#39;] = np.zeros(centerlines.n_cells) 
+    for i, e in zip(ind, end_arrays):
+        centerlines.cell_data[&#39;EndCells&#39;][i] = e
+
+    return centerlines </code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.centerline_geometry"><code class="name flex">
+<span>def <span class="ident">centerline_geometry</span></span>(<span>centerlines)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def centerline_geometry(centerlines):
+    geo = vmtkscripts.vmtkCenterlineGeometry()
+    geo.Centerlines = centerlines
+    geo.LineSmoothing = False 
+    geo.Execute()
+    return pv.wrap(geo.Centerlines)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.centerline_mesh_sections"><code class="name flex">
+<span>def <span class="ident">centerline_mesh_sections</span></span>(<span>mesh, centerlines)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def centerline_mesh_sections(mesh, centerlines):
+    ms = vmtkscripts.vmtkCenterlineMeshSections()
+    ms.Mesh = mesh 
+    ms.Centerlines = centerlines 
+    ms.Execute()
+    return pv.wrap(ms.CenterlineSections)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.centerline_offset_attributes"><code class="name flex">
+<span>def <span class="ident">centerline_offset_attributes</span></span>(<span>centerlines, ref, ref_id)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def centerline_offset_attributes(centerlines, ref, ref_id):
+    ca = vmtkscripts.vmtkCenterlineOffsetAttributes()
+    ca.Centerlines = centerlines
+    ca.ReferenceSystems = ref
+    ca.ReferenceGroupId = ref_id 
+    ca.Execute()
+    return pv.wrap(ca.Centerlines)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.centerlines"><code class="name flex">
+<span>def <span class="ident">centerlines</span></span>(<span>surf, seed_selector='pickpoint', resampling=1, resampling_step_length=0.05, smoothing=True, iterations=100, sm_factor=0.1, src_ids=[], target_ids=[], src_pts=[], target_pts=[])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generate centerlines from a surface with open profiles.</p>
+<p>Before generating the centerlines, the surface is slightly
+perturbed to avoid a bug in vmtkCenterlines that occurs
+with perfectly straight flow extensions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def centerlines(surf, seed_selector=&#39;pickpoint&#39;, resampling=1, 
+                resampling_step_length=0.05, smoothing=True, 
+                iterations=100, sm_factor=0.1, src_ids=[], 
+                target_ids=[], src_pts=[], target_pts=[]):
+    &#34;&#34;&#34; Generate centerlines from a surface with open profiles.
+
+    Before generating the centerlines, the surface is slightly 
+    perturbed to avoid a bug in vmtkCenterlines that occurs
+    with perfectly straight flow extensions.
+    &#34;&#34;&#34;
+
+    surf = surf.compute_normals()
+    surf_perturb = surf.copy()
+    perturbed_vec = np.einsum(
+        &#39;ij,i-&gt;ij&#39;, 
+        surf_perturb.point_arrays[&#39;Normals&#39;], 
+        np.random.normal(0, 0.005, surf_perturb.n_points)
+        )
+    surf_perturb.points = surf_perturb.points + perturbed_vec
+    centerline_filt = vmtkscripts.vmtkCenterlines()
+    centerline_filt.Surface = surf_perturb
+    centerline_filt.SeedSelectorName = seed_selector
+    centerline_filt.Resampling = resampling
+    centerline_filt.ResamplingStepLength = resampling_step_length
+    centerline_filt.smoothing = smoothing
+    centerline_filt.iterations = iterations
+    centerline_filt.factor = sm_factor
+    centerline_filt.SourceIds = src_ids
+    centerline_filt.TargetIds = target_ids
+    centerline_filt.SourcePoints = src_pts
+    centerline_filt.TargetPoints = target_pts
+    centerline_filt.Execute()
+    centerlines = centerline_filt.Centerlines
+    return pv.wrap(centerlines)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.centerlines_smooth"><code class="name flex">
+<span>def <span class="ident">centerlines_smooth</span></span>(<span>centerlines, iterations, sm_factor)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def centerlines_smooth(centerlines, iterations, sm_factor):
+    alg = vmtkscripts.vmtkCenterlineSmoothing()
+    alg.Centerlines = centerlines
+    alg.iterations = iterations
+    alg.factor = sm_factor
+    alg.Execute()
+    return pv.wrap(alg.Centerlines)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.clipper"><code class="name flex">
+<span>def <span class="ident">clipper</span></span>(<span>surf)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Interactively clip branches</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clipper(surf):
+    &#34;&#34;&#34; Interactively clip branches &#34;&#34;&#34;
+
+    clipper = vmtkscripts.vmtkSurfaceClipper()
+    clipper.Surface = surf
+    clipper.WidgetType = &#39;box&#39;
+    clipper.CleanOutput = 1
+    clipper.Interactive = 1
+    clipper.Execute()
+    surf = pv.wrap(clipper.Surface)
+    return surf</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.delaunay_voronoi"><code class="name flex">
+<span>def <span class="ident">delaunay_voronoi</span></span>(<span>surf)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def delaunay_voronoi(surf):
+    # Perturb the surf a bit first
+    surf = surf.compute_normals()
+    surf_perturb = surf.copy()
+    perturbed_vec = np.einsum(
+        &#39;ij,i-&gt;ij&#39;, 
+        surf_perturb.point_arrays[&#39;Normals&#39;], 
+        np.random.normal(0, 0.01, surf_perturb.n_points)
+        )
+    surf_perturb.points = surf_perturb.points + perturbed_vec
+
+    alg = vmtkscripts.vmtkDelaunayVoronoi()
+    alg.Surface = surf_perturb
+    alg.Execute()
+    return pv.wrap(alg.VoronoiDiagram)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.distance_to_centerlines"><code class="name flex">
+<span>def <span class="ident">distance_to_centerlines</span></span>(<span>surf, centerlines, use_radius=1, project_point_arrays=0)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get distance between surf and centerlines.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def distance_to_centerlines(surf, centerlines, use_radius=1, project_point_arrays=0):
+    &#34;&#34;&#34; Get distance between surf and centerlines. &#34;&#34;&#34;
+
+    dist = vmtkscripts.vmtkDistanceToCenterlines()
+    dist.Surface = surf
+    dist.Centerlines = centerlines 
+    dist.UseRadiusInformation = use_radius
+    dist.EvaluateTubeFunction = 0
+    dist.EvaluateCenterlineRadius = 0 
+    dist.UseCombinedDistance = 0
+    dist.ProjectPointArrays = project_point_arrays
+    dist.DistanceToCenterlinesArrayName = utils.distanceToCenterlinesArrayName
+    dist.RadiusArrayName = utils.radiusArrayName
+    dist.UseRadiusThreshold = 0
+    dist.Execute()
+    return pv.wrap(dist.Surface), pv.wrap(dist.Centerlines)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.extract_group_adjacency"><code class="name flex">
+<span>def <span class="ident">extract_group_adjacency</span></span>(<span>centerlines)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get adj list of group IDs.</p>
+<p>Note: centerlines must not be branched, must
+have 1 cell per endpoint (the default format for
+fresh centerlines).</p>
+<p>NOTE: This does not currently work if you have two or more inlets!!</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extract_group_adjacency(centerlines):
+    &#34;&#34;&#34; Get adj list of group IDs.
+
+    Note: centerlines must not be branched, must 
+    have 1 cell per endpoint (the default format for 
+    fresh centerlines).
+
+    NOTE: This does not currently work if you have two or more inlets!!
+    &#34;&#34;&#34;
+    centerlines_og = centerlines.copy()
+    centerlines = centerline_branches_ids(centerlines)
+
+    # Convert cell data to point data
+    centerlines = centerlines.ctp()
+
+    # Create search tree for centerlines with GroupIds
+    tree = KDTree(centerlines.points)
+
+    # Prepare points from original structure to query 
+    q_points = centerlines_og.points
+    dd, ii = tree.query(q_points, k=1)
+
+    # Project onto centerlines_og
+    centerlines_og.point_arrays[&#39;GroupIds&#39;] = np.round(centerlines.point_arrays[&#39;GroupIds&#39;][ii]).astype(int)
+    centerlines_og.point_arrays[&#39;Blanking&#39;] = np.round(centerlines.point_arrays[&#39;Blanking&#39;][ii]).astype(int)
+
+    mask = np.invert(centerlines_og.point_arrays[&#39;Blanking&#39;].astype(bool))
+    valid_ids = np.unique(centerlines_og.point_arrays[&#39;GroupIds&#39;][mask])
+    #print(valid_ids)
+
+    # Split by endpoint
+    # This is the part that does not work with two or more inlets...
+    centerlines_split = centerlines_og.split_bodies()
+
+    # Get adj list
+    edges = []
+    G = nx.DiGraph()
+    for cline in centerlines_split:
+        # groups = np.unique([x for x in cline.point_arrays[&#39;GroupIds&#39;] if x in valid_ids])
+        #return an array of group associations for the portion ot the centerline that are only valid groupids
+        a = np.array([x for x in cline.point_arrays[&#39;GroupIds&#39;] if x in valid_ids])
+        #returns the ids where the first instance of a unique value for valid groupids is found
+        _, idx = np.unique(a, return_index=True)
+
+        groups = a[np.sort(idx)]
+        #print(groups)
+        #establishes adjacency to other groups by pairs
+        pairs = [(groups[i-1], groups[i]) for i in range(1, len(groups))]
+        for p in pairs:
+            edges.append(p)
+            G.add_edge(str(p[0]), str(p[1]))
+    
+    edges = sorted(set(edges))
+    #print(G.nodes)
+    return edges, G</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.flow_extensions"><code class="name flex">
+<span>def <span class="ident">flow_extensions</span></span>(<span>surf, centerlines)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add flow extensions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def flow_extensions(surf, centerlines):
+    &#34;&#34;&#34; Add flow extensions. &#34;&#34;&#34;
+
+    extender = vmtkscripts.vmtkFlowExtensions()
+    extender.Surface = surf
+    extender.Centerlines = centerlines
+    extender.AdaptiveExtensionLength = 1
+    extender.ExtensionRatio = 4
+    extender.CenterlineNormalEstimationDistanceRatio = 1
+    extender.Interactive = 0
+    extender.ExtensionMode = &#39;boundarynormal&#39; # &#39;centerlinedirection&#39; # 
+    extender.InterpolationMode = &#39;thinplatespline&#39; #&#39;linear&#39; # 
+    extender.Execute()
+    surf = pv.wrap(extender.Surface)
+    centerlines = pv.wrap(extender.Centerlines)
+    return surf, centerlines</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.get_bifurcation_vectors"><code class="name flex">
+<span>def <span class="ident">get_bifurcation_vectors</span></span>(<span>centerlines, ref_systems)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get bifurcation vectors.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_bifurcation_vectors(centerlines, ref_systems):
+    &#34;&#34;&#34; Get bifurcation vectors. &#34;&#34;&#34;
+
+    bifvec = vmtkscripts.vmtkBifurcationVectors()
+    bifvec.Centerlines = centerlines
+    bifvec.ReferenceSystems = ref_systems
+    bifvec.Execute()
+    bif_vectors = pv.wrap(bifvec.BifurcationVectors)
+    bif_group_ids = np.unique(bif_vectors.point_arrays[&#39;BifurcationGroupIds&#39;])
+    bif_groups = []
+    for bb in bif_group_ids:
+        bif_ind = np.where(bif_vectors.point_arrays[&#39;BifurcationGroupIds&#39;]==bb)
+        bif_groups.append(bif_vectors.extract_points(bif_ind))
+
+    return pv.MultiBlock(bif_groups)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.get_centerline_endpoints"><code class="name flex">
+<span>def <span class="ident">get_centerline_endpoints</span></span>(<span>centerlines)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get terminal points of centerlines.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_centerline_endpoints(centerlines):
+    &#34;&#34;&#34; Get terminal points of centerlines. &#34;&#34;&#34;
+
+    groups = np.unique(centerlines.cell_data[&#39;CenterlineIds&#39;])
+    ind = [np.where(centerlines.cell_data[&#39;CenterlineIds&#39;]==g) for g in groups]
+    clines = [centerlines.extract_cells(i) for i in ind]
+    clines = [c.ctp() for c in clines]
+
+    origins = [] #np.zeros((2*len(clines), 3))
+
+    for idx in range(len(clines)):
+        if idx == 0:
+            # REMOVE DUPLICATE ORIGINS
+            cut_start_origin = clines[idx].points[0]
+            origins.append(cut_start_origin)
+
+        cut_end_origin = clines[idx].points[-1]
+        origins.append(cut_end_origin)
+
+    return origins</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.get_centerline_endpoints_clip"><code class="name flex">
+<span>def <span class="ident">get_centerline_endpoints_clip</span></span>(<span>centerlines)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get origin and approx normals of endpoints.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_centerline_endpoints_clip(centerlines):
+    &#34;&#34;&#34; Get origin and approx normals of endpoints. &#34;&#34;&#34;
+
+    groups = np.unique(centerlines.cell_data[&#39;CenterlineIds&#39;])
+    ind = [np.where(centerlines.cell_data[&#39;CenterlineIds&#39;]==g) for g in groups]
+    clines = [centerlines.extract_cells(i) for i in ind]
+    clines = [c.ctp() for c in clines]
+
+    origins = [] #np.zeros((2*len(clines), 3))
+    normals = [] #np.zeros((2*len(clines), 3))
+
+    for idx in range(len(clines)):
+        clines[idx].point_arrays[&#39;EndPoints&#39;] = np.round(clines[idx].point_arrays[&#39;EndCells&#39;]).astype(int)
+        cut_mask = np.abs(np.diff(clines[idx].point_arrays[&#39;EndPoints&#39;]))
+        cut_index = np.where(cut_mask)[0]
+        # Get the point before/after
+        cut_start_index = [cut_index[0], cut_index[0]-5]
+        cut_end_index = [cut_index[1], cut_index[1]+5]
+
+        cut_start_normal = np.diff(clines[idx].points[cut_start_index], axis=0)
+        cut_end_normal = np.diff(clines[idx].points[cut_end_index], axis=0)
+
+        cut_start_origin = clines[idx].points[cut_start_index[0]]
+        cut_end_origin = clines[idx].points[cut_end_index[0]]
+
+        origins.append(cut_start_origin)
+        origins.append(cut_end_origin)
+        normals.append(cut_start_normal[0])
+        normals.append(cut_end_normal[0])
+
+    # inlet = clines[0].points[0]
+    # outlets = [c.points[-1] for c in clines]
+    return origins, normals #, outlets</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.kite_removal"><code class="name flex">
+<span>def <span class="ident">kite_removal</span></span>(<span>surf, factor=0.1)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def kite_removal(surf, factor=0.1):
+    kite = vmtkscripts.vmtkSurfaceKiteRemoval()
+    kite.Surface = surf 
+    kite.SizeFactor = factor 
+    kite.Execute()
+    return pv.wrap(kite.Surface)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.merge_centerlines"><code class="name flex">
+<span>def <span class="ident">merge_centerlines</span></span>(<span>centerlines)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def merge_centerlines(centerlines):
+    merged = vmtkscripts.vmtkCenterlineMerge()
+    merged.Centerlines = centerlines
+    merged.MergeBlanked = 1
+    merged.RadiusArrayName = &#39;MaximumInscribedSphereRadius&#39;
+    merged.GroupIdsArrayName = &#39;GroupIds&#39;
+    merged.CenterlineIdsArrayName = &#39;CenterlineIds&#39;
+    merged.BlankingArrayName = &#39;Blanking&#39;
+    merged.TractIdsArrayName = &#39;TractIds&#39;
+    merged.Execute()
+    return pv.wrap(merged.Centerlines)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.mesh_centerline_projection_MISR"><code class="name flex">
+<span>def <span class="ident">mesh_centerline_projection_MISR</span></span>(<span>mesh, centerlines, arrays=['GroupIds'], sm_iterations=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Inflate centerlines based on MISR, project arrays to mesh.</p>
+<p>Based on method in surface.py.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mesh_centerline_projection_MISR(mesh, centerlines, arrays=[&#39;GroupIds&#39;], sm_iterations=1):
+    &#34;&#34;&#34; Inflate centerlines based on MISR, project arrays to mesh.
+
+    Based on method in surface.py.
+    &#34;&#34;&#34;
+    # Cell-to-point; get relevant sections of centerlines
+    mask = centerlines.cell_data[&#39;Blanking&#39;] == 0
+    centerlines = centerlines.extract_cells(mask)
+
+    group_ids = np.unique(centerlines.cell_data[&#39;GroupIds&#39;])
+    g_masks = [centerlines.cell_data[&#39;GroupIds&#39;] == g for g in group_ids]
+
+    centerlines_list = [centerlines.extract_cells(gm).connectivity(largest=True) for gm in g_masks]
+    centerlines_pd = [pv.PolyData(c.points, lines=c.cells) for c in centerlines_list]
+    
+    for cline, u_cline in zip(centerlines_pd, centerlines_list):
+        u_cline = u_cline.ctp()
+        cline.point_arrays[&#39;GroupIds&#39;] = u_cline.point_arrays[&#39;GroupIds&#39;]
+        cline.point_arrays[&#39;MaximumInscribedSphereRadius&#39;] = u_cline.point_arrays[&#39;MaximumInscribedSphereRadius&#39;]
+
+    centerlines_pd = np.sum(centerlines_pd)
+
+    MISR = &#39;MaximumInscribedSphereRadius&#39;
+    rads = np.linspace(0.1, 4, 10)
+    test_object = np.sum([centerlines_pd.tube(scalars=MISR, radius_factor=i, n_sides=20) for i in rads])
+
+    # Create smooth surf
+    # surf_smooth = surf.smooth(n_iter=20, relaxation_factor=1.0)
+
+    # For point in surf_smooth, find nearest in test_object
+    tree = KDTree(test_object.points)
+    _, ii = tree.query(mesh.points, k=1)
+
+    # Assign values to surf and smooth array based on median filtering
+    # neighbour_pt_ids = None
+
+    # surf = surf.clean()
+    
+    for arr in arrays:
+        group_ids = test_object.point_arrays[arr][ii]
+        mesh.point_arrays[arr] = group_ids
+
+        # surf, neighbour_pt_ids = cc.smooth_mesh_data_local(
+        #     surf, 
+        #     array=arr, 
+        #     func=&#39;median&#39;, 
+        #     neighbour_pt_ids=neighbour_pt_ids, 
+        #     iterations=sm_iterations,
+        # )
+
+    return mesh</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.network_extractor"><code class="name flex">
+<span>def <span class="ident">network_extractor</span></span>(<span>surf)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extract a basic network and graph layout of a surfaces.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def network_extractor(surf):
+    &#34;&#34;&#34; Extract a basic network and graph layout of a surfaces. &#34;&#34;&#34;
+
+    ext = vmtkscripts.vmtkNetworkExtraction()
+    ext.Surface = surf 
+    ext.AdvancementRatio = 1.05
+    ext.RadiusArrayName = &#39;MaximumInscribedSphereRadius&#39;
+    ext.TopologyArrayName = &#39;Topology&#39;
+    ext.MarksArrayName = &#39;Marks&#39;
+    ext.Execute()
+
+    return pv.wrap(ext.Network), pv.wrap(ext.GraphLayout)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.renumber_entity_ids"><code class="name flex">
+<span>def <span class="ident">renumber_entity_ids</span></span>(<span>mesh, inlet_id)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Renumber entity ids
+-------- NOT YET FUNCTIONAL ---------</p>
+<p>Default is the following:
+0 is internal cells
+1 is wall
+2 is inlet
+3, &hellip; is outlets</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def renumber_entity_ids(mesh, inlet_id):
+    &#34;&#34;&#34; Renumber entity ids
+    -------- NOT YET FUNCTIONAL ---------
+
+    Default is the following:
+    0 is internal cells
+    1 is wall
+    2 is inlet
+    3, ... is outlets
+    &#34;&#34;&#34;
+    entity_ids = mesh.cell_data[&#39;CellEntityIds&#39;].copy()
+    valid_entity_ids = sorted(set(np.unique(entity_ids)) - set([0,1]))
+
+    entity_ids_renumbered = np.zeros_like(entity_ids)
+    
+    pairs = [[0,0],[1,1],[4,2],[2,4],[3,3]]
+    for p in pairs:
+        entity_ids_renumbered[entity_ids == p[0]] = p[1]
+    mesh.cell_data[&#39;CellEntityIds&#39;] = entity_ids_renumbered
+    return mesh </code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.sac_mask_tool"><code class="name flex">
+<span>def <span class="ident">sac_mask_tool</span></span>(<span>surf, centerlines)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ID sac based on centerline branches.</p>
+<p>Sac must be last branch.
+Not robust; only allows 1 sac.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sac_mask_tool(surf, centerlines):
+    &#34;&#34;&#34; ID sac based on centerline branches.
+
+    Sac must be last branch.
+    Not robust; only allows 1 sac.
+    &#34;&#34;&#34;
+    surf = surface_centerline_projection(surf, centerlines)
+
+    branch_ids = np.unique(surf.point_arrays[&#39;GroupIds&#39;])
+    sac_idx = branch_ids[-1]
+    mask = [0 if sac_idx != x else 1 for x in surf.point_arrays[&#39;GroupIds&#39;]]
+    surf.point_arrays[&#39;SacMask&#39;] = mask
+    return surf, centerlines </code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.surface_append"><code class="name flex">
+<span>def <span class="ident">surface_append</span></span>(<span>cl1, cl2)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def surface_append(cl1, cl2):
+    append_cl=vmtkscripts.vmtkSurfaceAppend()
+    append_cl.Surface = cl1
+    append_cl.Surface2 = cl2
+    append_cl.Execute()
+    return pv.wrap(append_cl.Surface)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.surface_array_smoothing"><code class="name flex">
+<span>def <span class="ident">surface_array_smoothing</span></span>(<span>surf, array_name='Size', connexity=1, relaxation=1.0, iterations=1)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def surface_array_smoothing(surf, array_name=&#39;Size&#39;, connexity=1, relaxation=1.0, iterations=1):
+    sm = vmtkscripts.vmtkSurfaceArraySmoothing()
+    sm.Surface = surf 
+    sm.SurfaceArrayName = array_name
+    sm.Connexity = connexity 
+    sm.Relaxation = relaxation 
+    sm.Iterations = iterations
+    sm.Execute()
+    return pv.wrap(sm.Surface)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.surface_capper"><code class="name flex">
+<span>def <span class="ident">surface_capper</span></span>(<span>surf)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add caps to surface.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def surface_capper(surf):
+    &#34;&#34;&#34; Add caps to surface. &#34;&#34;&#34;
+
+    capper = vmtkscripts.vmtkSurfaceCapper()
+    capper.Surface = surf
+    capper.Method =&#39;centerpoint&#39;
+    capper.Interactive = 0
+    capper.Execute()
+    return pv.wrap(capper.Surface)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.surface_centerline_projection"><code class="name flex">
+<span>def <span class="ident">surface_centerline_projection</span></span>(<span>surf, centerlines, pass_arrays=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Project centerline arrays onto surface</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def surface_centerline_projection(surf, centerlines, pass_arrays=None):
+    &#34;&#34;&#34; Project centerline arrays onto surface &#34;&#34;&#34;
+
+    c2 = centerlines.ctp()
+    if pass_arrays is not None:
+        pass_arrays.append(&#39;MaximumInscribedSphereRadius&#39;)
+        arrs = [c2.point_arrays[x] for x in pass_arrays]
+        pts = c2.points 
+        cells = c2.lines 
+        c2 = pv.PolyData(pts, lines=cells)
+        
+        for a, x in zip(arrs, pass_arrays):
+            c2.point_arrays[x] = a
+
+    proj = vmtkscripts.vmtkSurfaceCenterlineProjection()
+    proj.Surface = surf
+    proj.Centerlines = c2
+    proj.UseRadiusInformation = 1
+    proj.RadiusArrayName = utils.radiusArrayName
+    proj.Execute()
+    return pv.wrap(proj.Surface)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.surface_centerline_projection_MISR"><code class="name flex">
+<span>def <span class="ident">surface_centerline_projection_MISR</span></span>(<span>surf, centerlines, arrays=['GroupIds'], sm_iterations=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Inflate centerlines based on MISR, project arrays to surfacre.</p>
+<p>A better recipe for projecting centerline data to the surface.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def surface_centerline_projection_MISR(surf, centerlines, arrays=[&#39;GroupIds&#39;], sm_iterations=1):
+    &#34;&#34;&#34; Inflate centerlines based on MISR, project arrays to surfacre.
+
+    A better recipe for projecting centerline data to the surface.
+    &#34;&#34;&#34;
+    # Cell-to-point; get relevant sections of centerlines
+    mask = centerlines.cell_data[&#39;Blanking&#39;] == 0
+    centerlines = centerlines.extract_cells(mask)
+
+    group_ids = np.unique(centerlines.cell_data[&#39;GroupIds&#39;])
+    g_masks = [centerlines.cell_data[&#39;GroupIds&#39;] == g for g in group_ids]
+
+    centerlines_list = [centerlines.extract_cells(gm).connectivity(largest=True) for gm in g_masks]
+    centerlines_pd = [pv.PolyData(c.points, lines=c.cells) for c in centerlines_list]
+    
+    for cline, u_cline in zip(centerlines_pd, centerlines_list):
+        u_cline = u_cline.ctp()
+        cline.point_arrays[&#39;GroupIds&#39;] = u_cline.point_arrays[&#39;GroupIds&#39;]
+        cline.point_arrays[&#39;MaximumInscribedSphereRadius&#39;] = u_cline.point_arrays[&#39;MaximumInscribedSphereRadius&#39;]
+
+    centerlines_pd = np.sum(centerlines_pd)
+
+
+    test_object = centerlines_pd.tube(scalars=&#39;MaximumInscribedSphereRadius&#39;, radius_factor=4, n_sides=20)
+        
+    # Create smooth surf
+    # params used to be n_iter=20, relaxation=1.0, but was running into a bug
+    # where surf_smooth.n_points &lt; surf.n_points
+    surf_smooth = surf.smooth(n_iter=30, relaxation_factor=0.7)
+
+    # For point in surf_smooth, find nearest in test_object
+    tree = KDTree(test_object.points)
+    _, ii = tree.query(surf_smooth.points, k=1)
+
+    # Assign values to surf and smooth array based on median filtering
+    neighbour_pt_ids = None
+
+    surf = surf.clean()
+    
+    for arr in arrays:
+        group_ids = test_object.point_arrays[arr][ii]
+        surf.point_arrays[arr] = group_ids
+
+        surf, neighbour_pt_ids = cc.smooth_mesh_data_local(
+            surf, 
+            array=arr, 
+            func=&#39;median&#39;, 
+            neighbour_pt_ids=neighbour_pt_ids, 
+            iterations=sm_iterations,
+        )
+
+    return surf, neighbour_pt_ids</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.surface_centerline_projection_VOR"><code class="name flex">
+<span>def <span class="ident">surface_centerline_projection_VOR</span></span>(<span>surf, centerlines, arrays=['GroupIds'], sm_iterations=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Instead of glyphing, use Voronoi diagram.
+NOT WORKING &ndash; still need to project GroupIds onto voronoi, so
+doesn't really solve the issue.</p>
+<p>But the idea would be to progressively "inflate" the voronoi
+from the centerlines, projecting the group ids onto the surface.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def surface_centerline_projection_VOR(surf, centerlines, arrays=[&#39;GroupIds&#39;], sm_iterations=1):
+    &#34;&#34;&#34; Instead of glyphing, use Voronoi diagram.
+    NOT WORKING -- still need to project GroupIds onto voronoi, so
+    doesn&#39;t really solve the issue.
+
+    But the idea would be to progressively &#34;inflate&#34; the voronoi 
+    from the centerlines, projecting the group ids onto the surface.
+    &#34;&#34;&#34;
+    # Cell-to-point; get relevant sections of centerlines
+    mask = centerlines.cell_data[&#39;Blanking&#39;] == 0
+    centerlines = centerlines.extract_cells(mask)
+
+    centerlines = centerlines.ctp()
+    centerlines.set_active_scalars(&#39;MaximumInscribedSphereRadius&#39;)
+
+    test_object = delaunay_voronoi(surf)
+        
+    # Create smooth surf
+    surf_smooth = surf.smooth(n_iter=20, relaxation_factor=1.0)
+
+    # For point in surf_smooth, find nearest in test_object
+    # Could really speed up code by triming down the test_object
+    tree = KDTree(test_object.points)
+    _, ii = tree.query(surf_smooth.points, k=1)
+
+    # Assign values to surf and smooth array based on median filtering
+    neighbour_pt_ids = None
+
+    mask = np.invert(centerlines.point_arrays[&#39;Blanking&#39;].astype(bool))
+    valid_ids = np.unique(centerlines.point_arrays[&#39;GroupIds&#39;][mask])
+
+    for arr in arrays:
+        group_ids = test_object.point_arrays[arr][ii]
+        surf.point_arrays[arr] = group_ids
+
+        surf, neighbour_pt_ids = cc.smooth_mesh_data_local(
+            surf, 
+            array=arr, 
+            func=np.median, 
+            neighbour_pt_ids=neighbour_pt_ids, 
+            iterations=sm_iterations,
+        )
+
+    return surf, neighbour_pt_ids</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.surface_connectivity"><code class="name flex">
+<span>def <span class="ident">surface_connectivity</span></span>(<span>surf, group_ids_name='GroupIds', group_id=2)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get largest connected region.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def surface_connectivity(surf, group_ids_name=utils.groupIDsArrayName, group_id=2):
+    &#34;&#34;&#34; Get largest connected region. &#34;&#34;&#34;
+
+    connector = vmtkscripts.vmtkSurfaceConnectivity()
+    connector.Surface = surf
+    connector.CleanOutput = 1
+    connector.GroupIdsArrayName = group_ids_name
+    connector.GroupId = group_id
+    connector.Execute()
+    surf = pv.wrap(connector.Surface)
+    return surf</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.surface_end_clipper"><code class="name flex">
+<span>def <span class="ident">surface_end_clipper</span></span>(<span>surf, centerlines=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def surface_end_clipper(surf, centerlines=None):
+    sc = vmtkscripts.vmtkSurfaceEndClipper()
+    sc.Surface = surf 
+    sc.Centerlines = centerlines
+    if centerlines is not None:
+        use_normals = 0
+    else:
+        use_normals = 1
+    sc.CenterlineNormals = use_normals
+    sc.Execute()
+    return pv.wrap(sc.Surface)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.surface_remeshing"><code class="name flex">
+<span>def <span class="ident">surface_remeshing</span></span>(<span>surf, edgelength=0.3, element_size_mode='edgelength', edgearray='Size', iterations=10)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Surface remeshing with VMTK.</p>
+<p>If using element_size_mode='edgelengtharray', specify edgearray.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def surface_remeshing(surf, edgelength=0.3, element_size_mode=&#39;edgelength&#39;, edgearray=&#39;Size&#39;, iterations=10):
+    &#34;&#34;&#34; Surface remeshing with VMTK.
+    
+    If using element_size_mode=&#39;edgelengtharray&#39;, specify edgearray.
+    &#34;&#34;&#34;
+    remesher = vmtkscripts.vmtkSurfaceRemeshing()
+    remesher.Surface = surf
+    remesher.ElementSizeMode = element_size_mode
+    remesher.TargetEdgeLengthArrayName = edgearray
+    remesher.Iterations = iterations
+    remesher.TargetEdgeLength = edgelength
+    remesher.Execute()
+    surf = pv.wrap(remesher.Surface)
+    return surf </code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.vmtkcenterlinemodeller"><code class="name flex">
+<span>def <span class="ident">vmtkcenterlinemodeller</span></span>(<span>centerlines, arr, dims)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vmtkcenterlinemodeller(centerlines, arr, dims):
+    alg = vmtkscripts.vmtkCenterlineModeller()
+    alg.Centerlines = centerlines
+    alg.RadiusArrayName = arr
+    alg.SampleDimensions = dims
+    alg.Execute()
+    return pv.wrap(alg.Image)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.vmtkdelaunayvoronoi"><code class="name flex">
+<span>def <span class="ident">vmtkdelaunayvoronoi</span></span>(<span>surf)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vmtkdelaunayvoronoi(surf):
+    filt = vmtkscripts.vmtkDelaunayVoronoi()
+    filt.Surface = surf </code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.volume_meshing"><code class="name flex">
+<span>def <span class="ident">volume_meshing</span></span>(<span>surf)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>VMTK volume meshing.</p>
+<p>More input options will be added.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def volume_meshing(surf):
+    &#34;&#34;&#34; VMTK volume meshing.
+    
+    More input options will be added.
+    &#34;&#34;&#34;
+
+    meshgen = vmtkscripts.vmtkMeshGenerator()
+    meshgen.Surface = surf
+    #meshgen.SkipRemeshing = 1
+    meshgen.ElementSizeMode = &#34;edgelengtharray&#34;
+    meshgen.TargetEdgeLengthArrayName = &#34;Size&#34;
+    meshgen.BoundaryLayer = 1
+    meshgen.NumberOfSubLayers = 4
+    meshgen.BoundaryLayerOnCaps = 0
+    meshgen.BoundaryLayerThicknessFactor = 0.85
+    meshgen.SubLayerRatio = 0.75
+    meshgen.Tetrahedralize = 1
+    meshgen.VolumeElementScaleFactor = 0.8
+    meshgen.EndcapsEdgeLengthFactor = 1.0
+    meshgen.Execute()
+    mesh = pv.wrap(meshgen.Mesh)
+    return mesh</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.write_mesh"><code class="name flex">
+<span>def <span class="ident">write_mesh</span></span>(<span>mesh, outfile)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Write mesh using VMTK.</p>
+<p>Used for writing dolfin-format XML with
+cellEntityIds array.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def write_mesh(mesh, outfile):
+    &#34;&#34;&#34; Write mesh using VMTK.
+
+    Used for writing dolfin-format XML with
+    cellEntityIds array.
+    &#34;&#34;&#34;
+    writer = vmtkscripts.vmtkMeshWriter()
+    writer.Mesh = mesh 
+    writer.Format = &#39;dolfin&#39;
+    writer.Compressed = 0
+    writer.Mode = &#39;binary&#39;
+    writer.CellEntityIdsArrayName = &#39;CellEntityIds&#39;
+    writer.OutputFileName = str(outfile)
+    writer.Execute()
+
+    # Then open the file and gzip it
+    gz_outfile = str(outfile) + &#39;.gz&#39;
+
+    with open(outfile, &#39;rb&#39;) as orig_file:
+        with gzip.open(gz_outfile, &#39;wb&#39;) as zipped_file:
+            zipped_file.writelines(orig_file)
+    
+    outfile.unlink()</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="geometry_tools" href="index.html">geometry_tools</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="geometry_tools.vmtk_wrapper.assert_all_quads" href="#geometry_tools.vmtk_wrapper.assert_all_quads">assert_all_quads</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.bifurcation_profiles" href="#geometry_tools.vmtk_wrapper.bifurcation_profiles">bifurcation_profiles</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.bifurcation_ref_systems" href="#geometry_tools.vmtk_wrapper.bifurcation_ref_systems">bifurcation_ref_systems</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.bifurcation_sections" href="#geometry_tools.vmtk_wrapper.bifurcation_sections">bifurcation_sections</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.branch_center_normal_rad_area" href="#geometry_tools.vmtk_wrapper.branch_center_normal_rad_area">branch_center_normal_rad_area</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.branch_sections" href="#geometry_tools.vmtk_wrapper.branch_sections">branch_sections</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.centerline_attributes" href="#geometry_tools.vmtk_wrapper.centerline_attributes">centerline_attributes</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.centerline_branch_clipper" href="#geometry_tools.vmtk_wrapper.centerline_branch_clipper">centerline_branch_clipper</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.centerline_branch_clipper_checker" href="#geometry_tools.vmtk_wrapper.centerline_branch_clipper_checker">centerline_branch_clipper_checker</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.centerline_branches_ids" href="#geometry_tools.vmtk_wrapper.centerline_branches_ids">centerline_branches_ids</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.centerline_endpoint_extractor" href="#geometry_tools.vmtk_wrapper.centerline_endpoint_extractor">centerline_endpoint_extractor</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.centerline_endpoint_masking" href="#geometry_tools.vmtk_wrapper.centerline_endpoint_masking">centerline_endpoint_masking</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.centerline_endpoint_masking_old" href="#geometry_tools.vmtk_wrapper.centerline_endpoint_masking_old">centerline_endpoint_masking_old</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.centerline_geometry" href="#geometry_tools.vmtk_wrapper.centerline_geometry">centerline_geometry</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.centerline_mesh_sections" href="#geometry_tools.vmtk_wrapper.centerline_mesh_sections">centerline_mesh_sections</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.centerline_offset_attributes" href="#geometry_tools.vmtk_wrapper.centerline_offset_attributes">centerline_offset_attributes</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.centerlines" href="#geometry_tools.vmtk_wrapper.centerlines">centerlines</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.centerlines_smooth" href="#geometry_tools.vmtk_wrapper.centerlines_smooth">centerlines_smooth</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.clipper" href="#geometry_tools.vmtk_wrapper.clipper">clipper</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.delaunay_voronoi" href="#geometry_tools.vmtk_wrapper.delaunay_voronoi">delaunay_voronoi</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.distance_to_centerlines" href="#geometry_tools.vmtk_wrapper.distance_to_centerlines">distance_to_centerlines</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.extract_group_adjacency" href="#geometry_tools.vmtk_wrapper.extract_group_adjacency">extract_group_adjacency</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.flow_extensions" href="#geometry_tools.vmtk_wrapper.flow_extensions">flow_extensions</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.get_bifurcation_vectors" href="#geometry_tools.vmtk_wrapper.get_bifurcation_vectors">get_bifurcation_vectors</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.get_centerline_endpoints" href="#geometry_tools.vmtk_wrapper.get_centerline_endpoints">get_centerline_endpoints</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.get_centerline_endpoints_clip" href="#geometry_tools.vmtk_wrapper.get_centerline_endpoints_clip">get_centerline_endpoints_clip</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.kite_removal" href="#geometry_tools.vmtk_wrapper.kite_removal">kite_removal</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.merge_centerlines" href="#geometry_tools.vmtk_wrapper.merge_centerlines">merge_centerlines</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.mesh_centerline_projection_MISR" href="#geometry_tools.vmtk_wrapper.mesh_centerline_projection_MISR">mesh_centerline_projection_MISR</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.network_extractor" href="#geometry_tools.vmtk_wrapper.network_extractor">network_extractor</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.renumber_entity_ids" href="#geometry_tools.vmtk_wrapper.renumber_entity_ids">renumber_entity_ids</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.sac_mask_tool" href="#geometry_tools.vmtk_wrapper.sac_mask_tool">sac_mask_tool</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.surface_append" href="#geometry_tools.vmtk_wrapper.surface_append">surface_append</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.surface_array_smoothing" href="#geometry_tools.vmtk_wrapper.surface_array_smoothing">surface_array_smoothing</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.surface_capper" href="#geometry_tools.vmtk_wrapper.surface_capper">surface_capper</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.surface_centerline_projection" href="#geometry_tools.vmtk_wrapper.surface_centerline_projection">surface_centerline_projection</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.surface_centerline_projection_MISR" href="#geometry_tools.vmtk_wrapper.surface_centerline_projection_MISR">surface_centerline_projection_MISR</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.surface_centerline_projection_VOR" href="#geometry_tools.vmtk_wrapper.surface_centerline_projection_VOR">surface_centerline_projection_VOR</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.surface_connectivity" href="#geometry_tools.vmtk_wrapper.surface_connectivity">surface_connectivity</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.surface_end_clipper" href="#geometry_tools.vmtk_wrapper.surface_end_clipper">surface_end_clipper</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.surface_remeshing" href="#geometry_tools.vmtk_wrapper.surface_remeshing">surface_remeshing</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.vmtkcenterlinemodeller" href="#geometry_tools.vmtk_wrapper.vmtkcenterlinemodeller">vmtkcenterlinemodeller</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.vmtkdelaunayvoronoi" href="#geometry_tools.vmtk_wrapper.vmtkdelaunayvoronoi">vmtkdelaunayvoronoi</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.volume_meshing" href="#geometry_tools.vmtk_wrapper.volume_meshing">volume_meshing</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.write_mesh" href="#geometry_tools.vmtk_wrapper.write_mesh">write_mesh</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

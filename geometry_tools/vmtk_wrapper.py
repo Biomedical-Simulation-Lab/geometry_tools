@@ -73,6 +73,7 @@ def centerlines(surf, seed_selector='pickpoint', resampling=1,
 def merge_centerlines(centerlines):
     merged = vmtkscripts.vmtkCenterlineMerge()
     merged.Centerlines = centerlines
+    merged.MergeBlanked = 1
     merged.RadiusArrayName = 'MaximumInscribedSphereRadius'
     merged.GroupIdsArrayName = 'GroupIds'
     merged.CenterlineIdsArrayName = 'CenterlineIds'
@@ -126,16 +127,16 @@ def centerline_endpoint_masking_old(centerlines):
     Don't use, will be deleted.
     """ 
     print('Warning: using OLD centerline endpoint masking')
-    groups = np.unique(centerlines.cell_arrays['CenterlineIds'])
-    ind = [np.where(centerlines.cell_arrays['CenterlineIds']==g) for g in groups]
+    groups = np.unique(centerlines.cell_data['CenterlineIds'])
+    ind = [np.where(centerlines.cell_data['CenterlineIds']==g) for g in groups]
     clines = [centerlines.extract_cells(i) for i in ind]
     end_arrays = [np.zeros(c.n_cells) for c in clines]
     for e in end_arrays:
         e[0] = 1
         e[-1] = 1
-    centerlines.cell_arrays['EndCells'] = np.zeros(centerlines.n_cells) 
+    centerlines.cell_data['EndCells'] = np.zeros(centerlines.n_cells) 
     for i, e in zip(ind, end_arrays):
-        centerlines.cell_arrays['EndCells'][i] = e
+        centerlines.cell_data['EndCells'][i] = e
 
     return centerlines 
 
@@ -144,8 +145,8 @@ def centerline_endpoint_masking(centerlines, central_group_id=2):
     
     Marks centerline endpoints via a masking array 'EndCells'.
     """
-    centerlines.cell_arrays['EndCells'] = np.zeros_like(centerlines.cell_arrays['GroupIds'])
-    centerlines.cell_arrays['EndCells'] = [1 if x !=central_group_id else 0 for x in centerlines.cell_arrays['GroupIds']]
+    centerlines.cell_data['EndCells'] = np.zeros_like(centerlines.cell_data['GroupIds'])
+    centerlines.cell_data['EndCells'] = [1 if x !=central_group_id else 0 for x in centerlines.cell_data['GroupIds']]
     return centerlines 
 
 
@@ -160,11 +161,11 @@ def centerline_branch_clipper_checker(surf, centerlines):
 
     # Break surf into components based on GroupIds
     surf_section_idx = [np.where(surf.point_arrays['GroupIds'] == g)[0] for g in groups]
-    line_section_idx = [np.where(centerlines.cell_arrays['GroupIds'] == g)[0] for g in groups]
+    line_section_idx = [np.where(centerlines.cell_data['GroupIds'] == g)[0] for g in groups]
     
     surf_sections = [surf.extract_points(i) for i in surf_section_idx]
     line_sections = [centerlines.extract_cells(i) for i in line_section_idx]
-    line_end_bool = np.array([np.any(l.cell_arrays['EndCells'] == 1) for l in line_sections])
+    line_end_bool = np.array([np.any(l.cell_data['EndCells'] == 1) for l in line_sections])
 
     end_sections = [x for b, x in zip(line_end_bool, surf_sections) if b == True]
     end_lines = [x for b, x in zip(line_end_bool, line_sections) if b == True]
@@ -179,9 +180,9 @@ def centerline_branch_clipper_checker(surf, centerlines):
         s = s.connectivity()
         s.point_arrays['vtkOGIds'] = s.point_arrays['vtkOriginalPointIds'].copy()
 
-        component_ids = np.unique(s.cell_arrays['RegionId'])
+        component_ids = np.unique(s.cell_data['RegionId'])
         if len(component_ids) > 1:
-            ind = [np.where(s.cell_arrays['RegionId'] == c)[0] for c in component_ids]
+            ind = [np.where(s.cell_data['RegionId'] == c)[0] for c in component_ids]
             comps = [s.extract_cells(i) for i in ind]
 
             # Find which region is closest to centerline
@@ -205,8 +206,8 @@ def centerline_branch_clipper_checker(surf, centerlines):
 def get_centerline_endpoints(centerlines):
     """ Get terminal points of centerlines. """
 
-    groups = np.unique(centerlines.cell_arrays['CenterlineIds'])
-    ind = [np.where(centerlines.cell_arrays['CenterlineIds']==g) for g in groups]
+    groups = np.unique(centerlines.cell_data['CenterlineIds'])
+    ind = [np.where(centerlines.cell_data['CenterlineIds']==g) for g in groups]
     clines = [centerlines.extract_cells(i) for i in ind]
     clines = [c.ctp() for c in clines]
 
@@ -226,8 +227,8 @@ def get_centerline_endpoints(centerlines):
 def get_centerline_endpoints_clip(centerlines):
     """ Get origin and approx normals of endpoints. """
 
-    groups = np.unique(centerlines.cell_arrays['CenterlineIds'])
-    ind = [np.where(centerlines.cell_arrays['CenterlineIds']==g) for g in groups]
+    groups = np.unique(centerlines.cell_data['CenterlineIds'])
+    ind = [np.where(centerlines.cell_data['CenterlineIds']==g) for g in groups]
     clines = [centerlines.extract_cells(i) for i in ind]
     clines = [c.ctp() for c in clines]
 
@@ -437,7 +438,7 @@ def surface_centerline_projection_VOR(surf, centerlines, arrays=['GroupIds'], sm
     from the centerlines, projecting the group ids onto the surface.
     """
     # Cell-to-point; get relevant sections of centerlines
-    mask = centerlines.cell_arrays['Blanking'] == 0
+    mask = centerlines.cell_data['Blanking'] == 0
     centerlines = centerlines.extract_cells(mask)
 
     centerlines = centerlines.ctp()
@@ -480,11 +481,11 @@ def surface_centerline_projection_MISR(surf, centerlines, arrays=['GroupIds'], s
     A better recipe for projecting centerline data to the surface.
     """
     # Cell-to-point; get relevant sections of centerlines
-    mask = centerlines.cell_arrays['Blanking'] == 0
+    mask = centerlines.cell_data['Blanking'] == 0
     centerlines = centerlines.extract_cells(mask)
 
-    group_ids = np.unique(centerlines.cell_arrays['GroupIds'])
-    g_masks = [centerlines.cell_arrays['GroupIds'] == g for g in group_ids]
+    group_ids = np.unique(centerlines.cell_data['GroupIds'])
+    g_masks = [centerlines.cell_data['GroupIds'] == g for g in group_ids]
 
     centerlines_list = [centerlines.extract_cells(gm).connectivity(largest=True) for gm in g_masks]
     centerlines_pd = [pv.PolyData(c.points, lines=c.cells) for c in centerlines_list]
@@ -533,11 +534,11 @@ def mesh_centerline_projection_MISR(mesh, centerlines, arrays=['GroupIds'], sm_i
     Based on method in surface.py.
     """
     # Cell-to-point; get relevant sections of centerlines
-    mask = centerlines.cell_arrays['Blanking'] == 0
+    mask = centerlines.cell_data['Blanking'] == 0
     centerlines = centerlines.extract_cells(mask)
 
-    group_ids = np.unique(centerlines.cell_arrays['GroupIds'])
-    g_masks = [centerlines.cell_arrays['GroupIds'] == g for g in group_ids]
+    group_ids = np.unique(centerlines.cell_data['GroupIds'])
+    g_masks = [centerlines.cell_data['GroupIds'] == g for g in group_ids]
 
     centerlines_list = [centerlines.extract_cells(gm).connectivity(largest=True) for gm in g_masks]
     centerlines_pd = [pv.PolyData(c.points, lines=c.cells) for c in centerlines_list]
@@ -592,9 +593,9 @@ def network_extractor(surf):
     ext = vmtkscripts.vmtkNetworkExtraction()
     ext.Surface = surf 
     ext.AdvancementRatio = 1.05
-    ext.RadiusArrayName = 'Radius'
-    ext.TopologyArrayName = 'TopologyArrayName'
-    ext.MarksArrayName = 'MarksArrayName'
+    ext.RadiusArrayName = 'MaximumInscribedSphereRadius'
+    ext.TopologyArrayName = 'Topology'
+    ext.MarksArrayName = 'Marks'
     ext.Execute()
 
     return pv.wrap(ext.Network), pv.wrap(ext.GraphLayout)
@@ -619,7 +620,7 @@ def renumber_entity_ids(mesh, inlet_id):
     2 is inlet
     3, ... is outlets
     """
-    entity_ids = mesh.cell_arrays['CellEntityIds'].copy()
+    entity_ids = mesh.cell_data['CellEntityIds'].copy()
     valid_entity_ids = sorted(set(np.unique(entity_ids)) - set([0,1]))
 
     entity_ids_renumbered = np.zeros_like(entity_ids)
@@ -627,7 +628,7 @@ def renumber_entity_ids(mesh, inlet_id):
     pairs = [[0,0],[1,1],[4,2],[2,4],[3,3]]
     for p in pairs:
         entity_ids_renumbered[entity_ids == p[0]] = p[1]
-    mesh.cell_arrays['CellEntityIds'] = entity_ids_renumbered
+    mesh.cell_data['CellEntityIds'] = entity_ids_renumbered
     return mesh 
 
 def branch_center_normal_rad_area(mesh):
@@ -637,7 +638,7 @@ def branch_center_normal_rad_area(mesh):
     surf = mesh.extract_surface()
     surf = surf.compute_normals(cell_normals=False, point_normals=True,)
 
-    entity_ids = np.unique(surf.cell_arrays['CellEntityIds'])
+    entity_ids = np.unique(surf.cell_data['CellEntityIds'])
     
     # entity_id = 0, 1 is internal, wall
     entity_ids = sorted(set(entity_ids) - set([0, 1]))
@@ -651,7 +652,7 @@ def branch_center_normal_rad_area(mesh):
 
     for e in entity_ids:
         # print('e', e)
-        mask = surf.cell_arrays['CellEntityIds'] == e
+        mask = surf.cell_data['CellEntityIds'] == e
         cap = surf.extract_cells(mask)
         edges = cap.extract_feature_edges(
             boundary_edges=True, 
@@ -676,7 +677,7 @@ def branch_center_normal_rad_area(mesh):
 
         normal = cap_pts.point_arrays['Normals'].mean(axis=0).reshape(1,-1)
         normal = normal / np.linalg.norm(normal)
-        area = cap.cell_arrays['Area'].sum()
+        area = cap.cell_data['Area'].sum()
 
         # rad = np.linalg.norm(edges.points - center, axis=1).mean()
         # area = np.pi*rad**2

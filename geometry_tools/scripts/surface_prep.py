@@ -75,8 +75,8 @@ def surface_prep(surf_file, proj_dir, surf_type):
             anubool=True
         else:
             anubool=False   
-        m.generate_centerlines(include_aneurysms=anubool)#probably need something here for torcula
-        m.save_inlet_outlet_points(points_file_out, include_aneurysms=anubool)
+        m.generate_centerlines(include_aneurysms=anubool)
+        m.save_inlet_outlet_points(points_file_out, include_aneurysms=anubool, include_normals = True)
 
         time_spent = time.time() - case_start
         print('Case done', timedelta(seconds=time_spent))

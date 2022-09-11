@@ -1,0 +1,3468 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>geometry_tools.common API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>geometry_tools.common</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import vtk 
+import numpy as np 
+import pyvista as pv 
+from scipy.spatial import cKDTree as KDTree 
+from scipy.interpolate import interp1d
+import warnings
+        
+# from pathlib import Path 
+# import h5py 
+# import ast 
+
+def warning_on_one_line(message, category, filename, lineno, file=None, line=None):
+    return &#39;%s:%s: %s: %s\n&#39; % (filename, lineno, category.__name__, message)
+
+
+def fix_vmtk_group_ids(surf):
+    &#34;&#34;&#34; Fix group IDs.
+
+    Args:
+        surf (PolyData) : Surface with array GroupIds (optional: Mask)
+
+    Returns:
+        PolyData with fixed GroupIds
+
+    VMTK groups IDs are often buggy, this fixes them
+    based on connectivity.
+    &#34;&#34;&#34;
+    import pygeodesic.geodesic as geodesic
+    print(surf.point_data)
+    g_ids = np.unique(surf.point_data[&#39;GroupIds&#39;])
+
+    # Break into pieces, find which have broken ids
+    masks = [surf.point_data[&#39;GroupIds&#39;] == g for g in g_ids]
+    groups = [surf.extract_points(m) for m in masks]
+
+    # Find which id has most mutual with sac, overwrite
+    if &#39;Mask&#39; in surf.point_data:
+        check_sac = [g.point_data[&#39;Mask&#39;].sum()/g.n_points for g in groups]
+        surf.point_data[&#39;GroupIds&#39;][surf.point_data[&#39;Mask&#39;] == 1] = g_ids[np.argmax(check_sac)]
+
+    # Break into pieces, find which have broken ids
+    masks = [surf.point_data[&#39;GroupIds&#39;] == g for g in g_ids]
+    groups = [surf.extract_points(m) for m in masks]
+    n_parts = np.array([g.split_bodies().n_blocks for g in groups])
+
+    # Broken groups:
+    split_idx = [idx for idx, x in enumerate(n_parts &gt; 1) if x == True]
+    split_g_ids = g_ids[split_idx]
+
+    if len(split_idx) &gt; 0:
+
+        tree = KDTree(surf.points)
+        surf.point_data[&#39;GroupError&#39;] = np.zeros(surf.n_points, dtype=int)
+
+        for idx in split_idx:
+            parts = list(groups[idx].split_bodies())
+            small_parts = parts[1:]
+            error_points = np.concatenate([x.points for x in small_parts], axis=0)
+
+            _, ii = tree.query(error_points)
+            surf.point_data[&#39;GroupError&#39;][ii] = 1
+
+        target_indices = [idx for idx, x in enumerate(surf.point_data[&#39;GroupError&#39;] == 1) if x == True]
+        source_indices = [idx for idx, x in enumerate(surf.point_data[&#39;GroupError&#39;] == 0) if x == True]
+
+        target_indices = np.array(target_indices)
+        source_indices = np.array(source_indices)
+
+        geoalg = geodesic.PyGeodesicAlgorithmExact(surf.points, surf.faces.reshape(-1, 4)[:, 1:])
+        distances, best_source = geoalg.geodesicDistances(source_indices, target_indices)
+
+        surf.point_data[&#39;GroupIds&#39;][target_indices] = surf.point_data[&#39;GroupIds&#39;][source_indices[best_source]]
+    return surf 
+
+def vtk_generate_img_stencil(mesh, spacing=0.05, bounds=None):
+    &#34;&#34;&#34; Resample surf mesh to image.
+
+    This function has memory problems, something isn&#39;t freed at end,
+    so running it in a loop causes problems.
+    &#34;&#34;&#34;
+    if bounds is None:
+        bounds = np.array(mesh.bounds)
+    else:
+        bounds = np.array(bounds)
+
+    bounds_lengths = np.diff(bounds.reshape(3,2)).T[0]
+
+    # Inflate bounds
+    inflate_lens = bounds_lengths * 0.05
+    bounds[::2] -= inflate_lens
+    bounds[1::2] += inflate_lens
+    bounds_lengths = np.diff(bounds.reshape(3,2)).T[0]
+
+    spacing = (spacing, spacing, spacing)
+    dimensions = (bounds_lengths / spacing).astype(int)
+    dims = (dimensions - 1)
+    origin = bounds[::2]
+
+    image = pv.UniformGrid() 
+    image.dimensions = dimensions 
+    image.origin = origin
+    image.spacing = spacing
+    # image.SetScalarType(vtk.VTK_UNSIGNED_CHAR,image.GetInformation())
+    # image.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)    # 3
+    image.point_data[&#39;ImageScalars&#39;] = np.zeros(np.prod(image.dimensions), dtype=bool)
+
+    pol2Stenc = vtk.vtkPolyDataToImageStencil()
+    pol2Stenc.SetTolerance(0.5) 
+    pol2Stenc.SetInputData(mesh)
+    pol2Stenc.SetInformationInput(image)
+    pol2Stenc.Update()
+
+    stencil = vtk.vtkImageStencil()
+    stencil.SetInputData(image)
+    stencil.ReverseStencilOn()
+    stencil.SetBackgroundValue(1)
+    stencil.SetStencilData(pol2Stenc.GetOutput())
+    stencil.Update()
+
+    newImage = pv.wrap(stencil.GetOutput())
+    newImage.point_data[&#39;ImageScalars&#39;] = newImage.point_data[&#39;ImageScalars&#39;]#[:,0]
+    
+    return newImage
+
+def vtk_taubin_smooth(mesh, pass_band=0.1, feature_angle=60.0, iterations=20):
+    &#34;&#34;&#34; Smooth mesh using Taubin method. 
+    
+    Note:
+    This also exists in bsl.common. 
+    &#34;&#34;&#34;
+    smoother = vtk.vtkWindowedSincPolyDataFilter()
+    smoother.SetInputData(mesh) 
+    smoother.SetNumberOfIterations(iterations)
+    smoother.BoundarySmoothingOff()
+    smoother.FeatureEdgeSmoothingOff() 
+    smoother.SetFeatureAngle(feature_angle)
+    smoother.SetPassBand(pass_band)
+    smoother.NonManifoldSmoothingOn()
+    smoother.NormalizeCoordinatesOn()
+    # smoother.GenerateErrorScalarsOn() s
+    smoother.Update()
+    return pv.wrap(smoother.GetOutput())
+
+
+def smooth_mesh_data(data_array, points, radius, func=np.mean, mask=None):
+    &#34;&#34;&#34; Smooth the data, not the mesh. 
+
+    Radius-based moving average filter.
+    Incorporate distance weighting?
+    &#34;&#34;&#34;
+    tree = KDTree(points)
+    inds = [tree.query_ball_point(pt, radius) for pt in points]
+    out_array = np.zeros_like(data_array)
+
+    if mask is None:
+        mask = np.ones(len(points))
+
+    for idx in range(len(data_array)):
+        value = func(data_array[inds[idx]])
+        
+        if np.any(mask[inds[idx]] == 1):
+            out_array[idx] = value 
+        else:
+            out_array[idx] = data_array[idx]
+
+    return out_array
+
+def smooth_mesh_data_local(surf, array=&#39;GroupIds&#39;, 
+        func=&#39;median&#39;, neighbour_pt_ids=None, iterations=1):
+    &#34;&#34;&#34; Smooth mesh data based on local connectivity.
+
+    Args:
+        surf (polydata): Input surface.
+        array (str): Name of array to be smoothed.
+    Returns:
+        surf (polydata): Surface with smoothed array
+        neighbour_pt_ids (list of lists): list of neighbouring point ids,
+            index by point id.
+    &#34;&#34;&#34;
+    if neighbour_pt_ids == None:
+        neighbour_pt_ids = get_neighbour_map(surf) 
+    
+    neighbour_pt_ids = np.array(neighbour_pt_ids)
+
+    surf = surf.copy()
+    new_array = surf.point_data[array].copy()
+
+    for idx in range(iterations):
+        old_array = new_array.copy()
+        for pt_id in list(range(surf.n_points)):
+            # Uses 2 connexity by default
+            neighbours = neighbour_pt_ids[neighbour_pt_ids[pt_id]]
+            neighbours = np.unique([item for sublist in neighbours for item in sublist])
+            # neighbours = neighbour_pt_ids[pt_id]
+
+            # Unfortunately, np.median has the undesired &#34;fallback&#34; 
+            # that uses the mean when the array is even. This is bad for 
+            # data like GroupIds.
+            if func == &#39;median&#39;:
+                num_neighbours = len(neighbours)
+                neighbour_vals = np.sort(old_array[neighbours])
+                center_index = int(np.ceil(num_neighbours / 2) - 1)
+                new_val = neighbour_vals[center_index]
+
+            else:
+                new_val = func(old_array[neighbours])
+
+            new_array[pt_id] = new_val                        
+
+    surf.point_data[array] = new_array
+
+    return surf, neighbour_pt_ids
+
+# def get_neighbour_map_broken(surf):#, n_points):
+#     &#34;&#34;&#34; Get full list of adjacent neighbour pts.
+
+#     Args:
+#         cells (array): Cell connectivity, shape (n_cells, 3).
+#         n_pts (int): Number of point ids.
+    
+#     Returns:
+#         neighbour_pt_ids (list): List of lists containing neighbour pt ids.
+#         * Trying with numpy array.
+#     &#34;&#34;&#34;
+#     # neighbour_pt_ids = [[] for _ in range(surf.n_points)]
+#     edges = surf.extract_all_edges()
+
+#     # edges.points does not neccesarily == surf.points!!
+#     # create a map between them
+#     tree = KDTree(surf.points)
+#     _, ii = tree.query(edges.points, k=1)
+
+#     ee = edges.lines.reshape(-1, 3)[:,1:]
+    
+#     ee = ee[np.argsort(ee[:, 0])]
+    
+#     diff = np.diff(ee[:,0])
+    
+#     upper = np.argwhere(diff) + 1
+#     upper = np.concatenate([upper.flatten(), [len(ee)]], axis=0)
+#     lower = np.roll(upper,1)
+#     lower[0] = 0
+
+#     max_connect = np.diff(upper).max()
+#     index = np.zeros((len(upper), 2), dtype=int)
+#     neighbour_pt_ids = np.empty((surf.n_points, max_connect), dtype=np.int)
+#     neighbour_pt_ids.fill(np.nan)
+
+#     index[:, 0] = lower.flatten()
+#     index[:, 1] = upper.flatten()
+#     # index[-1] = [upper[-1], len(ee)]    
+
+#     for e, i in enumerate(index): #(surf.n_points):
+#         sub = ee[i[0]:i[1]]
+#         unique = np.unique(sub[:,1])
+#         # print(unique)
+#         neighbour_pt_ids[ii[e]][:len(unique)] = unique
+#         # neighbour_pt_ids[ii[unique]] = e
+#         for u in unique:
+#             neighbour_pt_ids[ii[u]] = e
+
+#     neighbour_pt_ids = [x[~np.isnan(x)] for x in neighbour_pt_ids]
+#     neighbour_pt_ids = np.array([np.unique(x) for x in neighbour_pt_ids], dtype=&#39;object&#39;)
+
+#     return neighbour_pt_ids
+
+def get_neighbour_map(surf):#, n_points):
+    &#34;&#34;&#34; Get full list of adjacent neighbour pts.
+
+    Args:
+        cells (array): Cell connectivity, shape (n_cells, 3).
+        n_pts (int): Number of point ids.
+    
+    Returns:
+        neighbour_pt_ids (list): List of lists containing neighbour pt ids.
+        * Trying with numpy array.
+    &#34;&#34;&#34;
+    neighbour_pt_ids = [[] for _ in range(surf.n_points)]
+    edges = surf.extract_all_edges()
+
+    # edges.points does not neccesarily == surf.points!!
+    # create a map between them
+    tree = KDTree(surf.points)
+    _, ii = tree.query(edges.points, k=1)
+
+    ee = edges.lines.reshape(-1, 3)[:,1:]
+    
+    for e in ee:
+        neighbour_pt_ids[ii[e[0]]].append(ii[e[1]])
+        neighbour_pt_ids[ii[e[1]]].append(ii[e[0]])
+
+    neighbour_pt_ids = np.array([np.unique(x) for x in neighbour_pt_ids], dtype=&#39;object&#39;)
+
+    return neighbour_pt_ids
+
+
+def create_edge_size_array(surf, fix_centerline, min_edge_size=0.1, max_edge_size=0.4, sac_size=0.15, misr_min=0.1, misr_max=2.5, name=&#39;Size&#39;, ref_edge_ratio=0.8):
+    &#34;&#34;&#34; Create &#34;Size&#34; array incorporating distance to centerlines and curvature.
+
+    This will likely be refined moving forward.
+    Optional:
+        Based on DistanceToCenterlinesArray, interpolate between 2.5 mm rad as max, 0.5 mm rad min
+        OR
+        Based on Dan&#39;s method (fix_centerline=&#39;fix&#39;): map the vertices to the centerline points, then use a proportion of 
+        the MISR as the edge length at that point.
+    Based on Curvature, interpolate between 0.3 as min, 0.8 as max
+    Based on Mask, set to min value where Mask == 1.
+    Then take min of each.
+
+    Refinement regions incorporated:
+    Assume everywhere within the refinement region will be assigned an edge length that is 0.5x what it would be with regular remeshing
+    &#34;&#34;&#34;
+    distance_interp = interp1d([misr_min, misr_max], [min_edge_size, max_edge_size], 
+        kind=&#39;linear&#39;,
+        bounds_error=False,
+        fill_value=(min_edge_size, max_edge_size),
+        )
+    curv_interp = interp1d([0.3, 0.8], [max_edge_size, min_edge_size], 
+        kind=&#39;linear&#39;,
+        bounds_error=False,
+        fill_value=(max_edge_size, min_edge_size),
+        )
+
+    surf = surf.compute_normals()
+    surf.point_data[&#39;SizeDistanceToCenterlinesArray&#39;] = distance_interp(surf.point_data[&#39;DistanceToCenterlinesArray&#39;]) #np.ones(surf.n_points) 
+
+    
+    if (fix_centerline == &#39;fix&#39;) or (fix_centerline == &#39;network_fix&#39;):
+        surf.point_data[&#39;SizeMISR&#39;] = distance_interp(surf.point_data[&#39;misr&#39;])
+        surf.point_data[name] = surf.point_data[&#39;SizeMISR&#39;]
+    else:
+        # The perfectly straight flow extensions end up having high curvature 
+        # unless they are perturbed slightly
+        # Some PT meshes have areas of really high curvature that need extra refinement
+        surf_perturb = surf.copy()
+        perturbed_vec = np.einsum(
+            &#39;ij,i-&gt;ij&#39;, 
+            surf_perturb.point_data[&#39;Normals&#39;], 
+            np.random.normal(0, 0.0001, surf_perturb.n_points)
+            )
+        surf_perturb.points = surf_perturb.points + perturbed_vec
+        surf_perturb.point_data[&#39;Curvature&#39;] = np.abs(surf_perturb.curvature(&#39;Minimum&#39;))
+        
+        surf.point_data[&#39;Curvature&#39;] = surf_perturb.point_data[&#39;Curvature&#39;] #np.abs(surf.curvature(&#39;Minimum&#39;))
+        surf.point_data[&#39;SizeCurvature&#39;] = curv_interp(surf.point_data[&#39;Curvature&#39;]) #np.ones(surf.n_points)
+        
+        surf.point_data[name] = np.minimum(surf.point_data[&#39;SizeDistanceToCenterlinesArray&#39;], surf.point_data[&#39;SizeCurvature&#39;])
+
+    surf, n_ids = smooth_mesh_data_local(surf, name, np.mean, iterations=2)
+
+    if &#39;Mask&#39; in surf.point_data:
+        # First dilate mask to include nearby regions
+        surf.point_data[&#39;MaskDilate&#39;] = surf.point_data[&#39;Mask&#39;].copy()
+        surf, _ = smooth_mesh_data_local(surf, &#39;MaskDilate&#39;, np.max, iterations=6, neighbour_pt_ids=n_ids)
+
+        sac_mask = surf.point_data[&#39;MaskDilate&#39;] == 1
+        # sac_size_array = sac_size * np.ones(len(sac_mask))
+        current_size_array = surf.point_data[name][sac_mask]
+
+        surf.point_data[name][sac_mask] = np.minimum(sac_size, current_size_array)
+    else:
+        print(&#39;No mask defined in create_edge_size_array.&#39;)
+
+    if (&#39;RefinementPoints&#39; in surf.point_data) and (&#39;Enlarge_Cells&#39; in surf.point_data):
+        surf.point_data[&#39;Refs&#39;] = surf.point_data[&#39;RefinementPoints&#39;].copy()
+        surf, _ = smooth_mesh_data_local(surf, &#39;Refs&#39;, np.max, iterations=6, neighbour_pt_ids=n_ids)
+
+        ref_reg = surf.point_data[&#39;Refs&#39;] == 1
+        current_size_array = surf.point_data[name][ref_reg]
+
+        surf.point_data[name][ref_reg] = current_size_array*ref_edge_ratio
+
+        surf.point_data[&#39;nds&#39;] = surf.point_data[&#39;Enlarge_Cells&#39;].copy()
+        nd_reg = surf.point_data[&#39;nds&#39;] == 1
+        current_size_array = surf.point_data[name][nd_reg]
+
+        surf.point_data[name][nd_reg] = current_size_array*1.5
+
+    elif &#39;RefinementPoints&#39; in surf.point_data:
+        surf.point_data[&#39;Refs&#39;] = surf.point_data[&#39;RefinementPoints&#39;].copy()
+        surf, _ = smooth_mesh_data_local(surf, &#39;Refs&#39;, np.max, iterations=6, neighbour_pt_ids=n_ids)
+
+        ref_reg = surf.point_data[&#39;Refs&#39;] == 1
+        current_size_array = surf.point_data[name][ref_reg]
+
+        surf.point_data[name][ref_reg] = current_size_array*ref_edge_ratio
+    elif &#39;Enlarge_Cells&#39; in surf.point_data:
+        surf.point_data[&#39;nds&#39;] = surf.point_data[&#39;Enlarge_Cells&#39;].copy()
+        nd_reg = surf.point_data[&#39;nds&#39;] == 1
+        current_size_array = surf.point_data[name][nd_reg]
+
+        surf.point_data[name][nd_reg] = current_size_array*1.5
+    else:
+        print(&#39;No non-dominant and/or refinement region defined in create_edge_size_array.&#39;)
+
+    surf, n_ids = smooth_mesh_data_local(surf, name, np.mean, iterations=3)
+
+    return surf
+
+
+class RefinementSelection():
+    &#34;&#34;&#34; Interactively create a refinement region by selecting cells on the mesh
+    and then obtaining the points they are associated with and assigning them a 
+    point_array (eg. &#39;RefinementPoints&#39;) which contains a boolean if those cells were
+    picked. 
+    
+    Later, these booleans will be used to assign a target edge length that will 
+    remesh the surface, and ultimately the volumetric mesh.
+    &#34;&#34;&#34; 
+    def __init__(self, surf, name = &#39;RefinementPoints&#39;, title=&#39;Clip Refinement Zone&#39;):
+        self.surf = surf
+        self.title = title
+        self.name = name
+        
+    def select(self):
+        self.surf.cell_data[self.name] = np.zeros(self.surf.n_cells, dtype=bool)
+        select = ClickDragSelect(self.surf, title = self.title)
+        self.surf.cell_data[self.name]=select.mesh.cell_data[&#39;PickedMask&#39;]
+
+    def define_surface(self):
+        self.surf.point_data[self.name] = np.zeros(self.surf.n_points, dtype=bool)
+        cell_ids = self.surf.faces.reshape(-1, 4)[self.surf.cell_data[self.name]==1][:,1:]
+        ids = cell_ids.flatten()
+        self.surf.point_data[self.name][ids]=1
+
+class RefinementSelection_OLD():
+    &#34;&#34;&#34; 
+    Not relevant anymore!!
+    Interactively create a refinement region by clipping away 
+    parts of a surface mesh that are not required to be refined, then storing a boolean at 
+    the selected surface points on the original mesh. 
+    
+    Later, these booleans will be used to assign a target edge length that will 
+    remesh the surface, and ultimately the volumetric mesh.
+    &#34;&#34;&#34; 
+    def __init__(self, surf, name = &#39;RefinementPoints&#39;, title=&#39;Clip Refinement Zone&#39;):
+        self.surf = surf.fill_holes(100)
+        self.title = title
+        self.name = name
+        
+    def select(self):
+        #Define the surface we want to refine by clipping the surface
+        warnings.formatwarning = warning_on_one_line
+        warnings.warn(&#34;Holes from clipping must be fillable. May result in inability to close surface!&#34;)
+        new_surf = ClickDragDelete(self.surf, title=self.title)
+        temprefsurf=new_surf.mesh.triangulate()
+        if type(temprefsurf) != pv.core.pointset.PolyData:
+                temprefsurf = pv.PolyData(temprefsurf.points, temprefsurf.cells)
+        self.temprefsurf=temprefsurf.fill_holes(100).clean()
+        self.temprefsurf = self.temprefsurf.connectivity(largest=True)
+
+    def define_surface(self):
+        self.refsurf=self.surf.select_enclosed_points(self.temprefsurf, tolerance=0.01)
+        self.pts = self.surf.extract_points(self.refsurf[&#39;SelectedPoints&#39;].view(bool),
+                           adjacent_cells=False)
+        
+        p = pv.Plotter()
+        p.add_text(&#39;Red points are the selected refinement region&#39;, position=&#39;upper_left&#39;)
+        p.add_mesh(self.surf,color = &#39;blue&#39;, style=&#39;wireframe&#39;, show_edges=True)
+        p.add_points(self.pts, color=&#39;r&#39;)
+        p.show()
+        self.surf.point_data[self.name]=self.refsurf.point_data[&#39;SelectedPoints&#39;]
+
+
+class SacSelectTool():
+    &#34;&#34;&#34; Interactively mark points using a probe.
+
+    I think this is obsolete? 
+    &#34;&#34;&#34; 
+    def __init__(self, surf):
+        self.surf = surf
+        self.surf.point_data[&#39;Mask&#39;] = np.zeros(self.surf.n_points)
+        self.surf.point_data[&#39;TempMask&#39;] = np.zeros(self.surf.n_points)
+
+    def mask(self, center, radius):
+        sphere = pv.Sphere(radius=radius, center=center)
+        self.surf = self.surf.select_enclosed_points(sphere)
+        mask_index = self.surf.point_data[&#39;SelectedPoints&#39;]
+        ids = [x for x in range(self.surf.n_points) if mask_index[x] == True]
+        self.selection = self.surf.extract_points(ids)
+
+        self.selection.point_data[&#39;vtkOGIds&#39;] = self.selection.point_data[&#39;vtkOriginalPointIds&#39;].copy()
+        self.selection = self.selection.extract_largest()
+        mask = self.selection.point_data[&#39;vtkOGIds&#39;]
+        self.selection = pv.PolyData(self.selection.points, self.selection.cells)
+        self.selection.point_data[&#39;vtkOGIds&#39;] = mask
+        self.selection = self.selection.clean()
+
+        self.surf.point_data[&#39;TempMask&#39;] = self.surf.point_data[&#39;Mask&#39;].copy()
+        self.surf.point_data[&#39;TempMask&#39;][self.selection.point_data[&#39;vtkOGIds&#39;]] = 1
+            
+    def select(self):
+
+        def sphere_cb(xyz, probe):
+            # Select enclosed points
+            self.sphere = pv.Sphere(radius=probe.GetRadius(), center=xyz)
+            # self.probe = probe
+            self.p.add_mesh(self.sphere, color=&#39;r&#39;, opacity=0.4, name=&#39;probe&#39;)
+            self.center = probe.GetCenter()
+            self.radius = probe.GetRadius()
+            self.mask(self.center, self.radius)
+            self.p.add_mesh(self.surf, scalars=&#39;TempMask&#39;, name=&#39;surf&#39;)
+
+        def choose_cb():
+            self.surf.point_data[&#39;Mask&#39;] = self.surf.point_data[&#39;TempMask&#39;]
+            
+        self.p = pv.Plotter()
+        self.p.add_mesh(self.surf, scalars=&#39;TempMask&#39;, opacity=1.0, name=&#39;surf&#39;)
+        self.p.add_sphere_widget(
+            callback=sphere_cb, 
+            center=np.mean(self.surf.points, axis=0), 
+            radius=4.0, 
+            pass_widget=True,
+            theta_resolution=8,
+            phi_resolution=8,
+            style=&#39;wireframe&#39;,
+            )
+        self.p.add_key_event(&#39;space&#39;, choose_cb)
+        self.p.show()
+
+        if np.all(self.surf.point_data[&#39;Mask&#39;] == 0):
+            self.surf.point_data[&#39;Mask&#39;] = self.surf.point_data[&#39;TempMask&#39;]
+
+    
+
+class SelectGeodesic():
+    def __init__(self, mesh, scalars=&#39;Mask&#39;):
+        mesh = mesh.clean()
+        mesh = mesh.compute_normals(auto_orient_normals=True)
+        self.mesh = mesh
+        self.scalars = scalars
+        if self.scalars not in mesh.point_data:
+            self.mesh.point_data[self.scalars] = np.zeros(self.mesh.n_points)
+
+        self.current_mask = np.zeros_like(self.mesh.point_data[self.scalars])
+        self.current_pts = self.mesh.points 
+        
+        self.stored_points = []
+        self.picked_points = []
+        self.picked_ids = []
+        self.lines = []
+        self.interactive = False
+        self.tree = KDTree(self.mesh.points)
+        
+    def interact(self, title=&#39;Isolate aneurysms.&#39;):
+        self.interactive = True
+        self.p = pv.Plotter() 
+        self.mesh = self.mesh.compute_normals()
+        self.p.add_mesh(self.mesh, name=&#39;mesh&#39;, scalars=self.scalars, cmap=&#39;Reds&#39;, show_edges=True)
+        self.p.enable_point_picking(
+            show_point=True,
+            show_message=False,
+            callback=self._cb,
+            color=&#39;red&#39;,
+            font_size=12,
+            point_size=15,
+            tolerance=0.005
+            )
+
+        self.p.add_text(title, position=&#39;upper_left&#39;, font_size=18)
+        msg = &#39;Keys:&#39;
+        self.p.add_text(msg, position=(0.05, 175), font_size=12)   
+        msg = &#39;f: select points&#39;
+        self.p.add_text(msg, position=(0.05, 150), font_size=12)
+        msg = &#39;u: undo&#39;
+        self.p.add_text(msg, position=(0.05, 125), font_size=12)
+        msg = &#39;space: complete loop&#39;
+        self.p.add_text(msg, position=(0.05, 100), font_size=12)
+        msg = &#39;a: append mask&#39;
+        self.p.add_text(msg, position=(0.05, 75), font_size=12)
+        msg = &#39;x: smooth section&#39;
+        self.p.add_text(msg, position=(0.05, 50), font_size=12)
+        msg = &#39;q: quit&#39;
+        self.p.add_text(msg, position=(0.05, 25), font_size=12)
+
+        self.p.add_key_event(&#39;u&#39;, self._undo)
+        self.p.add_key_event(&#39;space&#39;, self._finish)
+        self.p.add_key_event(&#39;a&#39;, self.append)
+        self.p.add_key_event(&#39;x&#39;, self.refill_section)
+        self.p.add_key_event(&#39;c&#39;, self._clear)
+        self.p.show()
+        self.stored_points.append(np.array(self.picked_points))
+
+        return self._get_points()
+
+    def _cb(self, pt):
+        &#34;&#34;&#34; CB for picking points. &#34;&#34;&#34;
+        self.picked_points.append(pt)
+        self.update_points()
+        self.update_geodesic()
+        self.display()
+
+    def _undo(self):
+        &#34;&#34;&#34; Remove last picked point and update display. &#34;&#34;&#34;
+        if len(self.picked_points) &gt; 0:
+            self.picked_points.pop()
+            self.picked_ids.pop() 
+        self.update_points()
+        self.update_geodesic()
+        self.display()
+
+    def _clear(self):
+        &#34;&#34;&#34; Clear all current picked points and update display. &#34;&#34;&#34;
+        self.picked_points = []
+        self.picked_ids = []
+        self.lines = []
+        self.update_points()
+        self.update_geodesic()
+        self.display()
+
+    def _finish(self):
+        &#34;&#34;&#34; Close current loop and update display.&#34;&#34;&#34;
+        self.picked_points.append(self.picked_points[0])
+        self.picked_ids.append(self.picked_ids[0])
+        self.update_geodesic()
+        self.display()
+        self.update_mesh()
+
+    def append(self):
+        &#34;&#34;&#34; Store current geodesic, start a new geodesic. &#34;&#34;&#34;
+        # Stored existing mask array
+        # When calling update_mesh, logical or with existing
+        self.current_mask = self.mesh.point_data[self.scalars].copy() 
+        self.current_pts = self.mesh.points 
+
+        self.stored_points.append(self.picked_points)
+
+        self.picked_points = []
+        self.picked_ids = []
+        self.lines = []
+        if self.interactive:
+            self.display()
+
+    def update_points(self):
+        &#34;&#34;&#34; Gets ids of picked points. &#34;&#34;&#34;
+        if len(self.picked_points) &gt; 0:
+            _, self.picked_ids = self.tree.query(self.picked_points, k=1)
+            self.picked_ids = list(self.picked_ids)
+        else:
+            self.picked_ids = []
+        # Clean duplicates 
+        _, idx = np.unique(self.picked_ids, return_index=True)
+        # self.picked_ids = list(np.array(self.picked_ids)[idx])
+        # self.picked_points = list(np.array(self.picked_points)[idx])
+
+    def update_geodesic(self):
+        &#34;&#34;&#34; Updates geodesic using current picked points. &#34;&#34;&#34;
+        if len(self.picked_ids) &gt; 1:
+            pairwise = zip(self.picked_ids, self.picked_ids[1:])
+            self.lines = [self.mesh.geodesic(a, b) for a, b in pairwise]
+        else:
+            self.lines = []
+       
+        if len(self.lines) &gt; 0:
+            lines = pv.PolyData() 
+            self.merged = lines.merge(self.lines)
+        
+
+    def update_mesh(self):
+        &#34;&#34;&#34; Split the mesh based on current geodesic. &#34;&#34;&#34;
+        # Split the mesh
+        self.mesh = self.mesh.triangulate()
+        tree = KDTree(self.mesh.points)
+        _, ii = tree.query(self.merged.points, k=1)
+        split, rdx = self.mesh.remove_points(ii)
+        split.point_data[&#39;vtkOGIds&#39;] = rdx
+        
+        split = split.connectivity()
+        region_ids = split.point_data[&#39;RegionId&#39;]
+        regions = np.unique(region_ids)
+        r_masks = [region_ids == r_id for r_id in regions]
+        split = [split.extract_points(r_m, adjacent_cells=False) for r_m in r_masks]
+        split = sorted(split, key=lambda x: x.n_points, reverse=True)
+
+        split_pd = [pv.PolyData(s.points, s.cells) for s in split]
+        for s, s_pd in zip(split, split_pd):
+            for arr in self.mesh.point_data:
+                s_pd.point_data[arr] = s.point_data[arr]
+            for arr in self.mesh.cell_data:
+                s_pd.cell_data[arr] = s.cell_data[arr]
+
+        # Smaller one mark 1, bigger 
+        mask = np.ones(self.mesh.n_points, dtype=bool)
+        mask[split[0].point_data[&#39;vtkOGIds&#39;]] = 0
+        temp_mask = self.mesh.point_data[self.scalars]
+        temp_mask[mask] = 1
+        temp_mask[~mask] = 0
+
+        # DM 11 11 21
+        # Commented out the logical or, just used temp_mask
+        # Interp old mask onto new
+        tree = KDTree(self.current_pts)
+        _, ii = tree.query(self.mesh.points,k=1)
+        self.mesh.point_data[self.scalars] = self.current_mask[ii]
+        new_mask = np.logical_or(temp_mask, self.mesh.point_data[self.scalars])
+        self.mesh.point_data[self.scalars] = new_mask
+
+        # self.mesh.point_data[self.scalars] = temp_mask
+
+        if self.interactive:
+            # self.p.add_mesh(self.mesh, name=&#39;mesh&#39;, scalars=self.scalars, cmap=&#39;coolwarm&#39;)
+            self.p.add_mesh(self.mesh, name=&#39;mesh&#39;, scalars=self.scalars, cmap=&#39;Reds&#39;, show_edges=True)
+
+    def display(self):
+        &#34;&#34;&#34; Update display based on current state. &#34;&#34;&#34;
+        
+        if len(self.picked_ids) &gt; 1:
+            tube = polyline_from_points(self.merged.points).tube(0.01)
+            # line = pv.PolyData(self.merged.points, self.merged.cells)
+            self.p.add_mesh(tube, name=&#39;lines&#39;, color=&#39;b&#39;)
+        else:
+            self.p.add_mesh(pv.Sphere(center=self.mesh.center), name=&#34;lines&#34;, opacity=0.0)
+    
+        if len(self.picked_points) &gt; 0:
+            points = pv.wrap(np.array(self.picked_points))
+
+            self.p.add_mesh(points, 
+                render_points_as_spheres=True, 
+                color=&#39;r&#39;,
+                name=&#39;points&#39;,
+                )
+        else:
+            self.p.add_mesh(pv.Sphere(center=self.mesh.center), name=&#34;points&#34;, opacity=0.0)
+
+    def smooth_section(self):
+        &#34;&#34;&#34; Smoothes section with Laplacian filtering. &#34;&#34;&#34;
+        mask = self.mesh.point_data[self.scalars] == 1
+        submesh = self.mesh.extract_points(mask, adjacent_cells=False)
+        submesh = pv.PolyData(submesh.points, submesh.cells)
+        submesh = submesh.smooth(n_iter=100, boundary_smoothing=False)
+        self.mesh.points[mask] = submesh.points
+
+        if self.interactive:
+            # self.p.add_mesh(self.mesh, name=&#39;mesh&#39;, scalars=self.scalars, cmap=&#39;coolwarm&#39;)
+            self.p.add_mesh(self.mesh, name=&#39;mesh&#39;, scalars=self.scalars, cmap=&#39;Reds&#39;, show_edges=True)
+
+    def refill_section(self):
+        &#34;&#34;&#34; Cut a hole and fill it. 
+        
+        &#34;&#34;&#34;
+        mask = self.mesh.point_data[self.scalars] == 0
+        mask_sub = self.mesh.point_data[self.scalars] == 1
+
+        self.mesh = self.mesh.clean()
+        self.mesh = self.mesh.fill_holes(15.0)
+        self.mesh = self.mesh.clean()
+
+        mesh = self.mesh.extract_points(mask, adjacent_cells=False)
+        submesh = self.mesh.extract_points(mask_sub)
+        submesh = pv.PolyData(submesh.points, submesh.cells)
+        edges = submesh.extract_feature_edges(boundary_edges=True, 
+            non_manifold_edges=False, feature_edges=False, manifold_edges=False)
+        submesh = pv.wrap(edges.points).delaunay_2d()
+        # submesh = submesh.decimate(0.7)
+
+        mesh = mesh.merge(submesh)
+        mesh = pv.PolyData(mesh.points, mesh.cells)
+        # mesh = mesh.boolean_union(submesh)
+
+        # mesh = pv.PolyData(mesh.points, mesh.cells)
+        self.mesh = mesh
+        self.mesh.point_data[self.scalars] = np.zeros(self.mesh.n_points)
+
+        self.mesh = self.mesh.clean()
+        self.mesh = self.mesh.fill_holes(20.0)
+        
+        self.tree = KDTree(self.mesh.points)
+
+        if self.interactive:
+            # self.p.add_mesh(self.mesh, name=&#39;mesh&#39;, scalars=self.scalars, cmap=&#39;coolwarm&#39;)
+            self.p.add_mesh(self.mesh, name=&#39;mesh&#39;, scalars=self.scalars, cmap=&#39;Reds&#39;, show_edges=True)
+
+    def _get_points(self):
+        &#34;&#34;&#34; Put the points in a geometry.
+        &#34;&#34;&#34;
+        print(&#34;TEST&#34;, self.stored_points)
+        self.stored_points = [x for x in self.stored_points if len(x) &gt; 1]
+        points = pv.MultiBlock()
+        if len(self.stored_points) &gt; 0:
+            for pts in self.stored_points:
+                points.append(pv.wrap(np.array(pts)))
+            return points
+        else:
+            return []
+
+
+    def save_stored_points(self, outfile=None):
+        &#34;&#34;&#34; Save stored points for later use. &#34;&#34;&#34;
+        # neck_ids = [np.zeros(len(ll), dtype=int) + idx for idx, ll in enumerate(self.stored_points)]
+        # neck_ids = [item for sublist in neck_ids for item in sublist]
+
+        # points = pv.wrap(np.concatenate(self.stored_points, axis=0))
+        # points.point_data[&#39;NeckIds&#39;] = neck_ids
+
+        points = pv.MultiBlock()
+        for pts in self.stored_points:
+            points.append(pv.wrap(np.array(pts)))
+
+        if outfile is not None:
+            points.save(outfile)       
+        return points
+
+    def use_stored_points(self, points):
+        for pts in points:
+            self.picked_points = pts.points
+            self.update_points()
+            self.update_geodesic()
+            self.update_mesh()
+            self.append()
+
+
+class ClickDragDelete:
+    &#34;&#34;&#34; Click and drag to select, space to delete.
+
+    Clip meshes based on cell picking routines.
+    Input surface must be vtkPolyData.
+    
+    Instructions:
+    - Press &#34;r&#34; to toggle between selection/interaction.
+    - Press &#34;c&#34; to clear selection.
+    - Press &#34;space&#34; to delete cells.
+    
+    Based on example here:
+    https://github.com/pyvista/pyvista/pull/281
+    &#34;&#34;&#34;
+    def __init__(self, mesh, title=&#39;Clip mesh&#39;):
+        self.plotter = pv.Plotter()
+        self.plotter.add_text(title, position=&#39;upper_left&#39;, font_size=18)
+        msg = &#39;r: toggle selection mode&#39;
+        self.plotter.add_text(msg, position=(0.05, 75), font_size=12)
+        msg = &#39;c: clear selection&#39;
+        self.plotter.add_text(msg, position=(0.05, 50), font_size=12)
+        msg = &#39;space: clip &#39;
+        self.plotter.add_text(msg, position=(0.05, 25), font_size=12)
+        msg = &#39;k: flag mesh&#39;
+        self.plotter.add_text(msg, position=(0.05, 0.05), font_size=12)
+
+        self.mesh = mesh
+        self.clear()
+
+        self.plotter.enable_cell_picking(callback=self, show=False, show_message=False)
+        self.plotter.add_key_event(&#39;c&#39;, callback=self.clear)
+        self.plotter.add_key_event(&#39;space&#39;, callback=self.clip)
+        self.plotter.add_key_event(&#39;k&#39;, callback=self.flag)
+
+        self.flag_inspect = False
+
+        self.plotter.show()
+
+    def display(self):
+        if self.mesh.n_points &gt; 0:
+            self.plotter.add_mesh(self.mesh,
+                scalars=&#39;DelMask&#39;,
+                name=&#39;mesh&#39;,
+                show_scalar_bar=False,
+                cmap=&#39;Reds&#39;)
+        else:
+            self.plotter.remove_actor(&#39;mesh&#39;)
+        
+    def __call__(self, picked_cells):
+        self.picked.merge(picked_cells, inplace=True)
+        if self.picked.n_cells &gt; 0:
+            self.mesh[&#39;DelMask&#39;][self.picked.cell_data[&#39;orig_extract_id&#39;]] = 1
+        self.display()
+
+        return
+    
+    def clear(self):
+        self.picked = pv.UnstructuredGrid()
+        self.mesh.cell_data[&#39;DelMask&#39;] = np.zeros(self.mesh.n_cells, dtype=bool)
+
+        self.plotter.add_mesh(self.mesh, 
+            color=&#39;w&#39;, 
+            scalars=&#39;DelMask&#39;, 
+            name=&#39;mesh&#39;,
+            show_scalar_bar=False)
+        self.display()
+
+    def clip(self):
+        if self.picked.n_points &gt; 0:
+            cells = np.invert(self.mesh.cell_data[&#39;DelMask&#39;])
+            self.mesh = self.mesh.extract_cells(cells)
+            self.mesh.cell_data[&#39;DelMask&#39;] = np.zeros(self.mesh.n_cells, dtype=bool)
+            self.plotter.enable_cell_picking(self.mesh, callback=self, show=False, show_message=False)
+            self.clear()
+            self.display()
+        
+    def flag(self):
+        print(&#39;Meshed flagged for further inspection.&#39;)
+        self.flag_inspect = True
+
+
+class ClickDragSelect:
+    def __init__(self, mesh, title=&#39;Pick Points to Enlarge Mesh&#39;):
+        self.plotter = pv.Plotter()
+        self.plotter.add_text(title, position=&#39;upper_left&#39;, font_size=18)
+        msg = &#39;r: toggle selection mode&#39;
+        self.plotter.add_text(msg, position=(0.05, 75), font_size=12)
+        msg = &#39;c: clear selection&#39;
+        self.plotter.add_text(msg, position=(0.05, 50), font_size=12)
+
+        self.mesh = mesh
+        self.clear()
+
+        self.plotter.enable_cell_picking(callback=self, show=False, show_message=False)
+        self.plotter.add_key_event(&#39;c&#39;, callback=self.clear)
+        self.plotter.show()
+
+    def display(self):
+        if self.mesh.n_points &gt; 0:
+            self.plotter.add_mesh(self.mesh,
+                scalars=&#39;PickedMask&#39;,
+                name=&#39;mesh&#39;,
+                show_scalar_bar=False,
+                cmap=&#39;Reds&#39;)
+        else:
+            self.plotter.remove_actor(&#39;mesh&#39;)
+        
+    def __call__(self, picked_cells):
+        self.picked.merge(picked_cells, inplace=True)
+        if self.picked.n_cells &gt; 0:
+            self.mesh.cell_data[&#39;PickedMask&#39;][self.picked.cell_data[&#39;orig_extract_id&#39;]] = 1
+        self.display()
+
+        return
+    
+    def clear(self):
+        self.picked = pv.UnstructuredGrid()
+        self.mesh.cell_data[&#39;PickedMask&#39;] = np.zeros(self.mesh.n_cells, dtype=bool)
+
+        self.plotter.add_mesh(self.mesh, 
+            color=&#39;w&#39;, 
+            scalars=&#39;PickedMask&#39;, 
+            name=&#39;mesh&#39;,
+            show_scalar_bar=False)
+        self.display()
+
+
+class ClickToDelete():
+    &#34;&#34;&#34; Click a point, cells that contain it will be deleted.
+    
+    I don&#39;t think this works?
+    &#34;&#34;&#34;
+    def __init__(self, mesh):
+        self.p = pv.Plotter()
+        msg = &#39;Press f to select point&#39;
+        self.p.add_text(msg, position=(0.05, 50), font_size=12)
+        msg = &#39;Press x to delete cells&#39;
+        self.p.add_text(msg, position=(0.05, 25), font_size=12)
+        msg = &#39;Press u to udno&#39;
+        self.p.add_text(msg, position=(0.05, 0), font_size=12)
+        
+        self.mesh = mesh
+        self.prev_mesh = self.mesh.copy()
+
+        self.p.add_mesh(self.mesh, color=&#39;w&#39;, name=&#39;mesh&#39;)
+        self.p.enable_point_picking(callback=self, show_message=False)
+        self.p.enable_cell_picking()
+        self.p.add_key_event(&#39;x&#39;, callback=self)
+        self.p.add_key_event(&#39;u&#39;, callback=self.undo)
+
+        self.p.show()
+
+    def __call__(self): # picked_cells
+        pt = self.p.picked_point_id
+        self.prev_mesh = self.mesh.copy()
+        self.mesh, _ = self.mesh.remove_points([pt], mode=&#39;any&#39;)
+        self.display()
+
+    def display(self):
+        if self.mesh.n_points &gt; 0:
+            self.p.add_mesh(self.mesh,
+                color=&#39;w&#39;,
+                name=&#39;mesh&#39;,
+            )
+        else:
+            self.p.remove_actor(&#39;mesh&#39;)
+
+    def undo(self):
+        self.mesh = self.prev_mesh
+        self.display()
+
+def get_network_endpoints(network):
+    &#34;&#34;&#34; Get terminal points of network
+    &#34;&#34;&#34;
+    # First, get all unique endpoints in the network
+    endpoints = []
+    cells = []
+    for ndx in range(network.n_cells):
+        cell_mask = np.zeros(network.n_cells, dtype=bool)
+        cell_mask[ndx] = True
+        cell = network.extract_cells(cell_mask)
+        endpoints.append(cell.points[0])
+        endpoints.append(cell.points[-1])
+        cells.append(cell)
+
+    endpoints = np.array(endpoints)
+
+    # Look for near-duplicates
+    distances = np.zeros((endpoints.shape[0], endpoints.shape[0]))
+    for idx in range(len(endpoints)):
+        for jdx in range(idx, len(endpoints)):
+            distances[idx, jdx] = np.linalg.norm(endpoints[idx] - endpoints[jdx])
+            distances[jdx, idx] = distances[idx, jdx]
+
+    tol = 1e-4
+    distances = distances &gt; tol
+    np.fill_diagonal(distances, True)
+
+    unique = [np.all(x == True) for x in distances]
+    network_endpoints = endpoints[unique]
+    return network_endpoints
+
+def split_network_into_cells(network):
+    cells = []
+    for ndx in range(network.n_cells):
+        cell_mask = np.zeros(network.n_cells, dtype=bool)
+        cell_mask[ndx] = True
+        cell = network.extract_cells(cell_mask)
+        cells.append(cell)
+    return cells 
+
+def get_mean_radii(centerlines_branched, grouplist):
+    &#34;&#34;&#34; Get mean radii of branches.
+
+    Used for Chnafa flow splitting method.
+    &#34;&#34;&#34;
+    mean_radii = {}
+
+    # Get mean radii
+    for node in grouplist:
+        # print(node)
+        mask = centerlines_branched.cell_data[&#39;GroupIds&#39;] == int(node)
+
+        branch_segments = centerlines_branched.extract_cells(mask)
+        branch = branch_segments.split_bodies()[0]
+        radius = branch.point_data[&#39;MaximumInscribedSphereRadius&#39;]
+        
+        # Convert to basic line for faster operations
+        branch = lines_from_points(branch.points)
+        branch.point_data[&#39;MaximumInscribedSphereRadius&#39;] = radius
+        branch = branch.ptc()
+
+        branch = branch.compute_cell_sizes()
+        lengths = branch.cell_data[&#39;Length&#39;] 
+        radius = branch.cell_data[&#39;MaximumInscribedSphereRadius&#39;]
+
+        branch_length = np.sum(lengths)
+
+        branch_resistance = np.sum(lengths / radius**4)
+
+        mean_radius = (branch_length / branch_resistance)**0.25
+
+        mean_radii[node] = mean_radius
+
+    return mean_radii
+
+def lines_from_points(points):
+    &#34;&#34;&#34;Given an array of points, make a line set&#34;&#34;&#34;
+    poly = pv.PolyData()
+    poly.points = points
+    cells = np.full((len(points)-1, 3), 2, dtype=np.int_)
+    cells[:, 1] = np.arange(0, len(points)-1, dtype=np.int_)
+    cells[:, 2] = np.arange(1, len(points), dtype=np.int_)
+    poly.lines = cells
+    return poly
+
+
+def polyline_from_points(points):
+    &#34;&#34;&#34; Convert a list of points to a PolyLine&#34;&#34;&#34;
+    poly = pv.PolyData()
+    poly.points = points
+    the_cell = np.arange(0, len(points), dtype=np.int_)
+    the_cell = np.insert(the_cell, 0, len(points))
+    poly.lines = the_cell
+    return poly
+
+def check_mem_usage():
+    import psutil
+    import os
+    p = psutil.Process(os.getpid())
+    mem_usage = p.memory_info().rss / 1024 / 1024
+    print(&#34;{} MB&#34;.format(mem_usage))
+
+
+def get_sac_surface_mask(mesh, sac):
+    &#34;&#34;&#34; Get ids of surface points of sac on mesh.
+    &#34;&#34;&#34;
+    mesh.point_data[&#39;vtkOGIds&#39;] = list(range(mesh.n_points))
+
+    sac = sac.fill_holes(20.0)
+    sac = sac.compute_normals(auto_orient_normals=True)
+    sac_inflate = sac.copy()
+    sac_inflate.points = sac.points + 0.1*sac.point_data[&#39;Normals&#39;]
+
+    mesh = mesh.select_enclosed_points(sac_inflate, check_surface=False)
+    mesh[&#39;SacMask&#39;] = mesh.point_data[&#39;SelectedPoints&#39;]
+    mesh, _ = smooth_mesh_data_local(mesh, array=&#39;SacMask&#39;)
+
+    surf = mesh.extract_surface()
+    mesh_sac = surf.extract_points(surf.point_data[&#39;SacMask&#39;] == 1)
+
+    mesh_sac_ids = mesh_sac.point_data[&#39;vtkOGIds&#39;].copy()
+
+    mesh_sac_array = np.zeros(mesh.n_points, dtype=int)
+    mesh_sac_array[mesh_sac_ids] = 1
+
+    mesh.point_data[&#39;SurfaceSacMask&#39;] = mesh_sac_array.astype(bool)
+
+    return mesh
+
+    
+def decimate_edge_length(surf, target_edge_length):
+    edges = surf.extract_all_edges()
+    mean_el = edges.compute_cell_sizes().cell_data[&#39;Length&#39;].mean()
+    target_el = target_edge_length
+    target_reduction = 1 - (mean_el / target_el)
+    surf_d = surf.decimate(target_reduction, volume_preservation=True)
+    surf = copy_arrays(surf, surf_d)
+    return surf
+
+def copy_arrays(src, dst):
+    tree = KDTree(src.points)
+    _, ii = tree.query(dst.points, k=1)
+    for arr in src.point_data:
+        dst.point_data[arr] = src.point_data[arr][ii]
+
+    centers = src.cell_centers()
+    tree = KDTree(centers.points)
+    _, ii = tree.query(dst.cell_centers().points, k=1)
+    for arr in src.cell_data:
+        dst.cell_data[arr] = src.cell_data[arr][ii]
+        
+    return dst
+
+def get_nearest_slice(mesh, origin, normal):
+    &#34;&#34;&#34; Get nearest slice from surface or mesh.
+    Could be used for tubeclipper 2.0.
+    Originated from DEM `scraps` file `2022-04-27.py`
+    &#34;&#34;&#34;
+    sl = mesh.slice(normal=normal, origin=origin, generate_triangles=False)
+
+    sl = sl.connectivity()
+    regions = np.unique(sl.point_data[&#39;RegionId&#39;])
+    rings = [sl.extract_points(sl.point_data[&#39;RegionId&#39;] == x) for x in regions]
+    ring_centers = pv.PolyData(np.array([x.center for x in rings]))
+    ring_centers.point_data[&#39;RegionId&#39;] = regions
+
+    tree = KDTree(ring_centers.points)
+    dd, ii  = tree.query(origin)
+    closest_ring_id = ring_centers.point_data[&#39;RegionId&#39;][ii]
+
+    mask = sl.cell_data[&#39;RegionId&#39;] == closest_ring_id
+    closest_ring = sl.extract_cells(mask)
+    return closest_ring
+
+def get_parent_slice_location_from_sac_zones(surf, key=None):
+    &#34;&#34;&#34; Get slices of the parent to calc flowrate.
+
+    Used to calc parent flowrate for ICI.
+    Definitely hacky, but fine for now.
+
+    Hyper-specific to ICI, changed name to reflect.
+
+    key is the dict key to a surface array.
+    &#34;&#34;&#34;
+    if key is None:
+        sac_zone_keys = [x for x in surf.point_data if &#39;sac_zone_&#39; in x]
+
+        if len(sac_zone_keys) &gt; 1:
+            print(&#34;Multiple zones present!&#34;)
+        
+        key = sac_zone_keys[0]
+
+    mask = surf.point_data[key] == 1
+    regions = surf.extract_points(mask)
+    r_split = regions.split_bodies()
+    g_ids = [np.median(x.point_data[&#39;GroupIds&#39;]) for x in r_split]
+    min_g_id_index = np.argmin(g_ids)
+    min_g_id = g_ids[min_g_id_index]
+    parent_zone = r_split[min_g_id_index]
+    edges = parent_zone.extract_feature_edges(45)
+    edges = edges.split_bodies()
+    edges = [pv.PolyData(e.points, lines=e.cells) for e in edges]
+    caps = [e.delaunay_2d() for e in edges]
+    caps = [c.compute_normals() for c in caps]
+    caps = [c.compute_cell_sizes() for c in caps]
+    caps = [c.ptc() for c in caps]
+    origins = [c.center for c in caps]
+    origins = pv.wrap(np.array(origins))
+    normals = [np.average(c.cell_data[&#39;Normals&#39;], axis=0, weights=c.cell_data[&#39;Area&#39;]) for c in caps]
+    normals = np.array(normals)
+    origins.point_data[&#39;Normals&#39;] = normals
+    
+    # slices = [get_nearest_slice(surf, o, n) for o, n in zip(origins.points, normals)]
+    return origins
+
+def get_normal_component(surf, array=&#39;u&#39;, normals=&#39;Normals&#39;,):
+    &#34;&#34;&#34; Get normal component of vector &#34;array&#34; wrt &#34;normals&#34;.
+
+    Creates array named array + &#39;_normal&#39; on surf.
+    &#34;&#34;&#34;
+    surf.point_data[f&#39;{array}_normal&#39;] = np.einsum(
+        &#39;ij,ij-&gt;i&#39;, 
+        surf.point_data[normals], 
+        surf.point_data[array],
+        )
+    return surf</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="geometry_tools.common.check_mem_usage"><code class="name flex">
+<span>def <span class="ident">check_mem_usage</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_mem_usage():
+    import psutil
+    import os
+    p = psutil.Process(os.getpid())
+    mem_usage = p.memory_info().rss / 1024 / 1024
+    print(&#34;{} MB&#34;.format(mem_usage))</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.copy_arrays"><code class="name flex">
+<span>def <span class="ident">copy_arrays</span></span>(<span>src, dst)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy_arrays(src, dst):
+    tree = KDTree(src.points)
+    _, ii = tree.query(dst.points, k=1)
+    for arr in src.point_data:
+        dst.point_data[arr] = src.point_data[arr][ii]
+
+    centers = src.cell_centers()
+    tree = KDTree(centers.points)
+    _, ii = tree.query(dst.cell_centers().points, k=1)
+    for arr in src.cell_data:
+        dst.cell_data[arr] = src.cell_data[arr][ii]
+        
+    return dst</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.create_edge_size_array"><code class="name flex">
+<span>def <span class="ident">create_edge_size_array</span></span>(<span>surf, fix_centerline, min_edge_size=0.1, max_edge_size=0.4, sac_size=0.15, misr_min=0.1, misr_max=2.5, name='Size', ref_edge_ratio=0.8)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create "Size" array incorporating distance to centerlines and curvature.</p>
+<p>This will likely be refined moving forward.</p>
+<h2 id="optional">Optional</h2>
+<p>Based on DistanceToCenterlinesArray, interpolate between 2.5 mm rad as max, 0.5 mm rad min
+OR
+Based on Dan's method (fix_centerline='fix'): map the vertices to the centerline points, then use a proportion of
+the MISR as the edge length at that point.
+Based on Curvature, interpolate between 0.3 as min, 0.8 as max
+Based on Mask, set to min value where Mask == 1.
+Then take min of each.</p>
+<p>Refinement regions incorporated:
+Assume everywhere within the refinement region will be assigned an edge length that is 0.5x what it would be with regular remeshing</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_edge_size_array(surf, fix_centerline, min_edge_size=0.1, max_edge_size=0.4, sac_size=0.15, misr_min=0.1, misr_max=2.5, name=&#39;Size&#39;, ref_edge_ratio=0.8):
+    &#34;&#34;&#34; Create &#34;Size&#34; array incorporating distance to centerlines and curvature.
+
+    This will likely be refined moving forward.
+    Optional:
+        Based on DistanceToCenterlinesArray, interpolate between 2.5 mm rad as max, 0.5 mm rad min
+        OR
+        Based on Dan&#39;s method (fix_centerline=&#39;fix&#39;): map the vertices to the centerline points, then use a proportion of 
+        the MISR as the edge length at that point.
+    Based on Curvature, interpolate between 0.3 as min, 0.8 as max
+    Based on Mask, set to min value where Mask == 1.
+    Then take min of each.
+
+    Refinement regions incorporated:
+    Assume everywhere within the refinement region will be assigned an edge length that is 0.5x what it would be with regular remeshing
+    &#34;&#34;&#34;
+    distance_interp = interp1d([misr_min, misr_max], [min_edge_size, max_edge_size], 
+        kind=&#39;linear&#39;,
+        bounds_error=False,
+        fill_value=(min_edge_size, max_edge_size),
+        )
+    curv_interp = interp1d([0.3, 0.8], [max_edge_size, min_edge_size], 
+        kind=&#39;linear&#39;,
+        bounds_error=False,
+        fill_value=(max_edge_size, min_edge_size),
+        )
+
+    surf = surf.compute_normals()
+    surf.point_data[&#39;SizeDistanceToCenterlinesArray&#39;] = distance_interp(surf.point_data[&#39;DistanceToCenterlinesArray&#39;]) #np.ones(surf.n_points) 
+
+    
+    if (fix_centerline == &#39;fix&#39;) or (fix_centerline == &#39;network_fix&#39;):
+        surf.point_data[&#39;SizeMISR&#39;] = distance_interp(surf.point_data[&#39;misr&#39;])
+        surf.point_data[name] = surf.point_data[&#39;SizeMISR&#39;]
+    else:
+        # The perfectly straight flow extensions end up having high curvature 
+        # unless they are perturbed slightly
+        # Some PT meshes have areas of really high curvature that need extra refinement
+        surf_perturb = surf.copy()
+        perturbed_vec = np.einsum(
+            &#39;ij,i-&gt;ij&#39;, 
+            surf_perturb.point_data[&#39;Normals&#39;], 
+            np.random.normal(0, 0.0001, surf_perturb.n_points)
+            )
+        surf_perturb.points = surf_perturb.points + perturbed_vec
+        surf_perturb.point_data[&#39;Curvature&#39;] = np.abs(surf_perturb.curvature(&#39;Minimum&#39;))
+        
+        surf.point_data[&#39;Curvature&#39;] = surf_perturb.point_data[&#39;Curvature&#39;] #np.abs(surf.curvature(&#39;Minimum&#39;))
+        surf.point_data[&#39;SizeCurvature&#39;] = curv_interp(surf.point_data[&#39;Curvature&#39;]) #np.ones(surf.n_points)
+        
+        surf.point_data[name] = np.minimum(surf.point_data[&#39;SizeDistanceToCenterlinesArray&#39;], surf.point_data[&#39;SizeCurvature&#39;])
+
+    surf, n_ids = smooth_mesh_data_local(surf, name, np.mean, iterations=2)
+
+    if &#39;Mask&#39; in surf.point_data:
+        # First dilate mask to include nearby regions
+        surf.point_data[&#39;MaskDilate&#39;] = surf.point_data[&#39;Mask&#39;].copy()
+        surf, _ = smooth_mesh_data_local(surf, &#39;MaskDilate&#39;, np.max, iterations=6, neighbour_pt_ids=n_ids)
+
+        sac_mask = surf.point_data[&#39;MaskDilate&#39;] == 1
+        # sac_size_array = sac_size * np.ones(len(sac_mask))
+        current_size_array = surf.point_data[name][sac_mask]
+
+        surf.point_data[name][sac_mask] = np.minimum(sac_size, current_size_array)
+    else:
+        print(&#39;No mask defined in create_edge_size_array.&#39;)
+
+    if (&#39;RefinementPoints&#39; in surf.point_data) and (&#39;Enlarge_Cells&#39; in surf.point_data):
+        surf.point_data[&#39;Refs&#39;] = surf.point_data[&#39;RefinementPoints&#39;].copy()
+        surf, _ = smooth_mesh_data_local(surf, &#39;Refs&#39;, np.max, iterations=6, neighbour_pt_ids=n_ids)
+
+        ref_reg = surf.point_data[&#39;Refs&#39;] == 1
+        current_size_array = surf.point_data[name][ref_reg]
+
+        surf.point_data[name][ref_reg] = current_size_array*ref_edge_ratio
+
+        surf.point_data[&#39;nds&#39;] = surf.point_data[&#39;Enlarge_Cells&#39;].copy()
+        nd_reg = surf.point_data[&#39;nds&#39;] == 1
+        current_size_array = surf.point_data[name][nd_reg]
+
+        surf.point_data[name][nd_reg] = current_size_array*1.5
+
+    elif &#39;RefinementPoints&#39; in surf.point_data:
+        surf.point_data[&#39;Refs&#39;] = surf.point_data[&#39;RefinementPoints&#39;].copy()
+        surf, _ = smooth_mesh_data_local(surf, &#39;Refs&#39;, np.max, iterations=6, neighbour_pt_ids=n_ids)
+
+        ref_reg = surf.point_data[&#39;Refs&#39;] == 1
+        current_size_array = surf.point_data[name][ref_reg]
+
+        surf.point_data[name][ref_reg] = current_size_array*ref_edge_ratio
+    elif &#39;Enlarge_Cells&#39; in surf.point_data:
+        surf.point_data[&#39;nds&#39;] = surf.point_data[&#39;Enlarge_Cells&#39;].copy()
+        nd_reg = surf.point_data[&#39;nds&#39;] == 1
+        current_size_array = surf.point_data[name][nd_reg]
+
+        surf.point_data[name][nd_reg] = current_size_array*1.5
+    else:
+        print(&#39;No non-dominant and/or refinement region defined in create_edge_size_array.&#39;)
+
+    surf, n_ids = smooth_mesh_data_local(surf, name, np.mean, iterations=3)
+
+    return surf</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.decimate_edge_length"><code class="name flex">
+<span>def <span class="ident">decimate_edge_length</span></span>(<span>surf, target_edge_length)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def decimate_edge_length(surf, target_edge_length):
+    edges = surf.extract_all_edges()
+    mean_el = edges.compute_cell_sizes().cell_data[&#39;Length&#39;].mean()
+    target_el = target_edge_length
+    target_reduction = 1 - (mean_el / target_el)
+    surf_d = surf.decimate(target_reduction, volume_preservation=True)
+    surf = copy_arrays(surf, surf_d)
+    return surf</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.fix_vmtk_group_ids"><code class="name flex">
+<span>def <span class="ident">fix_vmtk_group_ids</span></span>(<span>surf)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fix group IDs.</p>
+<h2 id="args">Args</h2>
+<p>surf (PolyData) : Surface with array GroupIds (optional: Mask)</p>
+<h2 id="returns">Returns</h2>
+<p>PolyData with fixed GroupIds
+VMTK groups IDs are often buggy, this fixes them
+based on connectivity.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fix_vmtk_group_ids(surf):
+    &#34;&#34;&#34; Fix group IDs.
+
+    Args:
+        surf (PolyData) : Surface with array GroupIds (optional: Mask)
+
+    Returns:
+        PolyData with fixed GroupIds
+
+    VMTK groups IDs are often buggy, this fixes them
+    based on connectivity.
+    &#34;&#34;&#34;
+    import pygeodesic.geodesic as geodesic
+    print(surf.point_data)
+    g_ids = np.unique(surf.point_data[&#39;GroupIds&#39;])
+
+    # Break into pieces, find which have broken ids
+    masks = [surf.point_data[&#39;GroupIds&#39;] == g for g in g_ids]
+    groups = [surf.extract_points(m) for m in masks]
+
+    # Find which id has most mutual with sac, overwrite
+    if &#39;Mask&#39; in surf.point_data:
+        check_sac = [g.point_data[&#39;Mask&#39;].sum()/g.n_points for g in groups]
+        surf.point_data[&#39;GroupIds&#39;][surf.point_data[&#39;Mask&#39;] == 1] = g_ids[np.argmax(check_sac)]
+
+    # Break into pieces, find which have broken ids
+    masks = [surf.point_data[&#39;GroupIds&#39;] == g for g in g_ids]
+    groups = [surf.extract_points(m) for m in masks]
+    n_parts = np.array([g.split_bodies().n_blocks for g in groups])
+
+    # Broken groups:
+    split_idx = [idx for idx, x in enumerate(n_parts &gt; 1) if x == True]
+    split_g_ids = g_ids[split_idx]
+
+    if len(split_idx) &gt; 0:
+
+        tree = KDTree(surf.points)
+        surf.point_data[&#39;GroupError&#39;] = np.zeros(surf.n_points, dtype=int)
+
+        for idx in split_idx:
+            parts = list(groups[idx].split_bodies())
+            small_parts = parts[1:]
+            error_points = np.concatenate([x.points for x in small_parts], axis=0)
+
+            _, ii = tree.query(error_points)
+            surf.point_data[&#39;GroupError&#39;][ii] = 1
+
+        target_indices = [idx for idx, x in enumerate(surf.point_data[&#39;GroupError&#39;] == 1) if x == True]
+        source_indices = [idx for idx, x in enumerate(surf.point_data[&#39;GroupError&#39;] == 0) if x == True]
+
+        target_indices = np.array(target_indices)
+        source_indices = np.array(source_indices)
+
+        geoalg = geodesic.PyGeodesicAlgorithmExact(surf.points, surf.faces.reshape(-1, 4)[:, 1:])
+        distances, best_source = geoalg.geodesicDistances(source_indices, target_indices)
+
+        surf.point_data[&#39;GroupIds&#39;][target_indices] = surf.point_data[&#39;GroupIds&#39;][source_indices[best_source]]
+    return surf </code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.get_mean_radii"><code class="name flex">
+<span>def <span class="ident">get_mean_radii</span></span>(<span>centerlines_branched, grouplist)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get mean radii of branches.</p>
+<p>Used for Chnafa flow splitting method.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_mean_radii(centerlines_branched, grouplist):
+    &#34;&#34;&#34; Get mean radii of branches.
+
+    Used for Chnafa flow splitting method.
+    &#34;&#34;&#34;
+    mean_radii = {}
+
+    # Get mean radii
+    for node in grouplist:
+        # print(node)
+        mask = centerlines_branched.cell_data[&#39;GroupIds&#39;] == int(node)
+
+        branch_segments = centerlines_branched.extract_cells(mask)
+        branch = branch_segments.split_bodies()[0]
+        radius = branch.point_data[&#39;MaximumInscribedSphereRadius&#39;]
+        
+        # Convert to basic line for faster operations
+        branch = lines_from_points(branch.points)
+        branch.point_data[&#39;MaximumInscribedSphereRadius&#39;] = radius
+        branch = branch.ptc()
+
+        branch = branch.compute_cell_sizes()
+        lengths = branch.cell_data[&#39;Length&#39;] 
+        radius = branch.cell_data[&#39;MaximumInscribedSphereRadius&#39;]
+
+        branch_length = np.sum(lengths)
+
+        branch_resistance = np.sum(lengths / radius**4)
+
+        mean_radius = (branch_length / branch_resistance)**0.25
+
+        mean_radii[node] = mean_radius
+
+    return mean_radii</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.get_nearest_slice"><code class="name flex">
+<span>def <span class="ident">get_nearest_slice</span></span>(<span>mesh, origin, normal)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get nearest slice from surface or mesh.
+Could be used for tubeclipper 2.0.
+Originated from DEM <code>scraps</code> file <code>2022-04-27.py</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_nearest_slice(mesh, origin, normal):
+    &#34;&#34;&#34; Get nearest slice from surface or mesh.
+    Could be used for tubeclipper 2.0.
+    Originated from DEM `scraps` file `2022-04-27.py`
+    &#34;&#34;&#34;
+    sl = mesh.slice(normal=normal, origin=origin, generate_triangles=False)
+
+    sl = sl.connectivity()
+    regions = np.unique(sl.point_data[&#39;RegionId&#39;])
+    rings = [sl.extract_points(sl.point_data[&#39;RegionId&#39;] == x) for x in regions]
+    ring_centers = pv.PolyData(np.array([x.center for x in rings]))
+    ring_centers.point_data[&#39;RegionId&#39;] = regions
+
+    tree = KDTree(ring_centers.points)
+    dd, ii  = tree.query(origin)
+    closest_ring_id = ring_centers.point_data[&#39;RegionId&#39;][ii]
+
+    mask = sl.cell_data[&#39;RegionId&#39;] == closest_ring_id
+    closest_ring = sl.extract_cells(mask)
+    return closest_ring</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.get_neighbour_map"><code class="name flex">
+<span>def <span class="ident">get_neighbour_map</span></span>(<span>surf)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get full list of adjacent neighbour pts.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>cells</code></strong> :&ensp;<code>array</code></dt>
+<dd>Cell connectivity, shape (n_cells, 3).</dd>
+<dt><strong><code>n_pts</code></strong> :&ensp;<code>int</code></dt>
+<dd>Number of point ids.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>neighbour_pt_ids (list): List of lists containing neighbour pt ids.
+* Trying with numpy array.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_neighbour_map(surf):#, n_points):
+    &#34;&#34;&#34; Get full list of adjacent neighbour pts.
+
+    Args:
+        cells (array): Cell connectivity, shape (n_cells, 3).
+        n_pts (int): Number of point ids.
+    
+    Returns:
+        neighbour_pt_ids (list): List of lists containing neighbour pt ids.
+        * Trying with numpy array.
+    &#34;&#34;&#34;
+    neighbour_pt_ids = [[] for _ in range(surf.n_points)]
+    edges = surf.extract_all_edges()
+
+    # edges.points does not neccesarily == surf.points!!
+    # create a map between them
+    tree = KDTree(surf.points)
+    _, ii = tree.query(edges.points, k=1)
+
+    ee = edges.lines.reshape(-1, 3)[:,1:]
+    
+    for e in ee:
+        neighbour_pt_ids[ii[e[0]]].append(ii[e[1]])
+        neighbour_pt_ids[ii[e[1]]].append(ii[e[0]])
+
+    neighbour_pt_ids = np.array([np.unique(x) for x in neighbour_pt_ids], dtype=&#39;object&#39;)
+
+    return neighbour_pt_ids</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.get_network_endpoints"><code class="name flex">
+<span>def <span class="ident">get_network_endpoints</span></span>(<span>network)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get terminal points of network</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_network_endpoints(network):
+    &#34;&#34;&#34; Get terminal points of network
+    &#34;&#34;&#34;
+    # First, get all unique endpoints in the network
+    endpoints = []
+    cells = []
+    for ndx in range(network.n_cells):
+        cell_mask = np.zeros(network.n_cells, dtype=bool)
+        cell_mask[ndx] = True
+        cell = network.extract_cells(cell_mask)
+        endpoints.append(cell.points[0])
+        endpoints.append(cell.points[-1])
+        cells.append(cell)
+
+    endpoints = np.array(endpoints)
+
+    # Look for near-duplicates
+    distances = np.zeros((endpoints.shape[0], endpoints.shape[0]))
+    for idx in range(len(endpoints)):
+        for jdx in range(idx, len(endpoints)):
+            distances[idx, jdx] = np.linalg.norm(endpoints[idx] - endpoints[jdx])
+            distances[jdx, idx] = distances[idx, jdx]
+
+    tol = 1e-4
+    distances = distances &gt; tol
+    np.fill_diagonal(distances, True)
+
+    unique = [np.all(x == True) for x in distances]
+    network_endpoints = endpoints[unique]
+    return network_endpoints</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.get_normal_component"><code class="name flex">
+<span>def <span class="ident">get_normal_component</span></span>(<span>surf, array='u', normals='Normals')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get normal component of vector "array" wrt "normals".</p>
+<p>Creates array named array + '_normal' on surf.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_normal_component(surf, array=&#39;u&#39;, normals=&#39;Normals&#39;,):
+    &#34;&#34;&#34; Get normal component of vector &#34;array&#34; wrt &#34;normals&#34;.
+
+    Creates array named array + &#39;_normal&#39; on surf.
+    &#34;&#34;&#34;
+    surf.point_data[f&#39;{array}_normal&#39;] = np.einsum(
+        &#39;ij,ij-&gt;i&#39;, 
+        surf.point_data[normals], 
+        surf.point_data[array],
+        )
+    return surf</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.get_parent_slice_location_from_sac_zones"><code class="name flex">
+<span>def <span class="ident">get_parent_slice_location_from_sac_zones</span></span>(<span>surf, key=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get slices of the parent to calc flowrate.</p>
+<p>Used to calc parent flowrate for ICI.
+Definitely hacky, but fine for now.</p>
+<p>Hyper-specific to ICI, changed name to reflect.</p>
+<p>key is the dict key to a surface array.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_parent_slice_location_from_sac_zones(surf, key=None):
+    &#34;&#34;&#34; Get slices of the parent to calc flowrate.
+
+    Used to calc parent flowrate for ICI.
+    Definitely hacky, but fine for now.
+
+    Hyper-specific to ICI, changed name to reflect.
+
+    key is the dict key to a surface array.
+    &#34;&#34;&#34;
+    if key is None:
+        sac_zone_keys = [x for x in surf.point_data if &#39;sac_zone_&#39; in x]
+
+        if len(sac_zone_keys) &gt; 1:
+            print(&#34;Multiple zones present!&#34;)
+        
+        key = sac_zone_keys[0]
+
+    mask = surf.point_data[key] == 1
+    regions = surf.extract_points(mask)
+    r_split = regions.split_bodies()
+    g_ids = [np.median(x.point_data[&#39;GroupIds&#39;]) for x in r_split]
+    min_g_id_index = np.argmin(g_ids)
+    min_g_id = g_ids[min_g_id_index]
+    parent_zone = r_split[min_g_id_index]
+    edges = parent_zone.extract_feature_edges(45)
+    edges = edges.split_bodies()
+    edges = [pv.PolyData(e.points, lines=e.cells) for e in edges]
+    caps = [e.delaunay_2d() for e in edges]
+    caps = [c.compute_normals() for c in caps]
+    caps = [c.compute_cell_sizes() for c in caps]
+    caps = [c.ptc() for c in caps]
+    origins = [c.center for c in caps]
+    origins = pv.wrap(np.array(origins))
+    normals = [np.average(c.cell_data[&#39;Normals&#39;], axis=0, weights=c.cell_data[&#39;Area&#39;]) for c in caps]
+    normals = np.array(normals)
+    origins.point_data[&#39;Normals&#39;] = normals
+    
+    # slices = [get_nearest_slice(surf, o, n) for o, n in zip(origins.points, normals)]
+    return origins</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.get_sac_surface_mask"><code class="name flex">
+<span>def <span class="ident">get_sac_surface_mask</span></span>(<span>mesh, sac)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get ids of surface points of sac on mesh.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_sac_surface_mask(mesh, sac):
+    &#34;&#34;&#34; Get ids of surface points of sac on mesh.
+    &#34;&#34;&#34;
+    mesh.point_data[&#39;vtkOGIds&#39;] = list(range(mesh.n_points))
+
+    sac = sac.fill_holes(20.0)
+    sac = sac.compute_normals(auto_orient_normals=True)
+    sac_inflate = sac.copy()
+    sac_inflate.points = sac.points + 0.1*sac.point_data[&#39;Normals&#39;]
+
+    mesh = mesh.select_enclosed_points(sac_inflate, check_surface=False)
+    mesh[&#39;SacMask&#39;] = mesh.point_data[&#39;SelectedPoints&#39;]
+    mesh, _ = smooth_mesh_data_local(mesh, array=&#39;SacMask&#39;)
+
+    surf = mesh.extract_surface()
+    mesh_sac = surf.extract_points(surf.point_data[&#39;SacMask&#39;] == 1)
+
+    mesh_sac_ids = mesh_sac.point_data[&#39;vtkOGIds&#39;].copy()
+
+    mesh_sac_array = np.zeros(mesh.n_points, dtype=int)
+    mesh_sac_array[mesh_sac_ids] = 1
+
+    mesh.point_data[&#39;SurfaceSacMask&#39;] = mesh_sac_array.astype(bool)
+
+    return mesh</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.lines_from_points"><code class="name flex">
+<span>def <span class="ident">lines_from_points</span></span>(<span>points)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Given an array of points, make a line set</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def lines_from_points(points):
+    &#34;&#34;&#34;Given an array of points, make a line set&#34;&#34;&#34;
+    poly = pv.PolyData()
+    poly.points = points
+    cells = np.full((len(points)-1, 3), 2, dtype=np.int_)
+    cells[:, 1] = np.arange(0, len(points)-1, dtype=np.int_)
+    cells[:, 2] = np.arange(1, len(points), dtype=np.int_)
+    poly.lines = cells
+    return poly</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.polyline_from_points"><code class="name flex">
+<span>def <span class="ident">polyline_from_points</span></span>(<span>points)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert a list of points to a PolyLine</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def polyline_from_points(points):
+    &#34;&#34;&#34; Convert a list of points to a PolyLine&#34;&#34;&#34;
+    poly = pv.PolyData()
+    poly.points = points
+    the_cell = np.arange(0, len(points), dtype=np.int_)
+    the_cell = np.insert(the_cell, 0, len(points))
+    poly.lines = the_cell
+    return poly</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.smooth_mesh_data"><code class="name flex">
+<span>def <span class="ident">smooth_mesh_data</span></span>(<span>data_array, points, radius, func=&lt;function mean&gt;, mask=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Smooth the data, not the mesh. </p>
+<p>Radius-based moving average filter.
+Incorporate distance weighting?</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def smooth_mesh_data(data_array, points, radius, func=np.mean, mask=None):
+    &#34;&#34;&#34; Smooth the data, not the mesh. 
+
+    Radius-based moving average filter.
+    Incorporate distance weighting?
+    &#34;&#34;&#34;
+    tree = KDTree(points)
+    inds = [tree.query_ball_point(pt, radius) for pt in points]
+    out_array = np.zeros_like(data_array)
+
+    if mask is None:
+        mask = np.ones(len(points))
+
+    for idx in range(len(data_array)):
+        value = func(data_array[inds[idx]])
+        
+        if np.any(mask[inds[idx]] == 1):
+            out_array[idx] = value 
+        else:
+            out_array[idx] = data_array[idx]
+
+    return out_array</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.smooth_mesh_data_local"><code class="name flex">
+<span>def <span class="ident">smooth_mesh_data_local</span></span>(<span>surf, array='GroupIds', func='median', neighbour_pt_ids=None, iterations=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Smooth mesh data based on local connectivity.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>surf</code></strong> :&ensp;<code>polydata</code></dt>
+<dd>Input surface.</dd>
+<dt><strong><code>array</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name of array to be smoothed.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>surf (polydata): Surface with smoothed array
+neighbour_pt_ids (list of lists): list of neighbouring point ids,
+index by point id.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def smooth_mesh_data_local(surf, array=&#39;GroupIds&#39;, 
+        func=&#39;median&#39;, neighbour_pt_ids=None, iterations=1):
+    &#34;&#34;&#34; Smooth mesh data based on local connectivity.
+
+    Args:
+        surf (polydata): Input surface.
+        array (str): Name of array to be smoothed.
+    Returns:
+        surf (polydata): Surface with smoothed array
+        neighbour_pt_ids (list of lists): list of neighbouring point ids,
+            index by point id.
+    &#34;&#34;&#34;
+    if neighbour_pt_ids == None:
+        neighbour_pt_ids = get_neighbour_map(surf) 
+    
+    neighbour_pt_ids = np.array(neighbour_pt_ids)
+
+    surf = surf.copy()
+    new_array = surf.point_data[array].copy()
+
+    for idx in range(iterations):
+        old_array = new_array.copy()
+        for pt_id in list(range(surf.n_points)):
+            # Uses 2 connexity by default
+            neighbours = neighbour_pt_ids[neighbour_pt_ids[pt_id]]
+            neighbours = np.unique([item for sublist in neighbours for item in sublist])
+            # neighbours = neighbour_pt_ids[pt_id]
+
+            # Unfortunately, np.median has the undesired &#34;fallback&#34; 
+            # that uses the mean when the array is even. This is bad for 
+            # data like GroupIds.
+            if func == &#39;median&#39;:
+                num_neighbours = len(neighbours)
+                neighbour_vals = np.sort(old_array[neighbours])
+                center_index = int(np.ceil(num_neighbours / 2) - 1)
+                new_val = neighbour_vals[center_index]
+
+            else:
+                new_val = func(old_array[neighbours])
+
+            new_array[pt_id] = new_val                        
+
+    surf.point_data[array] = new_array
+
+    return surf, neighbour_pt_ids</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.split_network_into_cells"><code class="name flex">
+<span>def <span class="ident">split_network_into_cells</span></span>(<span>network)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def split_network_into_cells(network):
+    cells = []
+    for ndx in range(network.n_cells):
+        cell_mask = np.zeros(network.n_cells, dtype=bool)
+        cell_mask[ndx] = True
+        cell = network.extract_cells(cell_mask)
+        cells.append(cell)
+    return cells </code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.vtk_generate_img_stencil"><code class="name flex">
+<span>def <span class="ident">vtk_generate_img_stencil</span></span>(<span>mesh, spacing=0.05, bounds=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Resample surf mesh to image.</p>
+<p>This function has memory problems, something isn't freed at end,
+so running it in a loop causes problems.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vtk_generate_img_stencil(mesh, spacing=0.05, bounds=None):
+    &#34;&#34;&#34; Resample surf mesh to image.
+
+    This function has memory problems, something isn&#39;t freed at end,
+    so running it in a loop causes problems.
+    &#34;&#34;&#34;
+    if bounds is None:
+        bounds = np.array(mesh.bounds)
+    else:
+        bounds = np.array(bounds)
+
+    bounds_lengths = np.diff(bounds.reshape(3,2)).T[0]
+
+    # Inflate bounds
+    inflate_lens = bounds_lengths * 0.05
+    bounds[::2] -= inflate_lens
+    bounds[1::2] += inflate_lens
+    bounds_lengths = np.diff(bounds.reshape(3,2)).T[0]
+
+    spacing = (spacing, spacing, spacing)
+    dimensions = (bounds_lengths / spacing).astype(int)
+    dims = (dimensions - 1)
+    origin = bounds[::2]
+
+    image = pv.UniformGrid() 
+    image.dimensions = dimensions 
+    image.origin = origin
+    image.spacing = spacing
+    # image.SetScalarType(vtk.VTK_UNSIGNED_CHAR,image.GetInformation())
+    # image.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)    # 3
+    image.point_data[&#39;ImageScalars&#39;] = np.zeros(np.prod(image.dimensions), dtype=bool)
+
+    pol2Stenc = vtk.vtkPolyDataToImageStencil()
+    pol2Stenc.SetTolerance(0.5) 
+    pol2Stenc.SetInputData(mesh)
+    pol2Stenc.SetInformationInput(image)
+    pol2Stenc.Update()
+
+    stencil = vtk.vtkImageStencil()
+    stencil.SetInputData(image)
+    stencil.ReverseStencilOn()
+    stencil.SetBackgroundValue(1)
+    stencil.SetStencilData(pol2Stenc.GetOutput())
+    stencil.Update()
+
+    newImage = pv.wrap(stencil.GetOutput())
+    newImage.point_data[&#39;ImageScalars&#39;] = newImage.point_data[&#39;ImageScalars&#39;]#[:,0]
+    
+    return newImage</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.vtk_taubin_smooth"><code class="name flex">
+<span>def <span class="ident">vtk_taubin_smooth</span></span>(<span>mesh, pass_band=0.1, feature_angle=60.0, iterations=20)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Smooth mesh using Taubin method. </p>
+<p>Note:
+This also exists in bsl.common.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vtk_taubin_smooth(mesh, pass_band=0.1, feature_angle=60.0, iterations=20):
+    &#34;&#34;&#34; Smooth mesh using Taubin method. 
+    
+    Note:
+    This also exists in bsl.common. 
+    &#34;&#34;&#34;
+    smoother = vtk.vtkWindowedSincPolyDataFilter()
+    smoother.SetInputData(mesh) 
+    smoother.SetNumberOfIterations(iterations)
+    smoother.BoundarySmoothingOff()
+    smoother.FeatureEdgeSmoothingOff() 
+    smoother.SetFeatureAngle(feature_angle)
+    smoother.SetPassBand(pass_band)
+    smoother.NonManifoldSmoothingOn()
+    smoother.NormalizeCoordinatesOn()
+    # smoother.GenerateErrorScalarsOn() s
+    smoother.Update()
+    return pv.wrap(smoother.GetOutput())</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.warning_on_one_line"><code class="name flex">
+<span>def <span class="ident">warning_on_one_line</span></span>(<span>message, category, filename, lineno, file=None, line=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def warning_on_one_line(message, category, filename, lineno, file=None, line=None):
+    return &#39;%s:%s: %s: %s\n&#39; % (filename, lineno, category.__name__, message)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="geometry_tools.common.ClickDragDelete"><code class="flex name class">
+<span>class <span class="ident">ClickDragDelete</span></span>
+<span>(</span><span>mesh, title='Clip mesh')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Click and drag to select, space to delete.</p>
+<p>Clip meshes based on cell picking routines.
+Input surface must be vtkPolyData.</p>
+<p>Instructions:
+- Press "r" to toggle between selection/interaction.
+- Press "c" to clear selection.
+- Press "space" to delete cells.</p>
+<p>Based on example here:
+<a href="https://github.com/pyvista/pyvista/pull/281">https://github.com/pyvista/pyvista/pull/281</a></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ClickDragDelete:
+    &#34;&#34;&#34; Click and drag to select, space to delete.
+
+    Clip meshes based on cell picking routines.
+    Input surface must be vtkPolyData.
+    
+    Instructions:
+    - Press &#34;r&#34; to toggle between selection/interaction.
+    - Press &#34;c&#34; to clear selection.
+    - Press &#34;space&#34; to delete cells.
+    
+    Based on example here:
+    https://github.com/pyvista/pyvista/pull/281
+    &#34;&#34;&#34;
+    def __init__(self, mesh, title=&#39;Clip mesh&#39;):
+        self.plotter = pv.Plotter()
+        self.plotter.add_text(title, position=&#39;upper_left&#39;, font_size=18)
+        msg = &#39;r: toggle selection mode&#39;
+        self.plotter.add_text(msg, position=(0.05, 75), font_size=12)
+        msg = &#39;c: clear selection&#39;
+        self.plotter.add_text(msg, position=(0.05, 50), font_size=12)
+        msg = &#39;space: clip &#39;
+        self.plotter.add_text(msg, position=(0.05, 25), font_size=12)
+        msg = &#39;k: flag mesh&#39;
+        self.plotter.add_text(msg, position=(0.05, 0.05), font_size=12)
+
+        self.mesh = mesh
+        self.clear()
+
+        self.plotter.enable_cell_picking(callback=self, show=False, show_message=False)
+        self.plotter.add_key_event(&#39;c&#39;, callback=self.clear)
+        self.plotter.add_key_event(&#39;space&#39;, callback=self.clip)
+        self.plotter.add_key_event(&#39;k&#39;, callback=self.flag)
+
+        self.flag_inspect = False
+
+        self.plotter.show()
+
+    def display(self):
+        if self.mesh.n_points &gt; 0:
+            self.plotter.add_mesh(self.mesh,
+                scalars=&#39;DelMask&#39;,
+                name=&#39;mesh&#39;,
+                show_scalar_bar=False,
+                cmap=&#39;Reds&#39;)
+        else:
+            self.plotter.remove_actor(&#39;mesh&#39;)
+        
+    def __call__(self, picked_cells):
+        self.picked.merge(picked_cells, inplace=True)
+        if self.picked.n_cells &gt; 0:
+            self.mesh[&#39;DelMask&#39;][self.picked.cell_data[&#39;orig_extract_id&#39;]] = 1
+        self.display()
+
+        return
+    
+    def clear(self):
+        self.picked = pv.UnstructuredGrid()
+        self.mesh.cell_data[&#39;DelMask&#39;] = np.zeros(self.mesh.n_cells, dtype=bool)
+
+        self.plotter.add_mesh(self.mesh, 
+            color=&#39;w&#39;, 
+            scalars=&#39;DelMask&#39;, 
+            name=&#39;mesh&#39;,
+            show_scalar_bar=False)
+        self.display()
+
+    def clip(self):
+        if self.picked.n_points &gt; 0:
+            cells = np.invert(self.mesh.cell_data[&#39;DelMask&#39;])
+            self.mesh = self.mesh.extract_cells(cells)
+            self.mesh.cell_data[&#39;DelMask&#39;] = np.zeros(self.mesh.n_cells, dtype=bool)
+            self.plotter.enable_cell_picking(self.mesh, callback=self, show=False, show_message=False)
+            self.clear()
+            self.display()
+        
+    def flag(self):
+        print(&#39;Meshed flagged for further inspection.&#39;)
+        self.flag_inspect = True</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="geometry_tools.common.ClickDragDelete.clear"><code class="name flex">
+<span>def <span class="ident">clear</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clear(self):
+    self.picked = pv.UnstructuredGrid()
+    self.mesh.cell_data[&#39;DelMask&#39;] = np.zeros(self.mesh.n_cells, dtype=bool)
+
+    self.plotter.add_mesh(self.mesh, 
+        color=&#39;w&#39;, 
+        scalars=&#39;DelMask&#39;, 
+        name=&#39;mesh&#39;,
+        show_scalar_bar=False)
+    self.display()</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.ClickDragDelete.clip"><code class="name flex">
+<span>def <span class="ident">clip</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clip(self):
+    if self.picked.n_points &gt; 0:
+        cells = np.invert(self.mesh.cell_data[&#39;DelMask&#39;])
+        self.mesh = self.mesh.extract_cells(cells)
+        self.mesh.cell_data[&#39;DelMask&#39;] = np.zeros(self.mesh.n_cells, dtype=bool)
+        self.plotter.enable_cell_picking(self.mesh, callback=self, show=False, show_message=False)
+        self.clear()
+        self.display()</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.ClickDragDelete.display"><code class="name flex">
+<span>def <span class="ident">display</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def display(self):
+    if self.mesh.n_points &gt; 0:
+        self.plotter.add_mesh(self.mesh,
+            scalars=&#39;DelMask&#39;,
+            name=&#39;mesh&#39;,
+            show_scalar_bar=False,
+            cmap=&#39;Reds&#39;)
+    else:
+        self.plotter.remove_actor(&#39;mesh&#39;)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.ClickDragDelete.flag"><code class="name flex">
+<span>def <span class="ident">flag</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def flag(self):
+    print(&#39;Meshed flagged for further inspection.&#39;)
+    self.flag_inspect = True</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="geometry_tools.common.ClickDragSelect"><code class="flex name class">
+<span>class <span class="ident">ClickDragSelect</span></span>
+<span>(</span><span>mesh, title='Pick Points to Enlarge Mesh')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ClickDragSelect:
+    def __init__(self, mesh, title=&#39;Pick Points to Enlarge Mesh&#39;):
+        self.plotter = pv.Plotter()
+        self.plotter.add_text(title, position=&#39;upper_left&#39;, font_size=18)
+        msg = &#39;r: toggle selection mode&#39;
+        self.plotter.add_text(msg, position=(0.05, 75), font_size=12)
+        msg = &#39;c: clear selection&#39;
+        self.plotter.add_text(msg, position=(0.05, 50), font_size=12)
+
+        self.mesh = mesh
+        self.clear()
+
+        self.plotter.enable_cell_picking(callback=self, show=False, show_message=False)
+        self.plotter.add_key_event(&#39;c&#39;, callback=self.clear)
+        self.plotter.show()
+
+    def display(self):
+        if self.mesh.n_points &gt; 0:
+            self.plotter.add_mesh(self.mesh,
+                scalars=&#39;PickedMask&#39;,
+                name=&#39;mesh&#39;,
+                show_scalar_bar=False,
+                cmap=&#39;Reds&#39;)
+        else:
+            self.plotter.remove_actor(&#39;mesh&#39;)
+        
+    def __call__(self, picked_cells):
+        self.picked.merge(picked_cells, inplace=True)
+        if self.picked.n_cells &gt; 0:
+            self.mesh.cell_data[&#39;PickedMask&#39;][self.picked.cell_data[&#39;orig_extract_id&#39;]] = 1
+        self.display()
+
+        return
+    
+    def clear(self):
+        self.picked = pv.UnstructuredGrid()
+        self.mesh.cell_data[&#39;PickedMask&#39;] = np.zeros(self.mesh.n_cells, dtype=bool)
+
+        self.plotter.add_mesh(self.mesh, 
+            color=&#39;w&#39;, 
+            scalars=&#39;PickedMask&#39;, 
+            name=&#39;mesh&#39;,
+            show_scalar_bar=False)
+        self.display()</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="geometry_tools.common.ClickDragSelect.clear"><code class="name flex">
+<span>def <span class="ident">clear</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clear(self):
+    self.picked = pv.UnstructuredGrid()
+    self.mesh.cell_data[&#39;PickedMask&#39;] = np.zeros(self.mesh.n_cells, dtype=bool)
+
+    self.plotter.add_mesh(self.mesh, 
+        color=&#39;w&#39;, 
+        scalars=&#39;PickedMask&#39;, 
+        name=&#39;mesh&#39;,
+        show_scalar_bar=False)
+    self.display()</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.ClickDragSelect.display"><code class="name flex">
+<span>def <span class="ident">display</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def display(self):
+    if self.mesh.n_points &gt; 0:
+        self.plotter.add_mesh(self.mesh,
+            scalars=&#39;PickedMask&#39;,
+            name=&#39;mesh&#39;,
+            show_scalar_bar=False,
+            cmap=&#39;Reds&#39;)
+    else:
+        self.plotter.remove_actor(&#39;mesh&#39;)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="geometry_tools.common.ClickToDelete"><code class="flex name class">
+<span>class <span class="ident">ClickToDelete</span></span>
+<span>(</span><span>mesh)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Click a point, cells that contain it will be deleted.</p>
+<p>I don't think this works?</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ClickToDelete():
+    &#34;&#34;&#34; Click a point, cells that contain it will be deleted.
+    
+    I don&#39;t think this works?
+    &#34;&#34;&#34;
+    def __init__(self, mesh):
+        self.p = pv.Plotter()
+        msg = &#39;Press f to select point&#39;
+        self.p.add_text(msg, position=(0.05, 50), font_size=12)
+        msg = &#39;Press x to delete cells&#39;
+        self.p.add_text(msg, position=(0.05, 25), font_size=12)
+        msg = &#39;Press u to udno&#39;
+        self.p.add_text(msg, position=(0.05, 0), font_size=12)
+        
+        self.mesh = mesh
+        self.prev_mesh = self.mesh.copy()
+
+        self.p.add_mesh(self.mesh, color=&#39;w&#39;, name=&#39;mesh&#39;)
+        self.p.enable_point_picking(callback=self, show_message=False)
+        self.p.enable_cell_picking()
+        self.p.add_key_event(&#39;x&#39;, callback=self)
+        self.p.add_key_event(&#39;u&#39;, callback=self.undo)
+
+        self.p.show()
+
+    def __call__(self): # picked_cells
+        pt = self.p.picked_point_id
+        self.prev_mesh = self.mesh.copy()
+        self.mesh, _ = self.mesh.remove_points([pt], mode=&#39;any&#39;)
+        self.display()
+
+    def display(self):
+        if self.mesh.n_points &gt; 0:
+            self.p.add_mesh(self.mesh,
+                color=&#39;w&#39;,
+                name=&#39;mesh&#39;,
+            )
+        else:
+            self.p.remove_actor(&#39;mesh&#39;)
+
+    def undo(self):
+        self.mesh = self.prev_mesh
+        self.display()</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="geometry_tools.common.ClickToDelete.display"><code class="name flex">
+<span>def <span class="ident">display</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def display(self):
+    if self.mesh.n_points &gt; 0:
+        self.p.add_mesh(self.mesh,
+            color=&#39;w&#39;,
+            name=&#39;mesh&#39;,
+        )
+    else:
+        self.p.remove_actor(&#39;mesh&#39;)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.ClickToDelete.undo"><code class="name flex">
+<span>def <span class="ident">undo</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def undo(self):
+    self.mesh = self.prev_mesh
+    self.display()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="geometry_tools.common.RefinementSelection"><code class="flex name class">
+<span>class <span class="ident">RefinementSelection</span></span>
+<span>(</span><span>surf, name='RefinementPoints', title='Clip Refinement Zone')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Interactively create a refinement region by selecting cells on the mesh
+and then obtaining the points they are associated with and assigning them a
+point_array (eg. 'RefinementPoints') which contains a boolean if those cells were
+picked. </p>
+<p>Later, these booleans will be used to assign a target edge length that will
+remesh the surface, and ultimately the volumetric mesh.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RefinementSelection():
+    &#34;&#34;&#34; Interactively create a refinement region by selecting cells on the mesh
+    and then obtaining the points they are associated with and assigning them a 
+    point_array (eg. &#39;RefinementPoints&#39;) which contains a boolean if those cells were
+    picked. 
+    
+    Later, these booleans will be used to assign a target edge length that will 
+    remesh the surface, and ultimately the volumetric mesh.
+    &#34;&#34;&#34; 
+    def __init__(self, surf, name = &#39;RefinementPoints&#39;, title=&#39;Clip Refinement Zone&#39;):
+        self.surf = surf
+        self.title = title
+        self.name = name
+        
+    def select(self):
+        self.surf.cell_data[self.name] = np.zeros(self.surf.n_cells, dtype=bool)
+        select = ClickDragSelect(self.surf, title = self.title)
+        self.surf.cell_data[self.name]=select.mesh.cell_data[&#39;PickedMask&#39;]
+
+    def define_surface(self):
+        self.surf.point_data[self.name] = np.zeros(self.surf.n_points, dtype=bool)
+        cell_ids = self.surf.faces.reshape(-1, 4)[self.surf.cell_data[self.name]==1][:,1:]
+        ids = cell_ids.flatten()
+        self.surf.point_data[self.name][ids]=1</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="geometry_tools.common.RefinementSelection.define_surface"><code class="name flex">
+<span>def <span class="ident">define_surface</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def define_surface(self):
+    self.surf.point_data[self.name] = np.zeros(self.surf.n_points, dtype=bool)
+    cell_ids = self.surf.faces.reshape(-1, 4)[self.surf.cell_data[self.name]==1][:,1:]
+    ids = cell_ids.flatten()
+    self.surf.point_data[self.name][ids]=1</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.RefinementSelection.select"><code class="name flex">
+<span>def <span class="ident">select</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def select(self):
+    self.surf.cell_data[self.name] = np.zeros(self.surf.n_cells, dtype=bool)
+    select = ClickDragSelect(self.surf, title = self.title)
+    self.surf.cell_data[self.name]=select.mesh.cell_data[&#39;PickedMask&#39;]</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="geometry_tools.common.RefinementSelection_OLD"><code class="flex name class">
+<span>class <span class="ident">RefinementSelection_OLD</span></span>
+<span>(</span><span>surf, name='RefinementPoints', title='Clip Refinement Zone')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Not relevant anymore!!
+Interactively create a refinement region by clipping away
+parts of a surface mesh that are not required to be refined, then storing a boolean at
+the selected surface points on the original mesh. </p>
+<p>Later, these booleans will be used to assign a target edge length that will
+remesh the surface, and ultimately the volumetric mesh.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RefinementSelection_OLD():
+    &#34;&#34;&#34; 
+    Not relevant anymore!!
+    Interactively create a refinement region by clipping away 
+    parts of a surface mesh that are not required to be refined, then storing a boolean at 
+    the selected surface points on the original mesh. 
+    
+    Later, these booleans will be used to assign a target edge length that will 
+    remesh the surface, and ultimately the volumetric mesh.
+    &#34;&#34;&#34; 
+    def __init__(self, surf, name = &#39;RefinementPoints&#39;, title=&#39;Clip Refinement Zone&#39;):
+        self.surf = surf.fill_holes(100)
+        self.title = title
+        self.name = name
+        
+    def select(self):
+        #Define the surface we want to refine by clipping the surface
+        warnings.formatwarning = warning_on_one_line
+        warnings.warn(&#34;Holes from clipping must be fillable. May result in inability to close surface!&#34;)
+        new_surf = ClickDragDelete(self.surf, title=self.title)
+        temprefsurf=new_surf.mesh.triangulate()
+        if type(temprefsurf) != pv.core.pointset.PolyData:
+                temprefsurf = pv.PolyData(temprefsurf.points, temprefsurf.cells)
+        self.temprefsurf=temprefsurf.fill_holes(100).clean()
+        self.temprefsurf = self.temprefsurf.connectivity(largest=True)
+
+    def define_surface(self):
+        self.refsurf=self.surf.select_enclosed_points(self.temprefsurf, tolerance=0.01)
+        self.pts = self.surf.extract_points(self.refsurf[&#39;SelectedPoints&#39;].view(bool),
+                           adjacent_cells=False)
+        
+        p = pv.Plotter()
+        p.add_text(&#39;Red points are the selected refinement region&#39;, position=&#39;upper_left&#39;)
+        p.add_mesh(self.surf,color = &#39;blue&#39;, style=&#39;wireframe&#39;, show_edges=True)
+        p.add_points(self.pts, color=&#39;r&#39;)
+        p.show()
+        self.surf.point_data[self.name]=self.refsurf.point_data[&#39;SelectedPoints&#39;]</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="geometry_tools.common.RefinementSelection_OLD.define_surface"><code class="name flex">
+<span>def <span class="ident">define_surface</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def define_surface(self):
+    self.refsurf=self.surf.select_enclosed_points(self.temprefsurf, tolerance=0.01)
+    self.pts = self.surf.extract_points(self.refsurf[&#39;SelectedPoints&#39;].view(bool),
+                       adjacent_cells=False)
+    
+    p = pv.Plotter()
+    p.add_text(&#39;Red points are the selected refinement region&#39;, position=&#39;upper_left&#39;)
+    p.add_mesh(self.surf,color = &#39;blue&#39;, style=&#39;wireframe&#39;, show_edges=True)
+    p.add_points(self.pts, color=&#39;r&#39;)
+    p.show()
+    self.surf.point_data[self.name]=self.refsurf.point_data[&#39;SelectedPoints&#39;]</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.RefinementSelection_OLD.select"><code class="name flex">
+<span>def <span class="ident">select</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def select(self):
+    #Define the surface we want to refine by clipping the surface
+    warnings.formatwarning = warning_on_one_line
+    warnings.warn(&#34;Holes from clipping must be fillable. May result in inability to close surface!&#34;)
+    new_surf = ClickDragDelete(self.surf, title=self.title)
+    temprefsurf=new_surf.mesh.triangulate()
+    if type(temprefsurf) != pv.core.pointset.PolyData:
+            temprefsurf = pv.PolyData(temprefsurf.points, temprefsurf.cells)
+    self.temprefsurf=temprefsurf.fill_holes(100).clean()
+    self.temprefsurf = self.temprefsurf.connectivity(largest=True)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="geometry_tools.common.SacSelectTool"><code class="flex name class">
+<span>class <span class="ident">SacSelectTool</span></span>
+<span>(</span><span>surf)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Interactively mark points using a probe.</p>
+<p>I think this is obsolete?</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SacSelectTool():
+    &#34;&#34;&#34; Interactively mark points using a probe.
+
+    I think this is obsolete? 
+    &#34;&#34;&#34; 
+    def __init__(self, surf):
+        self.surf = surf
+        self.surf.point_data[&#39;Mask&#39;] = np.zeros(self.surf.n_points)
+        self.surf.point_data[&#39;TempMask&#39;] = np.zeros(self.surf.n_points)
+
+    def mask(self, center, radius):
+        sphere = pv.Sphere(radius=radius, center=center)
+        self.surf = self.surf.select_enclosed_points(sphere)
+        mask_index = self.surf.point_data[&#39;SelectedPoints&#39;]
+        ids = [x for x in range(self.surf.n_points) if mask_index[x] == True]
+        self.selection = self.surf.extract_points(ids)
+
+        self.selection.point_data[&#39;vtkOGIds&#39;] = self.selection.point_data[&#39;vtkOriginalPointIds&#39;].copy()
+        self.selection = self.selection.extract_largest()
+        mask = self.selection.point_data[&#39;vtkOGIds&#39;]
+        self.selection = pv.PolyData(self.selection.points, self.selection.cells)
+        self.selection.point_data[&#39;vtkOGIds&#39;] = mask
+        self.selection = self.selection.clean()
+
+        self.surf.point_data[&#39;TempMask&#39;] = self.surf.point_data[&#39;Mask&#39;].copy()
+        self.surf.point_data[&#39;TempMask&#39;][self.selection.point_data[&#39;vtkOGIds&#39;]] = 1
+            
+    def select(self):
+
+        def sphere_cb(xyz, probe):
+            # Select enclosed points
+            self.sphere = pv.Sphere(radius=probe.GetRadius(), center=xyz)
+            # self.probe = probe
+            self.p.add_mesh(self.sphere, color=&#39;r&#39;, opacity=0.4, name=&#39;probe&#39;)
+            self.center = probe.GetCenter()
+            self.radius = probe.GetRadius()
+            self.mask(self.center, self.radius)
+            self.p.add_mesh(self.surf, scalars=&#39;TempMask&#39;, name=&#39;surf&#39;)
+
+        def choose_cb():
+            self.surf.point_data[&#39;Mask&#39;] = self.surf.point_data[&#39;TempMask&#39;]
+            
+        self.p = pv.Plotter()
+        self.p.add_mesh(self.surf, scalars=&#39;TempMask&#39;, opacity=1.0, name=&#39;surf&#39;)
+        self.p.add_sphere_widget(
+            callback=sphere_cb, 
+            center=np.mean(self.surf.points, axis=0), 
+            radius=4.0, 
+            pass_widget=True,
+            theta_resolution=8,
+            phi_resolution=8,
+            style=&#39;wireframe&#39;,
+            )
+        self.p.add_key_event(&#39;space&#39;, choose_cb)
+        self.p.show()
+
+        if np.all(self.surf.point_data[&#39;Mask&#39;] == 0):
+            self.surf.point_data[&#39;Mask&#39;] = self.surf.point_data[&#39;TempMask&#39;]</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="geometry_tools.common.SacSelectTool.mask"><code class="name flex">
+<span>def <span class="ident">mask</span></span>(<span>self, center, radius)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mask(self, center, radius):
+    sphere = pv.Sphere(radius=radius, center=center)
+    self.surf = self.surf.select_enclosed_points(sphere)
+    mask_index = self.surf.point_data[&#39;SelectedPoints&#39;]
+    ids = [x for x in range(self.surf.n_points) if mask_index[x] == True]
+    self.selection = self.surf.extract_points(ids)
+
+    self.selection.point_data[&#39;vtkOGIds&#39;] = self.selection.point_data[&#39;vtkOriginalPointIds&#39;].copy()
+    self.selection = self.selection.extract_largest()
+    mask = self.selection.point_data[&#39;vtkOGIds&#39;]
+    self.selection = pv.PolyData(self.selection.points, self.selection.cells)
+    self.selection.point_data[&#39;vtkOGIds&#39;] = mask
+    self.selection = self.selection.clean()
+
+    self.surf.point_data[&#39;TempMask&#39;] = self.surf.point_data[&#39;Mask&#39;].copy()
+    self.surf.point_data[&#39;TempMask&#39;][self.selection.point_data[&#39;vtkOGIds&#39;]] = 1</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.SacSelectTool.select"><code class="name flex">
+<span>def <span class="ident">select</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def select(self):
+
+    def sphere_cb(xyz, probe):
+        # Select enclosed points
+        self.sphere = pv.Sphere(radius=probe.GetRadius(), center=xyz)
+        # self.probe = probe
+        self.p.add_mesh(self.sphere, color=&#39;r&#39;, opacity=0.4, name=&#39;probe&#39;)
+        self.center = probe.GetCenter()
+        self.radius = probe.GetRadius()
+        self.mask(self.center, self.radius)
+        self.p.add_mesh(self.surf, scalars=&#39;TempMask&#39;, name=&#39;surf&#39;)
+
+    def choose_cb():
+        self.surf.point_data[&#39;Mask&#39;] = self.surf.point_data[&#39;TempMask&#39;]
+        
+    self.p = pv.Plotter()
+    self.p.add_mesh(self.surf, scalars=&#39;TempMask&#39;, opacity=1.0, name=&#39;surf&#39;)
+    self.p.add_sphere_widget(
+        callback=sphere_cb, 
+        center=np.mean(self.surf.points, axis=0), 
+        radius=4.0, 
+        pass_widget=True,
+        theta_resolution=8,
+        phi_resolution=8,
+        style=&#39;wireframe&#39;,
+        )
+    self.p.add_key_event(&#39;space&#39;, choose_cb)
+    self.p.show()
+
+    if np.all(self.surf.point_data[&#39;Mask&#39;] == 0):
+        self.surf.point_data[&#39;Mask&#39;] = self.surf.point_data[&#39;TempMask&#39;]</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="geometry_tools.common.SelectGeodesic"><code class="flex name class">
+<span>class <span class="ident">SelectGeodesic</span></span>
+<span>(</span><span>mesh, scalars='Mask')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SelectGeodesic():
+    def __init__(self, mesh, scalars=&#39;Mask&#39;):
+        mesh = mesh.clean()
+        mesh = mesh.compute_normals(auto_orient_normals=True)
+        self.mesh = mesh
+        self.scalars = scalars
+        if self.scalars not in mesh.point_data:
+            self.mesh.point_data[self.scalars] = np.zeros(self.mesh.n_points)
+
+        self.current_mask = np.zeros_like(self.mesh.point_data[self.scalars])
+        self.current_pts = self.mesh.points 
+        
+        self.stored_points = []
+        self.picked_points = []
+        self.picked_ids = []
+        self.lines = []
+        self.interactive = False
+        self.tree = KDTree(self.mesh.points)
+        
+    def interact(self, title=&#39;Isolate aneurysms.&#39;):
+        self.interactive = True
+        self.p = pv.Plotter() 
+        self.mesh = self.mesh.compute_normals()
+        self.p.add_mesh(self.mesh, name=&#39;mesh&#39;, scalars=self.scalars, cmap=&#39;Reds&#39;, show_edges=True)
+        self.p.enable_point_picking(
+            show_point=True,
+            show_message=False,
+            callback=self._cb,
+            color=&#39;red&#39;,
+            font_size=12,
+            point_size=15,
+            tolerance=0.005
+            )
+
+        self.p.add_text(title, position=&#39;upper_left&#39;, font_size=18)
+        msg = &#39;Keys:&#39;
+        self.p.add_text(msg, position=(0.05, 175), font_size=12)   
+        msg = &#39;f: select points&#39;
+        self.p.add_text(msg, position=(0.05, 150), font_size=12)
+        msg = &#39;u: undo&#39;
+        self.p.add_text(msg, position=(0.05, 125), font_size=12)
+        msg = &#39;space: complete loop&#39;
+        self.p.add_text(msg, position=(0.05, 100), font_size=12)
+        msg = &#39;a: append mask&#39;
+        self.p.add_text(msg, position=(0.05, 75), font_size=12)
+        msg = &#39;x: smooth section&#39;
+        self.p.add_text(msg, position=(0.05, 50), font_size=12)
+        msg = &#39;q: quit&#39;
+        self.p.add_text(msg, position=(0.05, 25), font_size=12)
+
+        self.p.add_key_event(&#39;u&#39;, self._undo)
+        self.p.add_key_event(&#39;space&#39;, self._finish)
+        self.p.add_key_event(&#39;a&#39;, self.append)
+        self.p.add_key_event(&#39;x&#39;, self.refill_section)
+        self.p.add_key_event(&#39;c&#39;, self._clear)
+        self.p.show()
+        self.stored_points.append(np.array(self.picked_points))
+
+        return self._get_points()
+
+    def _cb(self, pt):
+        &#34;&#34;&#34; CB for picking points. &#34;&#34;&#34;
+        self.picked_points.append(pt)
+        self.update_points()
+        self.update_geodesic()
+        self.display()
+
+    def _undo(self):
+        &#34;&#34;&#34; Remove last picked point and update display. &#34;&#34;&#34;
+        if len(self.picked_points) &gt; 0:
+            self.picked_points.pop()
+            self.picked_ids.pop() 
+        self.update_points()
+        self.update_geodesic()
+        self.display()
+
+    def _clear(self):
+        &#34;&#34;&#34; Clear all current picked points and update display. &#34;&#34;&#34;
+        self.picked_points = []
+        self.picked_ids = []
+        self.lines = []
+        self.update_points()
+        self.update_geodesic()
+        self.display()
+
+    def _finish(self):
+        &#34;&#34;&#34; Close current loop and update display.&#34;&#34;&#34;
+        self.picked_points.append(self.picked_points[0])
+        self.picked_ids.append(self.picked_ids[0])
+        self.update_geodesic()
+        self.display()
+        self.update_mesh()
+
+    def append(self):
+        &#34;&#34;&#34; Store current geodesic, start a new geodesic. &#34;&#34;&#34;
+        # Stored existing mask array
+        # When calling update_mesh, logical or with existing
+        self.current_mask = self.mesh.point_data[self.scalars].copy() 
+        self.current_pts = self.mesh.points 
+
+        self.stored_points.append(self.picked_points)
+
+        self.picked_points = []
+        self.picked_ids = []
+        self.lines = []
+        if self.interactive:
+            self.display()
+
+    def update_points(self):
+        &#34;&#34;&#34; Gets ids of picked points. &#34;&#34;&#34;
+        if len(self.picked_points) &gt; 0:
+            _, self.picked_ids = self.tree.query(self.picked_points, k=1)
+            self.picked_ids = list(self.picked_ids)
+        else:
+            self.picked_ids = []
+        # Clean duplicates 
+        _, idx = np.unique(self.picked_ids, return_index=True)
+        # self.picked_ids = list(np.array(self.picked_ids)[idx])
+        # self.picked_points = list(np.array(self.picked_points)[idx])
+
+    def update_geodesic(self):
+        &#34;&#34;&#34; Updates geodesic using current picked points. &#34;&#34;&#34;
+        if len(self.picked_ids) &gt; 1:
+            pairwise = zip(self.picked_ids, self.picked_ids[1:])
+            self.lines = [self.mesh.geodesic(a, b) for a, b in pairwise]
+        else:
+            self.lines = []
+       
+        if len(self.lines) &gt; 0:
+            lines = pv.PolyData() 
+            self.merged = lines.merge(self.lines)
+        
+
+    def update_mesh(self):
+        &#34;&#34;&#34; Split the mesh based on current geodesic. &#34;&#34;&#34;
+        # Split the mesh
+        self.mesh = self.mesh.triangulate()
+        tree = KDTree(self.mesh.points)
+        _, ii = tree.query(self.merged.points, k=1)
+        split, rdx = self.mesh.remove_points(ii)
+        split.point_data[&#39;vtkOGIds&#39;] = rdx
+        
+        split = split.connectivity()
+        region_ids = split.point_data[&#39;RegionId&#39;]
+        regions = np.unique(region_ids)
+        r_masks = [region_ids == r_id for r_id in regions]
+        split = [split.extract_points(r_m, adjacent_cells=False) for r_m in r_masks]
+        split = sorted(split, key=lambda x: x.n_points, reverse=True)
+
+        split_pd = [pv.PolyData(s.points, s.cells) for s in split]
+        for s, s_pd in zip(split, split_pd):
+            for arr in self.mesh.point_data:
+                s_pd.point_data[arr] = s.point_data[arr]
+            for arr in self.mesh.cell_data:
+                s_pd.cell_data[arr] = s.cell_data[arr]
+
+        # Smaller one mark 1, bigger 
+        mask = np.ones(self.mesh.n_points, dtype=bool)
+        mask[split[0].point_data[&#39;vtkOGIds&#39;]] = 0
+        temp_mask = self.mesh.point_data[self.scalars]
+        temp_mask[mask] = 1
+        temp_mask[~mask] = 0
+
+        # DM 11 11 21
+        # Commented out the logical or, just used temp_mask
+        # Interp old mask onto new
+        tree = KDTree(self.current_pts)
+        _, ii = tree.query(self.mesh.points,k=1)
+        self.mesh.point_data[self.scalars] = self.current_mask[ii]
+        new_mask = np.logical_or(temp_mask, self.mesh.point_data[self.scalars])
+        self.mesh.point_data[self.scalars] = new_mask
+
+        # self.mesh.point_data[self.scalars] = temp_mask
+
+        if self.interactive:
+            # self.p.add_mesh(self.mesh, name=&#39;mesh&#39;, scalars=self.scalars, cmap=&#39;coolwarm&#39;)
+            self.p.add_mesh(self.mesh, name=&#39;mesh&#39;, scalars=self.scalars, cmap=&#39;Reds&#39;, show_edges=True)
+
+    def display(self):
+        &#34;&#34;&#34; Update display based on current state. &#34;&#34;&#34;
+        
+        if len(self.picked_ids) &gt; 1:
+            tube = polyline_from_points(self.merged.points).tube(0.01)
+            # line = pv.PolyData(self.merged.points, self.merged.cells)
+            self.p.add_mesh(tube, name=&#39;lines&#39;, color=&#39;b&#39;)
+        else:
+            self.p.add_mesh(pv.Sphere(center=self.mesh.center), name=&#34;lines&#34;, opacity=0.0)
+    
+        if len(self.picked_points) &gt; 0:
+            points = pv.wrap(np.array(self.picked_points))
+
+            self.p.add_mesh(points, 
+                render_points_as_spheres=True, 
+                color=&#39;r&#39;,
+                name=&#39;points&#39;,
+                )
+        else:
+            self.p.add_mesh(pv.Sphere(center=self.mesh.center), name=&#34;points&#34;, opacity=0.0)
+
+    def smooth_section(self):
+        &#34;&#34;&#34; Smoothes section with Laplacian filtering. &#34;&#34;&#34;
+        mask = self.mesh.point_data[self.scalars] == 1
+        submesh = self.mesh.extract_points(mask, adjacent_cells=False)
+        submesh = pv.PolyData(submesh.points, submesh.cells)
+        submesh = submesh.smooth(n_iter=100, boundary_smoothing=False)
+        self.mesh.points[mask] = submesh.points
+
+        if self.interactive:
+            # self.p.add_mesh(self.mesh, name=&#39;mesh&#39;, scalars=self.scalars, cmap=&#39;coolwarm&#39;)
+            self.p.add_mesh(self.mesh, name=&#39;mesh&#39;, scalars=self.scalars, cmap=&#39;Reds&#39;, show_edges=True)
+
+    def refill_section(self):
+        &#34;&#34;&#34; Cut a hole and fill it. 
+        
+        &#34;&#34;&#34;
+        mask = self.mesh.point_data[self.scalars] == 0
+        mask_sub = self.mesh.point_data[self.scalars] == 1
+
+        self.mesh = self.mesh.clean()
+        self.mesh = self.mesh.fill_holes(15.0)
+        self.mesh = self.mesh.clean()
+
+        mesh = self.mesh.extract_points(mask, adjacent_cells=False)
+        submesh = self.mesh.extract_points(mask_sub)
+        submesh = pv.PolyData(submesh.points, submesh.cells)
+        edges = submesh.extract_feature_edges(boundary_edges=True, 
+            non_manifold_edges=False, feature_edges=False, manifold_edges=False)
+        submesh = pv.wrap(edges.points).delaunay_2d()
+        # submesh = submesh.decimate(0.7)
+
+        mesh = mesh.merge(submesh)
+        mesh = pv.PolyData(mesh.points, mesh.cells)
+        # mesh = mesh.boolean_union(submesh)
+
+        # mesh = pv.PolyData(mesh.points, mesh.cells)
+        self.mesh = mesh
+        self.mesh.point_data[self.scalars] = np.zeros(self.mesh.n_points)
+
+        self.mesh = self.mesh.clean()
+        self.mesh = self.mesh.fill_holes(20.0)
+        
+        self.tree = KDTree(self.mesh.points)
+
+        if self.interactive:
+            # self.p.add_mesh(self.mesh, name=&#39;mesh&#39;, scalars=self.scalars, cmap=&#39;coolwarm&#39;)
+            self.p.add_mesh(self.mesh, name=&#39;mesh&#39;, scalars=self.scalars, cmap=&#39;Reds&#39;, show_edges=True)
+
+    def _get_points(self):
+        &#34;&#34;&#34; Put the points in a geometry.
+        &#34;&#34;&#34;
+        print(&#34;TEST&#34;, self.stored_points)
+        self.stored_points = [x for x in self.stored_points if len(x) &gt; 1]
+        points = pv.MultiBlock()
+        if len(self.stored_points) &gt; 0:
+            for pts in self.stored_points:
+                points.append(pv.wrap(np.array(pts)))
+            return points
+        else:
+            return []
+
+
+    def save_stored_points(self, outfile=None):
+        &#34;&#34;&#34; Save stored points for later use. &#34;&#34;&#34;
+        # neck_ids = [np.zeros(len(ll), dtype=int) + idx for idx, ll in enumerate(self.stored_points)]
+        # neck_ids = [item for sublist in neck_ids for item in sublist]
+
+        # points = pv.wrap(np.concatenate(self.stored_points, axis=0))
+        # points.point_data[&#39;NeckIds&#39;] = neck_ids
+
+        points = pv.MultiBlock()
+        for pts in self.stored_points:
+            points.append(pv.wrap(np.array(pts)))
+
+        if outfile is not None:
+            points.save(outfile)       
+        return points
+
+    def use_stored_points(self, points):
+        for pts in points:
+            self.picked_points = pts.points
+            self.update_points()
+            self.update_geodesic()
+            self.update_mesh()
+            self.append()</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="geometry_tools.common.SelectGeodesic.append"><code class="name flex">
+<span>def <span class="ident">append</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Store current geodesic, start a new geodesic.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def append(self):
+    &#34;&#34;&#34; Store current geodesic, start a new geodesic. &#34;&#34;&#34;
+    # Stored existing mask array
+    # When calling update_mesh, logical or with existing
+    self.current_mask = self.mesh.point_data[self.scalars].copy() 
+    self.current_pts = self.mesh.points 
+
+    self.stored_points.append(self.picked_points)
+
+    self.picked_points = []
+    self.picked_ids = []
+    self.lines = []
+    if self.interactive:
+        self.display()</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.SelectGeodesic.display"><code class="name flex">
+<span>def <span class="ident">display</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Update display based on current state.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def display(self):
+    &#34;&#34;&#34; Update display based on current state. &#34;&#34;&#34;
+    
+    if len(self.picked_ids) &gt; 1:
+        tube = polyline_from_points(self.merged.points).tube(0.01)
+        # line = pv.PolyData(self.merged.points, self.merged.cells)
+        self.p.add_mesh(tube, name=&#39;lines&#39;, color=&#39;b&#39;)
+    else:
+        self.p.add_mesh(pv.Sphere(center=self.mesh.center), name=&#34;lines&#34;, opacity=0.0)
+
+    if len(self.picked_points) &gt; 0:
+        points = pv.wrap(np.array(self.picked_points))
+
+        self.p.add_mesh(points, 
+            render_points_as_spheres=True, 
+            color=&#39;r&#39;,
+            name=&#39;points&#39;,
+            )
+    else:
+        self.p.add_mesh(pv.Sphere(center=self.mesh.center), name=&#34;points&#34;, opacity=0.0)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.SelectGeodesic.interact"><code class="name flex">
+<span>def <span class="ident">interact</span></span>(<span>self, title='Isolate aneurysms.')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def interact(self, title=&#39;Isolate aneurysms.&#39;):
+    self.interactive = True
+    self.p = pv.Plotter() 
+    self.mesh = self.mesh.compute_normals()
+    self.p.add_mesh(self.mesh, name=&#39;mesh&#39;, scalars=self.scalars, cmap=&#39;Reds&#39;, show_edges=True)
+    self.p.enable_point_picking(
+        show_point=True,
+        show_message=False,
+        callback=self._cb,
+        color=&#39;red&#39;,
+        font_size=12,
+        point_size=15,
+        tolerance=0.005
+        )
+
+    self.p.add_text(title, position=&#39;upper_left&#39;, font_size=18)
+    msg = &#39;Keys:&#39;
+    self.p.add_text(msg, position=(0.05, 175), font_size=12)   
+    msg = &#39;f: select points&#39;
+    self.p.add_text(msg, position=(0.05, 150), font_size=12)
+    msg = &#39;u: undo&#39;
+    self.p.add_text(msg, position=(0.05, 125), font_size=12)
+    msg = &#39;space: complete loop&#39;
+    self.p.add_text(msg, position=(0.05, 100), font_size=12)
+    msg = &#39;a: append mask&#39;
+    self.p.add_text(msg, position=(0.05, 75), font_size=12)
+    msg = &#39;x: smooth section&#39;
+    self.p.add_text(msg, position=(0.05, 50), font_size=12)
+    msg = &#39;q: quit&#39;
+    self.p.add_text(msg, position=(0.05, 25), font_size=12)
+
+    self.p.add_key_event(&#39;u&#39;, self._undo)
+    self.p.add_key_event(&#39;space&#39;, self._finish)
+    self.p.add_key_event(&#39;a&#39;, self.append)
+    self.p.add_key_event(&#39;x&#39;, self.refill_section)
+    self.p.add_key_event(&#39;c&#39;, self._clear)
+    self.p.show()
+    self.stored_points.append(np.array(self.picked_points))
+
+    return self._get_points()</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.SelectGeodesic.refill_section"><code class="name flex">
+<span>def <span class="ident">refill_section</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Cut a hole and fill it.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def refill_section(self):
+    &#34;&#34;&#34; Cut a hole and fill it. 
+    
+    &#34;&#34;&#34;
+    mask = self.mesh.point_data[self.scalars] == 0
+    mask_sub = self.mesh.point_data[self.scalars] == 1
+
+    self.mesh = self.mesh.clean()
+    self.mesh = self.mesh.fill_holes(15.0)
+    self.mesh = self.mesh.clean()
+
+    mesh = self.mesh.extract_points(mask, adjacent_cells=False)
+    submesh = self.mesh.extract_points(mask_sub)
+    submesh = pv.PolyData(submesh.points, submesh.cells)
+    edges = submesh.extract_feature_edges(boundary_edges=True, 
+        non_manifold_edges=False, feature_edges=False, manifold_edges=False)
+    submesh = pv.wrap(edges.points).delaunay_2d()
+    # submesh = submesh.decimate(0.7)
+
+    mesh = mesh.merge(submesh)
+    mesh = pv.PolyData(mesh.points, mesh.cells)
+    # mesh = mesh.boolean_union(submesh)
+
+    # mesh = pv.PolyData(mesh.points, mesh.cells)
+    self.mesh = mesh
+    self.mesh.point_data[self.scalars] = np.zeros(self.mesh.n_points)
+
+    self.mesh = self.mesh.clean()
+    self.mesh = self.mesh.fill_holes(20.0)
+    
+    self.tree = KDTree(self.mesh.points)
+
+    if self.interactive:
+        # self.p.add_mesh(self.mesh, name=&#39;mesh&#39;, scalars=self.scalars, cmap=&#39;coolwarm&#39;)
+        self.p.add_mesh(self.mesh, name=&#39;mesh&#39;, scalars=self.scalars, cmap=&#39;Reds&#39;, show_edges=True)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.SelectGeodesic.save_stored_points"><code class="name flex">
+<span>def <span class="ident">save_stored_points</span></span>(<span>self, outfile=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Save stored points for later use.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save_stored_points(self, outfile=None):
+    &#34;&#34;&#34; Save stored points for later use. &#34;&#34;&#34;
+    # neck_ids = [np.zeros(len(ll), dtype=int) + idx for idx, ll in enumerate(self.stored_points)]
+    # neck_ids = [item for sublist in neck_ids for item in sublist]
+
+    # points = pv.wrap(np.concatenate(self.stored_points, axis=0))
+    # points.point_data[&#39;NeckIds&#39;] = neck_ids
+
+    points = pv.MultiBlock()
+    for pts in self.stored_points:
+        points.append(pv.wrap(np.array(pts)))
+
+    if outfile is not None:
+        points.save(outfile)       
+    return points</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.SelectGeodesic.smooth_section"><code class="name flex">
+<span>def <span class="ident">smooth_section</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Smoothes section with Laplacian filtering.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def smooth_section(self):
+    &#34;&#34;&#34; Smoothes section with Laplacian filtering. &#34;&#34;&#34;
+    mask = self.mesh.point_data[self.scalars] == 1
+    submesh = self.mesh.extract_points(mask, adjacent_cells=False)
+    submesh = pv.PolyData(submesh.points, submesh.cells)
+    submesh = submesh.smooth(n_iter=100, boundary_smoothing=False)
+    self.mesh.points[mask] = submesh.points
+
+    if self.interactive:
+        # self.p.add_mesh(self.mesh, name=&#39;mesh&#39;, scalars=self.scalars, cmap=&#39;coolwarm&#39;)
+        self.p.add_mesh(self.mesh, name=&#39;mesh&#39;, scalars=self.scalars, cmap=&#39;Reds&#39;, show_edges=True)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.SelectGeodesic.update_geodesic"><code class="name flex">
+<span>def <span class="ident">update_geodesic</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Updates geodesic using current picked points.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_geodesic(self):
+    &#34;&#34;&#34; Updates geodesic using current picked points. &#34;&#34;&#34;
+    if len(self.picked_ids) &gt; 1:
+        pairwise = zip(self.picked_ids, self.picked_ids[1:])
+        self.lines = [self.mesh.geodesic(a, b) for a, b in pairwise]
+    else:
+        self.lines = []
+   
+    if len(self.lines) &gt; 0:
+        lines = pv.PolyData() 
+        self.merged = lines.merge(self.lines)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.SelectGeodesic.update_mesh"><code class="name flex">
+<span>def <span class="ident">update_mesh</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Split the mesh based on current geodesic.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_mesh(self):
+    &#34;&#34;&#34; Split the mesh based on current geodesic. &#34;&#34;&#34;
+    # Split the mesh
+    self.mesh = self.mesh.triangulate()
+    tree = KDTree(self.mesh.points)
+    _, ii = tree.query(self.merged.points, k=1)
+    split, rdx = self.mesh.remove_points(ii)
+    split.point_data[&#39;vtkOGIds&#39;] = rdx
+    
+    split = split.connectivity()
+    region_ids = split.point_data[&#39;RegionId&#39;]
+    regions = np.unique(region_ids)
+    r_masks = [region_ids == r_id for r_id in regions]
+    split = [split.extract_points(r_m, adjacent_cells=False) for r_m in r_masks]
+    split = sorted(split, key=lambda x: x.n_points, reverse=True)
+
+    split_pd = [pv.PolyData(s.points, s.cells) for s in split]
+    for s, s_pd in zip(split, split_pd):
+        for arr in self.mesh.point_data:
+            s_pd.point_data[arr] = s.point_data[arr]
+        for arr in self.mesh.cell_data:
+            s_pd.cell_data[arr] = s.cell_data[arr]
+
+    # Smaller one mark 1, bigger 
+    mask = np.ones(self.mesh.n_points, dtype=bool)
+    mask[split[0].point_data[&#39;vtkOGIds&#39;]] = 0
+    temp_mask = self.mesh.point_data[self.scalars]
+    temp_mask[mask] = 1
+    temp_mask[~mask] = 0
+
+    # DM 11 11 21
+    # Commented out the logical or, just used temp_mask
+    # Interp old mask onto new
+    tree = KDTree(self.current_pts)
+    _, ii = tree.query(self.mesh.points,k=1)
+    self.mesh.point_data[self.scalars] = self.current_mask[ii]
+    new_mask = np.logical_or(temp_mask, self.mesh.point_data[self.scalars])
+    self.mesh.point_data[self.scalars] = new_mask
+
+    # self.mesh.point_data[self.scalars] = temp_mask
+
+    if self.interactive:
+        # self.p.add_mesh(self.mesh, name=&#39;mesh&#39;, scalars=self.scalars, cmap=&#39;coolwarm&#39;)
+        self.p.add_mesh(self.mesh, name=&#39;mesh&#39;, scalars=self.scalars, cmap=&#39;Reds&#39;, show_edges=True)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.SelectGeodesic.update_points"><code class="name flex">
+<span>def <span class="ident">update_points</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets ids of picked points.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_points(self):
+    &#34;&#34;&#34; Gets ids of picked points. &#34;&#34;&#34;
+    if len(self.picked_points) &gt; 0:
+        _, self.picked_ids = self.tree.query(self.picked_points, k=1)
+        self.picked_ids = list(self.picked_ids)
+    else:
+        self.picked_ids = []
+    # Clean duplicates 
+    _, idx = np.unique(self.picked_ids, return_index=True)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.SelectGeodesic.use_stored_points"><code class="name flex">
+<span>def <span class="ident">use_stored_points</span></span>(<span>self, points)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def use_stored_points(self, points):
+    for pts in points:
+        self.picked_points = pts.points
+        self.update_points()
+        self.update_geodesic()
+        self.update_mesh()
+        self.append()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="geometry_tools" href="index.html">geometry_tools</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="geometry_tools.common.check_mem_usage" href="#geometry_tools.common.check_mem_usage">check_mem_usage</a></code></li>
+<li><code><a title="geometry_tools.common.copy_arrays" href="#geometry_tools.common.copy_arrays">copy_arrays</a></code></li>
+<li><code><a title="geometry_tools.common.create_edge_size_array" href="#geometry_tools.common.create_edge_size_array">create_edge_size_array</a></code></li>
+<li><code><a title="geometry_tools.common.decimate_edge_length" href="#geometry_tools.common.decimate_edge_length">decimate_edge_length</a></code></li>
+<li><code><a title="geometry_tools.common.fix_vmtk_group_ids" href="#geometry_tools.common.fix_vmtk_group_ids">fix_vmtk_group_ids</a></code></li>
+<li><code><a title="geometry_tools.common.get_mean_radii" href="#geometry_tools.common.get_mean_radii">get_mean_radii</a></code></li>
+<li><code><a title="geometry_tools.common.get_nearest_slice" href="#geometry_tools.common.get_nearest_slice">get_nearest_slice</a></code></li>
+<li><code><a title="geometry_tools.common.get_neighbour_map" href="#geometry_tools.common.get_neighbour_map">get_neighbour_map</a></code></li>
+<li><code><a title="geometry_tools.common.get_network_endpoints" href="#geometry_tools.common.get_network_endpoints">get_network_endpoints</a></code></li>
+<li><code><a title="geometry_tools.common.get_normal_component" href="#geometry_tools.common.get_normal_component">get_normal_component</a></code></li>
+<li><code><a title="geometry_tools.common.get_parent_slice_location_from_sac_zones" href="#geometry_tools.common.get_parent_slice_location_from_sac_zones">get_parent_slice_location_from_sac_zones</a></code></li>
+<li><code><a title="geometry_tools.common.get_sac_surface_mask" href="#geometry_tools.common.get_sac_surface_mask">get_sac_surface_mask</a></code></li>
+<li><code><a title="geometry_tools.common.lines_from_points" href="#geometry_tools.common.lines_from_points">lines_from_points</a></code></li>
+<li><code><a title="geometry_tools.common.polyline_from_points" href="#geometry_tools.common.polyline_from_points">polyline_from_points</a></code></li>
+<li><code><a title="geometry_tools.common.smooth_mesh_data" href="#geometry_tools.common.smooth_mesh_data">smooth_mesh_data</a></code></li>
+<li><code><a title="geometry_tools.common.smooth_mesh_data_local" href="#geometry_tools.common.smooth_mesh_data_local">smooth_mesh_data_local</a></code></li>
+<li><code><a title="geometry_tools.common.split_network_into_cells" href="#geometry_tools.common.split_network_into_cells">split_network_into_cells</a></code></li>
+<li><code><a title="geometry_tools.common.vtk_generate_img_stencil" href="#geometry_tools.common.vtk_generate_img_stencil">vtk_generate_img_stencil</a></code></li>
+<li><code><a title="geometry_tools.common.vtk_taubin_smooth" href="#geometry_tools.common.vtk_taubin_smooth">vtk_taubin_smooth</a></code></li>
+<li><code><a title="geometry_tools.common.warning_on_one_line" href="#geometry_tools.common.warning_on_one_line">warning_on_one_line</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="geometry_tools.common.ClickDragDelete" href="#geometry_tools.common.ClickDragDelete">ClickDragDelete</a></code></h4>
+<ul class="">
+<li><code><a title="geometry_tools.common.ClickDragDelete.clear" href="#geometry_tools.common.ClickDragDelete.clear">clear</a></code></li>
+<li><code><a title="geometry_tools.common.ClickDragDelete.clip" href="#geometry_tools.common.ClickDragDelete.clip">clip</a></code></li>
+<li><code><a title="geometry_tools.common.ClickDragDelete.display" href="#geometry_tools.common.ClickDragDelete.display">display</a></code></li>
+<li><code><a title="geometry_tools.common.ClickDragDelete.flag" href="#geometry_tools.common.ClickDragDelete.flag">flag</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="geometry_tools.common.ClickDragSelect" href="#geometry_tools.common.ClickDragSelect">ClickDragSelect</a></code></h4>
+<ul class="">
+<li><code><a title="geometry_tools.common.ClickDragSelect.clear" href="#geometry_tools.common.ClickDragSelect.clear">clear</a></code></li>
+<li><code><a title="geometry_tools.common.ClickDragSelect.display" href="#geometry_tools.common.ClickDragSelect.display">display</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="geometry_tools.common.ClickToDelete" href="#geometry_tools.common.ClickToDelete">ClickToDelete</a></code></h4>
+<ul class="">
+<li><code><a title="geometry_tools.common.ClickToDelete.display" href="#geometry_tools.common.ClickToDelete.display">display</a></code></li>
+<li><code><a title="geometry_tools.common.ClickToDelete.undo" href="#geometry_tools.common.ClickToDelete.undo">undo</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="geometry_tools.common.RefinementSelection" href="#geometry_tools.common.RefinementSelection">RefinementSelection</a></code></h4>
+<ul class="">
+<li><code><a title="geometry_tools.common.RefinementSelection.define_surface" href="#geometry_tools.common.RefinementSelection.define_surface">define_surface</a></code></li>
+<li><code><a title="geometry_tools.common.RefinementSelection.select" href="#geometry_tools.common.RefinementSelection.select">select</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="geometry_tools.common.RefinementSelection_OLD" href="#geometry_tools.common.RefinementSelection_OLD">RefinementSelection_OLD</a></code></h4>
+<ul class="">
+<li><code><a title="geometry_tools.common.RefinementSelection_OLD.define_surface" href="#geometry_tools.common.RefinementSelection_OLD.define_surface">define_surface</a></code></li>
+<li><code><a title="geometry_tools.common.RefinementSelection_OLD.select" href="#geometry_tools.common.RefinementSelection_OLD.select">select</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="geometry_tools.common.SacSelectTool" href="#geometry_tools.common.SacSelectTool">SacSelectTool</a></code></h4>
+<ul class="">
+<li><code><a title="geometry_tools.common.SacSelectTool.mask" href="#geometry_tools.common.SacSelectTool.mask">mask</a></code></li>
+<li><code><a title="geometry_tools.common.SacSelectTool.select" href="#geometry_tools.common.SacSelectTool.select">select</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="geometry_tools.common.SelectGeodesic" href="#geometry_tools.common.SelectGeodesic">SelectGeodesic</a></code></h4>
+<ul class="two-column">
+<li><code><a title="geometry_tools.common.SelectGeodesic.append" href="#geometry_tools.common.SelectGeodesic.append">append</a></code></li>
+<li><code><a title="geometry_tools.common.SelectGeodesic.display" href="#geometry_tools.common.SelectGeodesic.display">display</a></code></li>
+<li><code><a title="geometry_tools.common.SelectGeodesic.interact" href="#geometry_tools.common.SelectGeodesic.interact">interact</a></code></li>
+<li><code><a title="geometry_tools.common.SelectGeodesic.refill_section" href="#geometry_tools.common.SelectGeodesic.refill_section">refill_section</a></code></li>
+<li><code><a title="geometry_tools.common.SelectGeodesic.save_stored_points" href="#geometry_tools.common.SelectGeodesic.save_stored_points">save_stored_points</a></code></li>
+<li><code><a title="geometry_tools.common.SelectGeodesic.smooth_section" href="#geometry_tools.common.SelectGeodesic.smooth_section">smooth_section</a></code></li>
+<li><code><a title="geometry_tools.common.SelectGeodesic.update_geodesic" href="#geometry_tools.common.SelectGeodesic.update_geodesic">update_geodesic</a></code></li>
+<li><code><a title="geometry_tools.common.SelectGeodesic.update_mesh" href="#geometry_tools.common.SelectGeodesic.update_mesh">update_mesh</a></code></li>
+<li><code><a title="geometry_tools.common.SelectGeodesic.update_points" href="#geometry_tools.common.SelectGeodesic.update_points">update_points</a></code></li>
+<li><code><a title="geometry_tools.common.SelectGeodesic.use_stored_points" href="#geometry_tools.common.SelectGeodesic.use_stored_points">use_stored_points</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

@@ -77,21 +77,21 @@ class Surfer():
     def copy_arrays(self, src, dst):
         # tree = KDTree(src.points)
         # _, ii = tree.query(dst.points, k=1)
-        # for arr in src.point_arrays:
-        #     dst.point_arrays[arr] = src.point_arrays[arr][ii]
+        # for arr in src.point_data:
+        #     dst.point_data[arr] = src.point_data[arr][ii]
 
         # centers = src.cell_centers()
         # tree = KDTree(centers.points)
         # _, ii = tree.query(dst.cell_centers().points, k=1)
-        # for arr in src.cell_arrays:
-        #     dst.cell_arrays[arr] = src.cell_arrays[arr][ii]
+        # for arr in src.cell_data:
+        #     dst.cell_data[arr] = src.cell_data[arr][ii]
             
         # return dst
         return cc.copy_arrays(src, dst)
 
     def decimate_surface(self, target_edge_length):
         # edges = self.surf.extract_all_edges()
-        # mean_el = edges.compute_cell_sizes().cell_arrays['Length'].mean()
+        # mean_el = edges.compute_cell_sizes().cell_data['Length'].mean()
         # target_el = target_edge_length
         # target_reduction = 1 - (mean_el / target_el)
         # surf_d = self.surf.decimate(target_reduction, volume_preservation=True)
@@ -108,9 +108,9 @@ class Surfer():
             _, ii = tree.query(endlets.points, k=3)
             ii = np.array(ii)[:,-1]
             
-            misr = self.centerlines_aneurysm.point_arrays['MaximumInscribedSphereRadius'][ii]
+            misr = self.centerlines_aneurysm.point_data['MaximumInscribedSphereRadius'][ii]
             
-            endlets.point_arrays['MaximumInscribedSphereRadius'] = misr
+            endlets.point_data['MaximumInscribedSphereRadius'] = misr
             outlet_clip = endlets.glyph(geom=pv.Sphere(1.0), factor=factor)
 
         self.surf = self.surf.clip_surface(outlet_clip, invert=False)
@@ -143,36 +143,36 @@ class Surfer():
                 out_points = self.centerlines_aneurysm.points[ii_outlets]
             
                 # Get normal at those points
-                in_normals = self.centerlines_aneurysm.point_arrays['FrenetTangent'][ii_inlets_n]
-                out_normals = -self.centerlines_aneurysm.point_arrays['FrenetTangent'][ii_outlets_n]
+                in_normals = self.centerlines_aneurysm.point_data['FrenetTangent'][ii_inlets_n]
+                out_normals = -self.centerlines_aneurysm.point_data['FrenetTangent'][ii_outlets_n]
             else:
                 # Get points at those points
                 in_points = self.centerlines.points[ii_inlets]
                 out_points = self.centerlines.points[ii_outlets]
             
                 # Get normal at those points
-                in_normals = self.centerlines.point_arrays['FrenetTangent'][ii_inlets_n]
-                out_normals = -self.centerlines.point_arrays['FrenetTangent'][ii_outlets_n]
+                in_normals = self.centerlines.point_data['FrenetTangent'][ii_inlets_n]
+                out_normals = -self.centerlines.point_data['FrenetTangent'][ii_outlets_n]
                 
             points = np.concatenate([in_points, out_points], axis=0)
             normals = np.concatenate([in_normals, out_normals], axis=0)
 
             endpoints_pv = pv.wrap(points)
-            endpoints_pv.point_arrays['Normals'] = normals
+            endpoints_pv.point_data['Normals'] = normals
 
-        surf_closed = self.surf.fill_holes(20.0).clean()
+        surf_closed = self.surf.fill_holes(30.0).clean()
         select = endpoints_pv.select_enclosed_points(surf_closed, tolerance=0.00001, check_surface=False)
 
-        # for origin, normal in zip(endpoints_pv.points, endpoints_pv.point_arrays['Normals']):
+        # for origin, normal in zip(endpoints_pv.points, endpoints_pv.point_data['Normals']):
         #     t = TubeClipper(self.surf)
         #     t.clip(origin, normal)
         #     self.surf = t.far_side
 
         for sdx in range(select.n_points):
-            check = select.point_arrays['SelectedPoints'][sdx]
+            check = select.point_data['SelectedPoints'][sdx]
             if check == True:
                 origin = select.points[sdx]
-                normal = select.point_arrays['Normals'][sdx]
+                normal = select.point_data['Normals'][sdx]
                 t = TubeClipper(self.surf)
                 t.clip(origin, normal)
                 self.surf = t.far_side
@@ -234,8 +234,8 @@ class Surfer():
             manifold_edges=False
             )
         edges = edges.connectivity()
-        regions = np.unique(edges.point_arrays['RegionId'])
-        masks = [edges.point_arrays['RegionId'] == r for r in regions]
+        regions = np.unique(edges.point_data['RegionId'])
+        masks = [edges.point_data['RegionId'] == r for r in regions]
         profiles = pv.MultiBlock([edges.extract_points(m) for m in masks])
 
         num_profiles = len(profiles)
@@ -253,6 +253,8 @@ class Surfer():
 
     def generate_centerlines(self, include_aneurysms=True, seed_selector='idlist'):
         """ Generate centerlines using VMTK.
+
+        Watch the centerline smoothing at the end!! May need tweaking for your case.
 
         Consider moving this into vmtk_wrapper, the nearest ids works well.
         """
@@ -284,8 +286,8 @@ class Surfer():
             ind = list(range(len(self.outlet_ids)))
             cline_temp = self.centerlines_aneurysm.extract_cells(ind)
             centerlines = pv.PolyData(cline_temp.points, lines=cline_temp.cells)
-            for arr in cline_temp.point_arrays:
-                centerlines.point_arrays[arr] = cline_temp.point_arrays[arr]
+            for arr in cline_temp.point_data:
+                centerlines.point_data[arr] = cline_temp.point_data[arr]
             for arr in cline_temp.cell_data:
                 centerlines.cell_data[arr] = cline_temp.cell_data[arr]
             self.centerlines = centerlines
@@ -299,6 +301,8 @@ class Surfer():
                 src_ids=self.inlet_ids,
                 target_ids=target_ids,
                 )
+            #NOTE: If your vessels are really tortuous, you are going to want to turn the 
+            # smoothing wayyy down...    
             centerlines = vmtk.centerlines_smooth(centerlines, iterations=100, sm_factor=0.1)
 
             self.centerlines = centerlines
@@ -307,9 +311,14 @@ class Surfer():
         return self 
 
     def generate_centerlines_multi(self, proj_dir, seed_selector='idlist'):
-        """ Generate centerlines using VMTK.
+        '''
+        """ Generate centerlines using VMTK
+        Here, the inlets are iterated over to generate individual sets of centerlines.
+        Then, the centerlines are all merged together into one single centerline.
+        This is necessary for multiple inlets, and needs quite a lot of monitoring if you have 
+        both multiple inlets and many outlets. It can make terrible centerlines if you are not careful.
 
-        Consider moving this into vmtk_wrapper, the nearest ids works well.
+        The only reason we need this is for tubeclipper to do a good job.
         """
         print("Generating multiple centerlines")
         surf_capped = pv.PolyData()
@@ -321,7 +330,6 @@ class Surfer():
         self.inlet_ids = inlet_ids 
         self.outlet_ids = outlet_ids
         target_ids = self.outlet_ids 
-        
         centerlines_unmerged_blocks = pv.MultiBlock()
 
         for idx,i_id in enumerate(inlet_ids):
@@ -342,21 +350,27 @@ class Surfer():
                     src_ids=[i_id],
                     #NOTE: this might create better centerlines if you try switching this to
                     #different outlet targets. Try a few and look at the output first.
-                    target_ids=[target_ids[0]],
+                    target_ids=[0],
                     )
                 centerlines_unmerged.save(proj_dir/('centerline{}.vtp'.format(idx)))
                 centerlines_unmerged_blocks.append(vmtk.surface_append(centerlines_unmerged_blocks[idx-1],centerlines_unmerged))
                 centerlines_appended = centerlines_unmerged_blocks[idx]
-                centerlines_appended.save(proj_dir/('appended_cl.vtp'))
+                #centerlines_appended.save(proj_dir/('appended_cl.vtp'))
 
         centerlines_branched = vmtk.centerline_branches_ids(centerlines_appended)
         centerlines_merged = vmtk.merge_centerlines(centerlines_branched)
-        centerlines_total = vmtk.centerlines_smooth(centerlines_merged, iterations=100, sm_factor=0.1)
+        centerlines_total = vmtk.centerlines_smooth(centerlines_merged, iterations=1, sm_factor=0.01)
 
         self.centerlines = centerlines_total
-        centerlines_total.save(proj_dir/('merged_centerlines.vtp'))
+        #centerlines_total.save(proj_dir/('merged_centerlines.vtp'))
         self.centerlines = vmtk.centerline_geometry(self.centerlines)
-        
+        '''
+        """
+        Generate centerlines using the network extractor. This won't cause merging issues.
+        """
+        self.centerlines, _ = vmtk.network_extractor(self.surf)
+        self.centerlines = vmtk.centerline_geometry(self.centerlines)
+
         return self         
     # def _project_centerline_attrs(self, centerlines, centerlines_branched):
     #         centerlines_og = centerlines.copy()
@@ -373,8 +387,8 @@ class Surfer():
     #         dd, ii = tree.query(q_points, k=1)
 
     #         # Project onto centerlines_og
-    #         centerlines_og.point_arrays['GroupIds'] = np.round(centerlines_branched.point_arrays['GroupIds'][ii]).astype(int)
-    #         centerlines_og.point_arrays['Blanking'] = np.round(centerlines_branched.point_arrays['Blanking'][ii]).astype(int)
+    #         centerlines_og.point_data['GroupIds'] = np.round(centerlines_branched.point_data['GroupIds'][ii]).astype(int)
+    #         centerlines_og.point_data['Blanking'] = np.round(centerlines_branched.point_data['Blanking'][ii]).astype(int)
 
     #         return centerlines_og    
     
@@ -400,12 +414,12 @@ class Surfer():
                 blanking_interp[ii] = s['Blanking'][0]
 
             _, ii = tree.query(centerlines_og.points, k=1)
-            centerlines_og.point_arrays['GroupIds'] = group_ids_interp[ii]
-            centerlines_og.point_arrays['Blanking'] = blanking_interp[ii]
+            centerlines_og.point_data['GroupIds'] = group_ids_interp[ii]
+            centerlines_og.point_data['Blanking'] = blanking_interp[ii]
 
             # Project onto centerlines_og
-            # centerlines_og.point_arrays['GroupIds'] = np.round(centerlines_branched.point_arrays['GroupIds'][ii]).astype(int)
-            # centerlines_og.point_arrays['Blanking'] = np.round(centerlines_branched.point_arrays['Blanking'][ii]).astype(int)
+            # centerlines_og.point_data['GroupIds'] = np.round(centerlines_branched.point_data['GroupIds'][ii]).astype(int)
+            # centerlines_og.point_data['Blanking'] = np.round(centerlines_branched.point_data['Blanking'][ii]).astype(int)
 
             return centerlines_og    
     
@@ -440,13 +454,13 @@ class Surfer():
         self.surf, self.neighbour_pt_ids = vmtk.surface_centerline_projection_MISR(
             self.surf, self.centerlines_branched, sm_iterations=1)
         
-        #print(self.surf.point_arrays)
+        #print(self.surf.point_data)
         return self
 
     def update_aneurysm_group_ids(self):    
         tree = KDTree(self.surf.points)
         nearest_temp_idx = tree.query(self.aneurysm_points, k=1)[1]
-        self.aneurysm_group_ids = [str(x) for x in self.surf.point_arrays['GroupIds'][nearest_temp_idx]]
+        self.aneurysm_group_ids = [str(x) for x in self.surf.point_data['GroupIds'][nearest_temp_idx]]
         self.get_group_adjacency()
         # self.check_group_id_integrity()
 
@@ -458,11 +472,11 @@ class Surfer():
         self.sacs = {}
 
         for g in self.aneurysm_group_ids:
-            sac_mask = self.surf.point_arrays['GroupIds'] == g
+            sac_mask = self.surf.point_data['GroupIds'] == g
             sac = self.surf.extract_points(sac_mask)
             sac_pd = pv.PolyData(sac.points, sac.cells)
-            for arr in sac.point_arrays:
-                sac_pd.point_arrays[arr] = sac.point_arrays[arr]
+            for arr in sac.point_data:
+                sac_pd.point_data[arr] = sac.point_data[arr]
             for arr in sac.cell_data:
                 sac_pd.cell_data[arr] = sac.cell_data[arr]
             self.sacs[g] = sac_pd
@@ -480,7 +494,7 @@ class Surfer():
             cb = cc.ClickDragDelete(self.surf, title='Clip boundaries')
             surf = cb.mesh 
             surf = surf.triangulate()
-            #print(surf.point_arrays)
+            #print(surf.point_data)
 
             if type(surf) != pv.core.pointset.PolyData:
                 surf = pv.PolyData(surf.points, surf.cells)
@@ -495,7 +509,7 @@ class Surfer():
         self.surf = surf    
         return cb.flag_inspect 
 
-    def save_inlet_outlet_points(self, points_file, centerlines='centerlines', include_aneurysms=True):
+    def save_inlet_outlet_points(self, points_file, centerlines='centerlines', include_aneurysms=True, include_normals=False):
         """ Save inlet_points and outlet_points to a single h5 file.
 
         File keys will be "inlets" and "outlets"
@@ -506,12 +520,12 @@ class Surfer():
         if include_aneurysms==True:
             points['aneurysms'] = pv.wrap(np.array(self.aneurysm_points))
 
-        if hasattr(self, centerlines):
+        if (hasattr(self, centerlines)) and (include_normals == True):
             tree = KDTree(self.centerlines.points)
             _, ii = tree.query(self.inlet_points)
-            points['inlets'].point_arrays['normals'] = self.centerlines.point_arrays['FrenetTangent'][ii]
+            points['inlets'].point_data['normals'] = self.centerlines.point_data['FrenetTangent'][ii]
             _, ii = tree.query(self.outlet_points)
-            points['outlets'].point_arrays['normals'] = self.centerlines.point_arrays['FrenetTangent'][ii]
+            points['outlets'].point_data['normals'] = self.centerlines.point_data['FrenetTangent'][ii]
 
         points.save(points_file)
 
@@ -588,13 +602,13 @@ class Surfer():
         centerlines_split = self.centerlines_aneurysm_split
 
         # Get valid (non-blanked) ids
-        mask = np.invert(centerlines_split.point_arrays['Blanking'].astype(bool))
-        all_ids = np.unique(centerlines_split.point_arrays['GroupIds'])
-        valid_ids = np.unique(centerlines_split.point_arrays['GroupIds'][mask])
+        mask = np.invert(centerlines_split.point_data['Blanking'].astype(bool))
+        all_ids = np.unique(centerlines_split.point_data['GroupIds'])
+        valid_ids = np.unique(centerlines_split.point_data['GroupIds'][mask])
         print('valid:', len(valid_ids), valid_ids)
         valid_ids = [x for x in valid_ids if str(x) in self.G.nodes]
         #print('valid2:', len(valid_ids), valid_ids)
-        blanking_ids = np.unique(centerlines_split.point_arrays['GroupIds'][~mask])
+        blanking_ids = np.unique(centerlines_split.point_data['GroupIds'][~mask])
         print("blankingids: ", len(blanking_ids), blanking_ids)
         # Split each centerline into segments based on groupIds
         segments = {key : [] for key in valid_ids}
@@ -603,29 +617,29 @@ class Surfer():
         # Create a new variable like "GroupIds" called "GroupIdsNonBlanking"
         # Anywhere a a group is blanked, relabel it with the successor's group id.
         for cline in centerlines_multi:
-            cline.point_arrays['GroupIdsNonBlanking'] = cline.point_arrays['GroupIds'].copy()
-            groups = np.unique([x for x in cline.point_arrays['GroupIds'] if x in all_ids])
+            cline.point_data['GroupIdsNonBlanking'] = cline.point_data['GroupIds'].copy()
+            groups = np.unique([x for x in cline.point_data['GroupIds'] if x in all_ids])
             blanking_groups = [x for x in groups if x in blanking_ids]
             # blanking_successors = [list(self.G.successors(blanking_groups[i] - 1)) for i in range(len(blanking_groups))]
-            blanking_masks = [cline.point_arrays['GroupIds'] == x for x in blanking_groups]
+            blanking_masks = [cline.point_data['GroupIds'] == x for x in blanking_groups]
             blanking_diffs = [np.diff(x.astype(int)) for x in blanking_masks]
             blanking_successor_idx = [np.argmin(x) + 1 for x in blanking_diffs]
-            blanking_successors = [cline.point_arrays['GroupIds'][x] for x in blanking_successor_idx]
+            blanking_successors = [cline.point_data['GroupIds'][x] for x in blanking_successor_idx]
             reassignments = blanking_successors #[[x for x in suc if x in groups][0] for suc in blanking_successors]
 
-            masks = [cline.point_arrays['GroupIdsNonBlanking'] == x for x in blanking_groups]
+            masks = [cline.point_data['GroupIdsNonBlanking'] == x for x in blanking_groups]
             
             for msk, r in zip(masks, reassignments):
-                cline.point_arrays['GroupIdsNonBlanking'][msk] = r
+                cline.point_data['GroupIdsNonBlanking'][msk] = r
 
         # For each valid group id, extract lines associated with that group ID.
         # The items in segments are lists because multiple lines may have the same 
         # point id (to be averaged later)
         for cline in centerlines_multi:
-            groups = np.unique([x for x in cline.point_arrays['GroupIdsNonBlanking'] if x in valid_ids])
+            groups = np.unique([x for x in cline.point_data['GroupIdsNonBlanking'] if x in valid_ids])
             # print(groups)
             for gid in groups:
-                mask = cline.point_arrays['GroupIdsNonBlanking'] == gid
+                mask = cline.point_data['GroupIdsNonBlanking'] == gid
                 line_points = cline.extract_points(mask, adjacent_cells=False, include_cells=False)
                 segments[gid].append(line_points)
 
@@ -668,7 +682,7 @@ class Surfer():
                 segment = mean_segments[key].points
                 points = np.concatenate([pt, segment], axis=0)
                 spline = pv.Spline(points, segment.shape[0] + 1)
-                spline.point_arrays['GroupIds'] = key
+                spline.point_data['GroupIds'] = key
                 mean_segments[key] = spline
 
         centerlines_multi_merge = centerlines_multi.combine()
@@ -678,12 +692,12 @@ class Surfer():
             # Transfer relevant arrays to new spline
             ndx = tree.query(mean_segments[key].points, k=1)[1]
 
-            for arr in centerlines_multi_merge.point_arrays.keys():
-                mean_arr = centerlines_multi_merge.point_arrays[arr][ndx] #p.mean([s.point_arrays[arr] for s in splines], axis=0)
-                mean_segments[key].point_arrays[arr] = mean_arr
+            for arr in centerlines_multi_merge.point_data.keys():
+                mean_arr = centerlines_multi_merge.point_data[arr][ndx] #p.mean([s.point_data[arr] for s in splines], axis=0)
+                mean_segments[key].point_data[arr] = mean_arr
            
-            mean_segments[key].point_arrays['OriginalGroupIds'] = mean_segments[key].point_arrays['GroupIds'].copy()
-            mean_segments[key].point_arrays['GroupIds'] = key
+            mean_segments[key].point_data['OriginalGroupIds'] = mean_segments[key].point_data['GroupIds'].copy()
+            mean_segments[key].point_data['GroupIds'] = key
             mean_segments[key] = mean_segments[key].compute_arc_length()
             mean_segments[key]['arc_length_inv'] = mean_segments[key]['arc_length'][::-1]
 
@@ -700,9 +714,9 @@ class Surfer():
         """
         self.clipping_points = {}
 
-        groups = np.unique(self.surf.point_arrays['GroupIds'])
+        groups = np.unique(self.surf.point_data['GroupIds'])
         #print(groups)
-        masks = [self.surf.point_arrays['GroupIds'] == int(g) for g in groups]
+        masks = [self.surf.point_data['GroupIds'] == int(g) for g in groups]
 
         keys = [int(g) for g in groups]
         #print(keys)
@@ -717,14 +731,14 @@ class Surfer():
             line = line.clean(tolerance=0.05)
             part = parts[g]
             select = line.select_enclosed_points(part.fill_holes(20), tolerance=1e-5, check_surface=False)
-            s_mask = select.point_arrays['SelectedPoints'] == 1
+            s_mask = select.point_data['SelectedPoints'] == 1
 
             if np.sum(s_mask) > 2:
                 sub = pv.PolyData(select.points[s_mask])
-                sub.point_arrays['FrenetTangent'] = select.point_arrays['FrenetTangent'][s_mask]
-                sub.point_arrays['MaximumInscribedSphereRadius'] = select.point_arrays['MaximumInscribedSphereRadius'][s_mask]
-                sub.point_arrays['arc_length'] = select.point_arrays['arc_length'][s_mask]
-                sub.point_arrays['arc_length'] = sub.point_arrays['arc_length'] - sub.point_arrays['arc_length'][0]
+                sub.point_data['FrenetTangent'] = select.point_data['FrenetTangent'][s_mask]
+                sub.point_data['MaximumInscribedSphereRadius'] = select.point_data['MaximumInscribedSphereRadius'][s_mask]
+                sub.point_data['arc_length'] = select.point_data['arc_length'][s_mask]
+                sub.point_data['arc_length'] = sub.point_data['arc_length'] - sub.point_data['arc_length'][0]
 
                 # Just not starting at endpoint
                 new_start_index = 1
@@ -738,7 +752,7 @@ class Surfer():
                 while not slice_condition:
                     new_start_index += 1
                     if new_start_index < sub.n_points:
-                        slice1 = part.slice(normal=sub.point_arrays['FrenetTangent'][new_start_index],origin=sub.points[new_start_index])
+                        slice1 = part.slice(normal=sub.point_data['FrenetTangent'][new_start_index],origin=sub.points[new_start_index])
                     else:
                         break
 
@@ -756,7 +770,7 @@ class Surfer():
                 while not slice_condition:
                     new_end_index -= 1
                     if new_end_index > 0:
-                        slice2 = part.slice(normal=sub.point_arrays['FrenetTangent'][new_end_index],origin=sub.points[new_end_index])
+                        slice2 = part.slice(normal=sub.point_data['FrenetTangent'][new_end_index],origin=sub.points[new_end_index])
                     else:
                         break
 
@@ -767,15 +781,15 @@ class Surfer():
 
                 if len(sub.points[new_start_index:new_end_index]) > 2:
                     sub_new = pv.wrap(sub.points[new_start_index:new_end_index])
-                    sub_new.point_arrays['Normals'] = sub.point_arrays['FrenetTangent'][new_start_index:new_end_index]
-                    sub_new.point_arrays['arc_length'] = sub.point_arrays['arc_length'][new_start_index:new_end_index]
+                    sub_new.point_data['Normals'] = sub.point_data['FrenetTangent'][new_start_index:new_end_index]
+                    sub_new.point_data['arc_length'] = sub.point_data['arc_length'][new_start_index:new_end_index]
 
                     self.clipping_points[g] = {}
                     self.clipping_points[g]['start'] = pv.wrap(sub_new.points[0])
-                    self.clipping_points[g]['start'].point_arrays['Normal'] = sub_new.point_arrays['Normals'][0].reshape(1,3)
+                    self.clipping_points[g]['start'].point_data['Normal'] = sub_new.point_data['Normals'][0].reshape(1,3)
 
                     self.clipping_points[g]['end'] = pv.wrap(sub_new.points[-1])
-                    self.clipping_points[g]['end'].point_arrays['Normal'] = -sub_new.point_arrays['Normals'][-1].reshape(1,3) 
+                    self.clipping_points[g]['end'].point_data['Normal'] = -sub_new.point_data['Normals'][-1].reshape(1,3) 
 
 
     def get_branch_endpoints_OLD(self):
@@ -837,14 +851,14 @@ class Surfer():
                     while (check == True) and (idx > 2):
                         _, ii = tree.query(s_line.points[idx], k=1)
                         origin = self.centerlines_aneurysm.points[ii]
-                        normal = self.centerlines_aneurysm.point_arrays['FrenetTangent'][ii]
+                        normal = self.centerlines_aneurysm.point_data['FrenetTangent'][ii]
                         t.clip(origin, -normal)
                         clipped = t.clipped
-                        mask = clipped.point_arrays['Side'] == 1
+                        mask = clipped.point_data['Side'] == 1
                         clipped = clipped.extract_points(mask)
                         # clipped = clipped.clean()
 
-                        check = np.any([int(s) in clipped.point_arrays['GroupIds'] for s in descendants])
+                        check = np.any([int(s) in clipped.point_data['GroupIds'] for s in descendants])
                         # clipped.plot(color='w')#scalars='GroupIds')
                         # p = pv.Plotter()
                         # p.camera_position = cpos
@@ -860,11 +874,11 @@ class Surfer():
                 else:
                     _, ii = tree.query(s_line.points[-1], k=1)
                     origin = self.centerlines_aneurysm.points[ii]
-                    normal = self.centerlines_aneurysm.point_arrays['FrenetTangent'][ii]
+                    normal = self.centerlines_aneurysm.point_data['FrenetTangent'][ii]
 
                 if (len(descendants) == 0) or (check == False):
                     self.clipping_points[g]['end'] = pv.wrap(origin)
-                    self.clipping_points[g]['end'].point_arrays['Normal'] = -normal.reshape(1,3)
+                    self.clipping_points[g]['end'].point_data['Normal'] = -normal.reshape(1,3)
                 # else:
                     # self.clipping_points[g]['end'] = None
 
@@ -872,7 +886,7 @@ class Surfer():
             t = TubeClipper(surf_d)
 
             # Get index of first item after blanking ends 
-            # diff = np.diff(s_line.point_arrays['Blanking'])
+            # diff = np.diff(s_line.point_data['Blanking'])
             # BLANKING is janky don't use
             idx = 0 #np.argmax(diff == -1) 
 
@@ -885,13 +899,13 @@ class Surfer():
                 while (check2 == True) and (idx < len(s_line.points)):
                     _, ii = tree.query(s_line.points[idx], k=1)
                     origin = self.centerlines_aneurysm.points[ii]
-                    normal = self.centerlines_aneurysm.point_arrays['FrenetTangent'][ii]
+                    normal = self.centerlines_aneurysm.point_data['FrenetTangent'][ii]
                     t.clip(origin, normal)
                     clipped = t.clipped
-                    mask = clipped.point_arrays['Side'] == 1
+                    mask = clipped.point_data['Side'] == 1
                     clipped = clipped.extract_points(mask)
 
-                    check2 = np.any([int(s) in clipped.point_arrays['GroupIds'] for s in fam])
+                    check2 = np.any([int(s) in clipped.point_data['GroupIds'] for s in fam])
                     
                     # clipped.plot(color='b')#scalars='GroupIds')
                     # p = pv.Plotter()
@@ -908,11 +922,11 @@ class Surfer():
             else:
                 _, ii = tree.query(s_line.points[0], k=1)
                 origin = self.centerlines_aneurysm.points[ii]
-                normal = self.centerlines_aneurysm.point_arrays['FrenetTangent'][ii]
+                normal = self.centerlines_aneurysm.point_data['FrenetTangent'][ii]
 
             if len(fam) == 0 or check2 == False:
                 self.clipping_points[g]['start'] = pv.wrap(origin)
-                self.clipping_points[g]['start'].point_arrays['Normal'] = normal.reshape(1,3)
+                self.clipping_points[g]['start'].point_data['Normal'] = normal.reshape(1,3)
             # else:
                 # self.clipping_points[g]['start'] = None 
 
@@ -985,13 +999,13 @@ class Surfer():
     #                 while (check == True) and (idx > 2):
     #                     _, ii = tree.query(s_line.points[idx], k=1)
     #                     origin = self.centerlines_aneurysm.points[ii]
-    #                     normal = self.centerlines_aneurysm.point_arrays['FrenetTangent'][ii]
+    #                     normal = self.centerlines_aneurysm.point_data['FrenetTangent'][ii]
     #                     t.clip(origin, -normal)
     #                     clipped = t.clipped
-    #                     mask = clipped.point_arrays['Side'] == 1
+    #                     mask = clipped.point_data['Side'] == 1
     #                     clipped = clipped.extract_points(mask)
 
-    #                     check = np.any([s in clipped.point_arrays['GroupIds'] for s in children])
+    #                     check = np.any([s in clipped.point_data['GroupIds'] for s in children])
                         
     #                     # print('ch', check)
     #                     if check == True:
@@ -1000,11 +1014,11 @@ class Surfer():
     #             else:
     #                 _, ii = tree.query(s_line.points[-1], k=1)
     #                 origin = self.centerlines_aneurysm.points[ii]
-    #                 normal = self.centerlines_aneurysm.point_arrays['FrenetTangent'][ii]
+    #                 normal = self.centerlines_aneurysm.point_data['FrenetTangent'][ii]
 
     #             if (len(children) == 0) or (check == False):
     #                 self.clipping_points[g]['end'] = pv.wrap(origin)
-    #                 self.clipping_points[g]['end'].point_arrays['Normal'] = -normal.reshape(1,3)
+    #                 self.clipping_points[g]['end'].point_data['Normal'] = -normal.reshape(1,3)
     #             else:
     #                 self.clipping_points[g]['end'] = None
     #         else:
@@ -1014,7 +1028,7 @@ class Surfer():
     #         t = TubeClipper(self.surf)
 
     #         # Get index of first item after blanking ends 
-    #         # diff = np.diff(s_line.point_arrays['Blanking'])
+    #         # diff = np.diff(s_line.point_data['Blanking'])
     #         # BLANKING is janky don't use
     #         idx = 0 #np.argmax(diff == -1) 
 
@@ -1025,13 +1039,13 @@ class Surfer():
     #             while (check == True) and (idx < len(s_line.points)):
     #                 _, ii = tree.query(s_line.points[idx], k=1)
     #                 origin = self.centerlines_aneurysm.points[ii]
-    #                 normal = self.centerlines_aneurysm.point_arrays['FrenetTangent'][ii]
+    #                 normal = self.centerlines_aneurysm.point_data['FrenetTangent'][ii]
     #                 t.clip(origin, normal)
     #                 clipped = t.clipped
-    #                 mask = clipped.point_arrays['Side'] == 1
+    #                 mask = clipped.point_data['Side'] == 1
     #                 clipped = clipped.extract_points(mask)
 
-    #                 check = np.any([s in clipped.point_arrays['GroupIds'] for s in fam])
+    #                 check = np.any([s in clipped.point_data['GroupIds'] for s in fam])
                     
     #                 # clipped.plot(scalars='GroupIds')
     #                 # print('ch2', check)
@@ -1041,11 +1055,11 @@ class Surfer():
     #         else:
     #             _, ii = tree.query(s_line.points[0], k=1)
     #             origin = self.centerlines_aneurysm.points[ii]
-    #             normal = self.centerlines_aneurysm.point_arrays['FrenetTangent'][ii]
+    #             normal = self.centerlines_aneurysm.point_data['FrenetTangent'][ii]
 
     #         if len(fam) == 0 or check == False:
     #             self.clipping_points[g]['start'] = pv.wrap(origin)
-    #             self.clipping_points[g]['start'].point_arrays['Normal'] = normal.reshape(1,3)
+    #             self.clipping_points[g]['start'].point_data['Normal'] = normal.reshape(1,3)
     #         else:
     #             self.clipping_points[g]['start'] = None 
 
@@ -1108,17 +1122,17 @@ class Surfer():
                     tree = KDTree(self.mean_segments[str(s)].points)
                     _, ii = tree.query(pts, k=1)
                     idx = ii[0]
-                    arc_vals = self.mean_segments[str(s)].point_arrays['arc_length'][ii]
+                    arc_vals = self.mean_segments[str(s)].point_data['arc_length'][ii]
 
                     s_line = self.mean_segments[str(s)]
 
                     n = 1
                     cpos = None
                     while (n <= n_spheres) and idx < ii[1]:
-                        arc_val = s_line.point_arrays['arc_length'][idx]
-                        MISR = s_line.point_arrays['MaximumInscribedSphereRadius'][idx]
+                        arc_val = s_line.point_data['arc_length'][idx]
+                        MISR = s_line.point_data['MaximumInscribedSphereRadius'][idx]
                         next_val = arc_val + MISR
-                        idx = np.argmin((s_line.point_arrays['arc_length'] - next_val)**2)
+                        idx = np.argmin((s_line.point_data['arc_length'] - next_val)**2)
                         # print('Step', s, n)
                         # p = pv.Plotter()
                         # p.camera_position = cpos
@@ -1132,7 +1146,7 @@ class Surfer():
                         idx = ii[1]
 
                     origin = pv.wrap(s_line.points[idx])
-                    origin.point_arrays['Normal'] = -s_line.point_arrays['FrenetTangent'][idx].reshape(1,3)
+                    origin.point_data['Normal'] = -s_line.point_data['FrenetTangent'][idx].reshape(1,3)
 
                     self.sac_zones[an_id][s][n_spheres] = origin
                     self.sac_zones[an_id][s][n_spheres].relation = 'sibling'
@@ -1147,23 +1161,23 @@ class Surfer():
             tree = KDTree(self.mean_segments[str(parent)].points)
             _, ii = tree.query(pts, k=1)
             idx = ii[1]
-            arc_vals = self.mean_segments[str(parent)].point_arrays['arc_length'][ii]
+            arc_vals = self.mean_segments[str(parent)].point_data['arc_length'][ii]
 
             s_line = self.mean_segments[str(parent)]
 
             n = 1
             while (n <= n_spheres) and idx > ii[0]:
-                arc_val = s_line.point_arrays['arc_length'][idx]
-                MISR = s_line.point_arrays['MaximumInscribedSphereRadius'][idx]
+                arc_val = s_line.point_data['arc_length'][idx]
+                MISR = s_line.point_data['MaximumInscribedSphereRadius'][idx]
                 next_val = arc_val - MISR
-                idx = np.argmin((s_line.point_arrays['arc_length'] - next_val)**2)
+                idx = np.argmin((s_line.point_data['arc_length'] - next_val)**2)
                 n += 1
             
             if n < n_spheres:
                 idx = ii[0]
 
             origin = pv.wrap(s_line.points[idx])
-            origin.point_arrays['Normal'] = s_line.point_arrays['FrenetTangent'][idx].reshape(1,3)
+            origin.point_data['Normal'] = s_line.point_data['FrenetTangent'][idx].reshape(1,3)
 
             self.sac_zones[an_id][parent][n_spheres] = origin
             self.sac_zones[an_id][parent][n_spheres].relation = 'parent'
@@ -1180,28 +1194,28 @@ class Surfer():
             for s in self.sac_zones[an_id].keys():
                 pt_far = self.sac_zones[an_id][s][n_spheres]
 
-                far.clip(pt_far.points[0], pt_far.point_arrays['Normal'][0])
+                far.clip(pt_far.points[0], pt_far.point_data['Normal'][0])
 
                 if pt_far.relation == 'parent':
                     pt_near = self.clipping_points[s]['end']
                 else:
                     pt_near = self.clipping_points[s]['start']
                 
-                near.clip(pt_near.points[0], -pt_near.point_arrays['Normal'][0])
+                near.clip(pt_near.points[0], -pt_near.point_data['Normal'][0])
 
             near = near.clipped
             far = far.clipped
-            near.point_arrays['Side'] = ~near.point_arrays['Side'] 
-            region = near.point_arrays['Side'] * far.point_arrays['Side'] 
+            near.point_data['Side'] = ~near.point_data['Side'] 
+            region = near.point_data['Side'] * far.point_data['Side'] 
 
-            mesh.point_arrays['sac_zone_{:02d}'.format(int(an_id))] = region
+            mesh.point_data['sac_zone_{:02d}'.format(int(an_id))] = region
 
-        zone_arr_names = [x for x in mesh.point_arrays if 'sac_zone_' in x]
-        zone_arrs = [mesh.point_arrays[a] for a in zone_arr_names]
-        mesh.point_arrays['sac_zones'] = np.sum(zone_arrs, axis=0)
+        zone_arr_names = [x for x in mesh.point_data if 'sac_zone_' in x]
+        zone_arrs = [mesh.point_data[a] for a in zone_arr_names]
+        mesh.point_data['sac_zones'] = np.sum(zone_arrs, axis=0)
 
         # for idx, an_id in enumerate(self.aneurysm_group_ids):
-            # mesh.point_arrays['sac_zones'][mesh.point_arrays['GroupIds'] == an_id] = idx + 3
+            # mesh.point_data['sac_zones'][mesh.point_data['GroupIds'] == an_id] = idx + 3
 
     def get_plc_points(self, n_spheres):
         """ Get PLC points based on mark_near_vessel_regions.
@@ -1233,7 +1247,7 @@ class Surfer():
         # mean_segments = self.mean_segments.combine()
         tree = KDTree(mean_segments.points)
         _, ii = tree.query(outlet_points)
-        g_ids = mean_segments.point_arrays['GroupIds'][ii].astype(int)
+        g_ids = mean_segments.point_data['GroupIds'][ii].astype(int)
         lowest_common = nx.lowest_common_ancestor(self.G, g_ids[0], g_ids[1])
         ancestors = nx.ancestors(self.G, lowest_common)
         fam = list(ancestors) + [lowest_common]

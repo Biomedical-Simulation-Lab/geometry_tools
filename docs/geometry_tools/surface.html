@@ -1,0 +1,3963 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>geometry_tools.surface API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>geometry_tools.surface</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from networkx.algorithms.dag import ancestors
+from networkx.algorithms.distance_measures import center
+from networkx.algorithms.lowest_common_ancestors import lowest_common_ancestor
+import pyvista as pv 
+import numpy as np
+from geometry_tools import vmtk_wrapper as vmtk
+# from pathlib import Path 
+from geometry_tools import common as cc 
+from scipy.spatial import cKDTree as KDTree 
+# import h5py 
+from tubeclipper import TubeClipper
+import networkx as nx 
+
+class Surfer():
+    &#34;&#34;&#34; Basic mesh manip tools based on VMTK.
+    &#34;&#34;&#34;
+
+    def __init__(self, surf=None, inlet_points=None, outlet_points=None, aneurysm_points=None, inlet_normals=None, outlet_normals=None, include_aneurysms=False):
+        &#34;&#34;&#34; Init the meshproto instance.
+
+        Surf must be given. 
+        &#34;&#34;&#34;
+
+        self.surf = surf 
+        self.inlet_points = inlet_points
+        self.outlet_points = outlet_points
+        self.aneurysm_points = aneurysm_points
+        self.include_aneurysms=include_aneurysms
+
+        if self.inlet_points is not None:
+            self.update_inlets_outlets()
+            self.inlet_points = np.array(inlet_points)
+            self.outlet_points = np.array(outlet_points)
+        
+    def _pick_points(self, mesh=None, text=&#39;&#39;, render_points_as_spheres=False):
+        &#34;&#34;&#34; Internal method for picking points for choosing inlet(s).
+
+        Input mesh should be, for example, a PolyData containing 
+        inlets and outlets. Returns points in a list.
+        &#34;&#34;&#34;
+
+        def _point_picker_cb(mm, pid):
+            # point = mm.points[pid]
+            # print(&#39;Picked point&#39;, point)
+            #self._picked_id = pid
+            self._picked_ids.append(pid)
+            p.add_point_labels([mm.points[pid],],[&#39;{}&#39;.format(pid)], )
+
+        def _reset_picked_cb():
+            print(&#39;reset&#39;)
+            self._picked_id = None
+            self._picked_ids = []
+
+        self._picked_ids = []
+        self._picked_id = None
+
+        p = pv.Plotter()
+        p.add_mesh(self.surf, color=&#39;w&#39;, opacity=1.0, pickable=False)
+        p.add_text(text, position=&#39;upper_left&#39;)
+        p.enable_point_picking(callback=_point_picker_cb, show_message=False, 
+                            color=&#39;r&#39;, point_size=10, 
+                            use_mesh=True, show_point=True, 
+                            render_points_as_spheres=render_points_as_spheres)
+        if mesh is not None:
+            p.add_mesh(mesh, color=&#39;b&#39;, point_size=30)
+
+        p.add_text(&#39;p: pick point&#39;, position=(0.05, 0.05), font_size=12)
+        p.add_key_event(&#39;c&#39;, _reset_picked_cb)
+        p.show()
+        return self._picked_ids #[self._picked_id]
+
+    def copy_structure(self):
+        surf_new = pv.PolyData()
+        surf_new.copy_structure(self.surf)
+        self.surf = surf_new
+        
+    def copy_arrays(self, src, dst):
+        # tree = KDTree(src.points)
+        # _, ii = tree.query(dst.points, k=1)
+        # for arr in src.point_data:
+        #     dst.point_data[arr] = src.point_data[arr][ii]
+
+        # centers = src.cell_centers()
+        # tree = KDTree(centers.points)
+        # _, ii = tree.query(dst.cell_centers().points, k=1)
+        # for arr in src.cell_data:
+        #     dst.cell_data[arr] = src.cell_data[arr][ii]
+            
+        # return dst
+        return cc.copy_arrays(src, dst)
+
+    def decimate_surface(self, target_edge_length):
+        # edges = self.surf.extract_all_edges()
+        # mean_el = edges.compute_cell_sizes().cell_data[&#39;Length&#39;].mean()
+        # target_el = target_edge_length
+        # target_reduction = 1 - (mean_el / target_el)
+        # surf_d = self.surf.decimate(target_reduction, volume_preservation=True)
+        # self.surf = self.copy_arrays(self.surf, surf_d)
+        self.surf = cc.decimate_edge_length(self.surf, target_edge_length)
+
+    def clip_endpoints_with_spheres(self, factor=1.4, outlet_clip=None):
+        
+        if outlet_clip is None:
+            endpoints = np.concatenate([self.inlet_points, self.outlet_points], axis=0)
+            endlets = pv.wrap(endpoints)
+
+            tree = KDTree(self.centerlines_aneurysm.points)
+            _, ii = tree.query(endlets.points, k=3)
+            ii = np.array(ii)[:,-1]
+            
+            misr = self.centerlines_aneurysm.point_data[&#39;MaximumInscribedSphereRadius&#39;][ii]
+            
+            endlets.point_data[&#39;MaximumInscribedSphereRadius&#39;] = misr
+            outlet_clip = endlets.glyph(geom=pv.Sphere(1.0), factor=factor)
+
+        self.surf = self.surf.clip_surface(outlet_clip, invert=False)
+        self.surf = self.surf.extract_largest()
+        return outlet_clip
+
+    def clip_endpoints_with_tubeclipper(self, endpoints_pv=None, include_aneurysms=True):
+        &#34;&#34;&#34; Can introduce buggy mesh! Beware!
+        &#34;&#34;&#34;
+        if endpoints_pv is None:
+            endpoints = np.concatenate([self.inlet_points, self.outlet_points], axis=0)
+            
+            if include_aneurysms==True:
+                tree = KDTree(self.centerlines_aneurysm.points)
+            else:
+                tree = KDTree(self.centerlines.points)
+                
+            _, ii_inlets = tree.query(self.inlet_points, k=3)
+            _, ii_outlets = tree.query(self.outlet_points, k=3)
+
+            ii_inlets_n = np.array(ii_inlets)[:,-1]
+            ii_outlets_n = np.array(ii_outlets)[:,-1]
+
+            ii_inlets = np.array(ii_inlets)[:,0]
+            ii_outlets = np.array(ii_outlets)[:,0]
+            
+            if include_aneurysms==True:
+                # Get points at those points
+                in_points = self.centerlines_aneurysm.points[ii_inlets]
+                out_points = self.centerlines_aneurysm.points[ii_outlets]
+            
+                # Get normal at those points
+                in_normals = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii_inlets_n]
+                out_normals = -self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii_outlets_n]
+            else:
+                # Get points at those points
+                in_points = self.centerlines.points[ii_inlets]
+                out_points = self.centerlines.points[ii_outlets]
+            
+                # Get normal at those points
+                in_normals = self.centerlines.point_data[&#39;FrenetTangent&#39;][ii_inlets_n]
+                out_normals = -self.centerlines.point_data[&#39;FrenetTangent&#39;][ii_outlets_n]
+                
+            points = np.concatenate([in_points, out_points], axis=0)
+            normals = np.concatenate([in_normals, out_normals], axis=0)
+
+            endpoints_pv = pv.wrap(points)
+            endpoints_pv.point_data[&#39;Normals&#39;] = normals
+
+        surf_closed = self.surf.fill_holes(30.0).clean()
+        select = endpoints_pv.select_enclosed_points(surf_closed, tolerance=0.00001, check_surface=False)
+
+        # for origin, normal in zip(endpoints_pv.points, endpoints_pv.point_data[&#39;Normals&#39;]):
+        #     t = TubeClipper(self.surf)
+        #     t.clip(origin, normal)
+        #     self.surf = t.far_side
+
+        for sdx in range(select.n_points):
+            check = select.point_data[&#39;SelectedPoints&#39;][sdx]
+            if check == True:
+                origin = select.points[sdx]
+                normal = select.point_data[&#39;Normals&#39;][sdx]
+                t = TubeClipper(self.surf)
+                t.clip(origin, normal)
+                self.surf = t.far_side
+                
+        old_surf = self.surf.copy()
+        # self.surf = self.surf.triangulate()
+        # self.surf = pv.PolyData(self.surf.points, self.surf.cells)
+
+        # self.surf = self.surf.interpolate(old_surf)
+        self.copy_arrays(old_surf, self.surf)
+        
+        #pretty sure there is no groupid issue without aneurysms?
+        if include_aneurysms == True:
+            self.surf = cc.fix_vmtk_group_ids(self.surf)
+        return endpoints_pv
+
+    def clip_endpoints_with_vmtk(self):
+        surf = vmtk.surface_end_clipper(self.surf, centerlines=self.centerlines)
+        return surf
+
+    def set_inlets_outlets(self):
+        &#34;&#34;&#34; Interactively choose inlet point.
+
+        All other open boundaries will be considered outlets. To update these points 
+        (for example, after adding flow extensions), see self.update_inlet_outlets. 
+        To save these inlet-outlet points, see self.save_inlet_outlet_points()
+        &#34;&#34;&#34;
+        text = &#34;Pick the inlet(s)&#34;
+        centers = self.get_open_profiles()
+        centers_m = pv.wrap(centers)
+        inlet_ids = self._pick_points(centers_m, text=text)
+        outlet_ids = list(set(range(centers_m.n_points)) - set(inlet_ids))
+        
+        assert inlet_ids[0] is not None, &#34;No inlet selected.&#34;
+
+        self.inlet_points = [centers[i] for i in inlet_ids]
+        self.outlet_points = [centers[i] for i in outlet_ids]
+        return centers_m, inlet_ids, outlet_ids
+
+    def update_inlets_outlets(self):
+        &#34;&#34;&#34; Update inlet-outlet points based on distance metric.
+        &#34;&#34;&#34;
+        centers = self.get_open_profiles()
+        centers_m = pv.wrap(centers)
+        tree = KDTree(centers)
+        inlet_ids = [tree.query(i)[1] for i in self.inlet_points]
+        outlet_ids = list(set(range(centers_m.n_points)) - set(inlet_ids))
+        
+        self.inlet_points = [centers[i] for i in inlet_ids]
+        self.outlet_points = [centers[i] for i in outlet_ids]
+        return centers_m, inlet_ids, outlet_ids
+
+    def get_open_profiles(self):
+        &#34;&#34;&#34; Get centers of open profiles
+        &#34;&#34;&#34;
+        edges = self.surf.extract_feature_edges(
+            boundary_edges=True, 
+            feature_edges=False, 
+            manifold_edges=False
+            )
+        edges = edges.connectivity()
+        regions = np.unique(edges.point_data[&#39;RegionId&#39;])
+        masks = [edges.point_data[&#39;RegionId&#39;] == r for r in regions]
+        profiles = pv.MultiBlock([edges.extract_points(m) for m in masks])
+
+        num_profiles = len(profiles)
+        centers = [x.points.mean(axis=0) for x in profiles]
+        centers = np.array(centers)
+
+        return centers 
+
+    def select_geodesic(self,title=&#39;Isolate aneurysms.&#39;, mask_name=&#39;Mask&#39;):
+        s = cc.SelectGeodesic(self.surf, scalars=mask_name)
+        pts = s.interact(title=title)
+        self.surf = s.mesh
+        return pts
+
+
+    def generate_centerlines(self, include_aneurysms=True, seed_selector=&#39;idlist&#39;):
+        &#34;&#34;&#34; Generate centerlines using VMTK.
+
+        Watch the centerline smoothing at the end!! May need tweaking for your case.
+
+        Consider moving this into vmtk_wrapper, the nearest ids works well.
+        &#34;&#34;&#34;
+        surf_capped = pv.PolyData()
+        surf_capped.copy_structure(vmtk.surface_capper(self.surf))
+        tree = KDTree(surf_capped.points)
+        inlet_ids = [tree.query(i, k=1)[1] for i in self.inlet_points]
+        outlet_ids = [tree.query(o, k=1)[1] for o in self.outlet_points]
+    
+        self.inlet_ids = inlet_ids 
+        self.outlet_ids = outlet_ids
+
+        
+        
+        if include_aneurysms == True:
+            self.aneurysm_ids = [tree.query(i, k=1)[1] for i in self.aneurysm_points]
+            target_ids = self.outlet_ids + self.aneurysm_ids
+
+            centerlines = vmtk.centerlines(
+                surf_capped, 
+                seed_selector=seed_selector, 
+                src_ids=self.inlet_ids,
+                target_ids=target_ids,
+                )
+            centerlines = vmtk.centerlines_smooth(centerlines, iterations=100, sm_factor=0.1)
+            self.centerlines_aneurysm = centerlines
+            self.centerlines_aneurysm = vmtk.centerline_geometry(self.centerlines_aneurysm)
+
+            ind = list(range(len(self.outlet_ids)))
+            cline_temp = self.centerlines_aneurysm.extract_cells(ind)
+            centerlines = pv.PolyData(cline_temp.points, lines=cline_temp.cells)
+            for arr in cline_temp.point_data:
+                centerlines.point_data[arr] = cline_temp.point_data[arr]
+            for arr in cline_temp.cell_data:
+                centerlines.cell_data[arr] = cline_temp.cell_data[arr]
+            self.centerlines = centerlines
+            
+        else:
+            target_ids = self.outlet_ids 
+
+            centerlines = vmtk.centerlines(
+                surf_capped, 
+                seed_selector=seed_selector, 
+                src_ids=self.inlet_ids,
+                target_ids=target_ids,
+                )
+            #NOTE: If your vessels are really tortuous, you are going to want to turn the 
+            # smoothing wayyy down...    
+            centerlines = vmtk.centerlines_smooth(centerlines, iterations=100, sm_factor=0.1)
+
+            self.centerlines = centerlines
+            self.centerlines = vmtk.centerline_geometry(self.centerlines)
+        
+        return self 
+
+    def generate_centerlines_multi(self, proj_dir, seed_selector=&#39;idlist&#39;):
+        &#39;&#39;&#39;
+        &#34;&#34;&#34; Generate centerlines using VMTK
+        Here, the inlets are iterated over to generate individual sets of centerlines.
+        Then, the centerlines are all merged together into one single centerline.
+        This is necessary for multiple inlets, and needs quite a lot of monitoring if you have 
+        both multiple inlets and many outlets. It can make terrible centerlines if you are not careful.
+
+        The only reason we need this is for tubeclipper to do a good job.
+        &#34;&#34;&#34;
+        print(&#34;Generating multiple centerlines&#34;)
+        surf_capped = pv.PolyData()
+        surf_capped.copy_structure(vmtk.surface_capper(self.surf))
+        tree = KDTree(surf_capped.points)
+        inlet_ids = [tree.query(i, k=1)[1] for i in self.inlet_points]
+        outlet_ids = [tree.query(o, k=1)[1] for o in self.outlet_points]
+    
+        self.inlet_ids = inlet_ids 
+        self.outlet_ids = outlet_ids
+        target_ids = self.outlet_ids 
+        centerlines_unmerged_blocks = pv.MultiBlock()
+
+        for idx,i_id in enumerate(inlet_ids):
+            
+            if idx&lt;1:
+                centerlines_unmerged = vmtk.centerlines(
+                    surf_capped, 
+                    seed_selector=seed_selector, 
+                    src_ids=[i_id],
+                    target_ids=target_ids,
+                    )
+                centerlines_unmerged.save(proj_dir/(&#39;centerline{}.vtp&#39;.format(idx)))
+                centerlines_unmerged_blocks.append(centerlines_unmerged)
+            else:
+                centerlines_unmerged = vmtk.centerlines(
+                    surf_capped, 
+                    seed_selector=seed_selector, 
+                    src_ids=[i_id],
+                    #NOTE: this might create better centerlines if you try switching this to
+                    #different outlet targets. Try a few and look at the output first.
+                    target_ids=[0],
+                    )
+                centerlines_unmerged.save(proj_dir/(&#39;centerline{}.vtp&#39;.format(idx)))
+                centerlines_unmerged_blocks.append(vmtk.surface_append(centerlines_unmerged_blocks[idx-1],centerlines_unmerged))
+                centerlines_appended = centerlines_unmerged_blocks[idx]
+                #centerlines_appended.save(proj_dir/(&#39;appended_cl.vtp&#39;))
+
+        centerlines_branched = vmtk.centerline_branches_ids(centerlines_appended)
+        centerlines_merged = vmtk.merge_centerlines(centerlines_branched)
+        centerlines_total = vmtk.centerlines_smooth(centerlines_merged, iterations=1, sm_factor=0.01)
+
+        self.centerlines = centerlines_total
+        #centerlines_total.save(proj_dir/(&#39;merged_centerlines.vtp&#39;))
+        self.centerlines = vmtk.centerline_geometry(self.centerlines)
+        &#39;&#39;&#39;
+        &#34;&#34;&#34;
+        Generate centerlines using the network extractor. This won&#39;t cause merging issues.
+        &#34;&#34;&#34;
+        self.centerlines, _ = vmtk.network_extractor(self.surf)
+        self.centerlines = vmtk.centerline_geometry(self.centerlines)
+
+        return self         
+    # def _project_centerline_attrs(self, centerlines, centerlines_branched):
+    #         centerlines_og = centerlines.copy()
+    #         centerlines_branched = centerlines_branched.copy()
+
+    #         # Convert cell data to point data
+    #         centerlines_branched = centerlines_branched.ctp()
+
+    #         # Create search tree for centerlines with GroupIds
+    #         tree = KDTree(centerlines_branched.points)
+
+    #         # Prepare points from original structure to query 
+    #         q_points = centerlines_og.points
+    #         dd, ii = tree.query(q_points, k=1)
+
+    #         # Project onto centerlines_og
+    #         centerlines_og.point_data[&#39;GroupIds&#39;] = np.round(centerlines_branched.point_data[&#39;GroupIds&#39;][ii]).astype(int)
+    #         centerlines_og.point_data[&#39;Blanking&#39;] = np.round(centerlines_branched.point_data[&#39;Blanking&#39;][ii]).astype(int)
+
+    #         return centerlines_og    
+    
+    def _project_centerline_attrs(self, centerlines, centerlines_branched):
+            centerlines_og = centerlines.copy()
+            centerlines_branched = centerlines_branched.copy()
+
+            # Want a map from centerlines_og to centerlines_branched
+            # But have to get cell data from the destination 
+
+            group_ids = np.unique(centerlines_branched.cell_data[&#39;GroupIds&#39;])
+            segments = [centerlines_branched.extract_cells(centerlines_branched.cell_data[&#39;GroupIds&#39;] == g) for g in group_ids]
+
+            group_ids_interp = np.zeros(centerlines_branched.n_points, dtype=int)
+            blanking_interp = np.zeros(centerlines_branched.n_points, dtype=int)
+
+            tree = KDTree(centerlines_branched.points)
+
+            for g, s in zip(group_ids,segments):
+                # This will default rounding to higher GroupIds
+                _, ii = tree.query(s.points, k=1)
+                group_ids_interp[ii] = g
+                blanking_interp[ii] = s[&#39;Blanking&#39;][0]
+
+            _, ii = tree.query(centerlines_og.points, k=1)
+            centerlines_og.point_data[&#39;GroupIds&#39;] = group_ids_interp[ii]
+            centerlines_og.point_data[&#39;Blanking&#39;] = blanking_interp[ii]
+
+            # Project onto centerlines_og
+            # centerlines_og.point_data[&#39;GroupIds&#39;] = np.round(centerlines_branched.point_data[&#39;GroupIds&#39;][ii]).astype(int)
+            # centerlines_og.point_data[&#39;Blanking&#39;] = np.round(centerlines_branched.point_data[&#39;Blanking&#39;][ii]).astype(int)
+
+            return centerlines_og    
+    
+    def branch_centerlines(self, project_back=True):
+
+        self.centerlines_aneurysm_branched = vmtk.centerline_branches_ids(self.centerlines_aneurysm)
+
+        if project_back:
+            self.centerlines_aneurysm_split = self._project_centerline_attrs(
+                self.centerlines_aneurysm, self.centerlines_aneurysm_branched)
+        
+        # This is the really slow step because of the glyphs.
+        self.surf, self.neighbour_pt_ids = vmtk.surface_centerline_projection_MISR(
+            self.surf, self.centerlines_aneurysm_branched, sm_iterations=1)
+        
+        # Check if this line is now redundant after adding new fix function.
+        self.update_aneurysm_group_ids()
+
+        # New fix function:
+        self.surf = cc.fix_vmtk_group_ids(self.surf)
+
+        return self
+
+    def branch_centerlines_pt(self, project_back=True):
+        print(&#34;\nBranching centerlines...&#34;)
+        self.centerlines_branched = vmtk.centerline_branches_ids(self.centerlines)
+
+        if project_back:
+            self.centerlines_split = self._project_centerline_attrs(
+                self.centerlines, self.centerlines_branched)
+        
+        self.surf, self.neighbour_pt_ids = vmtk.surface_centerline_projection_MISR(
+            self.surf, self.centerlines_branched, sm_iterations=1)
+        
+        #print(self.surf.point_data)
+        return self
+
+    def update_aneurysm_group_ids(self):    
+        tree = KDTree(self.surf.points)
+        nearest_temp_idx = tree.query(self.aneurysm_points, k=1)[1]
+        self.aneurysm_group_ids = [str(x) for x in self.surf.point_data[&#39;GroupIds&#39;][nearest_temp_idx]]
+        self.get_group_adjacency()
+        # self.check_group_id_integrity()
+
+        return self
+           
+    def extract_sacs(self):
+        &#34;&#34;&#34; Redux based on new vmtk.surface_centerline_projection_MISR.
+        &#34;&#34;&#34;
+        self.sacs = {}
+
+        for g in self.aneurysm_group_ids:
+            sac_mask = self.surf.point_data[&#39;GroupIds&#39;] == g
+            sac = self.surf.extract_points(sac_mask)
+            sac_pd = pv.PolyData(sac.points, sac.cells)
+            for arr in sac.point_data:
+                sac_pd.point_data[arr] = sac.point_data[arr]
+            for arr in sac.cell_data:
+                sac_pd.cell_data[arr] = sac.cell_data[arr]
+            self.sacs[g] = sac_pd
+
+                
+    def clip_boundaries(self, method=&#39;select&#39;, refine = False):
+        &#34;&#34;&#34; Interactively clip branches then fix clip to normal 
+
+        Args:
+            method (str): &#39;select&#39; uses common.ClickDragDelete tool,
+                          &#39;box&#39; uses vmtk.clipper tool.
+        &#34;&#34;&#34;
+        self.surf.clean()
+        if method == &#39;select&#39;:
+            cb = cc.ClickDragDelete(self.surf, title=&#39;Clip boundaries&#39;)
+            surf = cb.mesh 
+            surf = surf.triangulate()
+            #print(surf.point_data)
+
+            if type(surf) != pv.core.pointset.PolyData:
+                surf = pv.PolyData(surf.points, surf.cells)
+
+        else:   
+            surf = self.surf.fill_holes(10.0)
+            surf = vmtk.clipper(surf)
+
+        surf = surf.connectivity(largest=True)
+        surf = surf.clean() 
+
+        self.surf = surf    
+        return cb.flag_inspect 
+
+    def save_inlet_outlet_points(self, points_file, centerlines=&#39;centerlines&#39;, include_aneurysms=True, include_normals=False):
+        &#34;&#34;&#34; Save inlet_points and outlet_points to a single h5 file.
+
+        File keys will be &#34;inlets&#34; and &#34;outlets&#34;
+        &#34;&#34;&#34; 
+        points = pv.MultiBlock()
+        points[&#39;inlets&#39;] = pv.wrap(np.array(self.inlet_points))
+        points[&#39;outlets&#39;] = pv.wrap(np.array(self.outlet_points))
+        if include_aneurysms==True:
+            points[&#39;aneurysms&#39;] = pv.wrap(np.array(self.aneurysm_points))
+
+        if (hasattr(self, centerlines)) and (include_normals == True):
+            tree = KDTree(self.centerlines.points)
+            _, ii = tree.query(self.inlet_points)
+            points[&#39;inlets&#39;].point_data[&#39;normals&#39;] = self.centerlines.point_data[&#39;FrenetTangent&#39;][ii]
+            _, ii = tree.query(self.outlet_points)
+            points[&#39;outlets&#39;].point_data[&#39;normals&#39;] = self.centerlines.point_data[&#39;FrenetTangent&#39;][ii]
+
+        points.save(points_file)
+
+
+    def pick_aneurysm(self, text=&#39;Pick aneurysm&#39;):
+        &#34;&#34;&#34; Pick a point on the dome.
+        &#34;&#34;&#34;
+        def _point_picker_cb(mm, pid):
+            # point = mm.points[pid]
+            # print(&#39;Picked point&#39;, point)
+            self._picked_ids.append(pid)
+            picked_points = pv.wrap(mm.points[self._picked_ids])
+            p.add_mesh(picked_points, name=&#39;picked_pts&#39;, color=&#39;r&#39;, point_size=10,
+                render_points_as_spheres=True)
+
+        def _reset_picked_cb():
+            self._picked_ids = []
+            p.remove_actor(&#39;picked_pts&#39;)
+
+        self._picked_ids = []
+
+        p = pv.Plotter()
+        p.add_mesh(self.surf, color=&#39;w&#39;, opacity=1.0)
+
+        p.add_text(text, position=&#39;upper_left&#39;)
+        p.add_text(&#39;p: pick points&#39;, position=(0.05, 25), font_size=12)
+        p.add_text(&#39;u: reset all picks&#39;, position=(0.05, 0.05), font_size=12)
+        p.enable_point_picking(callback=_point_picker_cb, show_message=False, 
+                            color=&#39;r&#39;, point_size=30, 
+                            use_mesh=True, show_point=False, 
+                            render_points_as_spheres=True,
+                            tolerance=0.005)
+        p.add_key_event(&#39;u&#39;, _reset_picked_cb)
+        p.show()
+        # print(&#39;picked&#39;, self._picked_ids)
+
+        self.aneurysm_points = self.surf.points[self._picked_ids]
+
+    def get_group_adjacency(self):
+        &#34;&#34;&#34; Get adjlist and networkx DiGraph of centerlines.
+        
+        The centerlines should be passed before calling centerline branch ids.
+        If getting errors, try recomputing centerlines -- there might be a bug
+        where self.centerlines is overridden with centerlines_branched. 
+        &#34;&#34;&#34;
+        if self.include_aneurysms==True:
+            if hasattr(self, &#39;centerlines&#39;):
+                self.edges, self.G = vmtk.extract_group_adjacency(self.centerlines_aneurysm)
+            if hasattr(self, &#39;centerlines&#39;):
+                _, self.G_no_aneurysm = vmtk.extract_group_adjacency(self.centerlines)
+        else:
+            if hasattr(self, &#39;centerlines&#39;):
+                self.edges, self.G = vmtk.extract_group_adjacency(self.centerlines)
+
+    def get_bifurcation_ref_systems_vectors(self):
+        # self.ref = vmtk.bifurcation_ref_systems(self.centerlines_branched)
+        # self.bif_vec = vmtk.get_bifurcation_vectors(self.centerlines_branched, self.ref)
+
+        # if hasattr(self, &#39;centerlines_aneurysm_branched&#39;):
+        if self.include_aneurysms==True:
+            self.ref_aneurysm = vmtk.bifurcation_ref_systems(self.centerlines_aneurysm_branched)
+            self.bif_vec_aneurysm = vmtk.get_bifurcation_vectors(self.centerlines_aneurysm_branched, self.ref_aneurysm)
+        else: #May need this for inclusions
+            self.ref = vmtk.bifurcation_ref_systems(self.centerlines_branched)
+            self.bif_vec = vmtk.get_bifurcation_vectors(self.centerlines_branched, self.ref)
+
+        # for b in self.bif_vec_aneurysm:
+
+    def get_mean_segments(self):
+        &#34;&#34;&#34; Get the &#34;average&#34; segment for each each group id in centerline
+        &#34;&#34;&#34;
+        # Get group adjacency
+        # edges, G = vmtk.extract_group_adjacency(self.centerlines_aneurysm)
+        centerlines_split = self.centerlines_aneurysm_split
+
+        # Get valid (non-blanked) ids
+        mask = np.invert(centerlines_split.point_data[&#39;Blanking&#39;].astype(bool))
+        all_ids = np.unique(centerlines_split.point_data[&#39;GroupIds&#39;])
+        valid_ids = np.unique(centerlines_split.point_data[&#39;GroupIds&#39;][mask])
+        print(&#39;valid:&#39;, len(valid_ids), valid_ids)
+        valid_ids = [x for x in valid_ids if str(x) in self.G.nodes]
+        #print(&#39;valid2:&#39;, len(valid_ids), valid_ids)
+        blanking_ids = np.unique(centerlines_split.point_data[&#39;GroupIds&#39;][~mask])
+        print(&#34;blankingids: &#34;, len(blanking_ids), blanking_ids)
+        # Split each centerline into segments based on groupIds
+        segments = {key : [] for key in valid_ids}
+        centerlines_multi = centerlines_split.split_bodies()
+
+        # Create a new variable like &#34;GroupIds&#34; called &#34;GroupIdsNonBlanking&#34;
+        # Anywhere a a group is blanked, relabel it with the successor&#39;s group id.
+        for cline in centerlines_multi:
+            cline.point_data[&#39;GroupIdsNonBlanking&#39;] = cline.point_data[&#39;GroupIds&#39;].copy()
+            groups = np.unique([x for x in cline.point_data[&#39;GroupIds&#39;] if x in all_ids])
+            blanking_groups = [x for x in groups if x in blanking_ids]
+            # blanking_successors = [list(self.G.successors(blanking_groups[i] - 1)) for i in range(len(blanking_groups))]
+            blanking_masks = [cline.point_data[&#39;GroupIds&#39;] == x for x in blanking_groups]
+            blanking_diffs = [np.diff(x.astype(int)) for x in blanking_masks]
+            blanking_successor_idx = [np.argmin(x) + 1 for x in blanking_diffs]
+            blanking_successors = [cline.point_data[&#39;GroupIds&#39;][x] for x in blanking_successor_idx]
+            reassignments = blanking_successors #[[x for x in suc if x in groups][0] for suc in blanking_successors]
+
+            masks = [cline.point_data[&#39;GroupIdsNonBlanking&#39;] == x for x in blanking_groups]
+            
+            for msk, r in zip(masks, reassignments):
+                cline.point_data[&#39;GroupIdsNonBlanking&#39;][msk] = r
+
+        # For each valid group id, extract lines associated with that group ID.
+        # The items in segments are lists because multiple lines may have the same 
+        # point id (to be averaged later)
+        for cline in centerlines_multi:
+            groups = np.unique([x for x in cline.point_data[&#39;GroupIdsNonBlanking&#39;] if x in valid_ids])
+            # print(groups)
+            for gid in groups:
+                mask = cline.point_data[&#39;GroupIdsNonBlanking&#39;] == gid
+                line_points = cline.extract_points(mask, adjacent_cells=False, include_cells=False)
+                segments[gid].append(line_points)
+
+        # Get mean of each groupIDs segment
+        # Have to interpolate arrays onto mean segment
+        mean_segments = {key : None for key in valid_ids}
+        for key in valid_ids:
+            line_groups = segments[key]
+
+            points = [p.points for p in line_groups]
+            
+            n_points = np.max([p.n_points for p in line_groups])
+            splines = [pv.Spline(p, n_points) for p in points]
+            splines = [s.interpolate(l, strategy=&#39;closest_point&#39;) for s, l in zip(splines, line_groups)]
+
+            # NOTE this is a hacky way of doing it. find diverging point
+            # or use the bif vectors.
+            if n_points &gt; 20:
+                back_off = 20
+                mean_spline = np.mean([s.points[:-back_off] for s in splines], axis=0)
+            else:
+                mean_spline = np.mean([s.points for s in splines], axis=0)
+            spline = pv.Spline(mean_spline, n_points)
+            mean_segments[key] = spline
+
+
+        # # Prepend last point in parent segment to child
+        for key in valid_ids:
+            parent = [int(x) for x in self.G.predecessors(str(key))]
+            if len(parent) != 0:
+                parent = parent[0]
+            else:
+                parent = None
+
+            if parent is not None:
+                # ref_group = parent + 1 
+            
+                # Prepend point
+                pt = mean_segments[parent].points[-1].reshape(1,-1)
+                segment = mean_segments[key].points
+                points = np.concatenate([pt, segment], axis=0)
+                spline = pv.Spline(points, segment.shape[0] + 1)
+                spline.point_data[&#39;GroupIds&#39;] = key
+                mean_segments[key] = spline
+
+        centerlines_multi_merge = centerlines_multi.combine()
+        tree = KDTree(centerlines_multi_merge.points)
+
+        for key in mean_segments.keys():
+            # Transfer relevant arrays to new spline
+            ndx = tree.query(mean_segments[key].points, k=1)[1]
+
+            for arr in centerlines_multi_merge.point_data.keys():
+                mean_arr = centerlines_multi_merge.point_data[arr][ndx] #p.mean([s.point_data[arr] for s in splines], axis=0)
+                mean_segments[key].point_data[arr] = mean_arr
+           
+            mean_segments[key].point_data[&#39;OriginalGroupIds&#39;] = mean_segments[key].point_data[&#39;GroupIds&#39;].copy()
+            mean_segments[key].point_data[&#39;GroupIds&#39;] = key
+            mean_segments[key] = mean_segments[key].compute_arc_length()
+            mean_segments[key][&#39;arc_length_inv&#39;] = mean_segments[key][&#39;arc_length&#39;][::-1]
+
+        keys = list(mean_segments.keys())
+        items = [mean_segments[x] for x in keys]
+        keys = [str(x) for x in keys]
+
+        self.mean_segments = dict(zip(keys, items))
+        self.mean_segments = pv.MultiBlock(self.mean_segments)
+        print(self.mean_segments)
+
+    def get_branch_endpoints(self):
+        &#34;&#34;&#34; Get endpoints by splitting up the surface.
+        &#34;&#34;&#34;
+        self.clipping_points = {}
+
+        groups = np.unique(self.surf.point_data[&#39;GroupIds&#39;])
+        #print(groups)
+        masks = [self.surf.point_data[&#39;GroupIds&#39;] == int(g) for g in groups]
+
+        keys = [int(g) for g in groups]
+        #print(keys)
+        parts = [self.surf.extract_points(m) for m in masks]
+        parts = [p.extract_largest() for p in parts]
+        parts = [p.triangulate() for p in parts]
+        parts = [pv.PolyData(p.points, faces=p.cells).clean() for p in parts]
+        parts = dict(zip(keys, parts))
+
+        for g in keys:
+            line = self.mean_segments[g]
+            line = line.clean(tolerance=0.05)
+            part = parts[g]
+            select = line.select_enclosed_points(part.fill_holes(20), tolerance=1e-5, check_surface=False)
+            s_mask = select.point_data[&#39;SelectedPoints&#39;] == 1
+
+            if np.sum(s_mask) &gt; 2:
+                sub = pv.PolyData(select.points[s_mask])
+                sub.point_data[&#39;FrenetTangent&#39;] = select.point_data[&#39;FrenetTangent&#39;][s_mask]
+                sub.point_data[&#39;MaximumInscribedSphereRadius&#39;] = select.point_data[&#39;MaximumInscribedSphereRadius&#39;][s_mask]
+                sub.point_data[&#39;arc_length&#39;] = select.point_data[&#39;arc_length&#39;][s_mask]
+                sub.point_data[&#39;arc_length&#39;] = sub.point_data[&#39;arc_length&#39;] - sub.point_data[&#39;arc_length&#39;][0]
+
+                # Just not starting at endpoint
+                new_start_index = 1
+                new_end_index = len(sub.points) - 2
+
+                # Extract slices of the part based on the centerline and normal.
+                # If n_points == n_cells, the slice forms a loop
+                # otherwise it&#39;s just a line.
+                slice_condition = False
+                new_start_index -= 1
+                while not slice_condition:
+                    new_start_index += 1
+                    if new_start_index &lt; sub.n_points:
+                        slice1 = part.slice(normal=sub.point_data[&#39;FrenetTangent&#39;][new_start_index],origin=sub.points[new_start_index])
+                    else:
+                        break
+
+                    if slice1.n_points == 0:
+                        slice_condition = False
+                    else:
+                        slice_condition = slice1.n_points == slice1.n_cells
+
+                    if new_start_index &gt; len(sub.points):
+                        print(&#39;Broken loop!&#39;)
+
+                # Then for the other end
+                slice_condition = False
+                new_end_index += 1
+                while not slice_condition:
+                    new_end_index -= 1
+                    if new_end_index &gt; 0:
+                        slice2 = part.slice(normal=sub.point_data[&#39;FrenetTangent&#39;][new_end_index],origin=sub.points[new_end_index])
+                    else:
+                        break
+
+                    if slice2.n_points == 0:
+                        slice_condition = False
+                    else:
+                        slice_condition = slice2.n_points == slice2.n_cells
+
+                if len(sub.points[new_start_index:new_end_index]) &gt; 2:
+                    sub_new = pv.wrap(sub.points[new_start_index:new_end_index])
+                    sub_new.point_data[&#39;Normals&#39;] = sub.point_data[&#39;FrenetTangent&#39;][new_start_index:new_end_index]
+                    sub_new.point_data[&#39;arc_length&#39;] = sub.point_data[&#39;arc_length&#39;][new_start_index:new_end_index]
+
+                    self.clipping_points[g] = {}
+                    self.clipping_points[g][&#39;start&#39;] = pv.wrap(sub_new.points[0])
+                    self.clipping_points[g][&#39;start&#39;].point_data[&#39;Normal&#39;] = sub_new.point_data[&#39;Normals&#39;][0].reshape(1,3)
+
+                    self.clipping_points[g][&#39;end&#39;] = pv.wrap(sub_new.points[-1])
+                    self.clipping_points[g][&#39;end&#39;].point_data[&#39;Normal&#39;] = -sub_new.point_data[&#39;Normals&#39;][-1].reshape(1,3) 
+
+
+    def get_branch_endpoints_OLD(self):
+        &#34;&#34;&#34; 
+        This works and is robust, but super slow. Depreceate. 
+        Might be better when groupids is screwy though.
+        &#34;&#34;&#34;
+        self.clipping_points = {}
+        cpos = None
+        
+        tree = KDTree(self.centerlines_aneurysm.points)
+
+        # Remove short branches from search
+        self.GG = self.G.copy()
+
+        surf_d = cc.decimate_edge_length(self.surf, 0.8)
+        surf_d = cc.copy_arrays(self.surf, surf_d)
+
+        for g in self.GG.nodes:
+            # print(g)
+            self.clipping_points[g] = {}
+            self.M = self.GG.copy()
+            self.M.remove_edges_from(nx.selfloop_edges(self.M))
+
+            # For each aneurysm, get children, parents and siblings
+            children = sorted(self.M.successors(g))
+            parent = sorted(self.M.predecessors(g)) 
+            
+            G = self.M.to_undirected()
+            G.remove_node(g)
+            S = [G.subgraph(c).copy() for c in nx.connected_components(G)]
+            S = [list(x.nodes) for x in S]
+
+            descendants = [x for x in S if len(set(children) - set(x)) != len(children)]
+            other_fam = [x for x in S if x not in descendants]
+
+            # Flatten list of lists
+            descendants = [val for sublist in descendants for val in sublist]
+            other_fam = [val for sublist in other_fam for val in sublist]
+
+            if len(parent) &gt; 0:
+                siblings = sorted(self.M.successors(parent[0]))
+
+                # Remove the branch from the list of siblings
+                siblings = [x for x in siblings if x != g]
+            else:
+                siblings = []
+
+            s_line = self.mean_segments[str(g)]
+
+            if g not in self.aneurysm_group_ids: # Don&#39;t define an endpoint for aneurysms
+                # March backward along branch until clipping condition with children
+                t = TubeClipper(surf_d)
+                idx = len(s_line.points) - 1
+
+                # Make sure cross section doesn&#39;t intersect children
+                if len(descendants) != 0:
+                    check = True
+                    while (check == True) and (idx &gt; 2):
+                        _, ii = tree.query(s_line.points[idx], k=1)
+                        origin = self.centerlines_aneurysm.points[ii]
+                        normal = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii]
+                        t.clip(origin, -normal)
+                        clipped = t.clipped
+                        mask = clipped.point_data[&#39;Side&#39;] == 1
+                        clipped = clipped.extract_points(mask)
+                        # clipped = clipped.clean()
+
+                        check = np.any([int(s) in clipped.point_data[&#39;GroupIds&#39;] for s in descendants])
+                        # clipped.plot(color=&#39;w&#39;)#scalars=&#39;GroupIds&#39;)
+                        # p = pv.Plotter()
+                        # p.camera_position = cpos
+                        # p.add_mesh(clipped, color=&#39;r&#39;)
+                        # p.add_mesh(self.surf, color=&#39;w&#39;, opacity=0.1)
+                        # p.show()
+                        # cpos = p.camera_position
+
+                        print(&#39;ch&#39;, g, check, idx)
+                        if check == True:
+                            idx -= 2
+
+                else:
+                    _, ii = tree.query(s_line.points[-1], k=1)
+                    origin = self.centerlines_aneurysm.points[ii]
+                    normal = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii]
+
+                if (len(descendants) == 0) or (check == False):
+                    self.clipping_points[g][&#39;end&#39;] = pv.wrap(origin)
+                    self.clipping_points[g][&#39;end&#39;].point_data[&#39;Normal&#39;] = -normal.reshape(1,3)
+                # else:
+                    # self.clipping_points[g][&#39;end&#39;] = None
+
+            # Now march forward along branch from beginning
+            t = TubeClipper(surf_d)
+
+            # Get index of first item after blanking ends 
+            # diff = np.diff(s_line.point_data[&#39;Blanking&#39;])
+            # BLANKING is janky don&#39;t use
+            idx = 0 #np.argmax(diff == -1) 
+
+            # Make sure it doesn&#39;t intersect with parent or siblings
+            fam = other_fam #siblings + parent
+
+            if len(fam) != 0:
+                check2 = True
+
+                while (check2 == True) and (idx &lt; len(s_line.points)):
+                    _, ii = tree.query(s_line.points[idx], k=1)
+                    origin = self.centerlines_aneurysm.points[ii]
+                    normal = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii]
+                    t.clip(origin, normal)
+                    clipped = t.clipped
+                    mask = clipped.point_data[&#39;Side&#39;] == 1
+                    clipped = clipped.extract_points(mask)
+
+                    check2 = np.any([int(s) in clipped.point_data[&#39;GroupIds&#39;] for s in fam])
+                    
+                    # clipped.plot(color=&#39;b&#39;)#scalars=&#39;GroupIds&#39;)
+                    # p = pv.Plotter()
+                    # p.camera_position = cpos
+                    # p.add_mesh(clipped, color=&#39;r&#39;)
+                    # p.add_mesh(self.surf, color=&#39;w&#39;, opacity=0.1)
+                    # p.show()
+                    # cpos = p.camera_position
+                    
+                    print(&#39;ch2&#39;, g, check, idx)
+                    if check2 == True:
+                        idx += 2
+
+            else:
+                _, ii = tree.query(s_line.points[0], k=1)
+                origin = self.centerlines_aneurysm.points[ii]
+                normal = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii]
+
+            if len(fam) == 0 or check2 == False:
+                self.clipping_points[g][&#39;start&#39;] = pv.wrap(origin)
+                self.clipping_points[g][&#39;start&#39;].point_data[&#39;Normal&#39;] = normal.reshape(1,3)
+            # else:
+                # self.clipping_points[g][&#39;start&#39;] = None 
+
+        self.valid_clipping_points = {}
+        for g in self.clipping_points.keys():
+            if &#39;start&#39; in self.clipping_points[g].keys():
+                if &#39;end&#39; in self.clipping_points[g].keys():
+                    self.valid_clipping_points[str(g)] = self.clipping_points[g]
+
+        self.clipping_points = self.valid_clipping_points
+        
+        # del_keys = []
+        # for g in self.clipping_points.keys():
+        #     start = self.clipping_points[g][&#39;start&#39;]
+        #     end = self.clipping_points[g][&#39;end&#39;]
+        #     if start is None or end is None:
+        #         del_keys.append(g)
+        
+        # for k in del_keys:
+        #     del self.clipping_points[k]
+            
+
+    # def get_branch_endpoints_old(self, min_branch_length=100):
+    #     &#34;&#34;&#34; 
+    #     Want to get start/end points where, if you clipped the plane
+    #     normal to the centerline, it would contain none of the children, 
+    #     siblings, or parents.
+
+    #     This is a very slow function, but robust.
+    #     &#34;&#34;&#34;
+    #     self.clipping_points = {}
+        
+    #     tree = KDTree(self.centerlines_aneurysm.points)
+
+    #     # Remove short branches from search
+    #     self.GG = self.G.copy()
+
+    #     # Iterate each group
+    #     for g in self.GG.nodes:
+    #         self.clipping_points[g] = {}
+
+    #         # print(&#39;------- g&#39;, g)
+    #         self.M = self.GG.copy()
+
+    #         # Remove any self loops
+    #         self.M.remove_edges_from(nx.selfloop_edges(self.M))
+
+    #         # For each aneurysm, get children, parents and siblings
+    #         children = sorted(self.M.successors(g))
+    #         parent = sorted(self.M.predecessors(g))#[0]
+            
+    #         if len(parent) &gt; 0:
+    #             siblings = sorted(self.M.successors(parent[0]))
+
+    #             # Remove the branch from the list of siblings
+    #             siblings = [x for x in siblings if x != g]
+    #         else:
+    #             siblings = []
+
+    #         s_line = self.mean_segments[g]
+
+    #         if g not in self.aneurysm_group_ids: # Don&#39;t define an endpoint for aneurysms
+    #             # March backward along branch until clipping condition with children
+    #             t = TubeClipper(self.surf)
+    #             idx = len(s_line.points) - 1
+
+    #             # Make sure cross section doesn&#39;t intersect children
+    #             if len(children) != 0:
+    #                 check = True
+    #                 while (check == True) and (idx &gt; 2):
+    #                     _, ii = tree.query(s_line.points[idx], k=1)
+    #                     origin = self.centerlines_aneurysm.points[ii]
+    #                     normal = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii]
+    #                     t.clip(origin, -normal)
+    #                     clipped = t.clipped
+    #                     mask = clipped.point_data[&#39;Side&#39;] == 1
+    #                     clipped = clipped.extract_points(mask)
+
+    #                     check = np.any([s in clipped.point_data[&#39;GroupIds&#39;] for s in children])
+                        
+    #                     # print(&#39;ch&#39;, check)
+    #                     if check == True:
+    #                         idx -= 2
+                
+    #             else:
+    #                 _, ii = tree.query(s_line.points[-1], k=1)
+    #                 origin = self.centerlines_aneurysm.points[ii]
+    #                 normal = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii]
+
+    #             if (len(children) == 0) or (check == False):
+    #                 self.clipping_points[g][&#39;end&#39;] = pv.wrap(origin)
+    #                 self.clipping_points[g][&#39;end&#39;].point_data[&#39;Normal&#39;] = -normal.reshape(1,3)
+    #             else:
+    #                 self.clipping_points[g][&#39;end&#39;] = None
+    #         else:
+    #             self.clipping_points[g][&#39;end&#39;] = None
+
+    #         # Now march forward along branch from beginning
+    #         t = TubeClipper(self.surf)
+
+    #         # Get index of first item after blanking ends 
+    #         # diff = np.diff(s_line.point_data[&#39;Blanking&#39;])
+    #         # BLANKING is janky don&#39;t use
+    #         idx = 0 #np.argmax(diff == -1) 
+
+    #         # Make sure it doesn&#39;t intersect with parent or siblings
+    #         fam = siblings + parent
+    #         if len(fam) != 0:
+    #             check = True
+    #             while (check == True) and (idx &lt; len(s_line.points)):
+    #                 _, ii = tree.query(s_line.points[idx], k=1)
+    #                 origin = self.centerlines_aneurysm.points[ii]
+    #                 normal = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii]
+    #                 t.clip(origin, normal)
+    #                 clipped = t.clipped
+    #                 mask = clipped.point_data[&#39;Side&#39;] == 1
+    #                 clipped = clipped.extract_points(mask)
+
+    #                 check = np.any([s in clipped.point_data[&#39;GroupIds&#39;] for s in fam])
+                    
+    #                 # clipped.plot(scalars=&#39;GroupIds&#39;)
+    #                 # print(&#39;ch2&#39;, check)
+    #                 if check == True:
+    #                     idx += 2
+
+    #         else:
+    #             _, ii = tree.query(s_line.points[0], k=1)
+    #             origin = self.centerlines_aneurysm.points[ii]
+    #             normal = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii]
+
+    #         if len(fam) == 0 or check == False:
+    #             self.clipping_points[g][&#39;start&#39;] = pv.wrap(origin)
+    #             self.clipping_points[g][&#39;start&#39;].point_data[&#39;Normal&#39;] = normal.reshape(1,3)
+    #         else:
+    #             self.clipping_points[g][&#39;start&#39;] = None 
+
+
+    def mark_distance_from_sacs(self, n_spheres, min_branch_length=100):
+        &#34;&#34;&#34; Get point n_spheres away from sacs.
+    
+        Be careful with index between mean_segments and digraphs!!
+
+        &#34;&#34;&#34;
+        self.sac_zones = {}
+
+        # Before looping, collapse short branch nodes to parent
+        # We are exluding them from the search
+        self.GG = self.G.copy()
+        group_ids = list(self.mean_segments.keys())
+        segment_lengths = [self.mean_segments[g].n_points for g in group_ids]
+
+        for idx in range(len(group_ids)):
+            g = group_ids[idx]
+            l = segment_lengths[idx]
+
+            if (l &lt; min_branch_length) and (g not in self.aneurysm_group_ids):
+                parent = sorted(self.GG.predecessors(g))
+                if len(parent) &gt; 0:
+                    self.GG = nx.contracted_nodes(self.GG, parent[0], g)
+                else:
+                    self.GG.remove_node(g)
+
+        for an_id in self.aneurysm_group_ids:
+            self.sac_zones[an_id] = {}
+
+            # For each an_id, collapse other aneurysm_ids
+            # to exclude them from the search
+            other_an_ids = [x for x in self.aneurysm_group_ids if x != an_id]
+            self.M = self.GG.copy()
+            for g in other_an_ids:
+                parent = sorted(self.GG.predecessors(g))[0]
+                self.M = nx.contracted_nodes(self.M, parent, g)
+
+            # Remove any self loops
+            self.M.remove_edges_from(nx.selfloop_edges(self.M))
+
+            # For each aneurysm, get parents and siblings
+            parent = sorted(self.M.predecessors(an_id))[0]
+            siblings = sorted(self.M.successors(parent))
+
+            # Remove the aneurysm from the list of siblings
+            siblings = [x for x in siblings if x != an_id]
+            print(&#39;sibs&#39;, siblings)
+
+            for s in siblings:
+                if s in self.clipping_points.keys():
+                    self.sac_zones[an_id][s] = {}
+
+                    # Get start and end points
+                    start = self.clipping_points[s][&#39;start&#39;]
+                    end = self.clipping_points[s][&#39;end&#39;]
+                    pts = np.concatenate([start.points, end.points], axis=0)
+                    tree = KDTree(self.mean_segments[str(s)].points)
+                    _, ii = tree.query(pts, k=1)
+                    idx = ii[0]
+                    arc_vals = self.mean_segments[str(s)].point_data[&#39;arc_length&#39;][ii]
+
+                    s_line = self.mean_segments[str(s)]
+
+                    n = 1
+                    cpos = None
+                    while (n &lt;= n_spheres) and idx &lt; ii[1]:
+                        arc_val = s_line.point_data[&#39;arc_length&#39;][idx]
+                        MISR = s_line.point_data[&#39;MaximumInscribedSphereRadius&#39;][idx]
+                        next_val = arc_val + MISR
+                        idx = np.argmin((s_line.point_data[&#39;arc_length&#39;] - next_val)**2)
+                        # print(&#39;Step&#39;, s, n)
+                        # p = pv.Plotter()
+                        # p.camera_position = cpos
+                        # p.add_mesh(self.surf, color=&#39;w&#39;, opacity=0.1)
+                        # p.add_mesh(pv.wrap(s_line.points[idx]), color=&#39;r&#39;)
+                        # p.show()
+                        # cpos = p.camera_position
+                        n += 1
+                    
+                    if n &lt; n_spheres:
+                        idx = ii[1]
+
+                    origin = pv.wrap(s_line.points[idx])
+                    origin.point_data[&#39;Normal&#39;] = -s_line.point_data[&#39;FrenetTangent&#39;][idx].reshape(1,3)
+
+                    self.sac_zones[an_id][s][n_spheres] = origin
+                    self.sac_zones[an_id][s][n_spheres].relation = &#39;sibling&#39;
+
+            # Then parent
+            self.sac_zones[an_id][parent] = {}
+            
+            # Get start and end points
+            start = self.clipping_points[parent][&#39;start&#39;]
+            end = self.clipping_points[parent][&#39;end&#39;]
+            pts = np.concatenate([start.points, end.points], axis=0)
+            tree = KDTree(self.mean_segments[str(parent)].points)
+            _, ii = tree.query(pts, k=1)
+            idx = ii[1]
+            arc_vals = self.mean_segments[str(parent)].point_data[&#39;arc_length&#39;][ii]
+
+            s_line = self.mean_segments[str(parent)]
+
+            n = 1
+            while (n &lt;= n_spheres) and idx &gt; ii[0]:
+                arc_val = s_line.point_data[&#39;arc_length&#39;][idx]
+                MISR = s_line.point_data[&#39;MaximumInscribedSphereRadius&#39;][idx]
+                next_val = arc_val - MISR
+                idx = np.argmin((s_line.point_data[&#39;arc_length&#39;] - next_val)**2)
+                n += 1
+            
+            if n &lt; n_spheres:
+                idx = ii[0]
+
+            origin = pv.wrap(s_line.points[idx])
+            origin.point_data[&#39;Normal&#39;] = s_line.point_data[&#39;FrenetTangent&#39;][idx].reshape(1,3)
+
+            self.sac_zones[an_id][parent][n_spheres] = origin
+            self.sac_zones[an_id][parent][n_spheres].relation = &#39;parent&#39;
+
+    def mark_near_vessel_regions(self, mesh, n_spheres):
+        &#34;&#34;&#34;
+        Be careful with index between mean_segments and digraphs!!
+        &#34;&#34;&#34;
+        for an_id in self.aneurysm_group_ids:
+            # First mask n_spheres away
+            far = TubeClipper(mesh)
+            near = TubeClipper(mesh)
+
+            for s in self.sac_zones[an_id].keys():
+                pt_far = self.sac_zones[an_id][s][n_spheres]
+
+                far.clip(pt_far.points[0], pt_far.point_data[&#39;Normal&#39;][0])
+
+                if pt_far.relation == &#39;parent&#39;:
+                    pt_near = self.clipping_points[s][&#39;end&#39;]
+                else:
+                    pt_near = self.clipping_points[s][&#39;start&#39;]
+                
+                near.clip(pt_near.points[0], -pt_near.point_data[&#39;Normal&#39;][0])
+
+            near = near.clipped
+            far = far.clipped
+            near.point_data[&#39;Side&#39;] = ~near.point_data[&#39;Side&#39;] 
+            region = near.point_data[&#39;Side&#39;] * far.point_data[&#39;Side&#39;] 
+
+            mesh.point_data[&#39;sac_zone_{:02d}&#39;.format(int(an_id))] = region
+
+        zone_arr_names = [x for x in mesh.point_data if &#39;sac_zone_&#39; in x]
+        zone_arrs = [mesh.point_data[a] for a in zone_arr_names]
+        mesh.point_data[&#39;sac_zones&#39;] = np.sum(zone_arrs, axis=0)
+
+        # for idx, an_id in enumerate(self.aneurysm_group_ids):
+            # mesh.point_data[&#39;sac_zones&#39;][mesh.point_data[&#39;GroupIds&#39;] == an_id] = idx + 3
+
+    def get_plc_points(self, n_spheres):
+        &#34;&#34;&#34; Get PLC points based on mark_near_vessel_regions.
+        &#34;&#34;&#34;
+        self.plc_points = {}
+
+        for an_id in self.aneurysm_group_ids:
+            plc_pts = pv.MultiBlock()
+            for relative in self.sac_zones[an_id].keys():
+                pt_far = self.sac_zones[an_id][relative][n_spheres]
+
+                if pt_far.relation == &#39;parent&#39;:
+                    pt_near = self.clipping_points[relative][&#39;end&#39;]
+                else:
+                    pt_near = self.clipping_points[relative][&#39;start&#39;]
+
+                plc_pts[relative] = pt_near #.append(pt_near)
+
+            self.plc_pts = plc_pts # = pv.MultiBlock(plc_pts)
+
+    def get_mutual_ancestors(self):
+        &#34;&#34;&#34; For landmarking a given bifurcation. 
+        &#34;&#34;&#34;
+        centers = self.get_open_profiles()
+        centers_m = pv.wrap(centers)
+        outlet_ids = self._pick_points(centers_m, text=&#39;Pick relevant outlets&#39;)
+        outlet_points = [centers[i] for i in outlet_ids]
+        mean_segments = pv.MultiBlock(self.mean_segments).combine()
+        # mean_segments = self.mean_segments.combine()
+        tree = KDTree(mean_segments.points)
+        _, ii = tree.query(outlet_points)
+        g_ids = mean_segments.point_data[&#39;GroupIds&#39;][ii].astype(int)
+        lowest_common = nx.lowest_common_ancestor(self.G, g_ids[0], g_ids[1])
+        ancestors = nx.ancestors(self.G, lowest_common)
+        fam = list(ancestors) + [lowest_common]
+        artery = self.mean_segments[[str(x) for x in fam]]
+        return artery, fam
+
+if __name__ == &#34;__main__&#34;:
+    print(&#39;See example scripts directory&#39;)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="geometry_tools.surface.Surfer"><code class="flex name class">
+<span>class <span class="ident">Surfer</span></span>
+<span>(</span><span>surf=None, inlet_points=None, outlet_points=None, aneurysm_points=None, inlet_normals=None, outlet_normals=None, include_aneurysms=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Basic mesh manip tools based on VMTK.</p>
+<p>Init the meshproto instance.</p>
+<p>Surf must be given.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Surfer():
+    &#34;&#34;&#34; Basic mesh manip tools based on VMTK.
+    &#34;&#34;&#34;
+
+    def __init__(self, surf=None, inlet_points=None, outlet_points=None, aneurysm_points=None, inlet_normals=None, outlet_normals=None, include_aneurysms=False):
+        &#34;&#34;&#34; Init the meshproto instance.
+
+        Surf must be given. 
+        &#34;&#34;&#34;
+
+        self.surf = surf 
+        self.inlet_points = inlet_points
+        self.outlet_points = outlet_points
+        self.aneurysm_points = aneurysm_points
+        self.include_aneurysms=include_aneurysms
+
+        if self.inlet_points is not None:
+            self.update_inlets_outlets()
+            self.inlet_points = np.array(inlet_points)
+            self.outlet_points = np.array(outlet_points)
+        
+    def _pick_points(self, mesh=None, text=&#39;&#39;, render_points_as_spheres=False):
+        &#34;&#34;&#34; Internal method for picking points for choosing inlet(s).
+
+        Input mesh should be, for example, a PolyData containing 
+        inlets and outlets. Returns points in a list.
+        &#34;&#34;&#34;
+
+        def _point_picker_cb(mm, pid):
+            # point = mm.points[pid]
+            # print(&#39;Picked point&#39;, point)
+            #self._picked_id = pid
+            self._picked_ids.append(pid)
+            p.add_point_labels([mm.points[pid],],[&#39;{}&#39;.format(pid)], )
+
+        def _reset_picked_cb():
+            print(&#39;reset&#39;)
+            self._picked_id = None
+            self._picked_ids = []
+
+        self._picked_ids = []
+        self._picked_id = None
+
+        p = pv.Plotter()
+        p.add_mesh(self.surf, color=&#39;w&#39;, opacity=1.0, pickable=False)
+        p.add_text(text, position=&#39;upper_left&#39;)
+        p.enable_point_picking(callback=_point_picker_cb, show_message=False, 
+                            color=&#39;r&#39;, point_size=10, 
+                            use_mesh=True, show_point=True, 
+                            render_points_as_spheres=render_points_as_spheres)
+        if mesh is not None:
+            p.add_mesh(mesh, color=&#39;b&#39;, point_size=30)
+
+        p.add_text(&#39;p: pick point&#39;, position=(0.05, 0.05), font_size=12)
+        p.add_key_event(&#39;c&#39;, _reset_picked_cb)
+        p.show()
+        return self._picked_ids #[self._picked_id]
+
+    def copy_structure(self):
+        surf_new = pv.PolyData()
+        surf_new.copy_structure(self.surf)
+        self.surf = surf_new
+        
+    def copy_arrays(self, src, dst):
+        # tree = KDTree(src.points)
+        # _, ii = tree.query(dst.points, k=1)
+        # for arr in src.point_data:
+        #     dst.point_data[arr] = src.point_data[arr][ii]
+
+        # centers = src.cell_centers()
+        # tree = KDTree(centers.points)
+        # _, ii = tree.query(dst.cell_centers().points, k=1)
+        # for arr in src.cell_data:
+        #     dst.cell_data[arr] = src.cell_data[arr][ii]
+            
+        # return dst
+        return cc.copy_arrays(src, dst)
+
+    def decimate_surface(self, target_edge_length):
+        # edges = self.surf.extract_all_edges()
+        # mean_el = edges.compute_cell_sizes().cell_data[&#39;Length&#39;].mean()
+        # target_el = target_edge_length
+        # target_reduction = 1 - (mean_el / target_el)
+        # surf_d = self.surf.decimate(target_reduction, volume_preservation=True)
+        # self.surf = self.copy_arrays(self.surf, surf_d)
+        self.surf = cc.decimate_edge_length(self.surf, target_edge_length)
+
+    def clip_endpoints_with_spheres(self, factor=1.4, outlet_clip=None):
+        
+        if outlet_clip is None:
+            endpoints = np.concatenate([self.inlet_points, self.outlet_points], axis=0)
+            endlets = pv.wrap(endpoints)
+
+            tree = KDTree(self.centerlines_aneurysm.points)
+            _, ii = tree.query(endlets.points, k=3)
+            ii = np.array(ii)[:,-1]
+            
+            misr = self.centerlines_aneurysm.point_data[&#39;MaximumInscribedSphereRadius&#39;][ii]
+            
+            endlets.point_data[&#39;MaximumInscribedSphereRadius&#39;] = misr
+            outlet_clip = endlets.glyph(geom=pv.Sphere(1.0), factor=factor)
+
+        self.surf = self.surf.clip_surface(outlet_clip, invert=False)
+        self.surf = self.surf.extract_largest()
+        return outlet_clip
+
+    def clip_endpoints_with_tubeclipper(self, endpoints_pv=None, include_aneurysms=True):
+        &#34;&#34;&#34; Can introduce buggy mesh! Beware!
+        &#34;&#34;&#34;
+        if endpoints_pv is None:
+            endpoints = np.concatenate([self.inlet_points, self.outlet_points], axis=0)
+            
+            if include_aneurysms==True:
+                tree = KDTree(self.centerlines_aneurysm.points)
+            else:
+                tree = KDTree(self.centerlines.points)
+                
+            _, ii_inlets = tree.query(self.inlet_points, k=3)
+            _, ii_outlets = tree.query(self.outlet_points, k=3)
+
+            ii_inlets_n = np.array(ii_inlets)[:,-1]
+            ii_outlets_n = np.array(ii_outlets)[:,-1]
+
+            ii_inlets = np.array(ii_inlets)[:,0]
+            ii_outlets = np.array(ii_outlets)[:,0]
+            
+            if include_aneurysms==True:
+                # Get points at those points
+                in_points = self.centerlines_aneurysm.points[ii_inlets]
+                out_points = self.centerlines_aneurysm.points[ii_outlets]
+            
+                # Get normal at those points
+                in_normals = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii_inlets_n]
+                out_normals = -self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii_outlets_n]
+            else:
+                # Get points at those points
+                in_points = self.centerlines.points[ii_inlets]
+                out_points = self.centerlines.points[ii_outlets]
+            
+                # Get normal at those points
+                in_normals = self.centerlines.point_data[&#39;FrenetTangent&#39;][ii_inlets_n]
+                out_normals = -self.centerlines.point_data[&#39;FrenetTangent&#39;][ii_outlets_n]
+                
+            points = np.concatenate([in_points, out_points], axis=0)
+            normals = np.concatenate([in_normals, out_normals], axis=0)
+
+            endpoints_pv = pv.wrap(points)
+            endpoints_pv.point_data[&#39;Normals&#39;] = normals
+
+        surf_closed = self.surf.fill_holes(30.0).clean()
+        select = endpoints_pv.select_enclosed_points(surf_closed, tolerance=0.00001, check_surface=False)
+
+        # for origin, normal in zip(endpoints_pv.points, endpoints_pv.point_data[&#39;Normals&#39;]):
+        #     t = TubeClipper(self.surf)
+        #     t.clip(origin, normal)
+        #     self.surf = t.far_side
+
+        for sdx in range(select.n_points):
+            check = select.point_data[&#39;SelectedPoints&#39;][sdx]
+            if check == True:
+                origin = select.points[sdx]
+                normal = select.point_data[&#39;Normals&#39;][sdx]
+                t = TubeClipper(self.surf)
+                t.clip(origin, normal)
+                self.surf = t.far_side
+                
+        old_surf = self.surf.copy()
+        # self.surf = self.surf.triangulate()
+        # self.surf = pv.PolyData(self.surf.points, self.surf.cells)
+
+        # self.surf = self.surf.interpolate(old_surf)
+        self.copy_arrays(old_surf, self.surf)
+        
+        #pretty sure there is no groupid issue without aneurysms?
+        if include_aneurysms == True:
+            self.surf = cc.fix_vmtk_group_ids(self.surf)
+        return endpoints_pv
+
+    def clip_endpoints_with_vmtk(self):
+        surf = vmtk.surface_end_clipper(self.surf, centerlines=self.centerlines)
+        return surf
+
+    def set_inlets_outlets(self):
+        &#34;&#34;&#34; Interactively choose inlet point.
+
+        All other open boundaries will be considered outlets. To update these points 
+        (for example, after adding flow extensions), see self.update_inlet_outlets. 
+        To save these inlet-outlet points, see self.save_inlet_outlet_points()
+        &#34;&#34;&#34;
+        text = &#34;Pick the inlet(s)&#34;
+        centers = self.get_open_profiles()
+        centers_m = pv.wrap(centers)
+        inlet_ids = self._pick_points(centers_m, text=text)
+        outlet_ids = list(set(range(centers_m.n_points)) - set(inlet_ids))
+        
+        assert inlet_ids[0] is not None, &#34;No inlet selected.&#34;
+
+        self.inlet_points = [centers[i] for i in inlet_ids]
+        self.outlet_points = [centers[i] for i in outlet_ids]
+        return centers_m, inlet_ids, outlet_ids
+
+    def update_inlets_outlets(self):
+        &#34;&#34;&#34; Update inlet-outlet points based on distance metric.
+        &#34;&#34;&#34;
+        centers = self.get_open_profiles()
+        centers_m = pv.wrap(centers)
+        tree = KDTree(centers)
+        inlet_ids = [tree.query(i)[1] for i in self.inlet_points]
+        outlet_ids = list(set(range(centers_m.n_points)) - set(inlet_ids))
+        
+        self.inlet_points = [centers[i] for i in inlet_ids]
+        self.outlet_points = [centers[i] for i in outlet_ids]
+        return centers_m, inlet_ids, outlet_ids
+
+    def get_open_profiles(self):
+        &#34;&#34;&#34; Get centers of open profiles
+        &#34;&#34;&#34;
+        edges = self.surf.extract_feature_edges(
+            boundary_edges=True, 
+            feature_edges=False, 
+            manifold_edges=False
+            )
+        edges = edges.connectivity()
+        regions = np.unique(edges.point_data[&#39;RegionId&#39;])
+        masks = [edges.point_data[&#39;RegionId&#39;] == r for r in regions]
+        profiles = pv.MultiBlock([edges.extract_points(m) for m in masks])
+
+        num_profiles = len(profiles)
+        centers = [x.points.mean(axis=0) for x in profiles]
+        centers = np.array(centers)
+
+        return centers 
+
+    def select_geodesic(self,title=&#39;Isolate aneurysms.&#39;, mask_name=&#39;Mask&#39;):
+        s = cc.SelectGeodesic(self.surf, scalars=mask_name)
+        pts = s.interact(title=title)
+        self.surf = s.mesh
+        return pts
+
+
+    def generate_centerlines(self, include_aneurysms=True, seed_selector=&#39;idlist&#39;):
+        &#34;&#34;&#34; Generate centerlines using VMTK.
+
+        Watch the centerline smoothing at the end!! May need tweaking for your case.
+
+        Consider moving this into vmtk_wrapper, the nearest ids works well.
+        &#34;&#34;&#34;
+        surf_capped = pv.PolyData()
+        surf_capped.copy_structure(vmtk.surface_capper(self.surf))
+        tree = KDTree(surf_capped.points)
+        inlet_ids = [tree.query(i, k=1)[1] for i in self.inlet_points]
+        outlet_ids = [tree.query(o, k=1)[1] for o in self.outlet_points]
+    
+        self.inlet_ids = inlet_ids 
+        self.outlet_ids = outlet_ids
+
+        
+        
+        if include_aneurysms == True:
+            self.aneurysm_ids = [tree.query(i, k=1)[1] for i in self.aneurysm_points]
+            target_ids = self.outlet_ids + self.aneurysm_ids
+
+            centerlines = vmtk.centerlines(
+                surf_capped, 
+                seed_selector=seed_selector, 
+                src_ids=self.inlet_ids,
+                target_ids=target_ids,
+                )
+            centerlines = vmtk.centerlines_smooth(centerlines, iterations=100, sm_factor=0.1)
+            self.centerlines_aneurysm = centerlines
+            self.centerlines_aneurysm = vmtk.centerline_geometry(self.centerlines_aneurysm)
+
+            ind = list(range(len(self.outlet_ids)))
+            cline_temp = self.centerlines_aneurysm.extract_cells(ind)
+            centerlines = pv.PolyData(cline_temp.points, lines=cline_temp.cells)
+            for arr in cline_temp.point_data:
+                centerlines.point_data[arr] = cline_temp.point_data[arr]
+            for arr in cline_temp.cell_data:
+                centerlines.cell_data[arr] = cline_temp.cell_data[arr]
+            self.centerlines = centerlines
+            
+        else:
+            target_ids = self.outlet_ids 
+
+            centerlines = vmtk.centerlines(
+                surf_capped, 
+                seed_selector=seed_selector, 
+                src_ids=self.inlet_ids,
+                target_ids=target_ids,
+                )
+            #NOTE: If your vessels are really tortuous, you are going to want to turn the 
+            # smoothing wayyy down...    
+            centerlines = vmtk.centerlines_smooth(centerlines, iterations=100, sm_factor=0.1)
+
+            self.centerlines = centerlines
+            self.centerlines = vmtk.centerline_geometry(self.centerlines)
+        
+        return self 
+
+    def generate_centerlines_multi(self, proj_dir, seed_selector=&#39;idlist&#39;):
+        &#39;&#39;&#39;
+        &#34;&#34;&#34; Generate centerlines using VMTK
+        Here, the inlets are iterated over to generate individual sets of centerlines.
+        Then, the centerlines are all merged together into one single centerline.
+        This is necessary for multiple inlets, and needs quite a lot of monitoring if you have 
+        both multiple inlets and many outlets. It can make terrible centerlines if you are not careful.
+
+        The only reason we need this is for tubeclipper to do a good job.
+        &#34;&#34;&#34;
+        print(&#34;Generating multiple centerlines&#34;)
+        surf_capped = pv.PolyData()
+        surf_capped.copy_structure(vmtk.surface_capper(self.surf))
+        tree = KDTree(surf_capped.points)
+        inlet_ids = [tree.query(i, k=1)[1] for i in self.inlet_points]
+        outlet_ids = [tree.query(o, k=1)[1] for o in self.outlet_points]
+    
+        self.inlet_ids = inlet_ids 
+        self.outlet_ids = outlet_ids
+        target_ids = self.outlet_ids 
+        centerlines_unmerged_blocks = pv.MultiBlock()
+
+        for idx,i_id in enumerate(inlet_ids):
+            
+            if idx&lt;1:
+                centerlines_unmerged = vmtk.centerlines(
+                    surf_capped, 
+                    seed_selector=seed_selector, 
+                    src_ids=[i_id],
+                    target_ids=target_ids,
+                    )
+                centerlines_unmerged.save(proj_dir/(&#39;centerline{}.vtp&#39;.format(idx)))
+                centerlines_unmerged_blocks.append(centerlines_unmerged)
+            else:
+                centerlines_unmerged = vmtk.centerlines(
+                    surf_capped, 
+                    seed_selector=seed_selector, 
+                    src_ids=[i_id],
+                    #NOTE: this might create better centerlines if you try switching this to
+                    #different outlet targets. Try a few and look at the output first.
+                    target_ids=[0],
+                    )
+                centerlines_unmerged.save(proj_dir/(&#39;centerline{}.vtp&#39;.format(idx)))
+                centerlines_unmerged_blocks.append(vmtk.surface_append(centerlines_unmerged_blocks[idx-1],centerlines_unmerged))
+                centerlines_appended = centerlines_unmerged_blocks[idx]
+                #centerlines_appended.save(proj_dir/(&#39;appended_cl.vtp&#39;))
+
+        centerlines_branched = vmtk.centerline_branches_ids(centerlines_appended)
+        centerlines_merged = vmtk.merge_centerlines(centerlines_branched)
+        centerlines_total = vmtk.centerlines_smooth(centerlines_merged, iterations=1, sm_factor=0.01)
+
+        self.centerlines = centerlines_total
+        #centerlines_total.save(proj_dir/(&#39;merged_centerlines.vtp&#39;))
+        self.centerlines = vmtk.centerline_geometry(self.centerlines)
+        &#39;&#39;&#39;
+        &#34;&#34;&#34;
+        Generate centerlines using the network extractor. This won&#39;t cause merging issues.
+        &#34;&#34;&#34;
+        self.centerlines, _ = vmtk.network_extractor(self.surf)
+        self.centerlines = vmtk.centerline_geometry(self.centerlines)
+
+        return self         
+    # def _project_centerline_attrs(self, centerlines, centerlines_branched):
+    #         centerlines_og = centerlines.copy()
+    #         centerlines_branched = centerlines_branched.copy()
+
+    #         # Convert cell data to point data
+    #         centerlines_branched = centerlines_branched.ctp()
+
+    #         # Create search tree for centerlines with GroupIds
+    #         tree = KDTree(centerlines_branched.points)
+
+    #         # Prepare points from original structure to query 
+    #         q_points = centerlines_og.points
+    #         dd, ii = tree.query(q_points, k=1)
+
+    #         # Project onto centerlines_og
+    #         centerlines_og.point_data[&#39;GroupIds&#39;] = np.round(centerlines_branched.point_data[&#39;GroupIds&#39;][ii]).astype(int)
+    #         centerlines_og.point_data[&#39;Blanking&#39;] = np.round(centerlines_branched.point_data[&#39;Blanking&#39;][ii]).astype(int)
+
+    #         return centerlines_og    
+    
+    def _project_centerline_attrs(self, centerlines, centerlines_branched):
+            centerlines_og = centerlines.copy()
+            centerlines_branched = centerlines_branched.copy()
+
+            # Want a map from centerlines_og to centerlines_branched
+            # But have to get cell data from the destination 
+
+            group_ids = np.unique(centerlines_branched.cell_data[&#39;GroupIds&#39;])
+            segments = [centerlines_branched.extract_cells(centerlines_branched.cell_data[&#39;GroupIds&#39;] == g) for g in group_ids]
+
+            group_ids_interp = np.zeros(centerlines_branched.n_points, dtype=int)
+            blanking_interp = np.zeros(centerlines_branched.n_points, dtype=int)
+
+            tree = KDTree(centerlines_branched.points)
+
+            for g, s in zip(group_ids,segments):
+                # This will default rounding to higher GroupIds
+                _, ii = tree.query(s.points, k=1)
+                group_ids_interp[ii] = g
+                blanking_interp[ii] = s[&#39;Blanking&#39;][0]
+
+            _, ii = tree.query(centerlines_og.points, k=1)
+            centerlines_og.point_data[&#39;GroupIds&#39;] = group_ids_interp[ii]
+            centerlines_og.point_data[&#39;Blanking&#39;] = blanking_interp[ii]
+
+            # Project onto centerlines_og
+            # centerlines_og.point_data[&#39;GroupIds&#39;] = np.round(centerlines_branched.point_data[&#39;GroupIds&#39;][ii]).astype(int)
+            # centerlines_og.point_data[&#39;Blanking&#39;] = np.round(centerlines_branched.point_data[&#39;Blanking&#39;][ii]).astype(int)
+
+            return centerlines_og    
+    
+    def branch_centerlines(self, project_back=True):
+
+        self.centerlines_aneurysm_branched = vmtk.centerline_branches_ids(self.centerlines_aneurysm)
+
+        if project_back:
+            self.centerlines_aneurysm_split = self._project_centerline_attrs(
+                self.centerlines_aneurysm, self.centerlines_aneurysm_branched)
+        
+        # This is the really slow step because of the glyphs.
+        self.surf, self.neighbour_pt_ids = vmtk.surface_centerline_projection_MISR(
+            self.surf, self.centerlines_aneurysm_branched, sm_iterations=1)
+        
+        # Check if this line is now redundant after adding new fix function.
+        self.update_aneurysm_group_ids()
+
+        # New fix function:
+        self.surf = cc.fix_vmtk_group_ids(self.surf)
+
+        return self
+
+    def branch_centerlines_pt(self, project_back=True):
+        print(&#34;\nBranching centerlines...&#34;)
+        self.centerlines_branched = vmtk.centerline_branches_ids(self.centerlines)
+
+        if project_back:
+            self.centerlines_split = self._project_centerline_attrs(
+                self.centerlines, self.centerlines_branched)
+        
+        self.surf, self.neighbour_pt_ids = vmtk.surface_centerline_projection_MISR(
+            self.surf, self.centerlines_branched, sm_iterations=1)
+        
+        #print(self.surf.point_data)
+        return self
+
+    def update_aneurysm_group_ids(self):    
+        tree = KDTree(self.surf.points)
+        nearest_temp_idx = tree.query(self.aneurysm_points, k=1)[1]
+        self.aneurysm_group_ids = [str(x) for x in self.surf.point_data[&#39;GroupIds&#39;][nearest_temp_idx]]
+        self.get_group_adjacency()
+        # self.check_group_id_integrity()
+
+        return self
+           
+    def extract_sacs(self):
+        &#34;&#34;&#34; Redux based on new vmtk.surface_centerline_projection_MISR.
+        &#34;&#34;&#34;
+        self.sacs = {}
+
+        for g in self.aneurysm_group_ids:
+            sac_mask = self.surf.point_data[&#39;GroupIds&#39;] == g
+            sac = self.surf.extract_points(sac_mask)
+            sac_pd = pv.PolyData(sac.points, sac.cells)
+            for arr in sac.point_data:
+                sac_pd.point_data[arr] = sac.point_data[arr]
+            for arr in sac.cell_data:
+                sac_pd.cell_data[arr] = sac.cell_data[arr]
+            self.sacs[g] = sac_pd
+
+                
+    def clip_boundaries(self, method=&#39;select&#39;, refine = False):
+        &#34;&#34;&#34; Interactively clip branches then fix clip to normal 
+
+        Args:
+            method (str): &#39;select&#39; uses common.ClickDragDelete tool,
+                          &#39;box&#39; uses vmtk.clipper tool.
+        &#34;&#34;&#34;
+        self.surf.clean()
+        if method == &#39;select&#39;:
+            cb = cc.ClickDragDelete(self.surf, title=&#39;Clip boundaries&#39;)
+            surf = cb.mesh 
+            surf = surf.triangulate()
+            #print(surf.point_data)
+
+            if type(surf) != pv.core.pointset.PolyData:
+                surf = pv.PolyData(surf.points, surf.cells)
+
+        else:   
+            surf = self.surf.fill_holes(10.0)
+            surf = vmtk.clipper(surf)
+
+        surf = surf.connectivity(largest=True)
+        surf = surf.clean() 
+
+        self.surf = surf    
+        return cb.flag_inspect 
+
+    def save_inlet_outlet_points(self, points_file, centerlines=&#39;centerlines&#39;, include_aneurysms=True, include_normals=False):
+        &#34;&#34;&#34; Save inlet_points and outlet_points to a single h5 file.
+
+        File keys will be &#34;inlets&#34; and &#34;outlets&#34;
+        &#34;&#34;&#34; 
+        points = pv.MultiBlock()
+        points[&#39;inlets&#39;] = pv.wrap(np.array(self.inlet_points))
+        points[&#39;outlets&#39;] = pv.wrap(np.array(self.outlet_points))
+        if include_aneurysms==True:
+            points[&#39;aneurysms&#39;] = pv.wrap(np.array(self.aneurysm_points))
+
+        if (hasattr(self, centerlines)) and (include_normals == True):
+            tree = KDTree(self.centerlines.points)
+            _, ii = tree.query(self.inlet_points)
+            points[&#39;inlets&#39;].point_data[&#39;normals&#39;] = self.centerlines.point_data[&#39;FrenetTangent&#39;][ii]
+            _, ii = tree.query(self.outlet_points)
+            points[&#39;outlets&#39;].point_data[&#39;normals&#39;] = self.centerlines.point_data[&#39;FrenetTangent&#39;][ii]
+
+        points.save(points_file)
+
+
+    def pick_aneurysm(self, text=&#39;Pick aneurysm&#39;):
+        &#34;&#34;&#34; Pick a point on the dome.
+        &#34;&#34;&#34;
+        def _point_picker_cb(mm, pid):
+            # point = mm.points[pid]
+            # print(&#39;Picked point&#39;, point)
+            self._picked_ids.append(pid)
+            picked_points = pv.wrap(mm.points[self._picked_ids])
+            p.add_mesh(picked_points, name=&#39;picked_pts&#39;, color=&#39;r&#39;, point_size=10,
+                render_points_as_spheres=True)
+
+        def _reset_picked_cb():
+            self._picked_ids = []
+            p.remove_actor(&#39;picked_pts&#39;)
+
+        self._picked_ids = []
+
+        p = pv.Plotter()
+        p.add_mesh(self.surf, color=&#39;w&#39;, opacity=1.0)
+
+        p.add_text(text, position=&#39;upper_left&#39;)
+        p.add_text(&#39;p: pick points&#39;, position=(0.05, 25), font_size=12)
+        p.add_text(&#39;u: reset all picks&#39;, position=(0.05, 0.05), font_size=12)
+        p.enable_point_picking(callback=_point_picker_cb, show_message=False, 
+                            color=&#39;r&#39;, point_size=30, 
+                            use_mesh=True, show_point=False, 
+                            render_points_as_spheres=True,
+                            tolerance=0.005)
+        p.add_key_event(&#39;u&#39;, _reset_picked_cb)
+        p.show()
+        # print(&#39;picked&#39;, self._picked_ids)
+
+        self.aneurysm_points = self.surf.points[self._picked_ids]
+
+    def get_group_adjacency(self):
+        &#34;&#34;&#34; Get adjlist and networkx DiGraph of centerlines.
+        
+        The centerlines should be passed before calling centerline branch ids.
+        If getting errors, try recomputing centerlines -- there might be a bug
+        where self.centerlines is overridden with centerlines_branched. 
+        &#34;&#34;&#34;
+        if self.include_aneurysms==True:
+            if hasattr(self, &#39;centerlines&#39;):
+                self.edges, self.G = vmtk.extract_group_adjacency(self.centerlines_aneurysm)
+            if hasattr(self, &#39;centerlines&#39;):
+                _, self.G_no_aneurysm = vmtk.extract_group_adjacency(self.centerlines)
+        else:
+            if hasattr(self, &#39;centerlines&#39;):
+                self.edges, self.G = vmtk.extract_group_adjacency(self.centerlines)
+
+    def get_bifurcation_ref_systems_vectors(self):
+        # self.ref = vmtk.bifurcation_ref_systems(self.centerlines_branched)
+        # self.bif_vec = vmtk.get_bifurcation_vectors(self.centerlines_branched, self.ref)
+
+        # if hasattr(self, &#39;centerlines_aneurysm_branched&#39;):
+        if self.include_aneurysms==True:
+            self.ref_aneurysm = vmtk.bifurcation_ref_systems(self.centerlines_aneurysm_branched)
+            self.bif_vec_aneurysm = vmtk.get_bifurcation_vectors(self.centerlines_aneurysm_branched, self.ref_aneurysm)
+        else: #May need this for inclusions
+            self.ref = vmtk.bifurcation_ref_systems(self.centerlines_branched)
+            self.bif_vec = vmtk.get_bifurcation_vectors(self.centerlines_branched, self.ref)
+
+        # for b in self.bif_vec_aneurysm:
+
+    def get_mean_segments(self):
+        &#34;&#34;&#34; Get the &#34;average&#34; segment for each each group id in centerline
+        &#34;&#34;&#34;
+        # Get group adjacency
+        # edges, G = vmtk.extract_group_adjacency(self.centerlines_aneurysm)
+        centerlines_split = self.centerlines_aneurysm_split
+
+        # Get valid (non-blanked) ids
+        mask = np.invert(centerlines_split.point_data[&#39;Blanking&#39;].astype(bool))
+        all_ids = np.unique(centerlines_split.point_data[&#39;GroupIds&#39;])
+        valid_ids = np.unique(centerlines_split.point_data[&#39;GroupIds&#39;][mask])
+        print(&#39;valid:&#39;, len(valid_ids), valid_ids)
+        valid_ids = [x for x in valid_ids if str(x) in self.G.nodes]
+        #print(&#39;valid2:&#39;, len(valid_ids), valid_ids)
+        blanking_ids = np.unique(centerlines_split.point_data[&#39;GroupIds&#39;][~mask])
+        print(&#34;blankingids: &#34;, len(blanking_ids), blanking_ids)
+        # Split each centerline into segments based on groupIds
+        segments = {key : [] for key in valid_ids}
+        centerlines_multi = centerlines_split.split_bodies()
+
+        # Create a new variable like &#34;GroupIds&#34; called &#34;GroupIdsNonBlanking&#34;
+        # Anywhere a a group is blanked, relabel it with the successor&#39;s group id.
+        for cline in centerlines_multi:
+            cline.point_data[&#39;GroupIdsNonBlanking&#39;] = cline.point_data[&#39;GroupIds&#39;].copy()
+            groups = np.unique([x for x in cline.point_data[&#39;GroupIds&#39;] if x in all_ids])
+            blanking_groups = [x for x in groups if x in blanking_ids]
+            # blanking_successors = [list(self.G.successors(blanking_groups[i] - 1)) for i in range(len(blanking_groups))]
+            blanking_masks = [cline.point_data[&#39;GroupIds&#39;] == x for x in blanking_groups]
+            blanking_diffs = [np.diff(x.astype(int)) for x in blanking_masks]
+            blanking_successor_idx = [np.argmin(x) + 1 for x in blanking_diffs]
+            blanking_successors = [cline.point_data[&#39;GroupIds&#39;][x] for x in blanking_successor_idx]
+            reassignments = blanking_successors #[[x for x in suc if x in groups][0] for suc in blanking_successors]
+
+            masks = [cline.point_data[&#39;GroupIdsNonBlanking&#39;] == x for x in blanking_groups]
+            
+            for msk, r in zip(masks, reassignments):
+                cline.point_data[&#39;GroupIdsNonBlanking&#39;][msk] = r
+
+        # For each valid group id, extract lines associated with that group ID.
+        # The items in segments are lists because multiple lines may have the same 
+        # point id (to be averaged later)
+        for cline in centerlines_multi:
+            groups = np.unique([x for x in cline.point_data[&#39;GroupIdsNonBlanking&#39;] if x in valid_ids])
+            # print(groups)
+            for gid in groups:
+                mask = cline.point_data[&#39;GroupIdsNonBlanking&#39;] == gid
+                line_points = cline.extract_points(mask, adjacent_cells=False, include_cells=False)
+                segments[gid].append(line_points)
+
+        # Get mean of each groupIDs segment
+        # Have to interpolate arrays onto mean segment
+        mean_segments = {key : None for key in valid_ids}
+        for key in valid_ids:
+            line_groups = segments[key]
+
+            points = [p.points for p in line_groups]
+            
+            n_points = np.max([p.n_points for p in line_groups])
+            splines = [pv.Spline(p, n_points) for p in points]
+            splines = [s.interpolate(l, strategy=&#39;closest_point&#39;) for s, l in zip(splines, line_groups)]
+
+            # NOTE this is a hacky way of doing it. find diverging point
+            # or use the bif vectors.
+            if n_points &gt; 20:
+                back_off = 20
+                mean_spline = np.mean([s.points[:-back_off] for s in splines], axis=0)
+            else:
+                mean_spline = np.mean([s.points for s in splines], axis=0)
+            spline = pv.Spline(mean_spline, n_points)
+            mean_segments[key] = spline
+
+
+        # # Prepend last point in parent segment to child
+        for key in valid_ids:
+            parent = [int(x) for x in self.G.predecessors(str(key))]
+            if len(parent) != 0:
+                parent = parent[0]
+            else:
+                parent = None
+
+            if parent is not None:
+                # ref_group = parent + 1 
+            
+                # Prepend point
+                pt = mean_segments[parent].points[-1].reshape(1,-1)
+                segment = mean_segments[key].points
+                points = np.concatenate([pt, segment], axis=0)
+                spline = pv.Spline(points, segment.shape[0] + 1)
+                spline.point_data[&#39;GroupIds&#39;] = key
+                mean_segments[key] = spline
+
+        centerlines_multi_merge = centerlines_multi.combine()
+        tree = KDTree(centerlines_multi_merge.points)
+
+        for key in mean_segments.keys():
+            # Transfer relevant arrays to new spline
+            ndx = tree.query(mean_segments[key].points, k=1)[1]
+
+            for arr in centerlines_multi_merge.point_data.keys():
+                mean_arr = centerlines_multi_merge.point_data[arr][ndx] #p.mean([s.point_data[arr] for s in splines], axis=0)
+                mean_segments[key].point_data[arr] = mean_arr
+           
+            mean_segments[key].point_data[&#39;OriginalGroupIds&#39;] = mean_segments[key].point_data[&#39;GroupIds&#39;].copy()
+            mean_segments[key].point_data[&#39;GroupIds&#39;] = key
+            mean_segments[key] = mean_segments[key].compute_arc_length()
+            mean_segments[key][&#39;arc_length_inv&#39;] = mean_segments[key][&#39;arc_length&#39;][::-1]
+
+        keys = list(mean_segments.keys())
+        items = [mean_segments[x] for x in keys]
+        keys = [str(x) for x in keys]
+
+        self.mean_segments = dict(zip(keys, items))
+        self.mean_segments = pv.MultiBlock(self.mean_segments)
+        print(self.mean_segments)
+
+    def get_branch_endpoints(self):
+        &#34;&#34;&#34; Get endpoints by splitting up the surface.
+        &#34;&#34;&#34;
+        self.clipping_points = {}
+
+        groups = np.unique(self.surf.point_data[&#39;GroupIds&#39;])
+        #print(groups)
+        masks = [self.surf.point_data[&#39;GroupIds&#39;] == int(g) for g in groups]
+
+        keys = [int(g) for g in groups]
+        #print(keys)
+        parts = [self.surf.extract_points(m) for m in masks]
+        parts = [p.extract_largest() for p in parts]
+        parts = [p.triangulate() for p in parts]
+        parts = [pv.PolyData(p.points, faces=p.cells).clean() for p in parts]
+        parts = dict(zip(keys, parts))
+
+        for g in keys:
+            line = self.mean_segments[g]
+            line = line.clean(tolerance=0.05)
+            part = parts[g]
+            select = line.select_enclosed_points(part.fill_holes(20), tolerance=1e-5, check_surface=False)
+            s_mask = select.point_data[&#39;SelectedPoints&#39;] == 1
+
+            if np.sum(s_mask) &gt; 2:
+                sub = pv.PolyData(select.points[s_mask])
+                sub.point_data[&#39;FrenetTangent&#39;] = select.point_data[&#39;FrenetTangent&#39;][s_mask]
+                sub.point_data[&#39;MaximumInscribedSphereRadius&#39;] = select.point_data[&#39;MaximumInscribedSphereRadius&#39;][s_mask]
+                sub.point_data[&#39;arc_length&#39;] = select.point_data[&#39;arc_length&#39;][s_mask]
+                sub.point_data[&#39;arc_length&#39;] = sub.point_data[&#39;arc_length&#39;] - sub.point_data[&#39;arc_length&#39;][0]
+
+                # Just not starting at endpoint
+                new_start_index = 1
+                new_end_index = len(sub.points) - 2
+
+                # Extract slices of the part based on the centerline and normal.
+                # If n_points == n_cells, the slice forms a loop
+                # otherwise it&#39;s just a line.
+                slice_condition = False
+                new_start_index -= 1
+                while not slice_condition:
+                    new_start_index += 1
+                    if new_start_index &lt; sub.n_points:
+                        slice1 = part.slice(normal=sub.point_data[&#39;FrenetTangent&#39;][new_start_index],origin=sub.points[new_start_index])
+                    else:
+                        break
+
+                    if slice1.n_points == 0:
+                        slice_condition = False
+                    else:
+                        slice_condition = slice1.n_points == slice1.n_cells
+
+                    if new_start_index &gt; len(sub.points):
+                        print(&#39;Broken loop!&#39;)
+
+                # Then for the other end
+                slice_condition = False
+                new_end_index += 1
+                while not slice_condition:
+                    new_end_index -= 1
+                    if new_end_index &gt; 0:
+                        slice2 = part.slice(normal=sub.point_data[&#39;FrenetTangent&#39;][new_end_index],origin=sub.points[new_end_index])
+                    else:
+                        break
+
+                    if slice2.n_points == 0:
+                        slice_condition = False
+                    else:
+                        slice_condition = slice2.n_points == slice2.n_cells
+
+                if len(sub.points[new_start_index:new_end_index]) &gt; 2:
+                    sub_new = pv.wrap(sub.points[new_start_index:new_end_index])
+                    sub_new.point_data[&#39;Normals&#39;] = sub.point_data[&#39;FrenetTangent&#39;][new_start_index:new_end_index]
+                    sub_new.point_data[&#39;arc_length&#39;] = sub.point_data[&#39;arc_length&#39;][new_start_index:new_end_index]
+
+                    self.clipping_points[g] = {}
+                    self.clipping_points[g][&#39;start&#39;] = pv.wrap(sub_new.points[0])
+                    self.clipping_points[g][&#39;start&#39;].point_data[&#39;Normal&#39;] = sub_new.point_data[&#39;Normals&#39;][0].reshape(1,3)
+
+                    self.clipping_points[g][&#39;end&#39;] = pv.wrap(sub_new.points[-1])
+                    self.clipping_points[g][&#39;end&#39;].point_data[&#39;Normal&#39;] = -sub_new.point_data[&#39;Normals&#39;][-1].reshape(1,3) 
+
+
+    def get_branch_endpoints_OLD(self):
+        &#34;&#34;&#34; 
+        This works and is robust, but super slow. Depreceate. 
+        Might be better when groupids is screwy though.
+        &#34;&#34;&#34;
+        self.clipping_points = {}
+        cpos = None
+        
+        tree = KDTree(self.centerlines_aneurysm.points)
+
+        # Remove short branches from search
+        self.GG = self.G.copy()
+
+        surf_d = cc.decimate_edge_length(self.surf, 0.8)
+        surf_d = cc.copy_arrays(self.surf, surf_d)
+
+        for g in self.GG.nodes:
+            # print(g)
+            self.clipping_points[g] = {}
+            self.M = self.GG.copy()
+            self.M.remove_edges_from(nx.selfloop_edges(self.M))
+
+            # For each aneurysm, get children, parents and siblings
+            children = sorted(self.M.successors(g))
+            parent = sorted(self.M.predecessors(g)) 
+            
+            G = self.M.to_undirected()
+            G.remove_node(g)
+            S = [G.subgraph(c).copy() for c in nx.connected_components(G)]
+            S = [list(x.nodes) for x in S]
+
+            descendants = [x for x in S if len(set(children) - set(x)) != len(children)]
+            other_fam = [x for x in S if x not in descendants]
+
+            # Flatten list of lists
+            descendants = [val for sublist in descendants for val in sublist]
+            other_fam = [val for sublist in other_fam for val in sublist]
+
+            if len(parent) &gt; 0:
+                siblings = sorted(self.M.successors(parent[0]))
+
+                # Remove the branch from the list of siblings
+                siblings = [x for x in siblings if x != g]
+            else:
+                siblings = []
+
+            s_line = self.mean_segments[str(g)]
+
+            if g not in self.aneurysm_group_ids: # Don&#39;t define an endpoint for aneurysms
+                # March backward along branch until clipping condition with children
+                t = TubeClipper(surf_d)
+                idx = len(s_line.points) - 1
+
+                # Make sure cross section doesn&#39;t intersect children
+                if len(descendants) != 0:
+                    check = True
+                    while (check == True) and (idx &gt; 2):
+                        _, ii = tree.query(s_line.points[idx], k=1)
+                        origin = self.centerlines_aneurysm.points[ii]
+                        normal = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii]
+                        t.clip(origin, -normal)
+                        clipped = t.clipped
+                        mask = clipped.point_data[&#39;Side&#39;] == 1
+                        clipped = clipped.extract_points(mask)
+                        # clipped = clipped.clean()
+
+                        check = np.any([int(s) in clipped.point_data[&#39;GroupIds&#39;] for s in descendants])
+                        # clipped.plot(color=&#39;w&#39;)#scalars=&#39;GroupIds&#39;)
+                        # p = pv.Plotter()
+                        # p.camera_position = cpos
+                        # p.add_mesh(clipped, color=&#39;r&#39;)
+                        # p.add_mesh(self.surf, color=&#39;w&#39;, opacity=0.1)
+                        # p.show()
+                        # cpos = p.camera_position
+
+                        print(&#39;ch&#39;, g, check, idx)
+                        if check == True:
+                            idx -= 2
+
+                else:
+                    _, ii = tree.query(s_line.points[-1], k=1)
+                    origin = self.centerlines_aneurysm.points[ii]
+                    normal = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii]
+
+                if (len(descendants) == 0) or (check == False):
+                    self.clipping_points[g][&#39;end&#39;] = pv.wrap(origin)
+                    self.clipping_points[g][&#39;end&#39;].point_data[&#39;Normal&#39;] = -normal.reshape(1,3)
+                # else:
+                    # self.clipping_points[g][&#39;end&#39;] = None
+
+            # Now march forward along branch from beginning
+            t = TubeClipper(surf_d)
+
+            # Get index of first item after blanking ends 
+            # diff = np.diff(s_line.point_data[&#39;Blanking&#39;])
+            # BLANKING is janky don&#39;t use
+            idx = 0 #np.argmax(diff == -1) 
+
+            # Make sure it doesn&#39;t intersect with parent or siblings
+            fam = other_fam #siblings + parent
+
+            if len(fam) != 0:
+                check2 = True
+
+                while (check2 == True) and (idx &lt; len(s_line.points)):
+                    _, ii = tree.query(s_line.points[idx], k=1)
+                    origin = self.centerlines_aneurysm.points[ii]
+                    normal = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii]
+                    t.clip(origin, normal)
+                    clipped = t.clipped
+                    mask = clipped.point_data[&#39;Side&#39;] == 1
+                    clipped = clipped.extract_points(mask)
+
+                    check2 = np.any([int(s) in clipped.point_data[&#39;GroupIds&#39;] for s in fam])
+                    
+                    # clipped.plot(color=&#39;b&#39;)#scalars=&#39;GroupIds&#39;)
+                    # p = pv.Plotter()
+                    # p.camera_position = cpos
+                    # p.add_mesh(clipped, color=&#39;r&#39;)
+                    # p.add_mesh(self.surf, color=&#39;w&#39;, opacity=0.1)
+                    # p.show()
+                    # cpos = p.camera_position
+                    
+                    print(&#39;ch2&#39;, g, check, idx)
+                    if check2 == True:
+                        idx += 2
+
+            else:
+                _, ii = tree.query(s_line.points[0], k=1)
+                origin = self.centerlines_aneurysm.points[ii]
+                normal = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii]
+
+            if len(fam) == 0 or check2 == False:
+                self.clipping_points[g][&#39;start&#39;] = pv.wrap(origin)
+                self.clipping_points[g][&#39;start&#39;].point_data[&#39;Normal&#39;] = normal.reshape(1,3)
+            # else:
+                # self.clipping_points[g][&#39;start&#39;] = None 
+
+        self.valid_clipping_points = {}
+        for g in self.clipping_points.keys():
+            if &#39;start&#39; in self.clipping_points[g].keys():
+                if &#39;end&#39; in self.clipping_points[g].keys():
+                    self.valid_clipping_points[str(g)] = self.clipping_points[g]
+
+        self.clipping_points = self.valid_clipping_points
+        
+        # del_keys = []
+        # for g in self.clipping_points.keys():
+        #     start = self.clipping_points[g][&#39;start&#39;]
+        #     end = self.clipping_points[g][&#39;end&#39;]
+        #     if start is None or end is None:
+        #         del_keys.append(g)
+        
+        # for k in del_keys:
+        #     del self.clipping_points[k]
+            
+
+    # def get_branch_endpoints_old(self, min_branch_length=100):
+    #     &#34;&#34;&#34; 
+    #     Want to get start/end points where, if you clipped the plane
+    #     normal to the centerline, it would contain none of the children, 
+    #     siblings, or parents.
+
+    #     This is a very slow function, but robust.
+    #     &#34;&#34;&#34;
+    #     self.clipping_points = {}
+        
+    #     tree = KDTree(self.centerlines_aneurysm.points)
+
+    #     # Remove short branches from search
+    #     self.GG = self.G.copy()
+
+    #     # Iterate each group
+    #     for g in self.GG.nodes:
+    #         self.clipping_points[g] = {}
+
+    #         # print(&#39;------- g&#39;, g)
+    #         self.M = self.GG.copy()
+
+    #         # Remove any self loops
+    #         self.M.remove_edges_from(nx.selfloop_edges(self.M))
+
+    #         # For each aneurysm, get children, parents and siblings
+    #         children = sorted(self.M.successors(g))
+    #         parent = sorted(self.M.predecessors(g))#[0]
+            
+    #         if len(parent) &gt; 0:
+    #             siblings = sorted(self.M.successors(parent[0]))
+
+    #             # Remove the branch from the list of siblings
+    #             siblings = [x for x in siblings if x != g]
+    #         else:
+    #             siblings = []
+
+    #         s_line = self.mean_segments[g]
+
+    #         if g not in self.aneurysm_group_ids: # Don&#39;t define an endpoint for aneurysms
+    #             # March backward along branch until clipping condition with children
+    #             t = TubeClipper(self.surf)
+    #             idx = len(s_line.points) - 1
+
+    #             # Make sure cross section doesn&#39;t intersect children
+    #             if len(children) != 0:
+    #                 check = True
+    #                 while (check == True) and (idx &gt; 2):
+    #                     _, ii = tree.query(s_line.points[idx], k=1)
+    #                     origin = self.centerlines_aneurysm.points[ii]
+    #                     normal = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii]
+    #                     t.clip(origin, -normal)
+    #                     clipped = t.clipped
+    #                     mask = clipped.point_data[&#39;Side&#39;] == 1
+    #                     clipped = clipped.extract_points(mask)
+
+    #                     check = np.any([s in clipped.point_data[&#39;GroupIds&#39;] for s in children])
+                        
+    #                     # print(&#39;ch&#39;, check)
+    #                     if check == True:
+    #                         idx -= 2
+                
+    #             else:
+    #                 _, ii = tree.query(s_line.points[-1], k=1)
+    #                 origin = self.centerlines_aneurysm.points[ii]
+    #                 normal = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii]
+
+    #             if (len(children) == 0) or (check == False):
+    #                 self.clipping_points[g][&#39;end&#39;] = pv.wrap(origin)
+    #                 self.clipping_points[g][&#39;end&#39;].point_data[&#39;Normal&#39;] = -normal.reshape(1,3)
+    #             else:
+    #                 self.clipping_points[g][&#39;end&#39;] = None
+    #         else:
+    #             self.clipping_points[g][&#39;end&#39;] = None
+
+    #         # Now march forward along branch from beginning
+    #         t = TubeClipper(self.surf)
+
+    #         # Get index of first item after blanking ends 
+    #         # diff = np.diff(s_line.point_data[&#39;Blanking&#39;])
+    #         # BLANKING is janky don&#39;t use
+    #         idx = 0 #np.argmax(diff == -1) 
+
+    #         # Make sure it doesn&#39;t intersect with parent or siblings
+    #         fam = siblings + parent
+    #         if len(fam) != 0:
+    #             check = True
+    #             while (check == True) and (idx &lt; len(s_line.points)):
+    #                 _, ii = tree.query(s_line.points[idx], k=1)
+    #                 origin = self.centerlines_aneurysm.points[ii]
+    #                 normal = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii]
+    #                 t.clip(origin, normal)
+    #                 clipped = t.clipped
+    #                 mask = clipped.point_data[&#39;Side&#39;] == 1
+    #                 clipped = clipped.extract_points(mask)
+
+    #                 check = np.any([s in clipped.point_data[&#39;GroupIds&#39;] for s in fam])
+                    
+    #                 # clipped.plot(scalars=&#39;GroupIds&#39;)
+    #                 # print(&#39;ch2&#39;, check)
+    #                 if check == True:
+    #                     idx += 2
+
+    #         else:
+    #             _, ii = tree.query(s_line.points[0], k=1)
+    #             origin = self.centerlines_aneurysm.points[ii]
+    #             normal = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii]
+
+    #         if len(fam) == 0 or check == False:
+    #             self.clipping_points[g][&#39;start&#39;] = pv.wrap(origin)
+    #             self.clipping_points[g][&#39;start&#39;].point_data[&#39;Normal&#39;] = normal.reshape(1,3)
+    #         else:
+    #             self.clipping_points[g][&#39;start&#39;] = None 
+
+
+    def mark_distance_from_sacs(self, n_spheres, min_branch_length=100):
+        &#34;&#34;&#34; Get point n_spheres away from sacs.
+    
+        Be careful with index between mean_segments and digraphs!!
+
+        &#34;&#34;&#34;
+        self.sac_zones = {}
+
+        # Before looping, collapse short branch nodes to parent
+        # We are exluding them from the search
+        self.GG = self.G.copy()
+        group_ids = list(self.mean_segments.keys())
+        segment_lengths = [self.mean_segments[g].n_points for g in group_ids]
+
+        for idx in range(len(group_ids)):
+            g = group_ids[idx]
+            l = segment_lengths[idx]
+
+            if (l &lt; min_branch_length) and (g not in self.aneurysm_group_ids):
+                parent = sorted(self.GG.predecessors(g))
+                if len(parent) &gt; 0:
+                    self.GG = nx.contracted_nodes(self.GG, parent[0], g)
+                else:
+                    self.GG.remove_node(g)
+
+        for an_id in self.aneurysm_group_ids:
+            self.sac_zones[an_id] = {}
+
+            # For each an_id, collapse other aneurysm_ids
+            # to exclude them from the search
+            other_an_ids = [x for x in self.aneurysm_group_ids if x != an_id]
+            self.M = self.GG.copy()
+            for g in other_an_ids:
+                parent = sorted(self.GG.predecessors(g))[0]
+                self.M = nx.contracted_nodes(self.M, parent, g)
+
+            # Remove any self loops
+            self.M.remove_edges_from(nx.selfloop_edges(self.M))
+
+            # For each aneurysm, get parents and siblings
+            parent = sorted(self.M.predecessors(an_id))[0]
+            siblings = sorted(self.M.successors(parent))
+
+            # Remove the aneurysm from the list of siblings
+            siblings = [x for x in siblings if x != an_id]
+            print(&#39;sibs&#39;, siblings)
+
+            for s in siblings:
+                if s in self.clipping_points.keys():
+                    self.sac_zones[an_id][s] = {}
+
+                    # Get start and end points
+                    start = self.clipping_points[s][&#39;start&#39;]
+                    end = self.clipping_points[s][&#39;end&#39;]
+                    pts = np.concatenate([start.points, end.points], axis=0)
+                    tree = KDTree(self.mean_segments[str(s)].points)
+                    _, ii = tree.query(pts, k=1)
+                    idx = ii[0]
+                    arc_vals = self.mean_segments[str(s)].point_data[&#39;arc_length&#39;][ii]
+
+                    s_line = self.mean_segments[str(s)]
+
+                    n = 1
+                    cpos = None
+                    while (n &lt;= n_spheres) and idx &lt; ii[1]:
+                        arc_val = s_line.point_data[&#39;arc_length&#39;][idx]
+                        MISR = s_line.point_data[&#39;MaximumInscribedSphereRadius&#39;][idx]
+                        next_val = arc_val + MISR
+                        idx = np.argmin((s_line.point_data[&#39;arc_length&#39;] - next_val)**2)
+                        # print(&#39;Step&#39;, s, n)
+                        # p = pv.Plotter()
+                        # p.camera_position = cpos
+                        # p.add_mesh(self.surf, color=&#39;w&#39;, opacity=0.1)
+                        # p.add_mesh(pv.wrap(s_line.points[idx]), color=&#39;r&#39;)
+                        # p.show()
+                        # cpos = p.camera_position
+                        n += 1
+                    
+                    if n &lt; n_spheres:
+                        idx = ii[1]
+
+                    origin = pv.wrap(s_line.points[idx])
+                    origin.point_data[&#39;Normal&#39;] = -s_line.point_data[&#39;FrenetTangent&#39;][idx].reshape(1,3)
+
+                    self.sac_zones[an_id][s][n_spheres] = origin
+                    self.sac_zones[an_id][s][n_spheres].relation = &#39;sibling&#39;
+
+            # Then parent
+            self.sac_zones[an_id][parent] = {}
+            
+            # Get start and end points
+            start = self.clipping_points[parent][&#39;start&#39;]
+            end = self.clipping_points[parent][&#39;end&#39;]
+            pts = np.concatenate([start.points, end.points], axis=0)
+            tree = KDTree(self.mean_segments[str(parent)].points)
+            _, ii = tree.query(pts, k=1)
+            idx = ii[1]
+            arc_vals = self.mean_segments[str(parent)].point_data[&#39;arc_length&#39;][ii]
+
+            s_line = self.mean_segments[str(parent)]
+
+            n = 1
+            while (n &lt;= n_spheres) and idx &gt; ii[0]:
+                arc_val = s_line.point_data[&#39;arc_length&#39;][idx]
+                MISR = s_line.point_data[&#39;MaximumInscribedSphereRadius&#39;][idx]
+                next_val = arc_val - MISR
+                idx = np.argmin((s_line.point_data[&#39;arc_length&#39;] - next_val)**2)
+                n += 1
+            
+            if n &lt; n_spheres:
+                idx = ii[0]
+
+            origin = pv.wrap(s_line.points[idx])
+            origin.point_data[&#39;Normal&#39;] = s_line.point_data[&#39;FrenetTangent&#39;][idx].reshape(1,3)
+
+            self.sac_zones[an_id][parent][n_spheres] = origin
+            self.sac_zones[an_id][parent][n_spheres].relation = &#39;parent&#39;
+
+    def mark_near_vessel_regions(self, mesh, n_spheres):
+        &#34;&#34;&#34;
+        Be careful with index between mean_segments and digraphs!!
+        &#34;&#34;&#34;
+        for an_id in self.aneurysm_group_ids:
+            # First mask n_spheres away
+            far = TubeClipper(mesh)
+            near = TubeClipper(mesh)
+
+            for s in self.sac_zones[an_id].keys():
+                pt_far = self.sac_zones[an_id][s][n_spheres]
+
+                far.clip(pt_far.points[0], pt_far.point_data[&#39;Normal&#39;][0])
+
+                if pt_far.relation == &#39;parent&#39;:
+                    pt_near = self.clipping_points[s][&#39;end&#39;]
+                else:
+                    pt_near = self.clipping_points[s][&#39;start&#39;]
+                
+                near.clip(pt_near.points[0], -pt_near.point_data[&#39;Normal&#39;][0])
+
+            near = near.clipped
+            far = far.clipped
+            near.point_data[&#39;Side&#39;] = ~near.point_data[&#39;Side&#39;] 
+            region = near.point_data[&#39;Side&#39;] * far.point_data[&#39;Side&#39;] 
+
+            mesh.point_data[&#39;sac_zone_{:02d}&#39;.format(int(an_id))] = region
+
+        zone_arr_names = [x for x in mesh.point_data if &#39;sac_zone_&#39; in x]
+        zone_arrs = [mesh.point_data[a] for a in zone_arr_names]
+        mesh.point_data[&#39;sac_zones&#39;] = np.sum(zone_arrs, axis=0)
+
+        # for idx, an_id in enumerate(self.aneurysm_group_ids):
+            # mesh.point_data[&#39;sac_zones&#39;][mesh.point_data[&#39;GroupIds&#39;] == an_id] = idx + 3
+
+    def get_plc_points(self, n_spheres):
+        &#34;&#34;&#34; Get PLC points based on mark_near_vessel_regions.
+        &#34;&#34;&#34;
+        self.plc_points = {}
+
+        for an_id in self.aneurysm_group_ids:
+            plc_pts = pv.MultiBlock()
+            for relative in self.sac_zones[an_id].keys():
+                pt_far = self.sac_zones[an_id][relative][n_spheres]
+
+                if pt_far.relation == &#39;parent&#39;:
+                    pt_near = self.clipping_points[relative][&#39;end&#39;]
+                else:
+                    pt_near = self.clipping_points[relative][&#39;start&#39;]
+
+                plc_pts[relative] = pt_near #.append(pt_near)
+
+            self.plc_pts = plc_pts # = pv.MultiBlock(plc_pts)
+
+    def get_mutual_ancestors(self):
+        &#34;&#34;&#34; For landmarking a given bifurcation. 
+        &#34;&#34;&#34;
+        centers = self.get_open_profiles()
+        centers_m = pv.wrap(centers)
+        outlet_ids = self._pick_points(centers_m, text=&#39;Pick relevant outlets&#39;)
+        outlet_points = [centers[i] for i in outlet_ids]
+        mean_segments = pv.MultiBlock(self.mean_segments).combine()
+        # mean_segments = self.mean_segments.combine()
+        tree = KDTree(mean_segments.points)
+        _, ii = tree.query(outlet_points)
+        g_ids = mean_segments.point_data[&#39;GroupIds&#39;][ii].astype(int)
+        lowest_common = nx.lowest_common_ancestor(self.G, g_ids[0], g_ids[1])
+        ancestors = nx.ancestors(self.G, lowest_common)
+        fam = list(ancestors) + [lowest_common]
+        artery = self.mean_segments[[str(x) for x in fam]]
+        return artery, fam</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="geometry_tools.meshing.Mesher" href="meshing.html#geometry_tools.meshing.Mesher">Mesher</a></li>
+<li><a title="geometry_tools.volume_mesh.VolumeMesh" href="volume_mesh.html#geometry_tools.volume_mesh.VolumeMesh">VolumeMesh</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="geometry_tools.surface.Surfer.branch_centerlines"><code class="name flex">
+<span>def <span class="ident">branch_centerlines</span></span>(<span>self, project_back=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def branch_centerlines(self, project_back=True):
+
+    self.centerlines_aneurysm_branched = vmtk.centerline_branches_ids(self.centerlines_aneurysm)
+
+    if project_back:
+        self.centerlines_aneurysm_split = self._project_centerline_attrs(
+            self.centerlines_aneurysm, self.centerlines_aneurysm_branched)
+    
+    # This is the really slow step because of the glyphs.
+    self.surf, self.neighbour_pt_ids = vmtk.surface_centerline_projection_MISR(
+        self.surf, self.centerlines_aneurysm_branched, sm_iterations=1)
+    
+    # Check if this line is now redundant after adding new fix function.
+    self.update_aneurysm_group_ids()
+
+    # New fix function:
+    self.surf = cc.fix_vmtk_group_ids(self.surf)
+
+    return self</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.branch_centerlines_pt"><code class="name flex">
+<span>def <span class="ident">branch_centerlines_pt</span></span>(<span>self, project_back=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def branch_centerlines_pt(self, project_back=True):
+    print(&#34;\nBranching centerlines...&#34;)
+    self.centerlines_branched = vmtk.centerline_branches_ids(self.centerlines)
+
+    if project_back:
+        self.centerlines_split = self._project_centerline_attrs(
+            self.centerlines, self.centerlines_branched)
+    
+    self.surf, self.neighbour_pt_ids = vmtk.surface_centerline_projection_MISR(
+        self.surf, self.centerlines_branched, sm_iterations=1)
+    
+    #print(self.surf.point_data)
+    return self</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.clip_boundaries"><code class="name flex">
+<span>def <span class="ident">clip_boundaries</span></span>(<span>self, method='select', refine=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Interactively clip branches then fix clip to normal </p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>method</code></strong> :&ensp;<code>str</code></dt>
+<dd>'select' uses common.ClickDragDelete tool,
+'box' uses vmtk.clipper tool.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clip_boundaries(self, method=&#39;select&#39;, refine = False):
+    &#34;&#34;&#34; Interactively clip branches then fix clip to normal 
+
+    Args:
+        method (str): &#39;select&#39; uses common.ClickDragDelete tool,
+                      &#39;box&#39; uses vmtk.clipper tool.
+    &#34;&#34;&#34;
+    self.surf.clean()
+    if method == &#39;select&#39;:
+        cb = cc.ClickDragDelete(self.surf, title=&#39;Clip boundaries&#39;)
+        surf = cb.mesh 
+        surf = surf.triangulate()
+        #print(surf.point_data)
+
+        if type(surf) != pv.core.pointset.PolyData:
+            surf = pv.PolyData(surf.points, surf.cells)
+
+    else:   
+        surf = self.surf.fill_holes(10.0)
+        surf = vmtk.clipper(surf)
+
+    surf = surf.connectivity(largest=True)
+    surf = surf.clean() 
+
+    self.surf = surf    
+    return cb.flag_inspect </code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.clip_endpoints_with_spheres"><code class="name flex">
+<span>def <span class="ident">clip_endpoints_with_spheres</span></span>(<span>self, factor=1.4, outlet_clip=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clip_endpoints_with_spheres(self, factor=1.4, outlet_clip=None):
+    
+    if outlet_clip is None:
+        endpoints = np.concatenate([self.inlet_points, self.outlet_points], axis=0)
+        endlets = pv.wrap(endpoints)
+
+        tree = KDTree(self.centerlines_aneurysm.points)
+        _, ii = tree.query(endlets.points, k=3)
+        ii = np.array(ii)[:,-1]
+        
+        misr = self.centerlines_aneurysm.point_data[&#39;MaximumInscribedSphereRadius&#39;][ii]
+        
+        endlets.point_data[&#39;MaximumInscribedSphereRadius&#39;] = misr
+        outlet_clip = endlets.glyph(geom=pv.Sphere(1.0), factor=factor)
+
+    self.surf = self.surf.clip_surface(outlet_clip, invert=False)
+    self.surf = self.surf.extract_largest()
+    return outlet_clip</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.clip_endpoints_with_tubeclipper"><code class="name flex">
+<span>def <span class="ident">clip_endpoints_with_tubeclipper</span></span>(<span>self, endpoints_pv=None, include_aneurysms=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Can introduce buggy mesh! Beware!</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clip_endpoints_with_tubeclipper(self, endpoints_pv=None, include_aneurysms=True):
+    &#34;&#34;&#34; Can introduce buggy mesh! Beware!
+    &#34;&#34;&#34;
+    if endpoints_pv is None:
+        endpoints = np.concatenate([self.inlet_points, self.outlet_points], axis=0)
+        
+        if include_aneurysms==True:
+            tree = KDTree(self.centerlines_aneurysm.points)
+        else:
+            tree = KDTree(self.centerlines.points)
+            
+        _, ii_inlets = tree.query(self.inlet_points, k=3)
+        _, ii_outlets = tree.query(self.outlet_points, k=3)
+
+        ii_inlets_n = np.array(ii_inlets)[:,-1]
+        ii_outlets_n = np.array(ii_outlets)[:,-1]
+
+        ii_inlets = np.array(ii_inlets)[:,0]
+        ii_outlets = np.array(ii_outlets)[:,0]
+        
+        if include_aneurysms==True:
+            # Get points at those points
+            in_points = self.centerlines_aneurysm.points[ii_inlets]
+            out_points = self.centerlines_aneurysm.points[ii_outlets]
+        
+            # Get normal at those points
+            in_normals = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii_inlets_n]
+            out_normals = -self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii_outlets_n]
+        else:
+            # Get points at those points
+            in_points = self.centerlines.points[ii_inlets]
+            out_points = self.centerlines.points[ii_outlets]
+        
+            # Get normal at those points
+            in_normals = self.centerlines.point_data[&#39;FrenetTangent&#39;][ii_inlets_n]
+            out_normals = -self.centerlines.point_data[&#39;FrenetTangent&#39;][ii_outlets_n]
+            
+        points = np.concatenate([in_points, out_points], axis=0)
+        normals = np.concatenate([in_normals, out_normals], axis=0)
+
+        endpoints_pv = pv.wrap(points)
+        endpoints_pv.point_data[&#39;Normals&#39;] = normals
+
+    surf_closed = self.surf.fill_holes(30.0).clean()
+    select = endpoints_pv.select_enclosed_points(surf_closed, tolerance=0.00001, check_surface=False)
+
+    # for origin, normal in zip(endpoints_pv.points, endpoints_pv.point_data[&#39;Normals&#39;]):
+    #     t = TubeClipper(self.surf)
+    #     t.clip(origin, normal)
+    #     self.surf = t.far_side
+
+    for sdx in range(select.n_points):
+        check = select.point_data[&#39;SelectedPoints&#39;][sdx]
+        if check == True:
+            origin = select.points[sdx]
+            normal = select.point_data[&#39;Normals&#39;][sdx]
+            t = TubeClipper(self.surf)
+            t.clip(origin, normal)
+            self.surf = t.far_side
+            
+    old_surf = self.surf.copy()
+    # self.surf = self.surf.triangulate()
+    # self.surf = pv.PolyData(self.surf.points, self.surf.cells)
+
+    # self.surf = self.surf.interpolate(old_surf)
+    self.copy_arrays(old_surf, self.surf)
+    
+    #pretty sure there is no groupid issue without aneurysms?
+    if include_aneurysms == True:
+        self.surf = cc.fix_vmtk_group_ids(self.surf)
+    return endpoints_pv</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.clip_endpoints_with_vmtk"><code class="name flex">
+<span>def <span class="ident">clip_endpoints_with_vmtk</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clip_endpoints_with_vmtk(self):
+    surf = vmtk.surface_end_clipper(self.surf, centerlines=self.centerlines)
+    return surf</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.copy_arrays"><code class="name flex">
+<span>def <span class="ident">copy_arrays</span></span>(<span>self, src, dst)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy_arrays(self, src, dst):
+    # tree = KDTree(src.points)
+    # _, ii = tree.query(dst.points, k=1)
+    # for arr in src.point_data:
+    #     dst.point_data[arr] = src.point_data[arr][ii]
+
+    # centers = src.cell_centers()
+    # tree = KDTree(centers.points)
+    # _, ii = tree.query(dst.cell_centers().points, k=1)
+    # for arr in src.cell_data:
+    #     dst.cell_data[arr] = src.cell_data[arr][ii]
+        
+    # return dst
+    return cc.copy_arrays(src, dst)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.copy_structure"><code class="name flex">
+<span>def <span class="ident">copy_structure</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy_structure(self):
+    surf_new = pv.PolyData()
+    surf_new.copy_structure(self.surf)
+    self.surf = surf_new</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.decimate_surface"><code class="name flex">
+<span>def <span class="ident">decimate_surface</span></span>(<span>self, target_edge_length)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def decimate_surface(self, target_edge_length):
+    # edges = self.surf.extract_all_edges()
+    # mean_el = edges.compute_cell_sizes().cell_data[&#39;Length&#39;].mean()
+    # target_el = target_edge_length
+    # target_reduction = 1 - (mean_el / target_el)
+    # surf_d = self.surf.decimate(target_reduction, volume_preservation=True)
+    # self.surf = self.copy_arrays(self.surf, surf_d)
+    self.surf = cc.decimate_edge_length(self.surf, target_edge_length)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.extract_sacs"><code class="name flex">
+<span>def <span class="ident">extract_sacs</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Redux based on new vmtk.surface_centerline_projection_MISR.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extract_sacs(self):
+    &#34;&#34;&#34; Redux based on new vmtk.surface_centerline_projection_MISR.
+    &#34;&#34;&#34;
+    self.sacs = {}
+
+    for g in self.aneurysm_group_ids:
+        sac_mask = self.surf.point_data[&#39;GroupIds&#39;] == g
+        sac = self.surf.extract_points(sac_mask)
+        sac_pd = pv.PolyData(sac.points, sac.cells)
+        for arr in sac.point_data:
+            sac_pd.point_data[arr] = sac.point_data[arr]
+        for arr in sac.cell_data:
+            sac_pd.cell_data[arr] = sac.cell_data[arr]
+        self.sacs[g] = sac_pd</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.generate_centerlines"><code class="name flex">
+<span>def <span class="ident">generate_centerlines</span></span>(<span>self, include_aneurysms=True, seed_selector='idlist')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generate centerlines using VMTK.</p>
+<p>Watch the centerline smoothing at the end!! May need tweaking for your case.</p>
+<p>Consider moving this into vmtk_wrapper, the nearest ids works well.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate_centerlines(self, include_aneurysms=True, seed_selector=&#39;idlist&#39;):
+    &#34;&#34;&#34; Generate centerlines using VMTK.
+
+    Watch the centerline smoothing at the end!! May need tweaking for your case.
+
+    Consider moving this into vmtk_wrapper, the nearest ids works well.
+    &#34;&#34;&#34;
+    surf_capped = pv.PolyData()
+    surf_capped.copy_structure(vmtk.surface_capper(self.surf))
+    tree = KDTree(surf_capped.points)
+    inlet_ids = [tree.query(i, k=1)[1] for i in self.inlet_points]
+    outlet_ids = [tree.query(o, k=1)[1] for o in self.outlet_points]
+
+    self.inlet_ids = inlet_ids 
+    self.outlet_ids = outlet_ids
+
+    
+    
+    if include_aneurysms == True:
+        self.aneurysm_ids = [tree.query(i, k=1)[1] for i in self.aneurysm_points]
+        target_ids = self.outlet_ids + self.aneurysm_ids
+
+        centerlines = vmtk.centerlines(
+            surf_capped, 
+            seed_selector=seed_selector, 
+            src_ids=self.inlet_ids,
+            target_ids=target_ids,
+            )
+        centerlines = vmtk.centerlines_smooth(centerlines, iterations=100, sm_factor=0.1)
+        self.centerlines_aneurysm = centerlines
+        self.centerlines_aneurysm = vmtk.centerline_geometry(self.centerlines_aneurysm)
+
+        ind = list(range(len(self.outlet_ids)))
+        cline_temp = self.centerlines_aneurysm.extract_cells(ind)
+        centerlines = pv.PolyData(cline_temp.points, lines=cline_temp.cells)
+        for arr in cline_temp.point_data:
+            centerlines.point_data[arr] = cline_temp.point_data[arr]
+        for arr in cline_temp.cell_data:
+            centerlines.cell_data[arr] = cline_temp.cell_data[arr]
+        self.centerlines = centerlines
+        
+    else:
+        target_ids = self.outlet_ids 
+
+        centerlines = vmtk.centerlines(
+            surf_capped, 
+            seed_selector=seed_selector, 
+            src_ids=self.inlet_ids,
+            target_ids=target_ids,
+            )
+        #NOTE: If your vessels are really tortuous, you are going to want to turn the 
+        # smoothing wayyy down...    
+        centerlines = vmtk.centerlines_smooth(centerlines, iterations=100, sm_factor=0.1)
+
+        self.centerlines = centerlines
+        self.centerlines = vmtk.centerline_geometry(self.centerlines)
+    
+    return self </code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.generate_centerlines_multi"><code class="name flex">
+<span>def <span class="ident">generate_centerlines_multi</span></span>(<span>self, proj_dir, seed_selector='idlist')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>""" Generate centerlines using VMTK
+Here, the inlets are iterated over to generate individual sets of centerlines.
+Then, the centerlines are all merged together into one single centerline.
+This is necessary for multiple inlets, and needs quite a lot of monitoring if you have
+both multiple inlets and many outlets. It can make terrible centerlines if you are not careful.</p>
+<p>The only reason we need this is for tubeclipper to do a good job.
+"""
+print("Generating multiple centerlines")
+surf_capped = pv.PolyData()
+surf_capped.copy_structure(vmtk.surface_capper(self.surf))
+tree = KDTree(surf_capped.points)
+inlet_ids = [tree.query(i, k=1)[1] for i in self.inlet_points]
+outlet_ids = [tree.query(o, k=1)[1] for o in self.outlet_points]</p>
+<p>self.inlet_ids = inlet_ids
+self.outlet_ids = outlet_ids
+target_ids = self.outlet_ids
+centerlines_unmerged_blocks = pv.MultiBlock()</p>
+<p>for idx,i_id in enumerate(inlet_ids):</p>
+<pre><code>if idx&lt;1:
+    centerlines_unmerged = vmtk.centerlines(
+        surf_capped, 
+        seed_selector=seed_selector, 
+        src_ids=[i_id],
+        target_ids=target_ids,
+        )
+    centerlines_unmerged.save(proj_dir/('centerline{}.vtp'.format(idx)))
+    centerlines_unmerged_blocks.append(centerlines_unmerged)
+else:
+    centerlines_unmerged = vmtk.centerlines(
+        surf_capped, 
+        seed_selector=seed_selector, 
+        src_ids=[i_id],
+        #NOTE: this might create better centerlines if you try switching this to
+        #different outlet targets. Try a few and look at the output first.
+        target_ids=[0],
+        )
+    centerlines_unmerged.save(proj_dir/('centerline{}.vtp'.format(idx)))
+    centerlines_unmerged_blocks.append(vmtk.surface_append(centerlines_unmerged_blocks[idx-1],centerlines_unmerged))
+    centerlines_appended = centerlines_unmerged_blocks[idx]
+    #centerlines_appended.save(proj_dir/('appended_cl.vtp'))
+</code></pre>
+<p>centerlines_branched = vmtk.centerline_branches_ids(centerlines_appended)
+centerlines_merged = vmtk.merge_centerlines(centerlines_branched)
+centerlines_total = vmtk.centerlines_smooth(centerlines_merged, iterations=1, sm_factor=0.01)</p>
+<p>self.centerlines = centerlines_total</p>
+<h1 id="centerlines_totalsaveproj_dirmerged_centerlinesvtp">centerlines_total.save(proj_dir/('merged_centerlines.vtp'))</h1>
+<p>self.centerlines = vmtk.centerline_geometry(self.centerlines)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate_centerlines_multi(self, proj_dir, seed_selector=&#39;idlist&#39;):
+    &#39;&#39;&#39;
+    &#34;&#34;&#34; Generate centerlines using VMTK
+    Here, the inlets are iterated over to generate individual sets of centerlines.
+    Then, the centerlines are all merged together into one single centerline.
+    This is necessary for multiple inlets, and needs quite a lot of monitoring if you have 
+    both multiple inlets and many outlets. It can make terrible centerlines if you are not careful.
+
+    The only reason we need this is for tubeclipper to do a good job.
+    &#34;&#34;&#34;
+    print(&#34;Generating multiple centerlines&#34;)
+    surf_capped = pv.PolyData()
+    surf_capped.copy_structure(vmtk.surface_capper(self.surf))
+    tree = KDTree(surf_capped.points)
+    inlet_ids = [tree.query(i, k=1)[1] for i in self.inlet_points]
+    outlet_ids = [tree.query(o, k=1)[1] for o in self.outlet_points]
+
+    self.inlet_ids = inlet_ids 
+    self.outlet_ids = outlet_ids
+    target_ids = self.outlet_ids 
+    centerlines_unmerged_blocks = pv.MultiBlock()
+
+    for idx,i_id in enumerate(inlet_ids):
+        
+        if idx&lt;1:
+            centerlines_unmerged = vmtk.centerlines(
+                surf_capped, 
+                seed_selector=seed_selector, 
+                src_ids=[i_id],
+                target_ids=target_ids,
+                )
+            centerlines_unmerged.save(proj_dir/(&#39;centerline{}.vtp&#39;.format(idx)))
+            centerlines_unmerged_blocks.append(centerlines_unmerged)
+        else:
+            centerlines_unmerged = vmtk.centerlines(
+                surf_capped, 
+                seed_selector=seed_selector, 
+                src_ids=[i_id],
+                #NOTE: this might create better centerlines if you try switching this to
+                #different outlet targets. Try a few and look at the output first.
+                target_ids=[0],
+                )
+            centerlines_unmerged.save(proj_dir/(&#39;centerline{}.vtp&#39;.format(idx)))
+            centerlines_unmerged_blocks.append(vmtk.surface_append(centerlines_unmerged_blocks[idx-1],centerlines_unmerged))
+            centerlines_appended = centerlines_unmerged_blocks[idx]
+            #centerlines_appended.save(proj_dir/(&#39;appended_cl.vtp&#39;))
+
+    centerlines_branched = vmtk.centerline_branches_ids(centerlines_appended)
+    centerlines_merged = vmtk.merge_centerlines(centerlines_branched)
+    centerlines_total = vmtk.centerlines_smooth(centerlines_merged, iterations=1, sm_factor=0.01)
+
+    self.centerlines = centerlines_total
+    #centerlines_total.save(proj_dir/(&#39;merged_centerlines.vtp&#39;))
+    self.centerlines = vmtk.centerline_geometry(self.centerlines)
+    &#39;&#39;&#39;
+    &#34;&#34;&#34;
+    Generate centerlines using the network extractor. This won&#39;t cause merging issues.
+    &#34;&#34;&#34;
+    self.centerlines, _ = vmtk.network_extractor(self.surf)
+    self.centerlines = vmtk.centerline_geometry(self.centerlines)
+
+    return self         </code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.get_bifurcation_ref_systems_vectors"><code class="name flex">
+<span>def <span class="ident">get_bifurcation_ref_systems_vectors</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_bifurcation_ref_systems_vectors(self):
+    # self.ref = vmtk.bifurcation_ref_systems(self.centerlines_branched)
+    # self.bif_vec = vmtk.get_bifurcation_vectors(self.centerlines_branched, self.ref)
+
+    # if hasattr(self, &#39;centerlines_aneurysm_branched&#39;):
+    if self.include_aneurysms==True:
+        self.ref_aneurysm = vmtk.bifurcation_ref_systems(self.centerlines_aneurysm_branched)
+        self.bif_vec_aneurysm = vmtk.get_bifurcation_vectors(self.centerlines_aneurysm_branched, self.ref_aneurysm)
+    else: #May need this for inclusions
+        self.ref = vmtk.bifurcation_ref_systems(self.centerlines_branched)
+        self.bif_vec = vmtk.get_bifurcation_vectors(self.centerlines_branched, self.ref)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.get_branch_endpoints"><code class="name flex">
+<span>def <span class="ident">get_branch_endpoints</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get endpoints by splitting up the surface.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_branch_endpoints(self):
+    &#34;&#34;&#34; Get endpoints by splitting up the surface.
+    &#34;&#34;&#34;
+    self.clipping_points = {}
+
+    groups = np.unique(self.surf.point_data[&#39;GroupIds&#39;])
+    #print(groups)
+    masks = [self.surf.point_data[&#39;GroupIds&#39;] == int(g) for g in groups]
+
+    keys = [int(g) for g in groups]
+    #print(keys)
+    parts = [self.surf.extract_points(m) for m in masks]
+    parts = [p.extract_largest() for p in parts]
+    parts = [p.triangulate() for p in parts]
+    parts = [pv.PolyData(p.points, faces=p.cells).clean() for p in parts]
+    parts = dict(zip(keys, parts))
+
+    for g in keys:
+        line = self.mean_segments[g]
+        line = line.clean(tolerance=0.05)
+        part = parts[g]
+        select = line.select_enclosed_points(part.fill_holes(20), tolerance=1e-5, check_surface=False)
+        s_mask = select.point_data[&#39;SelectedPoints&#39;] == 1
+
+        if np.sum(s_mask) &gt; 2:
+            sub = pv.PolyData(select.points[s_mask])
+            sub.point_data[&#39;FrenetTangent&#39;] = select.point_data[&#39;FrenetTangent&#39;][s_mask]
+            sub.point_data[&#39;MaximumInscribedSphereRadius&#39;] = select.point_data[&#39;MaximumInscribedSphereRadius&#39;][s_mask]
+            sub.point_data[&#39;arc_length&#39;] = select.point_data[&#39;arc_length&#39;][s_mask]
+            sub.point_data[&#39;arc_length&#39;] = sub.point_data[&#39;arc_length&#39;] - sub.point_data[&#39;arc_length&#39;][0]
+
+            # Just not starting at endpoint
+            new_start_index = 1
+            new_end_index = len(sub.points) - 2
+
+            # Extract slices of the part based on the centerline and normal.
+            # If n_points == n_cells, the slice forms a loop
+            # otherwise it&#39;s just a line.
+            slice_condition = False
+            new_start_index -= 1
+            while not slice_condition:
+                new_start_index += 1
+                if new_start_index &lt; sub.n_points:
+                    slice1 = part.slice(normal=sub.point_data[&#39;FrenetTangent&#39;][new_start_index],origin=sub.points[new_start_index])
+                else:
+                    break
+
+                if slice1.n_points == 0:
+                    slice_condition = False
+                else:
+                    slice_condition = slice1.n_points == slice1.n_cells
+
+                if new_start_index &gt; len(sub.points):
+                    print(&#39;Broken loop!&#39;)
+
+            # Then for the other end
+            slice_condition = False
+            new_end_index += 1
+            while not slice_condition:
+                new_end_index -= 1
+                if new_end_index &gt; 0:
+                    slice2 = part.slice(normal=sub.point_data[&#39;FrenetTangent&#39;][new_end_index],origin=sub.points[new_end_index])
+                else:
+                    break
+
+                if slice2.n_points == 0:
+                    slice_condition = False
+                else:
+                    slice_condition = slice2.n_points == slice2.n_cells
+
+            if len(sub.points[new_start_index:new_end_index]) &gt; 2:
+                sub_new = pv.wrap(sub.points[new_start_index:new_end_index])
+                sub_new.point_data[&#39;Normals&#39;] = sub.point_data[&#39;FrenetTangent&#39;][new_start_index:new_end_index]
+                sub_new.point_data[&#39;arc_length&#39;] = sub.point_data[&#39;arc_length&#39;][new_start_index:new_end_index]
+
+                self.clipping_points[g] = {}
+                self.clipping_points[g][&#39;start&#39;] = pv.wrap(sub_new.points[0])
+                self.clipping_points[g][&#39;start&#39;].point_data[&#39;Normal&#39;] = sub_new.point_data[&#39;Normals&#39;][0].reshape(1,3)
+
+                self.clipping_points[g][&#39;end&#39;] = pv.wrap(sub_new.points[-1])
+                self.clipping_points[g][&#39;end&#39;].point_data[&#39;Normal&#39;] = -sub_new.point_data[&#39;Normals&#39;][-1].reshape(1,3) </code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.get_branch_endpoints_OLD"><code class="name flex">
+<span>def <span class="ident">get_branch_endpoints_OLD</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This works and is robust, but super slow. Depreceate.
+Might be better when groupids is screwy though.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_branch_endpoints_OLD(self):
+    &#34;&#34;&#34; 
+    This works and is robust, but super slow. Depreceate. 
+    Might be better when groupids is screwy though.
+    &#34;&#34;&#34;
+    self.clipping_points = {}
+    cpos = None
+    
+    tree = KDTree(self.centerlines_aneurysm.points)
+
+    # Remove short branches from search
+    self.GG = self.G.copy()
+
+    surf_d = cc.decimate_edge_length(self.surf, 0.8)
+    surf_d = cc.copy_arrays(self.surf, surf_d)
+
+    for g in self.GG.nodes:
+        # print(g)
+        self.clipping_points[g] = {}
+        self.M = self.GG.copy()
+        self.M.remove_edges_from(nx.selfloop_edges(self.M))
+
+        # For each aneurysm, get children, parents and siblings
+        children = sorted(self.M.successors(g))
+        parent = sorted(self.M.predecessors(g)) 
+        
+        G = self.M.to_undirected()
+        G.remove_node(g)
+        S = [G.subgraph(c).copy() for c in nx.connected_components(G)]
+        S = [list(x.nodes) for x in S]
+
+        descendants = [x for x in S if len(set(children) - set(x)) != len(children)]
+        other_fam = [x for x in S if x not in descendants]
+
+        # Flatten list of lists
+        descendants = [val for sublist in descendants for val in sublist]
+        other_fam = [val for sublist in other_fam for val in sublist]
+
+        if len(parent) &gt; 0:
+            siblings = sorted(self.M.successors(parent[0]))
+
+            # Remove the branch from the list of siblings
+            siblings = [x for x in siblings if x != g]
+        else:
+            siblings = []
+
+        s_line = self.mean_segments[str(g)]
+
+        if g not in self.aneurysm_group_ids: # Don&#39;t define an endpoint for aneurysms
+            # March backward along branch until clipping condition with children
+            t = TubeClipper(surf_d)
+            idx = len(s_line.points) - 1
+
+            # Make sure cross section doesn&#39;t intersect children
+            if len(descendants) != 0:
+                check = True
+                while (check == True) and (idx &gt; 2):
+                    _, ii = tree.query(s_line.points[idx], k=1)
+                    origin = self.centerlines_aneurysm.points[ii]
+                    normal = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii]
+                    t.clip(origin, -normal)
+                    clipped = t.clipped
+                    mask = clipped.point_data[&#39;Side&#39;] == 1
+                    clipped = clipped.extract_points(mask)
+                    # clipped = clipped.clean()
+
+                    check = np.any([int(s) in clipped.point_data[&#39;GroupIds&#39;] for s in descendants])
+                    # clipped.plot(color=&#39;w&#39;)#scalars=&#39;GroupIds&#39;)
+                    # p = pv.Plotter()
+                    # p.camera_position = cpos
+                    # p.add_mesh(clipped, color=&#39;r&#39;)
+                    # p.add_mesh(self.surf, color=&#39;w&#39;, opacity=0.1)
+                    # p.show()
+                    # cpos = p.camera_position
+
+                    print(&#39;ch&#39;, g, check, idx)
+                    if check == True:
+                        idx -= 2
+
+            else:
+                _, ii = tree.query(s_line.points[-1], k=1)
+                origin = self.centerlines_aneurysm.points[ii]
+                normal = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii]
+
+            if (len(descendants) == 0) or (check == False):
+                self.clipping_points[g][&#39;end&#39;] = pv.wrap(origin)
+                self.clipping_points[g][&#39;end&#39;].point_data[&#39;Normal&#39;] = -normal.reshape(1,3)
+            # else:
+                # self.clipping_points[g][&#39;end&#39;] = None
+
+        # Now march forward along branch from beginning
+        t = TubeClipper(surf_d)
+
+        # Get index of first item after blanking ends 
+        # diff = np.diff(s_line.point_data[&#39;Blanking&#39;])
+        # BLANKING is janky don&#39;t use
+        idx = 0 #np.argmax(diff == -1) 
+
+        # Make sure it doesn&#39;t intersect with parent or siblings
+        fam = other_fam #siblings + parent
+
+        if len(fam) != 0:
+            check2 = True
+
+            while (check2 == True) and (idx &lt; len(s_line.points)):
+                _, ii = tree.query(s_line.points[idx], k=1)
+                origin = self.centerlines_aneurysm.points[ii]
+                normal = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii]
+                t.clip(origin, normal)
+                clipped = t.clipped
+                mask = clipped.point_data[&#39;Side&#39;] == 1
+                clipped = clipped.extract_points(mask)
+
+                check2 = np.any([int(s) in clipped.point_data[&#39;GroupIds&#39;] for s in fam])
+                
+                # clipped.plot(color=&#39;b&#39;)#scalars=&#39;GroupIds&#39;)
+                # p = pv.Plotter()
+                # p.camera_position = cpos
+                # p.add_mesh(clipped, color=&#39;r&#39;)
+                # p.add_mesh(self.surf, color=&#39;w&#39;, opacity=0.1)
+                # p.show()
+                # cpos = p.camera_position
+                
+                print(&#39;ch2&#39;, g, check, idx)
+                if check2 == True:
+                    idx += 2
+
+        else:
+            _, ii = tree.query(s_line.points[0], k=1)
+            origin = self.centerlines_aneurysm.points[ii]
+            normal = self.centerlines_aneurysm.point_data[&#39;FrenetTangent&#39;][ii]
+
+        if len(fam) == 0 or check2 == False:
+            self.clipping_points[g][&#39;start&#39;] = pv.wrap(origin)
+            self.clipping_points[g][&#39;start&#39;].point_data[&#39;Normal&#39;] = normal.reshape(1,3)
+        # else:
+            # self.clipping_points[g][&#39;start&#39;] = None 
+
+    self.valid_clipping_points = {}
+    for g in self.clipping_points.keys():
+        if &#39;start&#39; in self.clipping_points[g].keys():
+            if &#39;end&#39; in self.clipping_points[g].keys():
+                self.valid_clipping_points[str(g)] = self.clipping_points[g]
+
+    self.clipping_points = self.valid_clipping_points</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.get_group_adjacency"><code class="name flex">
+<span>def <span class="ident">get_group_adjacency</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get adjlist and networkx DiGraph of centerlines.</p>
+<p>The centerlines should be passed before calling centerline branch ids.
+If getting errors, try recomputing centerlines &ndash; there might be a bug
+where self.centerlines is overridden with centerlines_branched.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_group_adjacency(self):
+    &#34;&#34;&#34; Get adjlist and networkx DiGraph of centerlines.
+    
+    The centerlines should be passed before calling centerline branch ids.
+    If getting errors, try recomputing centerlines -- there might be a bug
+    where self.centerlines is overridden with centerlines_branched. 
+    &#34;&#34;&#34;
+    if self.include_aneurysms==True:
+        if hasattr(self, &#39;centerlines&#39;):
+            self.edges, self.G = vmtk.extract_group_adjacency(self.centerlines_aneurysm)
+        if hasattr(self, &#39;centerlines&#39;):
+            _, self.G_no_aneurysm = vmtk.extract_group_adjacency(self.centerlines)
+    else:
+        if hasattr(self, &#39;centerlines&#39;):
+            self.edges, self.G = vmtk.extract_group_adjacency(self.centerlines)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.get_mean_segments"><code class="name flex">
+<span>def <span class="ident">get_mean_segments</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the "average" segment for each each group id in centerline</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_mean_segments(self):
+    &#34;&#34;&#34; Get the &#34;average&#34; segment for each each group id in centerline
+    &#34;&#34;&#34;
+    # Get group adjacency
+    # edges, G = vmtk.extract_group_adjacency(self.centerlines_aneurysm)
+    centerlines_split = self.centerlines_aneurysm_split
+
+    # Get valid (non-blanked) ids
+    mask = np.invert(centerlines_split.point_data[&#39;Blanking&#39;].astype(bool))
+    all_ids = np.unique(centerlines_split.point_data[&#39;GroupIds&#39;])
+    valid_ids = np.unique(centerlines_split.point_data[&#39;GroupIds&#39;][mask])
+    print(&#39;valid:&#39;, len(valid_ids), valid_ids)
+    valid_ids = [x for x in valid_ids if str(x) in self.G.nodes]
+    #print(&#39;valid2:&#39;, len(valid_ids), valid_ids)
+    blanking_ids = np.unique(centerlines_split.point_data[&#39;GroupIds&#39;][~mask])
+    print(&#34;blankingids: &#34;, len(blanking_ids), blanking_ids)
+    # Split each centerline into segments based on groupIds
+    segments = {key : [] for key in valid_ids}
+    centerlines_multi = centerlines_split.split_bodies()
+
+    # Create a new variable like &#34;GroupIds&#34; called &#34;GroupIdsNonBlanking&#34;
+    # Anywhere a a group is blanked, relabel it with the successor&#39;s group id.
+    for cline in centerlines_multi:
+        cline.point_data[&#39;GroupIdsNonBlanking&#39;] = cline.point_data[&#39;GroupIds&#39;].copy()
+        groups = np.unique([x for x in cline.point_data[&#39;GroupIds&#39;] if x in all_ids])
+        blanking_groups = [x for x in groups if x in blanking_ids]
+        # blanking_successors = [list(self.G.successors(blanking_groups[i] - 1)) for i in range(len(blanking_groups))]
+        blanking_masks = [cline.point_data[&#39;GroupIds&#39;] == x for x in blanking_groups]
+        blanking_diffs = [np.diff(x.astype(int)) for x in blanking_masks]
+        blanking_successor_idx = [np.argmin(x) + 1 for x in blanking_diffs]
+        blanking_successors = [cline.point_data[&#39;GroupIds&#39;][x] for x in blanking_successor_idx]
+        reassignments = blanking_successors #[[x for x in suc if x in groups][0] for suc in blanking_successors]
+
+        masks = [cline.point_data[&#39;GroupIdsNonBlanking&#39;] == x for x in blanking_groups]
+        
+        for msk, r in zip(masks, reassignments):
+            cline.point_data[&#39;GroupIdsNonBlanking&#39;][msk] = r
+
+    # For each valid group id, extract lines associated with that group ID.
+    # The items in segments are lists because multiple lines may have the same 
+    # point id (to be averaged later)
+    for cline in centerlines_multi:
+        groups = np.unique([x for x in cline.point_data[&#39;GroupIdsNonBlanking&#39;] if x in valid_ids])
+        # print(groups)
+        for gid in groups:
+            mask = cline.point_data[&#39;GroupIdsNonBlanking&#39;] == gid
+            line_points = cline.extract_points(mask, adjacent_cells=False, include_cells=False)
+            segments[gid].append(line_points)
+
+    # Get mean of each groupIDs segment
+    # Have to interpolate arrays onto mean segment
+    mean_segments = {key : None for key in valid_ids}
+    for key in valid_ids:
+        line_groups = segments[key]
+
+        points = [p.points for p in line_groups]
+        
+        n_points = np.max([p.n_points for p in line_groups])
+        splines = [pv.Spline(p, n_points) for p in points]
+        splines = [s.interpolate(l, strategy=&#39;closest_point&#39;) for s, l in zip(splines, line_groups)]
+
+        # NOTE this is a hacky way of doing it. find diverging point
+        # or use the bif vectors.
+        if n_points &gt; 20:
+            back_off = 20
+            mean_spline = np.mean([s.points[:-back_off] for s in splines], axis=0)
+        else:
+            mean_spline = np.mean([s.points for s in splines], axis=0)
+        spline = pv.Spline(mean_spline, n_points)
+        mean_segments[key] = spline
+
+
+    # # Prepend last point in parent segment to child
+    for key in valid_ids:
+        parent = [int(x) for x in self.G.predecessors(str(key))]
+        if len(parent) != 0:
+            parent = parent[0]
+        else:
+            parent = None
+
+        if parent is not None:
+            # ref_group = parent + 1 
+        
+            # Prepend point
+            pt = mean_segments[parent].points[-1].reshape(1,-1)
+            segment = mean_segments[key].points
+            points = np.concatenate([pt, segment], axis=0)
+            spline = pv.Spline(points, segment.shape[0] + 1)
+            spline.point_data[&#39;GroupIds&#39;] = key
+            mean_segments[key] = spline
+
+    centerlines_multi_merge = centerlines_multi.combine()
+    tree = KDTree(centerlines_multi_merge.points)
+
+    for key in mean_segments.keys():
+        # Transfer relevant arrays to new spline
+        ndx = tree.query(mean_segments[key].points, k=1)[1]
+
+        for arr in centerlines_multi_merge.point_data.keys():
+            mean_arr = centerlines_multi_merge.point_data[arr][ndx] #p.mean([s.point_data[arr] for s in splines], axis=0)
+            mean_segments[key].point_data[arr] = mean_arr
+       
+        mean_segments[key].point_data[&#39;OriginalGroupIds&#39;] = mean_segments[key].point_data[&#39;GroupIds&#39;].copy()
+        mean_segments[key].point_data[&#39;GroupIds&#39;] = key
+        mean_segments[key] = mean_segments[key].compute_arc_length()
+        mean_segments[key][&#39;arc_length_inv&#39;] = mean_segments[key][&#39;arc_length&#39;][::-1]
+
+    keys = list(mean_segments.keys())
+    items = [mean_segments[x] for x in keys]
+    keys = [str(x) for x in keys]
+
+    self.mean_segments = dict(zip(keys, items))
+    self.mean_segments = pv.MultiBlock(self.mean_segments)
+    print(self.mean_segments)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.get_mutual_ancestors"><code class="name flex">
+<span>def <span class="ident">get_mutual_ancestors</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>For landmarking a given bifurcation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_mutual_ancestors(self):
+    &#34;&#34;&#34; For landmarking a given bifurcation. 
+    &#34;&#34;&#34;
+    centers = self.get_open_profiles()
+    centers_m = pv.wrap(centers)
+    outlet_ids = self._pick_points(centers_m, text=&#39;Pick relevant outlets&#39;)
+    outlet_points = [centers[i] for i in outlet_ids]
+    mean_segments = pv.MultiBlock(self.mean_segments).combine()
+    # mean_segments = self.mean_segments.combine()
+    tree = KDTree(mean_segments.points)
+    _, ii = tree.query(outlet_points)
+    g_ids = mean_segments.point_data[&#39;GroupIds&#39;][ii].astype(int)
+    lowest_common = nx.lowest_common_ancestor(self.G, g_ids[0], g_ids[1])
+    ancestors = nx.ancestors(self.G, lowest_common)
+    fam = list(ancestors) + [lowest_common]
+    artery = self.mean_segments[[str(x) for x in fam]]
+    return artery, fam</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.get_open_profiles"><code class="name flex">
+<span>def <span class="ident">get_open_profiles</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get centers of open profiles</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_open_profiles(self):
+    &#34;&#34;&#34; Get centers of open profiles
+    &#34;&#34;&#34;
+    edges = self.surf.extract_feature_edges(
+        boundary_edges=True, 
+        feature_edges=False, 
+        manifold_edges=False
+        )
+    edges = edges.connectivity()
+    regions = np.unique(edges.point_data[&#39;RegionId&#39;])
+    masks = [edges.point_data[&#39;RegionId&#39;] == r for r in regions]
+    profiles = pv.MultiBlock([edges.extract_points(m) for m in masks])
+
+    num_profiles = len(profiles)
+    centers = [x.points.mean(axis=0) for x in profiles]
+    centers = np.array(centers)
+
+    return centers </code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.get_plc_points"><code class="name flex">
+<span>def <span class="ident">get_plc_points</span></span>(<span>self, n_spheres)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get PLC points based on mark_near_vessel_regions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_plc_points(self, n_spheres):
+    &#34;&#34;&#34; Get PLC points based on mark_near_vessel_regions.
+    &#34;&#34;&#34;
+    self.plc_points = {}
+
+    for an_id in self.aneurysm_group_ids:
+        plc_pts = pv.MultiBlock()
+        for relative in self.sac_zones[an_id].keys():
+            pt_far = self.sac_zones[an_id][relative][n_spheres]
+
+            if pt_far.relation == &#39;parent&#39;:
+                pt_near = self.clipping_points[relative][&#39;end&#39;]
+            else:
+                pt_near = self.clipping_points[relative][&#39;start&#39;]
+
+            plc_pts[relative] = pt_near #.append(pt_near)
+
+        self.plc_pts = plc_pts # = pv.MultiBlock(plc_pts)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.mark_distance_from_sacs"><code class="name flex">
+<span>def <span class="ident">mark_distance_from_sacs</span></span>(<span>self, n_spheres, min_branch_length=100)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get point n_spheres away from sacs.</p>
+<p>Be careful with index between mean_segments and digraphs!!</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mark_distance_from_sacs(self, n_spheres, min_branch_length=100):
+    &#34;&#34;&#34; Get point n_spheres away from sacs.
+
+    Be careful with index between mean_segments and digraphs!!
+
+    &#34;&#34;&#34;
+    self.sac_zones = {}
+
+    # Before looping, collapse short branch nodes to parent
+    # We are exluding them from the search
+    self.GG = self.G.copy()
+    group_ids = list(self.mean_segments.keys())
+    segment_lengths = [self.mean_segments[g].n_points for g in group_ids]
+
+    for idx in range(len(group_ids)):
+        g = group_ids[idx]
+        l = segment_lengths[idx]
+
+        if (l &lt; min_branch_length) and (g not in self.aneurysm_group_ids):
+            parent = sorted(self.GG.predecessors(g))
+            if len(parent) &gt; 0:
+                self.GG = nx.contracted_nodes(self.GG, parent[0], g)
+            else:
+                self.GG.remove_node(g)
+
+    for an_id in self.aneurysm_group_ids:
+        self.sac_zones[an_id] = {}
+
+        # For each an_id, collapse other aneurysm_ids
+        # to exclude them from the search
+        other_an_ids = [x for x in self.aneurysm_group_ids if x != an_id]
+        self.M = self.GG.copy()
+        for g in other_an_ids:
+            parent = sorted(self.GG.predecessors(g))[0]
+            self.M = nx.contracted_nodes(self.M, parent, g)
+
+        # Remove any self loops
+        self.M.remove_edges_from(nx.selfloop_edges(self.M))
+
+        # For each aneurysm, get parents and siblings
+        parent = sorted(self.M.predecessors(an_id))[0]
+        siblings = sorted(self.M.successors(parent))
+
+        # Remove the aneurysm from the list of siblings
+        siblings = [x for x in siblings if x != an_id]
+        print(&#39;sibs&#39;, siblings)
+
+        for s in siblings:
+            if s in self.clipping_points.keys():
+                self.sac_zones[an_id][s] = {}
+
+                # Get start and end points
+                start = self.clipping_points[s][&#39;start&#39;]
+                end = self.clipping_points[s][&#39;end&#39;]
+                pts = np.concatenate([start.points, end.points], axis=0)
+                tree = KDTree(self.mean_segments[str(s)].points)
+                _, ii = tree.query(pts, k=1)
+                idx = ii[0]
+                arc_vals = self.mean_segments[str(s)].point_data[&#39;arc_length&#39;][ii]
+
+                s_line = self.mean_segments[str(s)]
+
+                n = 1
+                cpos = None
+                while (n &lt;= n_spheres) and idx &lt; ii[1]:
+                    arc_val = s_line.point_data[&#39;arc_length&#39;][idx]
+                    MISR = s_line.point_data[&#39;MaximumInscribedSphereRadius&#39;][idx]
+                    next_val = arc_val + MISR
+                    idx = np.argmin((s_line.point_data[&#39;arc_length&#39;] - next_val)**2)
+                    # print(&#39;Step&#39;, s, n)
+                    # p = pv.Plotter()
+                    # p.camera_position = cpos
+                    # p.add_mesh(self.surf, color=&#39;w&#39;, opacity=0.1)
+                    # p.add_mesh(pv.wrap(s_line.points[idx]), color=&#39;r&#39;)
+                    # p.show()
+                    # cpos = p.camera_position
+                    n += 1
+                
+                if n &lt; n_spheres:
+                    idx = ii[1]
+
+                origin = pv.wrap(s_line.points[idx])
+                origin.point_data[&#39;Normal&#39;] = -s_line.point_data[&#39;FrenetTangent&#39;][idx].reshape(1,3)
+
+                self.sac_zones[an_id][s][n_spheres] = origin
+                self.sac_zones[an_id][s][n_spheres].relation = &#39;sibling&#39;
+
+        # Then parent
+        self.sac_zones[an_id][parent] = {}
+        
+        # Get start and end points
+        start = self.clipping_points[parent][&#39;start&#39;]
+        end = self.clipping_points[parent][&#39;end&#39;]
+        pts = np.concatenate([start.points, end.points], axis=0)
+        tree = KDTree(self.mean_segments[str(parent)].points)
+        _, ii = tree.query(pts, k=1)
+        idx = ii[1]
+        arc_vals = self.mean_segments[str(parent)].point_data[&#39;arc_length&#39;][ii]
+
+        s_line = self.mean_segments[str(parent)]
+
+        n = 1
+        while (n &lt;= n_spheres) and idx &gt; ii[0]:
+            arc_val = s_line.point_data[&#39;arc_length&#39;][idx]
+            MISR = s_line.point_data[&#39;MaximumInscribedSphereRadius&#39;][idx]
+            next_val = arc_val - MISR
+            idx = np.argmin((s_line.point_data[&#39;arc_length&#39;] - next_val)**2)
+            n += 1
+        
+        if n &lt; n_spheres:
+            idx = ii[0]
+
+        origin = pv.wrap(s_line.points[idx])
+        origin.point_data[&#39;Normal&#39;] = s_line.point_data[&#39;FrenetTangent&#39;][idx].reshape(1,3)
+
+        self.sac_zones[an_id][parent][n_spheres] = origin
+        self.sac_zones[an_id][parent][n_spheres].relation = &#39;parent&#39;</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.mark_near_vessel_regions"><code class="name flex">
+<span>def <span class="ident">mark_near_vessel_regions</span></span>(<span>self, mesh, n_spheres)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Be careful with index between mean_segments and digraphs!!</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mark_near_vessel_regions(self, mesh, n_spheres):
+    &#34;&#34;&#34;
+    Be careful with index between mean_segments and digraphs!!
+    &#34;&#34;&#34;
+    for an_id in self.aneurysm_group_ids:
+        # First mask n_spheres away
+        far = TubeClipper(mesh)
+        near = TubeClipper(mesh)
+
+        for s in self.sac_zones[an_id].keys():
+            pt_far = self.sac_zones[an_id][s][n_spheres]
+
+            far.clip(pt_far.points[0], pt_far.point_data[&#39;Normal&#39;][0])
+
+            if pt_far.relation == &#39;parent&#39;:
+                pt_near = self.clipping_points[s][&#39;end&#39;]
+            else:
+                pt_near = self.clipping_points[s][&#39;start&#39;]
+            
+            near.clip(pt_near.points[0], -pt_near.point_data[&#39;Normal&#39;][0])
+
+        near = near.clipped
+        far = far.clipped
+        near.point_data[&#39;Side&#39;] = ~near.point_data[&#39;Side&#39;] 
+        region = near.point_data[&#39;Side&#39;] * far.point_data[&#39;Side&#39;] 
+
+        mesh.point_data[&#39;sac_zone_{:02d}&#39;.format(int(an_id))] = region
+
+    zone_arr_names = [x for x in mesh.point_data if &#39;sac_zone_&#39; in x]
+    zone_arrs = [mesh.point_data[a] for a in zone_arr_names]
+    mesh.point_data[&#39;sac_zones&#39;] = np.sum(zone_arrs, axis=0)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.pick_aneurysm"><code class="name flex">
+<span>def <span class="ident">pick_aneurysm</span></span>(<span>self, text='Pick aneurysm')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Pick a point on the dome.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pick_aneurysm(self, text=&#39;Pick aneurysm&#39;):
+    &#34;&#34;&#34; Pick a point on the dome.
+    &#34;&#34;&#34;
+    def _point_picker_cb(mm, pid):
+        # point = mm.points[pid]
+        # print(&#39;Picked point&#39;, point)
+        self._picked_ids.append(pid)
+        picked_points = pv.wrap(mm.points[self._picked_ids])
+        p.add_mesh(picked_points, name=&#39;picked_pts&#39;, color=&#39;r&#39;, point_size=10,
+            render_points_as_spheres=True)
+
+    def _reset_picked_cb():
+        self._picked_ids = []
+        p.remove_actor(&#39;picked_pts&#39;)
+
+    self._picked_ids = []
+
+    p = pv.Plotter()
+    p.add_mesh(self.surf, color=&#39;w&#39;, opacity=1.0)
+
+    p.add_text(text, position=&#39;upper_left&#39;)
+    p.add_text(&#39;p: pick points&#39;, position=(0.05, 25), font_size=12)
+    p.add_text(&#39;u: reset all picks&#39;, position=(0.05, 0.05), font_size=12)
+    p.enable_point_picking(callback=_point_picker_cb, show_message=False, 
+                        color=&#39;r&#39;, point_size=30, 
+                        use_mesh=True, show_point=False, 
+                        render_points_as_spheres=True,
+                        tolerance=0.005)
+    p.add_key_event(&#39;u&#39;, _reset_picked_cb)
+    p.show()
+    # print(&#39;picked&#39;, self._picked_ids)
+
+    self.aneurysm_points = self.surf.points[self._picked_ids]</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.save_inlet_outlet_points"><code class="name flex">
+<span>def <span class="ident">save_inlet_outlet_points</span></span>(<span>self, points_file, centerlines='centerlines', include_aneurysms=True, include_normals=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Save inlet_points and outlet_points to a single h5 file.</p>
+<p>File keys will be "inlets" and "outlets"</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save_inlet_outlet_points(self, points_file, centerlines=&#39;centerlines&#39;, include_aneurysms=True, include_normals=False):
+    &#34;&#34;&#34; Save inlet_points and outlet_points to a single h5 file.
+
+    File keys will be &#34;inlets&#34; and &#34;outlets&#34;
+    &#34;&#34;&#34; 
+    points = pv.MultiBlock()
+    points[&#39;inlets&#39;] = pv.wrap(np.array(self.inlet_points))
+    points[&#39;outlets&#39;] = pv.wrap(np.array(self.outlet_points))
+    if include_aneurysms==True:
+        points[&#39;aneurysms&#39;] = pv.wrap(np.array(self.aneurysm_points))
+
+    if (hasattr(self, centerlines)) and (include_normals == True):
+        tree = KDTree(self.centerlines.points)
+        _, ii = tree.query(self.inlet_points)
+        points[&#39;inlets&#39;].point_data[&#39;normals&#39;] = self.centerlines.point_data[&#39;FrenetTangent&#39;][ii]
+        _, ii = tree.query(self.outlet_points)
+        points[&#39;outlets&#39;].point_data[&#39;normals&#39;] = self.centerlines.point_data[&#39;FrenetTangent&#39;][ii]
+
+    points.save(points_file)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.select_geodesic"><code class="name flex">
+<span>def <span class="ident">select_geodesic</span></span>(<span>self, title='Isolate aneurysms.', mask_name='Mask')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def select_geodesic(self,title=&#39;Isolate aneurysms.&#39;, mask_name=&#39;Mask&#39;):
+    s = cc.SelectGeodesic(self.surf, scalars=mask_name)
+    pts = s.interact(title=title)
+    self.surf = s.mesh
+    return pts</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.set_inlets_outlets"><code class="name flex">
+<span>def <span class="ident">set_inlets_outlets</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Interactively choose inlet point.</p>
+<p>All other open boundaries will be considered outlets. To update these points
+(for example, after adding flow extensions), see self.update_inlet_outlets.
+To save these inlet-outlet points, see self.save_inlet_outlet_points()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_inlets_outlets(self):
+    &#34;&#34;&#34; Interactively choose inlet point.
+
+    All other open boundaries will be considered outlets. To update these points 
+    (for example, after adding flow extensions), see self.update_inlet_outlets. 
+    To save these inlet-outlet points, see self.save_inlet_outlet_points()
+    &#34;&#34;&#34;
+    text = &#34;Pick the inlet(s)&#34;
+    centers = self.get_open_profiles()
+    centers_m = pv.wrap(centers)
+    inlet_ids = self._pick_points(centers_m, text=text)
+    outlet_ids = list(set(range(centers_m.n_points)) - set(inlet_ids))
+    
+    assert inlet_ids[0] is not None, &#34;No inlet selected.&#34;
+
+    self.inlet_points = [centers[i] for i in inlet_ids]
+    self.outlet_points = [centers[i] for i in outlet_ids]
+    return centers_m, inlet_ids, outlet_ids</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.update_aneurysm_group_ids"><code class="name flex">
+<span>def <span class="ident">update_aneurysm_group_ids</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_aneurysm_group_ids(self):    
+    tree = KDTree(self.surf.points)
+    nearest_temp_idx = tree.query(self.aneurysm_points, k=1)[1]
+    self.aneurysm_group_ids = [str(x) for x in self.surf.point_data[&#39;GroupIds&#39;][nearest_temp_idx]]
+    self.get_group_adjacency()
+    # self.check_group_id_integrity()
+
+    return self</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.surface.Surfer.update_inlets_outlets"><code class="name flex">
+<span>def <span class="ident">update_inlets_outlets</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Update inlet-outlet points based on distance metric.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_inlets_outlets(self):
+    &#34;&#34;&#34; Update inlet-outlet points based on distance metric.
+    &#34;&#34;&#34;
+    centers = self.get_open_profiles()
+    centers_m = pv.wrap(centers)
+    tree = KDTree(centers)
+    inlet_ids = [tree.query(i)[1] for i in self.inlet_points]
+    outlet_ids = list(set(range(centers_m.n_points)) - set(inlet_ids))
+    
+    self.inlet_points = [centers[i] for i in inlet_ids]
+    self.outlet_points = [centers[i] for i in outlet_ids]
+    return centers_m, inlet_ids, outlet_ids</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="geometry_tools" href="index.html">geometry_tools</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="geometry_tools.surface.Surfer" href="#geometry_tools.surface.Surfer">Surfer</a></code></h4>
+<ul class="">
+<li><code><a title="geometry_tools.surface.Surfer.branch_centerlines" href="#geometry_tools.surface.Surfer.branch_centerlines">branch_centerlines</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.branch_centerlines_pt" href="#geometry_tools.surface.Surfer.branch_centerlines_pt">branch_centerlines_pt</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.clip_boundaries" href="#geometry_tools.surface.Surfer.clip_boundaries">clip_boundaries</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.clip_endpoints_with_spheres" href="#geometry_tools.surface.Surfer.clip_endpoints_with_spheres">clip_endpoints_with_spheres</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.clip_endpoints_with_tubeclipper" href="#geometry_tools.surface.Surfer.clip_endpoints_with_tubeclipper">clip_endpoints_with_tubeclipper</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.clip_endpoints_with_vmtk" href="#geometry_tools.surface.Surfer.clip_endpoints_with_vmtk">clip_endpoints_with_vmtk</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.copy_arrays" href="#geometry_tools.surface.Surfer.copy_arrays">copy_arrays</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.copy_structure" href="#geometry_tools.surface.Surfer.copy_structure">copy_structure</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.decimate_surface" href="#geometry_tools.surface.Surfer.decimate_surface">decimate_surface</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.extract_sacs" href="#geometry_tools.surface.Surfer.extract_sacs">extract_sacs</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.generate_centerlines" href="#geometry_tools.surface.Surfer.generate_centerlines">generate_centerlines</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.generate_centerlines_multi" href="#geometry_tools.surface.Surfer.generate_centerlines_multi">generate_centerlines_multi</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.get_bifurcation_ref_systems_vectors" href="#geometry_tools.surface.Surfer.get_bifurcation_ref_systems_vectors">get_bifurcation_ref_systems_vectors</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.get_branch_endpoints" href="#geometry_tools.surface.Surfer.get_branch_endpoints">get_branch_endpoints</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.get_branch_endpoints_OLD" href="#geometry_tools.surface.Surfer.get_branch_endpoints_OLD">get_branch_endpoints_OLD</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.get_group_adjacency" href="#geometry_tools.surface.Surfer.get_group_adjacency">get_group_adjacency</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.get_mean_segments" href="#geometry_tools.surface.Surfer.get_mean_segments">get_mean_segments</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.get_mutual_ancestors" href="#geometry_tools.surface.Surfer.get_mutual_ancestors">get_mutual_ancestors</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.get_open_profiles" href="#geometry_tools.surface.Surfer.get_open_profiles">get_open_profiles</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.get_plc_points" href="#geometry_tools.surface.Surfer.get_plc_points">get_plc_points</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.mark_distance_from_sacs" href="#geometry_tools.surface.Surfer.mark_distance_from_sacs">mark_distance_from_sacs</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.mark_near_vessel_regions" href="#geometry_tools.surface.Surfer.mark_near_vessel_regions">mark_near_vessel_regions</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.pick_aneurysm" href="#geometry_tools.surface.Surfer.pick_aneurysm">pick_aneurysm</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.save_inlet_outlet_points" href="#geometry_tools.surface.Surfer.save_inlet_outlet_points">save_inlet_outlet_points</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.select_geodesic" href="#geometry_tools.surface.Surfer.select_geodesic">select_geodesic</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.set_inlets_outlets" href="#geometry_tools.surface.Surfer.set_inlets_outlets">set_inlets_outlets</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.update_aneurysm_group_ids" href="#geometry_tools.surface.Surfer.update_aneurysm_group_ids">update_aneurysm_group_ids</a></code></li>
+<li><code><a title="geometry_tools.surface.Surfer.update_inlets_outlets" href="#geometry_tools.surface.Surfer.update_inlets_outlets">update_inlets_outlets</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

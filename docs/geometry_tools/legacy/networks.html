@@ -1,0 +1,2288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>geometry_tools.legacy.networks API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>geometry_tools.legacy.networks</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">## Program:   AneuTools
+## Module:    ImportData.py
+## Language:  Python
+## Date:      $Date: 2016/17/04 00:00:00 $
+## Version:   $Revision: 0.0.1 $
+## Author:    Christophe Chnafa
+
+##   Copyright (c) Christophe Chnafa. All rights reserved.
+
+import math
+import numpy as np
+import vtk
+
+# Array names used by VMTK.
+BLANKINGARRAYNAME = &#39;Blanking&#39;
+GROUPIDSARRAYNAME = &#39;GroupIds&#39;
+RADIUSARRAYNAME = &#39;MaximumInscribedSphereRadius&#39;
+SECTIONARRAYNAME = &#39;CenterlineSectionArea&#39;
+
+
+def loadFile(fileName):
+    &#39;&#39;&#39;Load the given file, and return a vtkPolyData object for it. &#39;&#39;&#39;
+    fileType = fileName[-3:]
+    if fileType == &#39;&#39;:
+        raise RuntimeError(&#39;The file does not have an extension&#39;)
+    if fileType == &#39;stl&#39;:
+        reader = vtk.vtkSTLReader()
+        reader.MergingOn()
+    elif fileType == &#39;vtk&#39;:
+        reader = vtk.vtkPolyDataReader()
+    elif fileType == &#39;vtp&#39;:
+        reader = vtk.vtkXMLPolyDataReader()
+    elif fileType == &#39;vtu&#39;:
+        reader = vtk.vtkUnstructuredGridReader()
+    else:
+        raise RuntimeError(&#39;Unknown file type %s&#39; % fileType)
+    reader.SetFileName(fileName)
+    reader.Update()
+    polyData = reader.GetOutput()
+
+    return(polyData)
+
+def GetMaxGroupId(centerline):
+    maxGroupId = 0
+    groupIdsArray = centerline.GetCellData().GetArray(GROUPIDSARRAYNAME)
+    for i in range(0, centerline.GetNumberOfCells()):
+        groupId = groupIdsArray.GetValue(i)
+        if groupId &gt; maxGroupId:
+            maxGroupId = groupId
+
+    return(maxGroupId)
+
+def GetBlankedGroupsIdList(centerline):
+    blankedGroupdsArray = []
+    idx = 0
+    groupIdsArray = centerline.GetCellData().GetArray(GROUPIDSARRAYNAME)
+    blankingArray = centerline.GetCellData().GetArray(BLANKINGARRAYNAME)
+    for i in range(0, centerline.GetNumberOfCells()):
+        groupId = groupIdsArray.GetValue(i)
+        blanking = blankingArray.GetValue(i)
+        if blanking == 1:
+            blankedGroupdsArray.append((idx, groupId)) 
+        idx += 1
+
+    return(blankedGroupdsArray)
+
+def GetRedundantBlankedIdList(centerline, blankedGroupsIdList):
+    &#39;&#39;&#39; Get the redundant blanked segments.
+    Nominaly, the x0 and x1 coordinates should be the same. Thus, the
+    computed distance should be exactly 0.0.
+    Sometimes branches are just different by a few and SHOULD be merged.
+    Visual inspection of the centerline with Paraview when the Warning 
+    message pop up is advised.
+    Sometimes, the problem is more concerning. It is problematic that 
+    VMTK split, sometimes, the branches with a segment with a blanked 
+    segment, a lil&#39; something and another blanked segment. In case of 
+    wierd branch splittings, try to lower the tol. It is cheating since 
+    branches that should not be merge will be merged anyway.
+    &#39;&#39;&#39;
+    currentX0 = [0.0, 0.0, 0.0]
+    currentX1 = [0.0, 0.0, 0.0]
+    otherX0 = [0.0, 0.0, 0.0]
+    otherX1 = [0.0, 0.0, 0.0]
+    minLength, maxLength = ComputeGeometricTolerance(centerline)
+    tol = maxLength*0.1 #10**(-5) 
+    redundantBranchesIndex = []
+    for currentBranch in blankedGroupsIdList:
+        currentBranchIndex = currentBranch[0]
+        if currentBranchIndex in redundantBranchesIndex:
+            continue
+        centerline.GetCell(currentBranchIndex).GetPoints().GetPoint(0, currentX0)
+        npts = centerline.GetCell(currentBranchIndex).GetPoints().GetNumberOfPoints()
+        centerline.GetCell(currentBranchIndex).GetPoints().GetPoint(npts - 1, currentX1)
+        for otherBranch in blankedGroupsIdList:
+            otherBranchIndex = otherBranch[0]
+            if otherBranchIndex == currentBranchIndex:
+                continue
+            if otherBranchIndex in redundantBranchesIndex:
+                continue
+            centerline.GetCell(otherBranchIndex).GetPoints().GetPoint(0, otherX0)
+            otherNpts = centerline.GetCell(otherBranchIndex).GetPoints().GetNumberOfPoints()
+            centerline.GetCell(otherBranchIndex).GetPoints().GetPoint(otherNpts - 1, otherX1)
+            if vtk.vtkMath.Distance2BetweenPoints(currentX0,otherX0) &lt; tol and \
+               vtk.vtkMath.Distance2BetweenPoints(currentX1,otherX1) &lt; tol:
+                redundantBranchesIndex.append(otherBranchIndex)
+                if vtk.vtkMath.Distance2BetweenPoints(currentX0,otherX0) &gt; minLength:
+                    print(&#39;WARNING: POTENTIAL ISSUE DURING THE MERGING OF REDUNDANTS BLANKED SEGMENTS.&#39;)
+                    print(&#39;         A distance between segments is suspicious.&#39;)
+                    print(&#39;         The blanked segments of VTK Cell Id &#39; + repr(currentBranchIndex))
+                    print(&#39;         and, VTK Cell Id &#39; + repr(otherBranchIndex) + &#39; will be merged.&#39;)
+                    print(&#39;         The segments points should be identical.  &#39;)
+                    print(&#39;         Please check if this action was expected.&#39;)
+                    print(&#39;\n&#39;)
+
+    return(redundantBranchesIndex)
+
+def IsArrayDefined(centerline, arrayName):
+    nPointDataArrays = centerline.GetPointData().GetNumberOfArrays()
+    found = False
+    for i in range(0, nPointDataArrays):
+        if arrayName == centerline.GetPointData().GetArrayName(i):
+            found = True
+            break
+    nCellDataArrays = centerline.GetCellData().GetNumberOfArrays()
+    for i in range(0, nCellDataArrays):
+        if arrayName == centerline.GetCellData().GetArrayName(i):
+            found = True
+            break
+
+    return(found)
+
+def ComputeGeometricTolerance(centerline):
+    &#39;&#39;&#39;Return the min and max length for branches.
+    This routine compute the delta x minimum and maximum in the network. 
+    The minimum length is used for the connectivity. The maximum length
+    is used for merging the blanked segments.
+    &#39;&#39;&#39;
+    groupIdsArray = centerline.GetCellData().GetArray(GROUPIDSARRAYNAME)
+    numberOfCells = centerline.GetNumberOfCells()
+    minLength = 10000.0
+    maxLength = 0.0
+    numberOfCells = centerline.GetNumberOfCells()
+    for i in range(0, numberOfCells):
+        groupId = groupIdsArray.GetValue(i)
+        npts =  centerline.GetCell(i).GetPoints().GetNumberOfPoints()
+        for k in range(0, npts - 1):
+            point0 = [0.0, 0.0, 0.0]
+            point1 = [0.0, 0.0, 0.0]
+            centerline.GetCell(i).GetPoints().GetPoint(k, point0)
+            centerline.GetCell(i).GetPoints().GetPoint(k + 1, point1)
+            if math.sqrt(vtk.vtkMath.Distance2BetweenPoints(point0,point1)) &lt; minLength:
+                if math.sqrt(vtk.vtkMath.Distance2BetweenPoints(point0,point1)) == 0.0:
+                    continue
+                minLength = math.sqrt(vtk.vtkMath.Distance2BetweenPoints(point0,point1))
+            if math.sqrt(vtk.vtkMath.Distance2BetweenPoints(point0,point1))&gt;maxLength:
+                maxLength = math.sqrt(vtk.vtkMath.Distance2BetweenPoints(point0,point1))
+
+    return minLength, maxLength
+
+def ComputeGroupLength(centerline, branchGroupId):
+    &#39;&#39;&#39;Return the mean length for branches of branchGroupId.&#39;&#39;&#39;
+
+    groupLength = 0.0
+    lengthWeightSum = 0.0
+    groupIdsArray = centerline.GetCellData().GetArray(GROUPIDSARRAYNAME)
+    numberOfCells = centerline.GetNumberOfCells()
+    for i in range(0, numberOfCells):
+        groupId = groupIdsArray.GetValue(i)
+        if groupId != branchGroupId:
+            continue
+        length = ComputeBranchLength(centerline, i)
+        groupLength += length
+        lengthWeightSum += 1.0
+    groupLength /= lengthWeightSum
+
+    return groupLength
+
+def ComputeBranchLength(centerline, branchId):
+    &#39;&#39;&#39;Return the length for the branch of index branchId.&#39;&#39;&#39;
+
+    length = 0.0
+    npts = centerline.GetCell(branchId).GetPoints().GetNumberOfPoints()
+    for k in range(0, npts - 1):
+        point0 = [0.0, 0.0, 0.0]
+        point1 = [0.0, 0.0, 0.0]
+        centerline.GetCell(branchId).GetPoints().GetPoint(k, point0)
+        centerline.GetCell(branchId).GetPoints().GetPoint(k + 1, point1)
+        length += math.sqrt(vtk.vtkMath.Distance2BetweenPoints(point0,point1))
+
+    return length
+
+def ComputeGroupRadius(centerline, branchGroupId):
+    &#39;&#39;&#39;Return the mean radius of a group.
+    The mean radius is computed using the hydraulic resistance for 
+    the branches of branchGroupId. See Chnafa et al. International 
+    Journal for Numerical Methods in Biomedical Engineering, 2016.
+    &#39;&#39;&#39;
+    groupRadius = 0.0
+    radiusWeightSum = 0.0
+    groupIdsArray = centerline.GetCellData().GetArray(GROUPIDSARRAYNAME)
+    numberOfCells = centerline.GetNumberOfCells()
+    for i in range(0, numberOfCells):
+        if groupIdsArray.GetValue(i) != branchGroupId:
+            continue
+        groupRadius += ComputeBranchRadius(centerline, i)
+        radiusWeightSum += 1.0
+    groupRadius /= radiusWeightSum
+
+    return groupRadius
+
+def ComputeBranchRadius(centerline, branchId):
+    &#39;&#39;&#39;Return the radius for a branch with index branchId. &#39;&#39;&#39;
+    length = 0.0
+    resistance = 0.0
+    radiusArray = centerline.GetPointData().GetArray(RADIUSARRAYNAME)
+    npts = centerline.GetCell(branchId).GetPoints().GetNumberOfPoints()
+    for k in range(0, npts - 1):
+        point0 = [0.0, 0.0, 0.0]
+        point1 = [0.0, 0.0, 0.0]
+        centerline.GetCell(branchId).GetPoints().GetPoint(k, point0)
+        centerline.GetCell(branchId).GetPoints().GetPoint(k + 1, point1)
+        dx = math.sqrt(vtk.vtkMath.Distance2BetweenPoints(point0,point1))
+        length += dx
+        r = radiusArray.GetComponent(centerline.GetCell(branchId).GetPointId(k),0)
+        resistance += dx / r**(4.0)
+    branchRadius = (length / resistance)**(0.25)
+
+    return branchRadius
+
+def GetListsUniqueBlankedBranches(blankedGroupsIdList, redundantBlankedBranchesIdList):
+    blankedGroupsIndex = []
+    blankedUniqueBranchesIndex = []
+    for i in range(0, len(blankedGroupsIdList)):
+        if blankedGroupsIdList[i][0] in redundantBlankedBranchesIdList:
+            continue
+        blankedGroupsIndex.append(blankedGroupsIdList[i][1])
+        blankedUniqueBranchesIndex.append(blankedGroupsIdList[i][0])
+
+    return blankedGroupsIndex, blankedUniqueBranchesIndex
+
+def SetNetworkStructure(centerline, network, verboseprint,
+    isConnectivityNeeded = True, isRadiusInletNeeded = True):
+    &#39;&#39;&#39;Fills a network structure with a vtkPolyData object.
+    Each element has an unique index. The groups length and radius are
+    averaged out. When the element is not not part of the bifurcation 
+    reference system, it is possible that multiple end points exist. They are
+    all saved. For the complet formalism of the bifurcation reference system 
+    see Antiga, L., &amp; Steinman, D. A. (2004). Robust and objective 
+    decomposition and mapping of bifurcating vessels. Medical Imaging, 
+    IEEE Transactions on, 23(6), 704-713.
+    &#39;&#39;&#39;
+    verboseprint(&#34;&gt; Filling the network structure with the raw data.&#34;)
+    if not(IsArrayDefined(centerline, GROUPIDSARRAYNAME)):
+        from vmtk import vmtkscripts
+        centerlines = vmtkscripts.vmtkBranchExtractor()
+        centerlines.Centerlines = centerline
+        centerlines.RadiusArrayName = RADIUSARRAYNAME
+        centerlines.Execute()
+        centerline = centerlines.Centerlines
+
+    # Treat the splitted centerline.
+    maxGroupId = GetMaxGroupId(centerline)
+    blankedGroupsIdList = GetBlankedGroupsIdList(centerline)
+    redundantBlankedBranchesIdList = GetRedundantBlankedIdList(centerline, 
+        blankedGroupsIdList)
+    blankedGroupsIndex, blankedUniqueBranchesIndex = \
+        GetListsUniqueBlankedBranches(blankedGroupsIdList, 
+        redundantBlankedBranchesIdList)
+    indexUniqueBranches = 0
+    for i in range(0, maxGroupId + 1):
+        x0List = []
+        x1List = []
+        VtkCellIdList = []
+        VtkGroupIdList = []
+        if i in blankedGroupsIndex:
+            for j in range(0,len(blankedGroupsIndex)):    
+                if blankedGroupsIndex[j] == i:
+                    el = Element(Id = indexUniqueBranches)
+                    el.SetMeanRadius(ComputeBranchRadius(centerline,
+                        blankedUniqueBranchesIndex[j]))
+                    el.SetLength(ComputeBranchLength(centerline,
+                        blankedUniqueBranchesIndex[j]))
+                    el.SetBlanking(1)
+                    npts = centerline.GetCell(blankedUniqueBranchesIndex[j]). \
+                        GetPoints().GetNumberOfPoints()
+                    x0 = [0.0, 0.0, 0.0]
+                    x1 = [0.0, 0.0, 0.0]
+                    centerline.GetCell(blankedUniqueBranchesIndex[j]). \
+                        GetPoints().GetPoint(0, x0)
+                    centerline.GetCell(blankedUniqueBranchesIndex[j]). \
+                        GetPoints().GetPoint(npts - 1, x1)
+                    x0List = []
+                    x1List = []
+                    VtkCellIdList =[]
+                    VtkGroupIdList = []
+                    x1List.append(x1)
+                    x0List.append(x0)
+                    el.SetInOutPointsCoordinates(x0List, x1List)
+                    VtkCellIdList.append(blankedUniqueBranchesIndex[j])
+                    VtkGroupIdList.append(i)
+                    el.SetVtkGroupIdList(VtkGroupIdList)
+                    el.SetVtkCellIdList(VtkCellIdList)
+                    network.AddElement(el)
+                    verboseprint(&#34;&gt; Edge Id &#34; + repr(indexUniqueBranches) 
+                        + &#34;, Length = &#34; + repr(el.GetLength()) + &#34; and Radius = &#34;
+                        + repr(el.GetMeanRadius()) + &#34;.&#34;)
+                    indexUniqueBranches += 1
+        else:
+            el = Element(Id = indexUniqueBranches)
+            el.SetMeanRadius(ComputeGroupRadius(centerline, i))
+            el.SetLength(ComputeGroupLength(centerline, i))
+            groupIdsArray = centerline.GetCellData().GetArray(GROUPIDSARRAYNAME)
+            numberOfCells = centerline.GetNumberOfCells()
+            for k in range(0, numberOfCells):
+                groupId = groupIdsArray.GetValue(k)
+                if groupId != i:
+                    continue
+                x0 = [0.0, 0.0, 0.0]
+                x1 = [0.0, 0.0, 0.0]
+                npts = centerline.GetCell(k).GetPoints().GetNumberOfPoints()
+                centerline.GetCell(k).GetPoints().GetPoint(npts - 1, x1)
+                x1List.append(x1)
+                centerline.GetCell(k).GetPoints().GetPoint(0, x0)
+                x0List.append(x0)
+                VtkCellIdList.append(k)
+                VtkGroupIdList.append(i)
+            uniqueX0List = [list(x) for x in set(tuple(x) for x in x0List)]
+            uniqueX1List = [list(x) for x in set(tuple(x) for x in x1List)]
+            el.SetInOutPointsCoordinates(uniqueX0List, uniqueX1List)
+            el.SetVtkGroupIdList(VtkGroupIdList)
+            el.SetVtkCellIdList(VtkCellIdList)
+            network.AddElement(el)
+            verboseprint(&#34;&gt; Edge Id &#34; + repr(indexUniqueBranches) 
+                + &#34;, Length = &#34; + repr(el.GetLength()) + &#34; and Radius = &#34;
+                + repr(el.GetMeanRadius()) + &#34;.&#34;)
+            indexUniqueBranches += 1
+    verboseprint(&#34;&gt; &#34;)
+
+    if isConnectivityNeeded:
+        minLength, maxLength = ComputeGeometricTolerance(centerline)
+        ComputeConnectivity(network, minLength, verboseprint)
+    SetRadiusX0(centerline, network, verboseprint)
+    network.SetNetworkInletRadius(
+        ComputeInletAverageRadius(centerline, 0.0, verboseprint))
+
+    return centerline
+
+def ComputeConnectivity(network, tolerance, verboseprint):
+    &#39;&#39;&#39;Compute the branches connectivity in the network.
+    It is assumed that the first element is the inlet. In case of several
+    inlets, modification to this routine should be coded. This routine search
+    for each branch, its connected branches by comparing the coordinates of 
+    the distal extremity of the treated branch with the proximal extremity
+    of the other branches in the network. As sometimes the coordinates do not
+    perfectly match, a tolerance is applied.
+    TODO: use simply vtkPolyDataConnectivityFilter to do the job...?
+    &#39;&#39;&#39;
+    # A few cases were bordeline, hence the factor.
+    tol = 5.0 * tolerance
+    # Initialization of the first branch.
+    network.elements[0].SetIfInlet(True)   
+    network.elements[0].SetInOutPointsIds(1, 2)
+    # Test the end node (x1) of a branch with the start node
+    # of the other branches (x0).
+    for treatedBranch in network.elements:
+        atLeastOneFound = False
+        for x1 in treatedBranch.GetOutPointsx1():
+            for otherBranch in network.elements:
+                if otherBranch.GetId() == treatedBranch.GetId():
+                    continue
+                for x0 in otherBranch.GetInPointsx0():
+                    if vtk.vtkMath.Distance2BetweenPoints(x0,x1) &lt; tol:
+                        if vtk.vtkMath.Distance2BetweenPoints(x0,x1) &gt; tolerance:
+                            print(&#39;WARNING: POTENTIAL CONNECTIVITY ISSUE. &#39;)
+                            print(&#39;         A distance between connected points is suspicious.&#39; )
+                            print(&#39;         The segment(s) of CELL ID VTK &#39; + repr(treatedBranch.GetVtkCellIdList()))
+                            print(&#39;         and, the segment(s) of CELL ID VTK &#39; + repr(otherBranch.GetVtkCellIdList()) + &#39; will be considered&#39; )
+                            print(&#39;         as connected. Please check if this action was expected.&#39;)
+                            print(&#39;\n&#39;)
+                        otherBranch.SetInOutPointsIds(
+                            treatedBranch.GetOutPointsx1Id(), 
+                            otherBranch.GetId() + 2)
+                        otherBranch.SetBehindSegment(treatedBranch.GetId())
+                        treatedBranch.SetFrontSegment(otherBranch.GetId())
+                        atLeastOneFound = True
+        
+        if not(atLeastOneFound):
+            treatedBranch.SetIfOutlet(True)
+            treatedBranch.SetInOutPointsIds(
+                treatedBranch.GetInPointsx0Id(), 
+                treatedBranch.GetId() + 2)
+
+def SetRadiusX0(centerline, network, verboseprint):
+    for branch in network.elements:
+        cellID = branch.GetVtkCellIdList()
+        radiusArray = centerline.GetPointData().GetArray(RADIUSARRAYNAME)
+        r = radiusArray.GetComponent(centerline.GetCell(cellID[0]).GetPointId(0),0)
+        branch.SetInletRadius(r)
+
+def ComputeInletAverageRadius(centerline, desiredLength, verboseprint):
+    &#39;&#39;&#39;Compute the inlet radius as an averaged radius.
+    Computes an average radius over a certain length of the ICA. The mean
+    radius is computed with the maximum inscribed sphere radius in the vessel.
+    Thus, the actual radius might be underestimated if the vessel has
+    an elliptical shape.
+    &#39;&#39;&#39;
+    branchId = 0
+    length = 0.0
+    resistance = 0.0
+    radiusArray = centerline.GetPointData().GetArray(RADIUSARRAYNAME)
+    npts = GetIndexCenterlineForADefinedLength(centerline, branchId, 
+        desiredLength, verboseprint)
+    for k in range(0, npts - 1):
+        point0 = [0.0, 0.0, 0.0]
+        point1 = [0.0, 0.0, 0.0]
+        centerline.GetCell(branchId).GetPoints().GetPoint(k, point0)
+        centerline.GetCell(branchId).GetPoints().GetPoint(k + 1, point1)
+        dx = math.sqrt(vtk.vtkMath.Distance2BetweenPoints(point0,point1))
+        length += dx
+        r = radiusArray.GetComponent(centerline.GetCell(branchId).GetPointId(k),0)
+        resistance += dx / r**(4.0)
+    if npts &lt; 2:
+        branchMeanRadius = radiusArray.GetComponent(
+            centerline.GetCell(branchId).GetPointId(0),0)
+    else:
+        branchMeanRadius = (length / resistance)**(0.25)
+
+    return branchMeanRadius
+
+def ComputeInletAverageCrossSectionArea(centerline, desiredLength, verboseprint):
+    &#39;&#39;&#39;Compute the inlet radius as an averaged radius.
+    Computes an average radius over a certain length of the ICA. The mean
+    radius is computed with the cross section area. If the number of points
+    over the segment is lower than two, then the section area correspond
+    to the inlet point. Note that due to a bug in VTK the very first point
+    seems wrong, that is why I am taking the second point of the centerline.
+    &#39;&#39;&#39;
+    branchId = 0
+    length = 0.0
+    resistance = 0.0
+    sectionArray = centerline.GetPointData().GetArray(SECTIONARRAYNAME)
+    npts = GetIndexCenterlineForADefinedLength(centerline, branchId, 
+        desiredLength, verboseprint)
+    for k in range(1, npts - 1):
+        point0 = [0.0, 0.0, 0.0]
+        point1 = [0.0, 0.0, 0.0]
+        S = sectionArray.GetComponent(centerline.GetCell(branchId).GetPointId(k),0)
+        if S == 0.0:
+            continue
+        centerline.GetCell(branchId).GetPoints().GetPoint(k, point0)
+        centerline.GetCell(branchId).GetPoints().GetPoint(k + 1, point1)
+        dx = math.sqrt(vtk.vtkMath.Distance2BetweenPoints(point0,point1))
+        length += dx
+        r = math.sqrt(S/np.pi)
+        resistance += dx / r**(4.0)
+    if npts &lt; 2:
+        S = sectionArray.GetComponent(centerline.GetCell(branchId).GetPointId(1),0)
+        branchMeanRadius = math.sqrt(S/np.pi)
+    else:
+        branchMeanRadius = (length / resistance)**(0.25)
+
+    return branchMeanRadius
+
+def GetIndexCenterlineForADefinedLength(centerline, branchId, desiredLength, 
+    verboseprint):
+    &#39;&#39;&#39;Get the index of the point such as the desired distance between the index and 
+    the beginning of the branch is reached. &#39;&#39;&#39;
+
+    length = 0.0
+    done = False
+    npts = centerline.GetCell(branchId).GetPoints().GetNumberOfPoints()
+    for k in range(0, npts - 1):
+        point0 = [0.0, 0.0, 0.0]
+        point1 = [0.0, 0.0, 0.0]
+        centerline.GetCell(branchId).GetPoints().GetPoint(k, point0)
+        centerline.GetCell(branchId).GetPoints().GetPoint(k + 1, point1)
+        length += math.sqrt(vtk.vtkMath.Distance2BetweenPoints(point0,point1))
+        if length &gt;= desiredLength:
+            index = k
+            done = True
+            break
+    if not(done):
+        try:
+            index = k
+        except:
+            index = None
+
+    return index
+
+def GetListProbePoints(centerline, network, verboseprint):
+    &#39;&#39;&#39;Get points on a centerline spaced by the inlet diameter. &#39;&#39;&#39;
+
+    diameterInlet = 2.0*network.GetNetworkInletRadius()
+    pointsList = []
+    for el in network.elements:
+        if el.IsBlanked():
+            continue
+        branchId = el.GetVtkCellIdList()[0]
+        npts = centerline.GetCell(branchId).GetPoints().GetNumberOfPoints()
+        done = False
+        ctr = 0
+        while not(done):
+            x = [0.0, 0.0, 0.0]
+            desiredLength = float(ctr)*diameterInlet
+            idx = GetIndexCenterlineForADefinedLength(centerline, branchId, desiredLength, 
+                    verboseprint)
+            if idx is None:
+                break
+            centerline.GetCell(branchId).GetPoints().GetPoint(idx, x)
+            pointsList.append(x) 
+            ctr += 1
+            if idx == npts - 2:
+                done = True
+                
+    return(pointsList)
+
+
+class Element(object):
+
+    def __init__(self, Id):
+        self.Id = Id
+        self.vtkGroupIdList = []
+        self.vtkCellIdList = []
+        self.length = 0.0
+        self.inletRadius = 0.0
+        self.meanInletRadius = 0.0
+        self.outletRadius = 0.0
+        self.meanRadius = 0.0
+        self.blanking = 0
+        self.inlet = False
+        self.outlet = False
+        self.x0 = []
+        self.x1 = []
+        self.x0Id = -1
+        self.x1Id = -1
+        self.behindSegment = None
+        self.frontSegment = None
+        self.alpha = 1.0
+        self.beta = 0.0
+        self.gamma = 0.0
+
+    def SetLength(self, length):
+        self.length = length
+
+    def SetAlpha(self, alpha):
+        self.alpha = alpha
+
+    def SetBeta(self, beta):
+        self.beta = beta
+
+    def SetGamma(self, gamma):
+        self.gamma = gamma
+
+    def SetBehindSegment(self, id):
+        self.behindSegment = id
+
+    def SetFrontSegment(self, id):
+        self.frontSegment = id
+
+    def SetVtkGroupIdList(self, VtkGroupIdList):
+        self.vtkGroupIdList = VtkGroupIdList
+
+    def SetVtkCellIdList(self, vtkCellIdList):
+        self.vtkCellIdList = vtkCellIdList
+
+    def SetMeanRadius(self, radius):
+        self.meanRadius = radius
+
+    def SetInletRadius(self, radius):
+        self.inletRadius = radius
+
+    def SetOutletRadius(self, radius):
+        self.outletRadius = radius
+
+    def SetBlanking(self, blanking):
+        self.blanking = blanking
+
+    def SetIfInlet(self, inlet):
+        self.inlet = inlet
+
+    def SetIfOutlet(self, outlet):
+        self.outlet = outlet
+
+    def SetInOutPointsCoordinates(self, x0, x1):
+        self.x0 = x0
+        self.x1 = x1
+
+    def SetInOutPointsIds(self, x0Id, x1Id):
+        self.x0Id = x0Id
+        self.x1Id = x1Id
+
+    def GetId(self):
+        return self.Id
+
+    def GetBehindSegment(self):
+        return self.behindSegment
+
+    def GetFrontSegment(self):
+        return self.frontSegment
+
+    def GetVtkCellIdList(self):
+        return self.vtkCellIdList
+
+    def GetVtkGroupIdList(self):
+        return self.vtkGroupIdList
+
+    def GetLength(self):
+        return self.length
+
+    def GetAlpha(self):
+        return self.alpha
+
+    def GetBeta(self):
+        return self.beta
+
+    def GetMeanRadius(self):
+        return self.meanRadius
+
+    def GetInletRadius(self):
+        return self.inletRadius
+
+    def GetMeanArea(self):
+        meanArea = np.pi*(self.meanRadius**2.0)
+        return meanArea
+
+    def GetInPointsx0(self):
+        return self.x0
+
+    def GetOutPointsx1(self):
+        return self.x1
+
+    def GetInPointsx0Id(self):
+        return self.x0Id
+
+    def GetOutPointsx1Id(self):
+        return self.x1Id
+
+    def IsBlanked(self):
+        &#39;&#39;&#39;Returns True if the element is part of a branch division.&#39;&#39;&#39;
+        return self.blanking
+
+    def IsAnInlet(self):
+        return self.inlet
+
+    def IsAnOutlet(self):
+        return self.outlet
+
+
+class Network(object):
+
+    def __init__(self):
+        self.elements = []
+        self.numberOfElements = 0
+        self.numberOfBifurcations = 0
+        self.numberOfOutlets = 0
+        self.networkInletRadius = 0.0
+
+    def AddElement(self, x):
+        self.elements.append(x)
+        self.numberOfElements += 1
+
+    def SetNetworkInletRadius(self, radius):
+        self.networkInletRadius = radius
+    
+    def GetNumberOfElements(self):
+        return self.numberOfElements
+
+    def GetNumberOfBifBranches(self):
+        nBlanked = 0
+        for el in self.elements:
+            nBlanked += el.IsBlanked()
+        return nBlanked
+
+    def GetNumberOfInlet(self):
+        nInlet = 0
+        for el in self.elements:
+            nInlet += el.IsAnInlet()
+        return nInlet
+
+    def GetNumberOfOutlet(self):
+        nOutlet = 0
+        for el in self.elements:
+            nOutlet += el.IsAnOutlet()
+        return nOutlet
+
+    def GetNetworkInletRadius(self):
+        return self.networkInletRadius</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="geometry_tools.legacy.networks.ComputeBranchLength"><code class="name flex">
+<span>def <span class="ident">ComputeBranchLength</span></span>(<span>centerline, branchId)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the length for the branch of index branchId.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ComputeBranchLength(centerline, branchId):
+    &#39;&#39;&#39;Return the length for the branch of index branchId.&#39;&#39;&#39;
+
+    length = 0.0
+    npts = centerline.GetCell(branchId).GetPoints().GetNumberOfPoints()
+    for k in range(0, npts - 1):
+        point0 = [0.0, 0.0, 0.0]
+        point1 = [0.0, 0.0, 0.0]
+        centerline.GetCell(branchId).GetPoints().GetPoint(k, point0)
+        centerline.GetCell(branchId).GetPoints().GetPoint(k + 1, point1)
+        length += math.sqrt(vtk.vtkMath.Distance2BetweenPoints(point0,point1))
+
+    return length</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.ComputeBranchRadius"><code class="name flex">
+<span>def <span class="ident">ComputeBranchRadius</span></span>(<span>centerline, branchId)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the radius for a branch with index branchId.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ComputeBranchRadius(centerline, branchId):
+    &#39;&#39;&#39;Return the radius for a branch with index branchId. &#39;&#39;&#39;
+    length = 0.0
+    resistance = 0.0
+    radiusArray = centerline.GetPointData().GetArray(RADIUSARRAYNAME)
+    npts = centerline.GetCell(branchId).GetPoints().GetNumberOfPoints()
+    for k in range(0, npts - 1):
+        point0 = [0.0, 0.0, 0.0]
+        point1 = [0.0, 0.0, 0.0]
+        centerline.GetCell(branchId).GetPoints().GetPoint(k, point0)
+        centerline.GetCell(branchId).GetPoints().GetPoint(k + 1, point1)
+        dx = math.sqrt(vtk.vtkMath.Distance2BetweenPoints(point0,point1))
+        length += dx
+        r = radiusArray.GetComponent(centerline.GetCell(branchId).GetPointId(k),0)
+        resistance += dx / r**(4.0)
+    branchRadius = (length / resistance)**(0.25)
+
+    return branchRadius</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.ComputeConnectivity"><code class="name flex">
+<span>def <span class="ident">ComputeConnectivity</span></span>(<span>network, tolerance, verboseprint)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compute the branches connectivity in the network.
+It is assumed that the first element is the inlet. In case of several
+inlets, modification to this routine should be coded. This routine search
+for each branch, its connected branches by comparing the coordinates of
+the distal extremity of the treated branch with the proximal extremity
+of the other branches in the network. As sometimes the coordinates do not
+perfectly match, a tolerance is applied.
+TODO: use simply vtkPolyDataConnectivityFilter to do the job&hellip;?</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ComputeConnectivity(network, tolerance, verboseprint):
+    &#39;&#39;&#39;Compute the branches connectivity in the network.
+    It is assumed that the first element is the inlet. In case of several
+    inlets, modification to this routine should be coded. This routine search
+    for each branch, its connected branches by comparing the coordinates of 
+    the distal extremity of the treated branch with the proximal extremity
+    of the other branches in the network. As sometimes the coordinates do not
+    perfectly match, a tolerance is applied.
+    TODO: use simply vtkPolyDataConnectivityFilter to do the job...?
+    &#39;&#39;&#39;
+    # A few cases were bordeline, hence the factor.
+    tol = 5.0 * tolerance
+    # Initialization of the first branch.
+    network.elements[0].SetIfInlet(True)   
+    network.elements[0].SetInOutPointsIds(1, 2)
+    # Test the end node (x1) of a branch with the start node
+    # of the other branches (x0).
+    for treatedBranch in network.elements:
+        atLeastOneFound = False
+        for x1 in treatedBranch.GetOutPointsx1():
+            for otherBranch in network.elements:
+                if otherBranch.GetId() == treatedBranch.GetId():
+                    continue
+                for x0 in otherBranch.GetInPointsx0():
+                    if vtk.vtkMath.Distance2BetweenPoints(x0,x1) &lt; tol:
+                        if vtk.vtkMath.Distance2BetweenPoints(x0,x1) &gt; tolerance:
+                            print(&#39;WARNING: POTENTIAL CONNECTIVITY ISSUE. &#39;)
+                            print(&#39;         A distance between connected points is suspicious.&#39; )
+                            print(&#39;         The segment(s) of CELL ID VTK &#39; + repr(treatedBranch.GetVtkCellIdList()))
+                            print(&#39;         and, the segment(s) of CELL ID VTK &#39; + repr(otherBranch.GetVtkCellIdList()) + &#39; will be considered&#39; )
+                            print(&#39;         as connected. Please check if this action was expected.&#39;)
+                            print(&#39;\n&#39;)
+                        otherBranch.SetInOutPointsIds(
+                            treatedBranch.GetOutPointsx1Id(), 
+                            otherBranch.GetId() + 2)
+                        otherBranch.SetBehindSegment(treatedBranch.GetId())
+                        treatedBranch.SetFrontSegment(otherBranch.GetId())
+                        atLeastOneFound = True
+        
+        if not(atLeastOneFound):
+            treatedBranch.SetIfOutlet(True)
+            treatedBranch.SetInOutPointsIds(
+                treatedBranch.GetInPointsx0Id(), 
+                treatedBranch.GetId() + 2)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.ComputeGeometricTolerance"><code class="name flex">
+<span>def <span class="ident">ComputeGeometricTolerance</span></span>(<span>centerline)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the min and max length for branches.
+This routine compute the delta x minimum and maximum in the network.
+The minimum length is used for the connectivity. The maximum length
+is used for merging the blanked segments.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ComputeGeometricTolerance(centerline):
+    &#39;&#39;&#39;Return the min and max length for branches.
+    This routine compute the delta x minimum and maximum in the network. 
+    The minimum length is used for the connectivity. The maximum length
+    is used for merging the blanked segments.
+    &#39;&#39;&#39;
+    groupIdsArray = centerline.GetCellData().GetArray(GROUPIDSARRAYNAME)
+    numberOfCells = centerline.GetNumberOfCells()
+    minLength = 10000.0
+    maxLength = 0.0
+    numberOfCells = centerline.GetNumberOfCells()
+    for i in range(0, numberOfCells):
+        groupId = groupIdsArray.GetValue(i)
+        npts =  centerline.GetCell(i).GetPoints().GetNumberOfPoints()
+        for k in range(0, npts - 1):
+            point0 = [0.0, 0.0, 0.0]
+            point1 = [0.0, 0.0, 0.0]
+            centerline.GetCell(i).GetPoints().GetPoint(k, point0)
+            centerline.GetCell(i).GetPoints().GetPoint(k + 1, point1)
+            if math.sqrt(vtk.vtkMath.Distance2BetweenPoints(point0,point1)) &lt; minLength:
+                if math.sqrt(vtk.vtkMath.Distance2BetweenPoints(point0,point1)) == 0.0:
+                    continue
+                minLength = math.sqrt(vtk.vtkMath.Distance2BetweenPoints(point0,point1))
+            if math.sqrt(vtk.vtkMath.Distance2BetweenPoints(point0,point1))&gt;maxLength:
+                maxLength = math.sqrt(vtk.vtkMath.Distance2BetweenPoints(point0,point1))
+
+    return minLength, maxLength</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.ComputeGroupLength"><code class="name flex">
+<span>def <span class="ident">ComputeGroupLength</span></span>(<span>centerline, branchGroupId)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the mean length for branches of branchGroupId.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ComputeGroupLength(centerline, branchGroupId):
+    &#39;&#39;&#39;Return the mean length for branches of branchGroupId.&#39;&#39;&#39;
+
+    groupLength = 0.0
+    lengthWeightSum = 0.0
+    groupIdsArray = centerline.GetCellData().GetArray(GROUPIDSARRAYNAME)
+    numberOfCells = centerline.GetNumberOfCells()
+    for i in range(0, numberOfCells):
+        groupId = groupIdsArray.GetValue(i)
+        if groupId != branchGroupId:
+            continue
+        length = ComputeBranchLength(centerline, i)
+        groupLength += length
+        lengthWeightSum += 1.0
+    groupLength /= lengthWeightSum
+
+    return groupLength</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.ComputeGroupRadius"><code class="name flex">
+<span>def <span class="ident">ComputeGroupRadius</span></span>(<span>centerline, branchGroupId)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the mean radius of a group.
+The mean radius is computed using the hydraulic resistance for
+the branches of branchGroupId. See Chnafa et al. International
+Journal for Numerical Methods in Biomedical Engineering, 2016.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ComputeGroupRadius(centerline, branchGroupId):
+    &#39;&#39;&#39;Return the mean radius of a group.
+    The mean radius is computed using the hydraulic resistance for 
+    the branches of branchGroupId. See Chnafa et al. International 
+    Journal for Numerical Methods in Biomedical Engineering, 2016.
+    &#39;&#39;&#39;
+    groupRadius = 0.0
+    radiusWeightSum = 0.0
+    groupIdsArray = centerline.GetCellData().GetArray(GROUPIDSARRAYNAME)
+    numberOfCells = centerline.GetNumberOfCells()
+    for i in range(0, numberOfCells):
+        if groupIdsArray.GetValue(i) != branchGroupId:
+            continue
+        groupRadius += ComputeBranchRadius(centerline, i)
+        radiusWeightSum += 1.0
+    groupRadius /= radiusWeightSum
+
+    return groupRadius</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.ComputeInletAverageCrossSectionArea"><code class="name flex">
+<span>def <span class="ident">ComputeInletAverageCrossSectionArea</span></span>(<span>centerline, desiredLength, verboseprint)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compute the inlet radius as an averaged radius.
+Computes an average radius over a certain length of the ICA. The mean
+radius is computed with the cross section area. If the number of points
+over the segment is lower than two, then the section area correspond
+to the inlet point. Note that due to a bug in VTK the very first point
+seems wrong, that is why I am taking the second point of the centerline.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ComputeInletAverageCrossSectionArea(centerline, desiredLength, verboseprint):
+    &#39;&#39;&#39;Compute the inlet radius as an averaged radius.
+    Computes an average radius over a certain length of the ICA. The mean
+    radius is computed with the cross section area. If the number of points
+    over the segment is lower than two, then the section area correspond
+    to the inlet point. Note that due to a bug in VTK the very first point
+    seems wrong, that is why I am taking the second point of the centerline.
+    &#39;&#39;&#39;
+    branchId = 0
+    length = 0.0
+    resistance = 0.0
+    sectionArray = centerline.GetPointData().GetArray(SECTIONARRAYNAME)
+    npts = GetIndexCenterlineForADefinedLength(centerline, branchId, 
+        desiredLength, verboseprint)
+    for k in range(1, npts - 1):
+        point0 = [0.0, 0.0, 0.0]
+        point1 = [0.0, 0.0, 0.0]
+        S = sectionArray.GetComponent(centerline.GetCell(branchId).GetPointId(k),0)
+        if S == 0.0:
+            continue
+        centerline.GetCell(branchId).GetPoints().GetPoint(k, point0)
+        centerline.GetCell(branchId).GetPoints().GetPoint(k + 1, point1)
+        dx = math.sqrt(vtk.vtkMath.Distance2BetweenPoints(point0,point1))
+        length += dx
+        r = math.sqrt(S/np.pi)
+        resistance += dx / r**(4.0)
+    if npts &lt; 2:
+        S = sectionArray.GetComponent(centerline.GetCell(branchId).GetPointId(1),0)
+        branchMeanRadius = math.sqrt(S/np.pi)
+    else:
+        branchMeanRadius = (length / resistance)**(0.25)
+
+    return branchMeanRadius</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.ComputeInletAverageRadius"><code class="name flex">
+<span>def <span class="ident">ComputeInletAverageRadius</span></span>(<span>centerline, desiredLength, verboseprint)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compute the inlet radius as an averaged radius.
+Computes an average radius over a certain length of the ICA. The mean
+radius is computed with the maximum inscribed sphere radius in the vessel.
+Thus, the actual radius might be underestimated if the vessel has
+an elliptical shape.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ComputeInletAverageRadius(centerline, desiredLength, verboseprint):
+    &#39;&#39;&#39;Compute the inlet radius as an averaged radius.
+    Computes an average radius over a certain length of the ICA. The mean
+    radius is computed with the maximum inscribed sphere radius in the vessel.
+    Thus, the actual radius might be underestimated if the vessel has
+    an elliptical shape.
+    &#39;&#39;&#39;
+    branchId = 0
+    length = 0.0
+    resistance = 0.0
+    radiusArray = centerline.GetPointData().GetArray(RADIUSARRAYNAME)
+    npts = GetIndexCenterlineForADefinedLength(centerline, branchId, 
+        desiredLength, verboseprint)
+    for k in range(0, npts - 1):
+        point0 = [0.0, 0.0, 0.0]
+        point1 = [0.0, 0.0, 0.0]
+        centerline.GetCell(branchId).GetPoints().GetPoint(k, point0)
+        centerline.GetCell(branchId).GetPoints().GetPoint(k + 1, point1)
+        dx = math.sqrt(vtk.vtkMath.Distance2BetweenPoints(point0,point1))
+        length += dx
+        r = radiusArray.GetComponent(centerline.GetCell(branchId).GetPointId(k),0)
+        resistance += dx / r**(4.0)
+    if npts &lt; 2:
+        branchMeanRadius = radiusArray.GetComponent(
+            centerline.GetCell(branchId).GetPointId(0),0)
+    else:
+        branchMeanRadius = (length / resistance)**(0.25)
+
+    return branchMeanRadius</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.GetBlankedGroupsIdList"><code class="name flex">
+<span>def <span class="ident">GetBlankedGroupsIdList</span></span>(<span>centerline)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetBlankedGroupsIdList(centerline):
+    blankedGroupdsArray = []
+    idx = 0
+    groupIdsArray = centerline.GetCellData().GetArray(GROUPIDSARRAYNAME)
+    blankingArray = centerline.GetCellData().GetArray(BLANKINGARRAYNAME)
+    for i in range(0, centerline.GetNumberOfCells()):
+        groupId = groupIdsArray.GetValue(i)
+        blanking = blankingArray.GetValue(i)
+        if blanking == 1:
+            blankedGroupdsArray.append((idx, groupId)) 
+        idx += 1
+
+    return(blankedGroupdsArray)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.GetIndexCenterlineForADefinedLength"><code class="name flex">
+<span>def <span class="ident">GetIndexCenterlineForADefinedLength</span></span>(<span>centerline, branchId, desiredLength, verboseprint)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the index of the point such as the desired distance between the index and
+the beginning of the branch is reached.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetIndexCenterlineForADefinedLength(centerline, branchId, desiredLength, 
+    verboseprint):
+    &#39;&#39;&#39;Get the index of the point such as the desired distance between the index and 
+    the beginning of the branch is reached. &#39;&#39;&#39;
+
+    length = 0.0
+    done = False
+    npts = centerline.GetCell(branchId).GetPoints().GetNumberOfPoints()
+    for k in range(0, npts - 1):
+        point0 = [0.0, 0.0, 0.0]
+        point1 = [0.0, 0.0, 0.0]
+        centerline.GetCell(branchId).GetPoints().GetPoint(k, point0)
+        centerline.GetCell(branchId).GetPoints().GetPoint(k + 1, point1)
+        length += math.sqrt(vtk.vtkMath.Distance2BetweenPoints(point0,point1))
+        if length &gt;= desiredLength:
+            index = k
+            done = True
+            break
+    if not(done):
+        try:
+            index = k
+        except:
+            index = None
+
+    return index</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.GetListProbePoints"><code class="name flex">
+<span>def <span class="ident">GetListProbePoints</span></span>(<span>centerline, network, verboseprint)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get points on a centerline spaced by the inlet diameter.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetListProbePoints(centerline, network, verboseprint):
+    &#39;&#39;&#39;Get points on a centerline spaced by the inlet diameter. &#39;&#39;&#39;
+
+    diameterInlet = 2.0*network.GetNetworkInletRadius()
+    pointsList = []
+    for el in network.elements:
+        if el.IsBlanked():
+            continue
+        branchId = el.GetVtkCellIdList()[0]
+        npts = centerline.GetCell(branchId).GetPoints().GetNumberOfPoints()
+        done = False
+        ctr = 0
+        while not(done):
+            x = [0.0, 0.0, 0.0]
+            desiredLength = float(ctr)*diameterInlet
+            idx = GetIndexCenterlineForADefinedLength(centerline, branchId, desiredLength, 
+                    verboseprint)
+            if idx is None:
+                break
+            centerline.GetCell(branchId).GetPoints().GetPoint(idx, x)
+            pointsList.append(x) 
+            ctr += 1
+            if idx == npts - 2:
+                done = True
+                
+    return(pointsList)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.GetListsUniqueBlankedBranches"><code class="name flex">
+<span>def <span class="ident">GetListsUniqueBlankedBranches</span></span>(<span>blankedGroupsIdList, redundantBlankedBranchesIdList)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetListsUniqueBlankedBranches(blankedGroupsIdList, redundantBlankedBranchesIdList):
+    blankedGroupsIndex = []
+    blankedUniqueBranchesIndex = []
+    for i in range(0, len(blankedGroupsIdList)):
+        if blankedGroupsIdList[i][0] in redundantBlankedBranchesIdList:
+            continue
+        blankedGroupsIndex.append(blankedGroupsIdList[i][1])
+        blankedUniqueBranchesIndex.append(blankedGroupsIdList[i][0])
+
+    return blankedGroupsIndex, blankedUniqueBranchesIndex</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.GetMaxGroupId"><code class="name flex">
+<span>def <span class="ident">GetMaxGroupId</span></span>(<span>centerline)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetMaxGroupId(centerline):
+    maxGroupId = 0
+    groupIdsArray = centerline.GetCellData().GetArray(GROUPIDSARRAYNAME)
+    for i in range(0, centerline.GetNumberOfCells()):
+        groupId = groupIdsArray.GetValue(i)
+        if groupId &gt; maxGroupId:
+            maxGroupId = groupId
+
+    return(maxGroupId)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.GetRedundantBlankedIdList"><code class="name flex">
+<span>def <span class="ident">GetRedundantBlankedIdList</span></span>(<span>centerline, blankedGroupsIdList)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the redundant blanked segments.
+Nominaly, the x0 and x1 coordinates should be the same. Thus, the
+computed distance should be exactly 0.0.
+Sometimes branches are just different by a few and SHOULD be merged.
+Visual inspection of the centerline with Paraview when the Warning
+message pop up is advised.
+Sometimes, the problem is more concerning. It is problematic that
+VMTK split, sometimes, the branches with a segment with a blanked
+segment, a lil' something and another blanked segment. In case of
+wierd branch splittings, try to lower the tol. It is cheating since
+branches that should not be merge will be merged anyway.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetRedundantBlankedIdList(centerline, blankedGroupsIdList):
+    &#39;&#39;&#39; Get the redundant blanked segments.
+    Nominaly, the x0 and x1 coordinates should be the same. Thus, the
+    computed distance should be exactly 0.0.
+    Sometimes branches are just different by a few and SHOULD be merged.
+    Visual inspection of the centerline with Paraview when the Warning 
+    message pop up is advised.
+    Sometimes, the problem is more concerning. It is problematic that 
+    VMTK split, sometimes, the branches with a segment with a blanked 
+    segment, a lil&#39; something and another blanked segment. In case of 
+    wierd branch splittings, try to lower the tol. It is cheating since 
+    branches that should not be merge will be merged anyway.
+    &#39;&#39;&#39;
+    currentX0 = [0.0, 0.0, 0.0]
+    currentX1 = [0.0, 0.0, 0.0]
+    otherX0 = [0.0, 0.0, 0.0]
+    otherX1 = [0.0, 0.0, 0.0]
+    minLength, maxLength = ComputeGeometricTolerance(centerline)
+    tol = maxLength*0.1 #10**(-5) 
+    redundantBranchesIndex = []
+    for currentBranch in blankedGroupsIdList:
+        currentBranchIndex = currentBranch[0]
+        if currentBranchIndex in redundantBranchesIndex:
+            continue
+        centerline.GetCell(currentBranchIndex).GetPoints().GetPoint(0, currentX0)
+        npts = centerline.GetCell(currentBranchIndex).GetPoints().GetNumberOfPoints()
+        centerline.GetCell(currentBranchIndex).GetPoints().GetPoint(npts - 1, currentX1)
+        for otherBranch in blankedGroupsIdList:
+            otherBranchIndex = otherBranch[0]
+            if otherBranchIndex == currentBranchIndex:
+                continue
+            if otherBranchIndex in redundantBranchesIndex:
+                continue
+            centerline.GetCell(otherBranchIndex).GetPoints().GetPoint(0, otherX0)
+            otherNpts = centerline.GetCell(otherBranchIndex).GetPoints().GetNumberOfPoints()
+            centerline.GetCell(otherBranchIndex).GetPoints().GetPoint(otherNpts - 1, otherX1)
+            if vtk.vtkMath.Distance2BetweenPoints(currentX0,otherX0) &lt; tol and \
+               vtk.vtkMath.Distance2BetweenPoints(currentX1,otherX1) &lt; tol:
+                redundantBranchesIndex.append(otherBranchIndex)
+                if vtk.vtkMath.Distance2BetweenPoints(currentX0,otherX0) &gt; minLength:
+                    print(&#39;WARNING: POTENTIAL ISSUE DURING THE MERGING OF REDUNDANTS BLANKED SEGMENTS.&#39;)
+                    print(&#39;         A distance between segments is suspicious.&#39;)
+                    print(&#39;         The blanked segments of VTK Cell Id &#39; + repr(currentBranchIndex))
+                    print(&#39;         and, VTK Cell Id &#39; + repr(otherBranchIndex) + &#39; will be merged.&#39;)
+                    print(&#39;         The segments points should be identical.  &#39;)
+                    print(&#39;         Please check if this action was expected.&#39;)
+                    print(&#39;\n&#39;)
+
+    return(redundantBranchesIndex)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.IsArrayDefined"><code class="name flex">
+<span>def <span class="ident">IsArrayDefined</span></span>(<span>centerline, arrayName)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def IsArrayDefined(centerline, arrayName):
+    nPointDataArrays = centerline.GetPointData().GetNumberOfArrays()
+    found = False
+    for i in range(0, nPointDataArrays):
+        if arrayName == centerline.GetPointData().GetArrayName(i):
+            found = True
+            break
+    nCellDataArrays = centerline.GetCellData().GetNumberOfArrays()
+    for i in range(0, nCellDataArrays):
+        if arrayName == centerline.GetCellData().GetArrayName(i):
+            found = True
+            break
+
+    return(found)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.SetNetworkStructure"><code class="name flex">
+<span>def <span class="ident">SetNetworkStructure</span></span>(<span>centerline, network, verboseprint, isConnectivityNeeded=True, isRadiusInletNeeded=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fills a network structure with a vtkPolyData object.
+Each element has an unique index. The groups length and radius are
+averaged out. When the element is not not part of the bifurcation
+reference system, it is possible that multiple end points exist. They are
+all saved. For the complet formalism of the bifurcation reference system
+see Antiga, L., &amp; Steinman, D. A. (2004). Robust and objective
+decomposition and mapping of bifurcating vessels. Medical Imaging,
+IEEE Transactions on, 23(6), 704-713.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SetNetworkStructure(centerline, network, verboseprint,
+    isConnectivityNeeded = True, isRadiusInletNeeded = True):
+    &#39;&#39;&#39;Fills a network structure with a vtkPolyData object.
+    Each element has an unique index. The groups length and radius are
+    averaged out. When the element is not not part of the bifurcation 
+    reference system, it is possible that multiple end points exist. They are
+    all saved. For the complet formalism of the bifurcation reference system 
+    see Antiga, L., &amp; Steinman, D. A. (2004). Robust and objective 
+    decomposition and mapping of bifurcating vessels. Medical Imaging, 
+    IEEE Transactions on, 23(6), 704-713.
+    &#39;&#39;&#39;
+    verboseprint(&#34;&gt; Filling the network structure with the raw data.&#34;)
+    if not(IsArrayDefined(centerline, GROUPIDSARRAYNAME)):
+        from vmtk import vmtkscripts
+        centerlines = vmtkscripts.vmtkBranchExtractor()
+        centerlines.Centerlines = centerline
+        centerlines.RadiusArrayName = RADIUSARRAYNAME
+        centerlines.Execute()
+        centerline = centerlines.Centerlines
+
+    # Treat the splitted centerline.
+    maxGroupId = GetMaxGroupId(centerline)
+    blankedGroupsIdList = GetBlankedGroupsIdList(centerline)
+    redundantBlankedBranchesIdList = GetRedundantBlankedIdList(centerline, 
+        blankedGroupsIdList)
+    blankedGroupsIndex, blankedUniqueBranchesIndex = \
+        GetListsUniqueBlankedBranches(blankedGroupsIdList, 
+        redundantBlankedBranchesIdList)
+    indexUniqueBranches = 0
+    for i in range(0, maxGroupId + 1):
+        x0List = []
+        x1List = []
+        VtkCellIdList = []
+        VtkGroupIdList = []
+        if i in blankedGroupsIndex:
+            for j in range(0,len(blankedGroupsIndex)):    
+                if blankedGroupsIndex[j] == i:
+                    el = Element(Id = indexUniqueBranches)
+                    el.SetMeanRadius(ComputeBranchRadius(centerline,
+                        blankedUniqueBranchesIndex[j]))
+                    el.SetLength(ComputeBranchLength(centerline,
+                        blankedUniqueBranchesIndex[j]))
+                    el.SetBlanking(1)
+                    npts = centerline.GetCell(blankedUniqueBranchesIndex[j]). \
+                        GetPoints().GetNumberOfPoints()
+                    x0 = [0.0, 0.0, 0.0]
+                    x1 = [0.0, 0.0, 0.0]
+                    centerline.GetCell(blankedUniqueBranchesIndex[j]). \
+                        GetPoints().GetPoint(0, x0)
+                    centerline.GetCell(blankedUniqueBranchesIndex[j]). \
+                        GetPoints().GetPoint(npts - 1, x1)
+                    x0List = []
+                    x1List = []
+                    VtkCellIdList =[]
+                    VtkGroupIdList = []
+                    x1List.append(x1)
+                    x0List.append(x0)
+                    el.SetInOutPointsCoordinates(x0List, x1List)
+                    VtkCellIdList.append(blankedUniqueBranchesIndex[j])
+                    VtkGroupIdList.append(i)
+                    el.SetVtkGroupIdList(VtkGroupIdList)
+                    el.SetVtkCellIdList(VtkCellIdList)
+                    network.AddElement(el)
+                    verboseprint(&#34;&gt; Edge Id &#34; + repr(indexUniqueBranches) 
+                        + &#34;, Length = &#34; + repr(el.GetLength()) + &#34; and Radius = &#34;
+                        + repr(el.GetMeanRadius()) + &#34;.&#34;)
+                    indexUniqueBranches += 1
+        else:
+            el = Element(Id = indexUniqueBranches)
+            el.SetMeanRadius(ComputeGroupRadius(centerline, i))
+            el.SetLength(ComputeGroupLength(centerline, i))
+            groupIdsArray = centerline.GetCellData().GetArray(GROUPIDSARRAYNAME)
+            numberOfCells = centerline.GetNumberOfCells()
+            for k in range(0, numberOfCells):
+                groupId = groupIdsArray.GetValue(k)
+                if groupId != i:
+                    continue
+                x0 = [0.0, 0.0, 0.0]
+                x1 = [0.0, 0.0, 0.0]
+                npts = centerline.GetCell(k).GetPoints().GetNumberOfPoints()
+                centerline.GetCell(k).GetPoints().GetPoint(npts - 1, x1)
+                x1List.append(x1)
+                centerline.GetCell(k).GetPoints().GetPoint(0, x0)
+                x0List.append(x0)
+                VtkCellIdList.append(k)
+                VtkGroupIdList.append(i)
+            uniqueX0List = [list(x) for x in set(tuple(x) for x in x0List)]
+            uniqueX1List = [list(x) for x in set(tuple(x) for x in x1List)]
+            el.SetInOutPointsCoordinates(uniqueX0List, uniqueX1List)
+            el.SetVtkGroupIdList(VtkGroupIdList)
+            el.SetVtkCellIdList(VtkCellIdList)
+            network.AddElement(el)
+            verboseprint(&#34;&gt; Edge Id &#34; + repr(indexUniqueBranches) 
+                + &#34;, Length = &#34; + repr(el.GetLength()) + &#34; and Radius = &#34;
+                + repr(el.GetMeanRadius()) + &#34;.&#34;)
+            indexUniqueBranches += 1
+    verboseprint(&#34;&gt; &#34;)
+
+    if isConnectivityNeeded:
+        minLength, maxLength = ComputeGeometricTolerance(centerline)
+        ComputeConnectivity(network, minLength, verboseprint)
+    SetRadiusX0(centerline, network, verboseprint)
+    network.SetNetworkInletRadius(
+        ComputeInletAverageRadius(centerline, 0.0, verboseprint))
+
+    return centerline</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.SetRadiusX0"><code class="name flex">
+<span>def <span class="ident">SetRadiusX0</span></span>(<span>centerline, network, verboseprint)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SetRadiusX0(centerline, network, verboseprint):
+    for branch in network.elements:
+        cellID = branch.GetVtkCellIdList()
+        radiusArray = centerline.GetPointData().GetArray(RADIUSARRAYNAME)
+        r = radiusArray.GetComponent(centerline.GetCell(cellID[0]).GetPointId(0),0)
+        branch.SetInletRadius(r)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.loadFile"><code class="name flex">
+<span>def <span class="ident">loadFile</span></span>(<span>fileName)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Load the given file, and return a vtkPolyData object for it.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def loadFile(fileName):
+    &#39;&#39;&#39;Load the given file, and return a vtkPolyData object for it. &#39;&#39;&#39;
+    fileType = fileName[-3:]
+    if fileType == &#39;&#39;:
+        raise RuntimeError(&#39;The file does not have an extension&#39;)
+    if fileType == &#39;stl&#39;:
+        reader = vtk.vtkSTLReader()
+        reader.MergingOn()
+    elif fileType == &#39;vtk&#39;:
+        reader = vtk.vtkPolyDataReader()
+    elif fileType == &#39;vtp&#39;:
+        reader = vtk.vtkXMLPolyDataReader()
+    elif fileType == &#39;vtu&#39;:
+        reader = vtk.vtkUnstructuredGridReader()
+    else:
+        raise RuntimeError(&#39;Unknown file type %s&#39; % fileType)
+    reader.SetFileName(fileName)
+    reader.Update()
+    polyData = reader.GetOutput()
+
+    return(polyData)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="geometry_tools.legacy.networks.Element"><code class="flex name class">
+<span>class <span class="ident">Element</span></span>
+<span>(</span><span>Id)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Element(object):
+
+    def __init__(self, Id):
+        self.Id = Id
+        self.vtkGroupIdList = []
+        self.vtkCellIdList = []
+        self.length = 0.0
+        self.inletRadius = 0.0
+        self.meanInletRadius = 0.0
+        self.outletRadius = 0.0
+        self.meanRadius = 0.0
+        self.blanking = 0
+        self.inlet = False
+        self.outlet = False
+        self.x0 = []
+        self.x1 = []
+        self.x0Id = -1
+        self.x1Id = -1
+        self.behindSegment = None
+        self.frontSegment = None
+        self.alpha = 1.0
+        self.beta = 0.0
+        self.gamma = 0.0
+
+    def SetLength(self, length):
+        self.length = length
+
+    def SetAlpha(self, alpha):
+        self.alpha = alpha
+
+    def SetBeta(self, beta):
+        self.beta = beta
+
+    def SetGamma(self, gamma):
+        self.gamma = gamma
+
+    def SetBehindSegment(self, id):
+        self.behindSegment = id
+
+    def SetFrontSegment(self, id):
+        self.frontSegment = id
+
+    def SetVtkGroupIdList(self, VtkGroupIdList):
+        self.vtkGroupIdList = VtkGroupIdList
+
+    def SetVtkCellIdList(self, vtkCellIdList):
+        self.vtkCellIdList = vtkCellIdList
+
+    def SetMeanRadius(self, radius):
+        self.meanRadius = radius
+
+    def SetInletRadius(self, radius):
+        self.inletRadius = radius
+
+    def SetOutletRadius(self, radius):
+        self.outletRadius = radius
+
+    def SetBlanking(self, blanking):
+        self.blanking = blanking
+
+    def SetIfInlet(self, inlet):
+        self.inlet = inlet
+
+    def SetIfOutlet(self, outlet):
+        self.outlet = outlet
+
+    def SetInOutPointsCoordinates(self, x0, x1):
+        self.x0 = x0
+        self.x1 = x1
+
+    def SetInOutPointsIds(self, x0Id, x1Id):
+        self.x0Id = x0Id
+        self.x1Id = x1Id
+
+    def GetId(self):
+        return self.Id
+
+    def GetBehindSegment(self):
+        return self.behindSegment
+
+    def GetFrontSegment(self):
+        return self.frontSegment
+
+    def GetVtkCellIdList(self):
+        return self.vtkCellIdList
+
+    def GetVtkGroupIdList(self):
+        return self.vtkGroupIdList
+
+    def GetLength(self):
+        return self.length
+
+    def GetAlpha(self):
+        return self.alpha
+
+    def GetBeta(self):
+        return self.beta
+
+    def GetMeanRadius(self):
+        return self.meanRadius
+
+    def GetInletRadius(self):
+        return self.inletRadius
+
+    def GetMeanArea(self):
+        meanArea = np.pi*(self.meanRadius**2.0)
+        return meanArea
+
+    def GetInPointsx0(self):
+        return self.x0
+
+    def GetOutPointsx1(self):
+        return self.x1
+
+    def GetInPointsx0Id(self):
+        return self.x0Id
+
+    def GetOutPointsx1Id(self):
+        return self.x1Id
+
+    def IsBlanked(self):
+        &#39;&#39;&#39;Returns True if the element is part of a branch division.&#39;&#39;&#39;
+        return self.blanking
+
+    def IsAnInlet(self):
+        return self.inlet
+
+    def IsAnOutlet(self):
+        return self.outlet</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="geometry_tools.legacy.networks.Element.GetAlpha"><code class="name flex">
+<span>def <span class="ident">GetAlpha</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetAlpha(self):
+    return self.alpha</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.GetBehindSegment"><code class="name flex">
+<span>def <span class="ident">GetBehindSegment</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetBehindSegment(self):
+    return self.behindSegment</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.GetBeta"><code class="name flex">
+<span>def <span class="ident">GetBeta</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetBeta(self):
+    return self.beta</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.GetFrontSegment"><code class="name flex">
+<span>def <span class="ident">GetFrontSegment</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetFrontSegment(self):
+    return self.frontSegment</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.GetId"><code class="name flex">
+<span>def <span class="ident">GetId</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetId(self):
+    return self.Id</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.GetInPointsx0"><code class="name flex">
+<span>def <span class="ident">GetInPointsx0</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetInPointsx0(self):
+    return self.x0</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.GetInPointsx0Id"><code class="name flex">
+<span>def <span class="ident">GetInPointsx0Id</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetInPointsx0Id(self):
+    return self.x0Id</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.GetInletRadius"><code class="name flex">
+<span>def <span class="ident">GetInletRadius</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetInletRadius(self):
+    return self.inletRadius</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.GetLength"><code class="name flex">
+<span>def <span class="ident">GetLength</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetLength(self):
+    return self.length</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.GetMeanArea"><code class="name flex">
+<span>def <span class="ident">GetMeanArea</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetMeanArea(self):
+    meanArea = np.pi*(self.meanRadius**2.0)
+    return meanArea</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.GetMeanRadius"><code class="name flex">
+<span>def <span class="ident">GetMeanRadius</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetMeanRadius(self):
+    return self.meanRadius</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.GetOutPointsx1"><code class="name flex">
+<span>def <span class="ident">GetOutPointsx1</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetOutPointsx1(self):
+    return self.x1</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.GetOutPointsx1Id"><code class="name flex">
+<span>def <span class="ident">GetOutPointsx1Id</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetOutPointsx1Id(self):
+    return self.x1Id</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.GetVtkCellIdList"><code class="name flex">
+<span>def <span class="ident">GetVtkCellIdList</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetVtkCellIdList(self):
+    return self.vtkCellIdList</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.GetVtkGroupIdList"><code class="name flex">
+<span>def <span class="ident">GetVtkGroupIdList</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetVtkGroupIdList(self):
+    return self.vtkGroupIdList</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.IsAnInlet"><code class="name flex">
+<span>def <span class="ident">IsAnInlet</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def IsAnInlet(self):
+    return self.inlet</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.IsAnOutlet"><code class="name flex">
+<span>def <span class="ident">IsAnOutlet</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def IsAnOutlet(self):
+    return self.outlet</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.IsBlanked"><code class="name flex">
+<span>def <span class="ident">IsBlanked</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns True if the element is part of a branch division.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def IsBlanked(self):
+    &#39;&#39;&#39;Returns True if the element is part of a branch division.&#39;&#39;&#39;
+    return self.blanking</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.SetAlpha"><code class="name flex">
+<span>def <span class="ident">SetAlpha</span></span>(<span>self, alpha)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SetAlpha(self, alpha):
+    self.alpha = alpha</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.SetBehindSegment"><code class="name flex">
+<span>def <span class="ident">SetBehindSegment</span></span>(<span>self, id)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SetBehindSegment(self, id):
+    self.behindSegment = id</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.SetBeta"><code class="name flex">
+<span>def <span class="ident">SetBeta</span></span>(<span>self, beta)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SetBeta(self, beta):
+    self.beta = beta</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.SetBlanking"><code class="name flex">
+<span>def <span class="ident">SetBlanking</span></span>(<span>self, blanking)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SetBlanking(self, blanking):
+    self.blanking = blanking</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.SetFrontSegment"><code class="name flex">
+<span>def <span class="ident">SetFrontSegment</span></span>(<span>self, id)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SetFrontSegment(self, id):
+    self.frontSegment = id</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.SetGamma"><code class="name flex">
+<span>def <span class="ident">SetGamma</span></span>(<span>self, gamma)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SetGamma(self, gamma):
+    self.gamma = gamma</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.SetIfInlet"><code class="name flex">
+<span>def <span class="ident">SetIfInlet</span></span>(<span>self, inlet)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SetIfInlet(self, inlet):
+    self.inlet = inlet</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.SetIfOutlet"><code class="name flex">
+<span>def <span class="ident">SetIfOutlet</span></span>(<span>self, outlet)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SetIfOutlet(self, outlet):
+    self.outlet = outlet</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.SetInOutPointsCoordinates"><code class="name flex">
+<span>def <span class="ident">SetInOutPointsCoordinates</span></span>(<span>self, x0, x1)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SetInOutPointsCoordinates(self, x0, x1):
+    self.x0 = x0
+    self.x1 = x1</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.SetInOutPointsIds"><code class="name flex">
+<span>def <span class="ident">SetInOutPointsIds</span></span>(<span>self, x0Id, x1Id)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SetInOutPointsIds(self, x0Id, x1Id):
+    self.x0Id = x0Id
+    self.x1Id = x1Id</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.SetInletRadius"><code class="name flex">
+<span>def <span class="ident">SetInletRadius</span></span>(<span>self, radius)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SetInletRadius(self, radius):
+    self.inletRadius = radius</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.SetLength"><code class="name flex">
+<span>def <span class="ident">SetLength</span></span>(<span>self, length)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SetLength(self, length):
+    self.length = length</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.SetMeanRadius"><code class="name flex">
+<span>def <span class="ident">SetMeanRadius</span></span>(<span>self, radius)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SetMeanRadius(self, radius):
+    self.meanRadius = radius</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.SetOutletRadius"><code class="name flex">
+<span>def <span class="ident">SetOutletRadius</span></span>(<span>self, radius)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SetOutletRadius(self, radius):
+    self.outletRadius = radius</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.SetVtkCellIdList"><code class="name flex">
+<span>def <span class="ident">SetVtkCellIdList</span></span>(<span>self, vtkCellIdList)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SetVtkCellIdList(self, vtkCellIdList):
+    self.vtkCellIdList = vtkCellIdList</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Element.SetVtkGroupIdList"><code class="name flex">
+<span>def <span class="ident">SetVtkGroupIdList</span></span>(<span>self, VtkGroupIdList)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SetVtkGroupIdList(self, VtkGroupIdList):
+    self.vtkGroupIdList = VtkGroupIdList</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="geometry_tools.legacy.networks.Network"><code class="flex name class">
+<span>class <span class="ident">Network</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Network(object):
+
+    def __init__(self):
+        self.elements = []
+        self.numberOfElements = 0
+        self.numberOfBifurcations = 0
+        self.numberOfOutlets = 0
+        self.networkInletRadius = 0.0
+
+    def AddElement(self, x):
+        self.elements.append(x)
+        self.numberOfElements += 1
+
+    def SetNetworkInletRadius(self, radius):
+        self.networkInletRadius = radius
+    
+    def GetNumberOfElements(self):
+        return self.numberOfElements
+
+    def GetNumberOfBifBranches(self):
+        nBlanked = 0
+        for el in self.elements:
+            nBlanked += el.IsBlanked()
+        return nBlanked
+
+    def GetNumberOfInlet(self):
+        nInlet = 0
+        for el in self.elements:
+            nInlet += el.IsAnInlet()
+        return nInlet
+
+    def GetNumberOfOutlet(self):
+        nOutlet = 0
+        for el in self.elements:
+            nOutlet += el.IsAnOutlet()
+        return nOutlet
+
+    def GetNetworkInletRadius(self):
+        return self.networkInletRadius</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="geometry_tools.legacy.networks.Network.AddElement"><code class="name flex">
+<span>def <span class="ident">AddElement</span></span>(<span>self, x)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def AddElement(self, x):
+    self.elements.append(x)
+    self.numberOfElements += 1</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Network.GetNetworkInletRadius"><code class="name flex">
+<span>def <span class="ident">GetNetworkInletRadius</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetNetworkInletRadius(self):
+    return self.networkInletRadius</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Network.GetNumberOfBifBranches"><code class="name flex">
+<span>def <span class="ident">GetNumberOfBifBranches</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetNumberOfBifBranches(self):
+    nBlanked = 0
+    for el in self.elements:
+        nBlanked += el.IsBlanked()
+    return nBlanked</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Network.GetNumberOfElements"><code class="name flex">
+<span>def <span class="ident">GetNumberOfElements</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetNumberOfElements(self):
+    return self.numberOfElements</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Network.GetNumberOfInlet"><code class="name flex">
+<span>def <span class="ident">GetNumberOfInlet</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetNumberOfInlet(self):
+    nInlet = 0
+    for el in self.elements:
+        nInlet += el.IsAnInlet()
+    return nInlet</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Network.GetNumberOfOutlet"><code class="name flex">
+<span>def <span class="ident">GetNumberOfOutlet</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetNumberOfOutlet(self):
+    nOutlet = 0
+    for el in self.elements:
+        nOutlet += el.IsAnOutlet()
+    return nOutlet</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.legacy.networks.Network.SetNetworkInletRadius"><code class="name flex">
+<span>def <span class="ident">SetNetworkInletRadius</span></span>(<span>self, radius)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SetNetworkInletRadius(self, radius):
+    self.networkInletRadius = radius</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="geometry_tools.legacy" href="index.html">geometry_tools.legacy</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="geometry_tools.legacy.networks.ComputeBranchLength" href="#geometry_tools.legacy.networks.ComputeBranchLength">ComputeBranchLength</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.ComputeBranchRadius" href="#geometry_tools.legacy.networks.ComputeBranchRadius">ComputeBranchRadius</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.ComputeConnectivity" href="#geometry_tools.legacy.networks.ComputeConnectivity">ComputeConnectivity</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.ComputeGeometricTolerance" href="#geometry_tools.legacy.networks.ComputeGeometricTolerance">ComputeGeometricTolerance</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.ComputeGroupLength" href="#geometry_tools.legacy.networks.ComputeGroupLength">ComputeGroupLength</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.ComputeGroupRadius" href="#geometry_tools.legacy.networks.ComputeGroupRadius">ComputeGroupRadius</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.ComputeInletAverageCrossSectionArea" href="#geometry_tools.legacy.networks.ComputeInletAverageCrossSectionArea">ComputeInletAverageCrossSectionArea</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.ComputeInletAverageRadius" href="#geometry_tools.legacy.networks.ComputeInletAverageRadius">ComputeInletAverageRadius</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.GetBlankedGroupsIdList" href="#geometry_tools.legacy.networks.GetBlankedGroupsIdList">GetBlankedGroupsIdList</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.GetIndexCenterlineForADefinedLength" href="#geometry_tools.legacy.networks.GetIndexCenterlineForADefinedLength">GetIndexCenterlineForADefinedLength</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.GetListProbePoints" href="#geometry_tools.legacy.networks.GetListProbePoints">GetListProbePoints</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.GetListsUniqueBlankedBranches" href="#geometry_tools.legacy.networks.GetListsUniqueBlankedBranches">GetListsUniqueBlankedBranches</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.GetMaxGroupId" href="#geometry_tools.legacy.networks.GetMaxGroupId">GetMaxGroupId</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.GetRedundantBlankedIdList" href="#geometry_tools.legacy.networks.GetRedundantBlankedIdList">GetRedundantBlankedIdList</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.IsArrayDefined" href="#geometry_tools.legacy.networks.IsArrayDefined">IsArrayDefined</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.SetNetworkStructure" href="#geometry_tools.legacy.networks.SetNetworkStructure">SetNetworkStructure</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.SetRadiusX0" href="#geometry_tools.legacy.networks.SetRadiusX0">SetRadiusX0</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.loadFile" href="#geometry_tools.legacy.networks.loadFile">loadFile</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="geometry_tools.legacy.networks.Element" href="#geometry_tools.legacy.networks.Element">Element</a></code></h4>
+<ul class="">
+<li><code><a title="geometry_tools.legacy.networks.Element.GetAlpha" href="#geometry_tools.legacy.networks.Element.GetAlpha">GetAlpha</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.GetBehindSegment" href="#geometry_tools.legacy.networks.Element.GetBehindSegment">GetBehindSegment</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.GetBeta" href="#geometry_tools.legacy.networks.Element.GetBeta">GetBeta</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.GetFrontSegment" href="#geometry_tools.legacy.networks.Element.GetFrontSegment">GetFrontSegment</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.GetId" href="#geometry_tools.legacy.networks.Element.GetId">GetId</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.GetInPointsx0" href="#geometry_tools.legacy.networks.Element.GetInPointsx0">GetInPointsx0</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.GetInPointsx0Id" href="#geometry_tools.legacy.networks.Element.GetInPointsx0Id">GetInPointsx0Id</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.GetInletRadius" href="#geometry_tools.legacy.networks.Element.GetInletRadius">GetInletRadius</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.GetLength" href="#geometry_tools.legacy.networks.Element.GetLength">GetLength</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.GetMeanArea" href="#geometry_tools.legacy.networks.Element.GetMeanArea">GetMeanArea</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.GetMeanRadius" href="#geometry_tools.legacy.networks.Element.GetMeanRadius">GetMeanRadius</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.GetOutPointsx1" href="#geometry_tools.legacy.networks.Element.GetOutPointsx1">GetOutPointsx1</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.GetOutPointsx1Id" href="#geometry_tools.legacy.networks.Element.GetOutPointsx1Id">GetOutPointsx1Id</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.GetVtkCellIdList" href="#geometry_tools.legacy.networks.Element.GetVtkCellIdList">GetVtkCellIdList</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.GetVtkGroupIdList" href="#geometry_tools.legacy.networks.Element.GetVtkGroupIdList">GetVtkGroupIdList</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.IsAnInlet" href="#geometry_tools.legacy.networks.Element.IsAnInlet">IsAnInlet</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.IsAnOutlet" href="#geometry_tools.legacy.networks.Element.IsAnOutlet">IsAnOutlet</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.IsBlanked" href="#geometry_tools.legacy.networks.Element.IsBlanked">IsBlanked</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.SetAlpha" href="#geometry_tools.legacy.networks.Element.SetAlpha">SetAlpha</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.SetBehindSegment" href="#geometry_tools.legacy.networks.Element.SetBehindSegment">SetBehindSegment</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.SetBeta" href="#geometry_tools.legacy.networks.Element.SetBeta">SetBeta</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.SetBlanking" href="#geometry_tools.legacy.networks.Element.SetBlanking">SetBlanking</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.SetFrontSegment" href="#geometry_tools.legacy.networks.Element.SetFrontSegment">SetFrontSegment</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.SetGamma" href="#geometry_tools.legacy.networks.Element.SetGamma">SetGamma</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.SetIfInlet" href="#geometry_tools.legacy.networks.Element.SetIfInlet">SetIfInlet</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.SetIfOutlet" href="#geometry_tools.legacy.networks.Element.SetIfOutlet">SetIfOutlet</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.SetInOutPointsCoordinates" href="#geometry_tools.legacy.networks.Element.SetInOutPointsCoordinates">SetInOutPointsCoordinates</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.SetInOutPointsIds" href="#geometry_tools.legacy.networks.Element.SetInOutPointsIds">SetInOutPointsIds</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.SetInletRadius" href="#geometry_tools.legacy.networks.Element.SetInletRadius">SetInletRadius</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.SetLength" href="#geometry_tools.legacy.networks.Element.SetLength">SetLength</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.SetMeanRadius" href="#geometry_tools.legacy.networks.Element.SetMeanRadius">SetMeanRadius</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.SetOutletRadius" href="#geometry_tools.legacy.networks.Element.SetOutletRadius">SetOutletRadius</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.SetVtkCellIdList" href="#geometry_tools.legacy.networks.Element.SetVtkCellIdList">SetVtkCellIdList</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Element.SetVtkGroupIdList" href="#geometry_tools.legacy.networks.Element.SetVtkGroupIdList">SetVtkGroupIdList</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="geometry_tools.legacy.networks.Network" href="#geometry_tools.legacy.networks.Network">Network</a></code></h4>
+<ul class="">
+<li><code><a title="geometry_tools.legacy.networks.Network.AddElement" href="#geometry_tools.legacy.networks.Network.AddElement">AddElement</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Network.GetNetworkInletRadius" href="#geometry_tools.legacy.networks.Network.GetNetworkInletRadius">GetNetworkInletRadius</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Network.GetNumberOfBifBranches" href="#geometry_tools.legacy.networks.Network.GetNumberOfBifBranches">GetNumberOfBifBranches</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Network.GetNumberOfElements" href="#geometry_tools.legacy.networks.Network.GetNumberOfElements">GetNumberOfElements</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Network.GetNumberOfInlet" href="#geometry_tools.legacy.networks.Network.GetNumberOfInlet">GetNumberOfInlet</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Network.GetNumberOfOutlet" href="#geometry_tools.legacy.networks.Network.GetNumberOfOutlet">GetNumberOfOutlet</a></code></li>
+<li><code><a title="geometry_tools.legacy.networks.Network.SetNetworkInletRadius" href="#geometry_tools.legacy.networks.Network.SetNetworkInletRadius">SetNetworkInletRadius</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

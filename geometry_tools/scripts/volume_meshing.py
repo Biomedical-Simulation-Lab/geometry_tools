@@ -10,7 +10,7 @@ import time
 from datetime import timedelta
 import numpy as np
 
-def volume_meshing(proj_dir, surf_type, multi_inlets):
+def volume_meshing(proj_dir, surf_type, multi_inlets, fix_centerline):
     
     if surf_type == 'pt':
         anubool=False
@@ -24,7 +24,7 @@ def volume_meshing(proj_dir, surf_type, multi_inlets):
 
     mesh_out_dir = proj_dir / 'mesh' 
     data_out_dir = proj_dir / 'data'  
-    submission_out_dir = proj_dir / 'submissions' 
+    submission_out_dir = proj_dir
 
     for f in [mesh_out_dir, data_out_dir, submission_out_dir]:
         if not f.exists():
@@ -69,16 +69,17 @@ def volume_meshing(proj_dir, surf_type, multi_inlets):
         m.update_inlets_outlets()
         if surf_type == 'a':
             m.generate_centerlines()
+
+        if (multi_inlets == 'multi'):
+            m.generate_centerlines_multi(proj_dir)
+            #m.centerlines.save(proj_dir/('volume_centerlines.vtp'))
+        elif multi_inlets == 'single':
             m.generate_centerlines(include_aneurysms=False)
 
-        if multi_inlets == 'multi':
-            m.generate_centerlines_multi(proj_dir)
-        else:
-            m.generate_centerlines(include_aneurysms=False)
         #WARNING: does not work with multiple inlets
         if multi_inlets == 'single':
             m.generate_flow_rates()
-        m.generate_h5_file(meshfile)
+        #m.generate_h5_file(meshfile)
         #m.generate_flow_rates_legacy() #why call?
         m.update_inlets_outlets()
         #NOTE: INLET FLOWRATES ARE SUBJECT TO CHANGE AND NEED TO BE INSPECTED BEFORE RUN!!
@@ -87,8 +88,10 @@ def volume_meshing(proj_dir, surf_type, multi_inlets):
 
         # Create submission file
         if surf_type == 'pt':
-            min_EL = np.min(surf.point_arrays['SizeDistanceToCenterlinesArray'][np.nonzero(surf.point_arrays['SizeDistanceToCenterlinesArray'])])
-            tstep_per_cycle = int(951/(min_EL/2)) #assuming 2 mm/ms is the max velocity
+            min_EL = 0.5*np.min(surf.point_arrays['Size'])
+            tstep_per_cycle = int(951/min_EL) #assuming 2 mm/ms is the max velocity
+        else:
+            tstep_per_cycle=9600
         s = SubmissionTemplate(meshfile.stem, timesteps_per_cycle=tstep_per_cycle)
         s.save_script(submission_out_dir)
 
@@ -104,6 +107,8 @@ if __name__ == "__main__":
     surf_type = sys.argv[2]
     if len(sys.argv) > 3:
         multi_inlets = sys.argv[3]
+        fix_centerline = sys.argv[4]
     else:
         multi_inlets = 'single'
-    volume_meshing(proj_dir=proj_dir, surf_type=surf_type, multi_inlets=multi_inlets)
+        fix_centerline = 'reg'
+    volume_meshing(proj_dir=proj_dir, surf_type=surf_type, multi_inlets=multi_inlets, fix_centerline=fix_centerline)

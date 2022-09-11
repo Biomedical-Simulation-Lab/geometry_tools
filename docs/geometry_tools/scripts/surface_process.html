@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>geometry_tools.scripts.surface_process API documentation</title>
+<meta name="description" content="Clip boundaries, mark inlets, outlets, and aneurysm locations." />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>geometry_tools.scripts.surface_process</code></h1>
+</header>
+<section id="section-intro">
+<p>Clip boundaries, mark inlets, outlets, and aneurysm locations.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34; Clip boundaries, mark inlets, outlets, and aneurysm locations.
+&#34;&#34;&#34;
+
+from configparser import NoOptionError
+import sys
+from pathlib import Path 
+import pyvista as pv 
+from geometry_tools.meshing import Mesher
+from geometry_tools import common as cc
+import geometry_tools.vmtk_wrapper as vmtk
+import numpy as np
+
+import time
+from datetime import timedelta
+from tubeclipper import TubeClipper
+
+def surface_process(proj_dir, proc_dir, surf_type, multi_inlets, ND, min_EL, max_EL, ref, fix_centerline, endpoints_pv=None):
+    proj_dir = Path(proj_dir)
+    if not proj_dir.exists():
+        proj_dir.mkdir()
+
+    proc_dir = Path(proc_dir)
+
+    surf_file = sorted(proc_dir.glob(&#39;*.vtp&#39;))[0]
+    #print(proj_dir)
+    point_file = proc_dir / (surf_file.stem + &#39;_endpoints.vtm&#39;)
+    #print(point_file)
+    assert point_file.exists()
+    
+    if surf_type==&#39;a&#39;:    
+        neckpoints_file = proj_dir / (surf_file.stem + &#39;_neckpoints.vtm&#39;)    
+        assert neckpoints_file.exists()
+        anubool=True
+
+    surf_output_file = proj_dir / (surf_file.stem + &#39;_pr.vtp&#39;)
+    points_output_file = proj_dir / (surf_file.stem + &#39;_pr_endpoints.vtm&#39;)
+    #endpoints_output_file = proj_dir / (surf_file.stem + &#39;_pr_endpoints.vtp&#39;)
+    centerlines_output_file=proj_dir / (surf_file.stem + &#39;_pr_centerlines.vtp&#39;)
+    #print(surf_output_file, points_output_file, centerlines_output_file)
+    ref_defined_outfile = proj_dir/(&#39;surf_refdefined.vtp&#39;)
+    ND_defined_outfile = proj_dir/(&#39;surf_NDdefined.vtp&#39;)
+
+    start = time.time()
+    #print(&#39;\n&#39; + surf_file.stem)
+
+    if not surf_output_file.exists():
+        surf = pv.read(surf_file)
+        # Make option for smoothing here
+        # surf = cc.vtk_taubin_smooth(surf, pass_band=0.05, iterations=50)
+        if surf_type==&#39;pt&#39;:
+            neck_geodesic_points = None
+        else:
+            neck_geodesic_points = pv.read(neckpoints_file)
+
+            if neck_geodesic_points is not None:
+                s = cc.SelectGeodesic(surf, scalars=&#39;Mask&#39;)
+                s.use_stored_points(neck_geodesic_points)
+                surf = s.mesh
+
+        points = pv.read(point_file)
+        in_points = points[&#39;inlets&#39;].points
+        out_points = points[&#39;outlets&#39;].points
+        if surf_type==&#39;a&#39;:   
+            an_points = points[&#39;aneurysms&#39;].points
+            anubool=True
+        else:
+            an_points = None
+            anubool = False
+
+        if &#39;normals&#39; in points[&#39;inlets&#39;].point_data:
+            # Clip
+            for pdx in range(points[&#39;inlets&#39;].n_points):
+                t = TubeClipper(surf)
+                t.clip(points[&#39;inlets&#39;].points[pdx], points[&#39;inlets&#39;].point_data[&#39;normals&#39;][pdx])
+                surf = t.far_side
+        
+        if &#39;normals&#39; in points[&#39;outlets&#39;].point_data:
+            # Clip
+            for pdx in range(points[&#39;outlets&#39;].n_points):
+                t = TubeClipper(surf)
+                t.clip(points[&#39;outlets&#39;].points[pdx], -points[&#39;outlets&#39;].point_data[&#39;normals&#39;][pdx])
+                surf = t.far_side
+
+        if endpoints_pv is not None:
+            print(&#39;Clipping with endpoints&#39;)
+            surf_closed = surf.fill_holes(20.0) #not sure about this, may have to make a flag
+            select = endpoints_pv.select_enclosed_points(surf_closed, tolerance=0.00001) #this doesn&#39;t work with a MuliBlock object
+            
+            for sdx in range(select.n_points):
+                check = select.point_data[&#39;SelectedPoints&#39;][sdx]
+                if check == True:
+                    print(&#39;t&#39;)
+                    origin = select.points[sdx]
+                    normal = select.point_data[&#39;normals&#39;][sdx]
+                    t = TubeClipper(surf)
+                    t.clip(origin, normal)
+                    surf = t.far_side
+
+        m = Mesher(
+            surf,
+            inlet_points=in_points, 
+            outlet_points=out_points,
+            aneurysm_points=an_points,
+            include_aneurysms=anubool
+            )
+
+        m.update_inlets_outlets()
+
+        if m.surf.n_points &gt; 1000:
+            m.decimate_surface(target_edge_length=0.5)
+
+        #Get any refinement regions for the PT mesh
+        if (surf_type==&#39;pt&#39;) and (ref == &#39;refine&#39;) and (not ref_defined_outfile.exists()):
+            s_pt = cc.RefinementSelection(m.surf, title=&#39;Choose Refinement Zone&#39;)
+            s_pt.select() #Selects the region of interest
+            s_pt.define_surface() #Adds data attribute to point array called &#39;RefinementPoints&#39;            
+            m.surf= s_pt.surf
+            &#39;&#39;&#39;
+            This goes with the old method
+
+            m.surf.point_data[&#39;vtkOGIds&#39;] = list(range(m.surf.n_points))
+            submesh = m.surf.extract_points(s_pt.surf.point_data[&#39;RefinementPoints&#39;]==1)
+            
+            #Check that the ids still match
+            #p=pv.Plotter()
+            #p.add_mesh(m.surf,color = &#39;blue&#39;, style=&#39;wireframe&#39;, show_edges=True)
+            #p.add_points(submesh, color=&#39;r&#39;)
+            #p.show()
+
+            submesh_ids = submesh.point_data[&#39;vtkOGIds&#39;].copy()
+            submesh_array = np.zeros(m.surf.n_points, dtype=int)
+            submesh_array[submesh_ids] = 1
+            m.surf.point_data[&#39;RefinementPoints&#39;] = submesh_array.astype(bool)
+            &#39;&#39;&#39;
+            m.surf.save(proj_dir/(&#39;surf_refdefined.vtp&#39;))    
+            #print(m.surf.point_data)
+        elif (ref_defined_outfile.exists()):
+            m.surf = pv.read(ref_defined_outfile)
+
+        if (ND == &#39;nd&#39;) and (not ND_defined_outfile.exists()):
+            e_pt = cc.RefinementSelection(m.surf, name=&#39;Enlarge_Cells&#39;, title = &#39;Mark Non-Dominant Side&#39;)
+            e_pt.select()
+            e_pt.define_surface()  
+            &#39;&#39;&#39;
+            This goes with the old method
+
+            m.surf.point_data[&#39;vtkOGIds&#39;] = list(range(m.surf.n_points))
+            submesh = m.surf.extract_points(e_pt.surf.point_data[&#39;Enlarge_Cells&#39;]==1)
+            submesh_ids = submesh.point_data[&#39;vtkOGIds&#39;].copy()
+            submesh_array = np.zeros(m.surf.n_points, dtype=int)
+            submesh_array[submesh_ids] = 1
+            m.surf.point_data[&#39;Enlarge_Cells&#39;] = submesh_array.astype(bool)
+            &#39;&#39;&#39;
+            m.surf = e_pt.surf
+            m.surf.save(proj_dir/(&#39;surf_NDdefined.vtp&#39;))    
+        elif ND_defined_outfile.exists():
+            m.surf = pv.read(ND_defined_outfile)
+
+        if surf_type==&#39;a&#39;: 
+            m.generate_centerlines()
+            m.generate_centerlines(include_aneurysms=False)
+
+        if multi_inlets == &#39;multi&#39;:
+            m.generate_centerlines_multi(proj_dir)               
+        else:
+            m.generate_centerlines(include_aneurysms=False)
+
+        if surf_type==&#39;a&#39;: 
+            m.branch_centerlines()
+            endpoints_pv = m.clip_endpoints_with_tubeclipper(endpoints_pv=endpoints_pv, include_aneurysms=anubool) #includes aneurysms by default
+            m.update_inlets_outlets()
+            m.get_bifurcation_ref_systems_vectors()
+
+        #These need to be optional, based on the flowrate and the size of the vessel
+        #For Dan&#39;s aneurysm cases, he appears to have used the following, which is probably too fine for the PT cases:
+        # min_edge_size=0.1, max_edge_size=0.4, sac_size=0.15, misr_min=0.1, misr_max=2.5
+        #I am going to mess with the defaults here, but keep the aneurysm defaults on the actual function
+        m.surface_preparation(proj_dir, multi_inlets, ref, ND, fix_centerline, neck_points=neck_geodesic_points, min_edge_size=min_EL, max_edge_size=max_EL, sac_size=0.15, misr_min=1, misr_max=7)
+        m.surf.clean()
+        m.update_inlets_outlets()
+   
+        # # This stuff is for getting plc points and 
+        # # parent regions for SCI
+        # m.get_mean_segments()
+        # m.branch_centerlines()
+        # m.update_aneurysm_group_ids()
+        # m.get_branch_endpoints()
+
+        # n_spheres=4
+        # m.mark_distance_from_sacs(n_spheres)
+        # m.mark_near_vessel_regions(m.surf, n_spheres=n_spheres)
+        # # plc_points = m.get_plc_points() 
+
+        # m.surf.save(surf_output_file)
+        if (fix_centerline == &#39;reg&#39;) and (multi_inlets == &#39;multi&#39;):
+            #NOTE: Always check the result of this!!!
+            m.generate_centerlines_multi(proj_dir)
+        elif (multi_inlets == &#39;single&#39;) :
+            m.generate_centerlines(include_aneurysms=anubool)
+
+        if surf_type==&#39;a&#39;: 
+            m.generate_centerlines(include_aneurysms=False)
+            m.branch_centerlines()
+            m.centerlines.save(centerlines_output_file)
+        elif (fix_centerline == &#39;reg&#39;) and (multi_inlets == &#39;multi&#39;):
+            m.branch_centerlines_pt()
+            m.centerlines.save(centerlines_output_file)
+        m.update_inlets_outlets()
+
+        if surf_type==&#39;a&#39;:                            
+            m.get_bifurcation_ref_systems_vectors()
+            m.update_inlets_outlets()
+            m.get_mean_segments()
+            m.update_aneurysm_group_ids()        
+            m.get_branch_endpoints()
+            n_spheres=4
+            m.mark_distance_from_sacs(n_spheres)
+            m.mark_near_vessel_regions(m.surf, n_spheres=n_spheres)
+            m.update_inlets_outlets()
+
+        # m.surf.plot(scalars=&#39;sac_zones&#39;)
+        
+        m.surf.save(surf_output_file)
+        m.save_inlet_outlet_points(points_output_file, include_aneurysms=anubool)
+
+
+        print(&#39;\n Case done&#39;, timedelta(seconds=time.time() - start))
+
+    else:
+        print(&#39;Output surface exists.&#39;)
+
+
+
+if __name__ == &#34;__main__&#34;:
+    &#34;&#34;&#34;
+    Call this script using the following formula:
+    surface_process.py path/to/case surf_type multi_inlets ref fix_centerline min_EL max_EL ND
+    
+    Info about the input arguments:
+
+    path/to/case: must be a path with a target separated with min two/max three underscores, eg. ./case_1_proc or ./case_1_proc_refined.
+    It will look in the directory ./case_1 for your prepared surface.
+
+    surf_type: options are a for aneurysm or pt for pulsatile tinnitus
+    
+    multi_inlets: options are multi for multiple inlet cases or single for single inlet cases
+    
+    ref: options are refine or no_ref. Use if you want a refinment patch
+    
+    fix_centerline: options are reg, fix, network, or network_fix. Use the &#39;fix&#39; options for if you want to use MISR instead of distance to centerlines
+    
+    min_EL/max_EL: specify floats that correspond to the minimum and maximum desired edgelengths
+    
+    ND: options are none or nd for whether or not you want to enlarge certain edge lengths (eg. the non-dominant side in a PT case)
+    
+    A full example of a command to put in a terminal that would call this script is as follows:
+    surface_process.py ./case_1_low pt multi no_ref network_fix 0.4 0.5 nd
+
+    NOTE: you do not need to precede this command with python because it already knows it is a python script.
+    &#34;&#34;&#34;
+    proj_dir = Path(sys.argv[1])  
+
+    if len(sys.argv[1].split(&#39;_&#39;)) == 3:
+        proc_dir = sys.argv[1].split(&#39;_&#39;)[0], &#39;_&#39;, sys.argv[1].split(&#39;_&#39;)[1], &#39;_&#39;,sys.argv[1].split(&#39;_&#39;)[2] 
+    else:
+        proc_dir = sys.argv[1].split(&#39;_&#39;)[0], &#39;_&#39;, sys.argv[1].split(&#39;_&#39;)[1]
+
+    proc_dir = Path(&#39;&#39;.join(str(i) for i in proc_dir))
+    #print(proc_dir)
+    if len(sys.argv) == 3:
+        endpoints_f = Path(sys.argv[2])
+        ref = &#39;no_ref&#39; 
+        if endpoints_f.exists():
+            endpoints_pv = pv.read(endpoints_f) #have to be PolyData type (vtp) to work?
+        else:
+            endpoints_pv = None
+            surf_type=sys.argv[2] 
+        min_EL = 0.1
+        max_EL = 0.4
+        multi_inlets = &#39;single&#39;
+        ND = &#39;none&#39;
+    elif len(sys.argv) &gt; 3:
+        endpoints_f = Path(sys.argv[2])
+        if endpoints_f.exists():
+            endpoints_pv = pv.read(endpoints_f) #have to be PolyData type (vtp) to work?
+            surf_type=sys.argv[3]
+            multi_inlets = sys.argv[4] #options are &#39;single&#39; and &#39;multi&#39;
+            ref = sys.argv[5] #options are &#39;refine&#39; or &#39;no_ref&#39; 
+            fix_centerline = sys.argv[6] #options are &#39;reg&#39;, &#39;fix&#39;, &#39;network&#39;, or &#39;network_fix&#39;
+            min_EL = float(sys.argv[7])
+            max_EL = float(sys.argv[8])  
+            ND = sys.argv[9]
+        else:
+            endpoints_pv = None
+            surf_type=sys.argv[2] 
+            multi_inlets = sys.argv[3] #options are &#39;single&#39; and &#39;multi&#39;
+            ref = sys.argv[4] #options are &#39;refine&#39; or &#39;no_ref&#39; 
+            fix_centerline = sys.argv[5] #options are &#39;reg&#39;, &#39;fix&#39;, &#39;network&#39;, or &#39;network_fix&#39;
+            min_EL = float(sys.argv[6])
+            max_EL = float(sys.argv[7])
+            ND = sys.argv[8] # options are &#39;none&#39; and &#39;nd&#39;
+
+    #print(proc_dir, proj_dir, min_EL, max_EL)
+    surface_process(proj_dir, proc_dir, surf_type, multi_inlets, ND, min_EL, max_EL, ref, fix_centerline, endpoints_pv)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="geometry_tools.scripts.surface_process.surface_process"><code class="name flex">
+<span>def <span class="ident">surface_process</span></span>(<span>proj_dir, proc_dir, surf_type, multi_inlets, ND, min_EL, max_EL, ref, fix_centerline, endpoints_pv=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def surface_process(proj_dir, proc_dir, surf_type, multi_inlets, ND, min_EL, max_EL, ref, fix_centerline, endpoints_pv=None):
+    proj_dir = Path(proj_dir)
+    if not proj_dir.exists():
+        proj_dir.mkdir()
+
+    proc_dir = Path(proc_dir)
+
+    surf_file = sorted(proc_dir.glob(&#39;*.vtp&#39;))[0]
+    #print(proj_dir)
+    point_file = proc_dir / (surf_file.stem + &#39;_endpoints.vtm&#39;)
+    #print(point_file)
+    assert point_file.exists()
+    
+    if surf_type==&#39;a&#39;:    
+        neckpoints_file = proj_dir / (surf_file.stem + &#39;_neckpoints.vtm&#39;)    
+        assert neckpoints_file.exists()
+        anubool=True
+
+    surf_output_file = proj_dir / (surf_file.stem + &#39;_pr.vtp&#39;)
+    points_output_file = proj_dir / (surf_file.stem + &#39;_pr_endpoints.vtm&#39;)
+    #endpoints_output_file = proj_dir / (surf_file.stem + &#39;_pr_endpoints.vtp&#39;)
+    centerlines_output_file=proj_dir / (surf_file.stem + &#39;_pr_centerlines.vtp&#39;)
+    #print(surf_output_file, points_output_file, centerlines_output_file)
+    ref_defined_outfile = proj_dir/(&#39;surf_refdefined.vtp&#39;)
+    ND_defined_outfile = proj_dir/(&#39;surf_NDdefined.vtp&#39;)
+
+    start = time.time()
+    #print(&#39;\n&#39; + surf_file.stem)
+
+    if not surf_output_file.exists():
+        surf = pv.read(surf_file)
+        # Make option for smoothing here
+        # surf = cc.vtk_taubin_smooth(surf, pass_band=0.05, iterations=50)
+        if surf_type==&#39;pt&#39;:
+            neck_geodesic_points = None
+        else:
+            neck_geodesic_points = pv.read(neckpoints_file)
+
+            if neck_geodesic_points is not None:
+                s = cc.SelectGeodesic(surf, scalars=&#39;Mask&#39;)
+                s.use_stored_points(neck_geodesic_points)
+                surf = s.mesh
+
+        points = pv.read(point_file)
+        in_points = points[&#39;inlets&#39;].points
+        out_points = points[&#39;outlets&#39;].points
+        if surf_type==&#39;a&#39;:   
+            an_points = points[&#39;aneurysms&#39;].points
+            anubool=True
+        else:
+            an_points = None
+            anubool = False
+
+        if &#39;normals&#39; in points[&#39;inlets&#39;].point_data:
+            # Clip
+            for pdx in range(points[&#39;inlets&#39;].n_points):
+                t = TubeClipper(surf)
+                t.clip(points[&#39;inlets&#39;].points[pdx], points[&#39;inlets&#39;].point_data[&#39;normals&#39;][pdx])
+                surf = t.far_side
+        
+        if &#39;normals&#39; in points[&#39;outlets&#39;].point_data:
+            # Clip
+            for pdx in range(points[&#39;outlets&#39;].n_points):
+                t = TubeClipper(surf)
+                t.clip(points[&#39;outlets&#39;].points[pdx], -points[&#39;outlets&#39;].point_data[&#39;normals&#39;][pdx])
+                surf = t.far_side
+
+        if endpoints_pv is not None:
+            print(&#39;Clipping with endpoints&#39;)
+            surf_closed = surf.fill_holes(20.0) #not sure about this, may have to make a flag
+            select = endpoints_pv.select_enclosed_points(surf_closed, tolerance=0.00001) #this doesn&#39;t work with a MuliBlock object
+            
+            for sdx in range(select.n_points):
+                check = select.point_data[&#39;SelectedPoints&#39;][sdx]
+                if check == True:
+                    print(&#39;t&#39;)
+                    origin = select.points[sdx]
+                    normal = select.point_data[&#39;normals&#39;][sdx]
+                    t = TubeClipper(surf)
+                    t.clip(origin, normal)
+                    surf = t.far_side
+
+        m = Mesher(
+            surf,
+            inlet_points=in_points, 
+            outlet_points=out_points,
+            aneurysm_points=an_points,
+            include_aneurysms=anubool
+            )
+
+        m.update_inlets_outlets()
+
+        if m.surf.n_points &gt; 1000:
+            m.decimate_surface(target_edge_length=0.5)
+
+        #Get any refinement regions for the PT mesh
+        if (surf_type==&#39;pt&#39;) and (ref == &#39;refine&#39;) and (not ref_defined_outfile.exists()):
+            s_pt = cc.RefinementSelection(m.surf, title=&#39;Choose Refinement Zone&#39;)
+            s_pt.select() #Selects the region of interest
+            s_pt.define_surface() #Adds data attribute to point array called &#39;RefinementPoints&#39;            
+            m.surf= s_pt.surf
+            &#39;&#39;&#39;
+            This goes with the old method
+
+            m.surf.point_data[&#39;vtkOGIds&#39;] = list(range(m.surf.n_points))
+            submesh = m.surf.extract_points(s_pt.surf.point_data[&#39;RefinementPoints&#39;]==1)
+            
+            #Check that the ids still match
+            #p=pv.Plotter()
+            #p.add_mesh(m.surf,color = &#39;blue&#39;, style=&#39;wireframe&#39;, show_edges=True)
+            #p.add_points(submesh, color=&#39;r&#39;)
+            #p.show()
+
+            submesh_ids = submesh.point_data[&#39;vtkOGIds&#39;].copy()
+            submesh_array = np.zeros(m.surf.n_points, dtype=int)
+            submesh_array[submesh_ids] = 1
+            m.surf.point_data[&#39;RefinementPoints&#39;] = submesh_array.astype(bool)
+            &#39;&#39;&#39;
+            m.surf.save(proj_dir/(&#39;surf_refdefined.vtp&#39;))    
+            #print(m.surf.point_data)
+        elif (ref_defined_outfile.exists()):
+            m.surf = pv.read(ref_defined_outfile)
+
+        if (ND == &#39;nd&#39;) and (not ND_defined_outfile.exists()):
+            e_pt = cc.RefinementSelection(m.surf, name=&#39;Enlarge_Cells&#39;, title = &#39;Mark Non-Dominant Side&#39;)
+            e_pt.select()
+            e_pt.define_surface()  
+            &#39;&#39;&#39;
+            This goes with the old method
+
+            m.surf.point_data[&#39;vtkOGIds&#39;] = list(range(m.surf.n_points))
+            submesh = m.surf.extract_points(e_pt.surf.point_data[&#39;Enlarge_Cells&#39;]==1)
+            submesh_ids = submesh.point_data[&#39;vtkOGIds&#39;].copy()
+            submesh_array = np.zeros(m.surf.n_points, dtype=int)
+            submesh_array[submesh_ids] = 1
+            m.surf.point_data[&#39;Enlarge_Cells&#39;] = submesh_array.astype(bool)
+            &#39;&#39;&#39;
+            m.surf = e_pt.surf
+            m.surf.save(proj_dir/(&#39;surf_NDdefined.vtp&#39;))    
+        elif ND_defined_outfile.exists():
+            m.surf = pv.read(ND_defined_outfile)
+
+        if surf_type==&#39;a&#39;: 
+            m.generate_centerlines()
+            m.generate_centerlines(include_aneurysms=False)
+
+        if multi_inlets == &#39;multi&#39;:
+            m.generate_centerlines_multi(proj_dir)               
+        else:
+            m.generate_centerlines(include_aneurysms=False)
+
+        if surf_type==&#39;a&#39;: 
+            m.branch_centerlines()
+            endpoints_pv = m.clip_endpoints_with_tubeclipper(endpoints_pv=endpoints_pv, include_aneurysms=anubool) #includes aneurysms by default
+            m.update_inlets_outlets()
+            m.get_bifurcation_ref_systems_vectors()
+
+        #These need to be optional, based on the flowrate and the size of the vessel
+        #For Dan&#39;s aneurysm cases, he appears to have used the following, which is probably too fine for the PT cases:
+        # min_edge_size=0.1, max_edge_size=0.4, sac_size=0.15, misr_min=0.1, misr_max=2.5
+        #I am going to mess with the defaults here, but keep the aneurysm defaults on the actual function
+        m.surface_preparation(proj_dir, multi_inlets, ref, ND, fix_centerline, neck_points=neck_geodesic_points, min_edge_size=min_EL, max_edge_size=max_EL, sac_size=0.15, misr_min=1, misr_max=7)
+        m.surf.clean()
+        m.update_inlets_outlets()
+   
+        # # This stuff is for getting plc points and 
+        # # parent regions for SCI
+        # m.get_mean_segments()
+        # m.branch_centerlines()
+        # m.update_aneurysm_group_ids()
+        # m.get_branch_endpoints()
+
+        # n_spheres=4
+        # m.mark_distance_from_sacs(n_spheres)
+        # m.mark_near_vessel_regions(m.surf, n_spheres=n_spheres)
+        # # plc_points = m.get_plc_points() 
+
+        # m.surf.save(surf_output_file)
+        if (fix_centerline == &#39;reg&#39;) and (multi_inlets == &#39;multi&#39;):
+            #NOTE: Always check the result of this!!!
+            m.generate_centerlines_multi(proj_dir)
+        elif (multi_inlets == &#39;single&#39;) :
+            m.generate_centerlines(include_aneurysms=anubool)
+
+        if surf_type==&#39;a&#39;: 
+            m.generate_centerlines(include_aneurysms=False)
+            m.branch_centerlines()
+            m.centerlines.save(centerlines_output_file)
+        elif (fix_centerline == &#39;reg&#39;) and (multi_inlets == &#39;multi&#39;):
+            m.branch_centerlines_pt()
+            m.centerlines.save(centerlines_output_file)
+        m.update_inlets_outlets()
+
+        if surf_type==&#39;a&#39;:                            
+            m.get_bifurcation_ref_systems_vectors()
+            m.update_inlets_outlets()
+            m.get_mean_segments()
+            m.update_aneurysm_group_ids()        
+            m.get_branch_endpoints()
+            n_spheres=4
+            m.mark_distance_from_sacs(n_spheres)
+            m.mark_near_vessel_regions(m.surf, n_spheres=n_spheres)
+            m.update_inlets_outlets()
+
+        # m.surf.plot(scalars=&#39;sac_zones&#39;)
+        
+        m.surf.save(surf_output_file)
+        m.save_inlet_outlet_points(points_output_file, include_aneurysms=anubool)
+
+
+        print(&#39;\n Case done&#39;, timedelta(seconds=time.time() - start))
+
+    else:
+        print(&#39;Output surface exists.&#39;)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="geometry_tools.scripts" href="index.html">geometry_tools.scripts</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="geometry_tools.scripts.surface_process.surface_process" href="#geometry_tools.scripts.surface_process.surface_process">surface_process</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
