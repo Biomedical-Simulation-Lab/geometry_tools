@@ -266,7 +266,7 @@ if __name__ == "__main__":
         endpoints_f = Path(sys.argv[2])
         ref = 'no_ref' 
         if endpoints_f.exists():
-            endpoints_pv = pv.read(endpoints_f) #have to be PolyData type (vtp) to work?
+            endpoints_pv = pv.read(endpoints_f) 
         else:
             endpoints_pv = None
             surf_type=sys.argv[2] 
