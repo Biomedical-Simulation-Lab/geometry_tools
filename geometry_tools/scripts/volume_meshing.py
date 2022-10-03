@@ -42,7 +42,7 @@ def volume_meshing(proj_dir, surf_type, multi_inlets, fix_centerline):
     if not xmlgzfile.exists():
         # try:
         surf = pv.read(surf_file)
-
+        surf.clean()
         points = pv.read(point_file)
         in_points = points['inlets'].points
         out_points = points['outlets'].points

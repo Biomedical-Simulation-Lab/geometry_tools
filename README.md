@@ -50,7 +50,7 @@ For an example of using this for meshing, see the `meshing_example.sh` file in `
 `conda install -c conda-forge vmtk`
 
 3) install some packages
-`conda install -c conda-forge scipy ipython pyvista networkx matplotlib`
+`conda install -c conda-forge scipy ipython pyvista=0.34.0 networkx matplotlib`
 `pip install pygeodesic`
 
 4) install tubeclipper
@@ -60,4 +60,7 @@ For an example of using this for meshing, see the `meshing_example.sh` file in `
 5) install geometry_tools
 `cd /path/to/geometry_tools/`
 `pip install -e .`
+
+# Warning
+There are newer versions of pyvista that have more functionality. Do not be tempted!
 

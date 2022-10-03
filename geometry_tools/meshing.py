@@ -150,7 +150,7 @@ class Mesher(Surfer):
         surf = surf.clean()
 
         #AH's implementation of Dan's solution to the off-centre centrelines. There is no use for this atm
-        if (fix_centerline == 'fix') or (fix_centerline == 'network_fix'):
+        if (fix_centerline == 'fix'):
             surf.point_data['centerline_map']=np.array(surf.n_points)
             surf.point_data['misr']=np.array(surf.n_points)
             tree = KDTree(centerlines1.points)
@@ -180,9 +180,9 @@ class Mesher(Surfer):
         # if smooth:
         #     surf = cc.vtk_taubin_smooth(surf, pass_band=0.05, iterations=100)
 
-        surf, centerlines1 = vmtk.flow_extensions(surf, centerlines1)
+        #moved the flow extensions to surface_prep!!
         surf = surf.clean()
-        
+
         self.surf = surf
         self.update_inlets_outlets()
         if multi_inlets == 'multi':    
@@ -200,6 +200,8 @@ class Mesher(Surfer):
             surf = s.mesh
         else:
             surf = surf.interpolate(surf_og, n_points=1, pass_point_data=True) #radius=0.5, strategy='null_value', null_value=0)
+        #surf.save(proj_dir/'after_interp0.vtp')
+        
         #print(surf.point_data)
         surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines1)
         surf = surf.clean()
@@ -241,11 +243,11 @@ class Mesher(Surfer):
         #in the point array. Still needed for the refinement points and mask points. 
         #Must re-calculate the size array for when the meshgenerator needs it, though...
         else:
-            surf_rm = surf_rm.interpolate(surf_og, n_points=5, pass_point_data=True) #radius=0.5, strategy='null_value', null_value=0)
+            surf_rm = surf_rm.interpolate(surf_og, n_points=1, pass_point_data=True) #radius=0.5, strategy='null_value', null_value=0)
             surf_rm = surf_rm.clean()
-
-        surf_rm = surf_rm.interpolate(surf, radius=0.5, pass_point_data=True)
-            
+        #surf_rm.save(proj_dir/'after_interp1.vtp')
+        surf_rm = surf_rm.interpolate(surf, radius=0.7, pass_point_data=True)
+        #surf_rm.save(proj_dir/'after_interp2.vtp')    
         surf_rm = cc.create_edge_size_array(surf_rm, fix_centerline, min_edge_size=min_edge_size, max_edge_size=max_edge_size, sac_size=sac_size, 
             misr_min=misr_min, misr_max=misr_max, name='Size', ref_edge_ratio=0.5)
             

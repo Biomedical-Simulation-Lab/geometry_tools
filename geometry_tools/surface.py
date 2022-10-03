@@ -206,6 +206,8 @@ class Surfer():
         inlet_ids = self._pick_points(centers_m, text=text)
         outlet_ids = list(set(range(centers_m.n_points)) - set(inlet_ids))
         
+        self.inlet_ids = inlet_ids
+
         assert inlet_ids[0] is not None, "No inlet selected."
 
         self.inlet_points = [centers[i] for i in inlet_ids]

@@ -362,6 +362,7 @@ def create_edge_size_array(surf, fix_centerline, min_edge_size=0.1, max_edge_siz
         print('No mask defined in create_edge_size_array.')
 
     if ('RefinementPoints' in surf.point_data) and ('Enlarge_Cells' in surf.point_data):
+        print('Refinement points and enlarged cells defined in create_edge_size_array.')
         surf.point_data['Refs'] = surf.point_data['RefinementPoints'].copy()
         surf, _ = smooth_mesh_data_local(surf, 'Refs', np.max, iterations=6, neighbour_pt_ids=n_ids)
 
@@ -377,6 +378,7 @@ def create_edge_size_array(surf, fix_centerline, min_edge_size=0.1, max_edge_siz
         surf.point_data[name][nd_reg] = current_size_array*1.5
 
     elif 'RefinementPoints' in surf.point_data:
+        print('Refinement points defined in create_edge_size_array.')
         surf.point_data['Refs'] = surf.point_data['RefinementPoints'].copy()
         surf, _ = smooth_mesh_data_local(surf, 'Refs', np.max, iterations=6, neighbour_pt_ids=n_ids)
 
@@ -385,6 +387,7 @@ def create_edge_size_array(surf, fix_centerline, min_edge_size=0.1, max_edge_siz
 
         surf.point_data[name][ref_reg] = current_size_array*ref_edge_ratio
     elif 'Enlarge_Cells' in surf.point_data:
+        print('Enlarged cells defined in create_edge_size_array.')
         surf.point_data['nds'] = surf.point_data['Enlarge_Cells'].copy()
         nd_reg = surf.point_data['nds'] == 1
         current_size_array = surf.point_data[name][nd_reg]
@@ -1206,3 +1209,87 @@ def get_normal_component(surf, array='u', normals='Normals',):
         surf.point_data[array],
         )
     return surf
+
+class Flow_Extender():
+    def __init__(self, surf = None, centerlines = None, inlet_points=None, outlet_points=None,length = 2):
+        self.surf = surf
+        self.centerlines = centerlines
+        self.length=length
+        self.inlet_points=inlet_points
+        self.outlet_points = outlet_points
+
+        self.get_boundary_pts()
+        self.get_normal_radius_effective()
+        self.extrude()
+
+    def get_boundary_pts(self):
+        edges = self.surf.extract_feature_edges(boundary_edges=True, feature_edges=False, manifold_edges=False)
+        edges = edges.connectivity()
+        self.edges=edges
+        regions = np.unique(edges.point_data['RegionId'])
+        self.regions = regions
+        masks = [edges.point_data['RegionId'] == r for r in regions]
+        self.profiles = pv.MultiBlock([edges.extract_points(m) for m in masks])
+
+    def get_normal_radius_effective(self):
+        self.radii = np.empty(len(self.profiles))
+        self.lengths = np.empty(len(self.profiles))
+        self.prof_surf=pv.MultiBlock()
+        for idx, prof in enumerate(self.profiles):
+            prof_surf = prof.delaunay_2d()
+            self.prof_surf.append(prof_surf)
+            area = prof_surf.area
+            radius_eff = np.sqrt(area/np.pi)
+            self.radii[idx]=radius_eff
+            self.lengths[idx]=self.length*radius_eff*2
+
+        #associate lengths with inlet or outlet points
+        centers = np.array([x.points.mean(axis=0) for x in self.profiles])
+        centers_m = pv.wrap(centers)
+        tree = KDTree(centers)
+        inlet_ids = [tree.query(i)[1] for i in self.inlet_points]
+        outlet_ids = list(set(range(centers_m.n_points)) - set(inlet_ids))
+        self.lengths_out=self.lengths[outlet_ids]
+        self.lengths_in=self.lengths[inlet_ids]
+        self.radii_in=self.radii[inlet_ids]
+
+        self.inlet_points = [centers[i] for i in inlet_ids]
+        self.outlet_points = [centers[i] for i in outlet_ids]
+
+        #get normals for profiles using centerlines
+        tree = KDTree(self.centerlines.points)
+        inlets, in_ids = tree.query(self.inlet_points)
+        outlets, out_ids = tree.query(self.outlet_points)
+        self.in_normals = self.centerlines.point_data['FrenetTangent'][in_ids]
+        self.out_normals = -self.centerlines.point_data['FrenetTangent'][out_ids]
+
+    def extrude(self):
+        for id, pt in enumerate(self.outlet_points):
+            #check that z is negative (should always be for outlets?)
+            if self.out_normals[id][2]>0:
+                self.out_normals[id]=-self.out_normals[id]
+            center=pt+self.out_normals[id]*self.lengths_out[id]
+            plane = pv.Plane(center=center, direction=self.out_normals[id], i_size = 30, j_size=30)
+            self.prof_surf[id] = self.prof_surf[id].extrude(self.out_normals[id]*self.lengths_out[id]*1.5, capping=False)
+            self.prof_surf[id] = self.prof_surf[id].triangulate()
+            #self.prof_surf[id] = self.prof_surf[id].subdivide(2)
+            
+            clipped=self.prof_surf[id].clip_surface(plane, invert=False)
+            
+            self.outlet_points[id] = center
+            self.surf=self.surf.merge(clipped, merge_points=True)  
+            self.surf=self.surf.clean(tolerance=0.0001)
+  
+        self.surf = self.surf.fill_holes(1)
+        self.surf=self.surf.smooth(n_iter=5)
+        self.surf = self.surf.fill_holes(1)
+        self.surf=self.surf.clean(tolerance=0.0001)
+        edges = self.surf.extract_feature_edges(
+                boundary_edges=True, 
+                feature_edges=False, 
+                manifold_edges=False)
+        pl2=pv.Plotter()
+        pl2.add_title(title = "Inspect for unfilled holes")
+        pl2.add_mesh(edges, color='red')
+        pl2.add_mesh(self.surf, opacity=0.5)
+        pl2.show()

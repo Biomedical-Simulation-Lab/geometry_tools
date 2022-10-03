@@ -45,6 +45,7 @@ def surface_process(proj_dir, proc_dir, surf_type, multi_inlets, ND, min_EL, max
 
     if not surf_output_file.exists():
         surf = pv.read(surf_file)
+        surf.clean()
         # Make option for smoothing here
         # surf = cc.vtk_taubin_smooth(surf, pass_band=0.05, iterations=50)
         if surf_type=='pt':
@@ -66,7 +67,9 @@ def surface_process(proj_dir, proc_dir, surf_type, multi_inlets, ND, min_EL, max
         else:
             an_points = None
             anubool = False
-
+        '''
+        #Commenting this section out because it is not necessary. We already have the
+        #flow extensions from the preparation script!
         if 'normals' in points['inlets'].point_data:
             # Clip
             for pdx in range(points['inlets'].n_points):
@@ -95,7 +98,7 @@ def surface_process(proj_dir, proc_dir, surf_type, multi_inlets, ND, min_EL, max
                     t = TubeClipper(surf)
                     t.clip(origin, normal)
                     surf = t.far_side
-
+        '''
         m = Mesher(
             surf,
             inlet_points=in_points, 
@@ -141,24 +144,16 @@ def surface_process(proj_dir, proc_dir, surf_type, multi_inlets, ND, min_EL, max
             e_pt = cc.RefinementSelection(m.surf, name='Enlarge_Cells', title = 'Mark Non-Dominant Side')
             e_pt.select()
             e_pt.define_surface()  
-            '''
-            This goes with the old method
-
-            m.surf.point_data['vtkOGIds'] = list(range(m.surf.n_points))
-            submesh = m.surf.extract_points(e_pt.surf.point_data['Enlarge_Cells']==1)
-            submesh_ids = submesh.point_data['vtkOGIds'].copy()
-            submesh_array = np.zeros(m.surf.n_points, dtype=int)
-            submesh_array[submesh_ids] = 1
-            m.surf.point_data['Enlarge_Cells'] = submesh_array.astype(bool)
-            '''
-            m.surf = e_pt.surf
+            m.surf.point_data['Enlarge_Cells'] = e_pt.surf.point_data['Enlarge_Cells']
             m.surf.save(proj_dir/('surf_NDdefined.vtp'))    
         elif ND_defined_outfile.exists():
-            m.surf = pv.read(ND_defined_outfile)
+            #NOTE: ref_defined_outfile must have been generated in the same script as this file!!
+            nd_surf = pv.read(ND_defined_outfile)
+            m.surf.point_data['Enlarge_Cells'] = nd_surf.point_data['Enlarge_Cells']
 
         if surf_type=='a': 
             m.generate_centerlines()
-            m.generate_centerlines(include_aneurysms=False)
+            m.generate_centerlines(include_aneurysms=False) 
 
         if multi_inlets == 'multi':
             m.generate_centerlines_multi(proj_dir)               
@@ -247,20 +242,20 @@ if __name__ == "__main__":
     
     ref: options are refine or no_ref. Use if you want a refinment patch
     
-    fix_centerline: options are reg, fix, network, or network_fix. Use the 'fix' options for if you want to use MISR instead of distance to centerlines
+    fix_centerline: options are reg, fix. Use the 'fix' option for if you want to use MISR instead of distance to centerlines
     
     min_EL/max_EL: specify floats that correspond to the minimum and maximum desired edgelengths
     
     ND: options are none or nd for whether or not you want to enlarge certain edge lengths (eg. the non-dominant side in a PT case)
     
     A full example of a command to put in a terminal that would call this script is as follows:
-    surface_process.py ./case_1_low pt multi no_ref network_fix 0.4 0.5 nd
+    surface_process.py ./case_1_low pt multi no_ref fix 0.4 0.5 nd
 
     NOTE: you do not need to precede this command with python because it already knows it is a python script.
     """
     proj_dir = Path(sys.argv[1])  
 
-    if len(sys.argv[1].split('_')) == 3:
+    if len(sys.argv[1].split('_')) == 4:
         proc_dir = sys.argv[1].split('_')[0], '_', sys.argv[1].split('_')[1], '_',sys.argv[1].split('_')[2] 
     else:
         proc_dir = sys.argv[1].split('_')[0], '_', sys.argv[1].split('_')[1]
@@ -286,7 +281,7 @@ if __name__ == "__main__":
             surf_type=sys.argv[3]
             multi_inlets = sys.argv[4] #options are 'single' and 'multi'
             ref = sys.argv[5] #options are 'refine' or 'no_ref' 
-            fix_centerline = sys.argv[6] #options are 'reg', 'fix', 'network', or 'network_fix'
+            fix_centerline = sys.argv[6] #options are 'reg', 'fix'
             min_EL = float(sys.argv[7])
             max_EL = float(sys.argv[8])  
             ND = sys.argv[9]
@@ -295,10 +290,10 @@ if __name__ == "__main__":
             surf_type=sys.argv[2] 
             multi_inlets = sys.argv[3] #options are 'single' and 'multi'
             ref = sys.argv[4] #options are 'refine' or 'no_ref' 
-            fix_centerline = sys.argv[5] #options are 'reg', 'fix', 'network', or 'network_fix'
+            fix_centerline = sys.argv[5] #options are 'reg', 'fix'
             min_EL = float(sys.argv[6])
             max_EL = float(sys.argv[7])
             ND = sys.argv[8] # options are 'none' and 'nd'
 
-    #print(proc_dir, proj_dir, min_EL, max_EL)
+    #print(proc_dir)
     surface_process(proj_dir, proc_dir, surf_type, multi_inlets, ND, min_EL, max_EL, ref, fix_centerline, endpoints_pv)

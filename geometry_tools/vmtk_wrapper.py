@@ -14,6 +14,7 @@ from email.utils import collapse_rfc2231_value
 from networkx.algorithms.distance_measures import center
 from numpy import testing
 from vmtk import vmtkscripts
+from vmtk import vtkvmtk
 from geometry_tools import utils 
 import pyvista as pv
 import numpy as np 
@@ -285,16 +286,16 @@ def surface_connectivity(surf, group_ids_name=utils.groupIDsArrayName, group_id=
     surf = pv.wrap(connector.Surface)
     return surf
 
-def flow_extensions(surf, centerlines):
+def flow_extensions(surf, centerlines, interactive=0):
     """ Add flow extensions. """
 
     extender = vmtkscripts.vmtkFlowExtensions()
     extender.Surface = surf
     extender.Centerlines = centerlines
     extender.AdaptiveExtensionLength = 1
-    extender.ExtensionRatio = 4
+    extender.ExtensionRatio = 2
     extender.CenterlineNormalEstimationDistanceRatio = 1
-    extender.Interactive = 0
+    extender.Interactive = interactive
     extender.ExtensionMode = 'boundarynormal' # 'centerlinedirection' # 
     extender.InterpolationMode = 'thinplatespline' #'linear' # 
     extender.Execute()
@@ -892,3 +893,30 @@ def vmtkcenterlinemodeller(centerlines, arr, dims):
     alg.SampleDimensions = dims
     alg.Execute()
     return pv.wrap(alg.Image)
+
+def flow_ext(surf, centerlines, inlet_ids):
+    import vtk
+    boundaryIds = vtk.vtkIdList()
+    labels = inlet_ids
+    for label in labels:
+        boundaryIds.InsertNextId(label)
+    flowExtensionsFilter = vtkvmtk.vtkvmtkPolyDataFlowExtensionsFilter()
+    flowExtensionsFilter.SetInputData(surf)
+    flowExtensionsFilter.SetCenterlines(centerlines)
+    flowExtensionsFilter.SetSigma(1.0)
+    flowExtensionsFilter.SetAdaptiveExtensionLength(1)
+    flowExtensionsFilter.SetAdaptiveExtensionRadius(1)
+    flowExtensionsFilter.SetAdaptiveNumberOfBoundaryPoints(0)
+    flowExtensionsFilter.SetExtensionLength(2)
+    flowExtensionsFilter.SetExtensionRatio(2)
+    flowExtensionsFilter.SetExtensionRadius(1)
+    flowExtensionsFilter.SetTransitionRatio(0.25)
+    flowExtensionsFilter.SetCenterlineNormalEstimationDistanceRatio(1)
+    flowExtensionsFilter.SetNumberOfBoundaryPoints(50)
+    flowExtensionsFilter.SetExtensionModeToUseNormalToBoundary()
+    flowExtensionsFilter.SetInterpolationModeToThinPlateSpline()
+    flowExtensionsFilter.SetBoundaryIds(boundaryIds)
+    flowExtensionsFilter.Update()
+
+    Surface = flowExtensionsFilter.GetOutput()
+    return Surface
