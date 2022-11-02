@@ -10,12 +10,12 @@ import time
 from datetime import timedelta
 import numpy as np
 
-def volume_meshing(proj_dir, surf_type, multi_inlets, fix_centerline):
+def volume_meshing(proj_dir, surf_type, multi_inlets):
     
     if surf_type == 'pt':
         anubool=False
     else:
-        anubool = True
+        anubool = True 
         
     surf_file = sorted(proj_dir.glob('*_pr.vtp'))[0]
 
@@ -79,11 +79,12 @@ def volume_meshing(proj_dir, surf_type, multi_inlets, fix_centerline):
         #WARNING: does not work with multiple inlets
         if multi_inlets == 'single':
             m.generate_flow_rates()
-        #m.generate_h5_file(meshfile)
+        m.generate_h5_file(meshfile)
         #m.generate_flow_rates_legacy() #why call?
         m.update_inlets_outlets()
-        #NOTE: INLET FLOWRATES ARE SUBJECT TO CHANGE AND NEED TO BE INSPECTED BEFORE RUN!!
-        m.generate_info_file(infofile, fcoeffsfile, multi_inlets, inlet_vel=False, inlet_flowrates=[5.578888889,	2.034444444, 0.63534717171], waveform='FC_VENOUS')  
+        #NOTE: INLET FLOWRATES ARE SUBJECT TO CHANGE AND NEED TO BE INSPECTED BEFORE RUN!! The following line may need to be changed if you are doing an aneurysm case:
+        m.generate_info_file(infofile, fcoeffsfile, multi_inlets, inlet_vel=False, inlet_flowrates=[5.578888889, 2.034444444, 0.63534717171], waveform='FC_VENOUS')  
+        #the inlet flowrates given are for SSS, SIS, and Labbe. You may need to change these for your PT case
         m.generate_xml_gz_file(xmlgzfile)
 
         # Create submission file
@@ -107,8 +108,6 @@ if __name__ == "__main__":
     surf_type = sys.argv[2]
     if len(sys.argv) > 3:
         multi_inlets = sys.argv[3]
-        fix_centerline = sys.argv[4]
     else:
         multi_inlets = 'single'
-        fix_centerline = 'reg'
-    volume_meshing(proj_dir=proj_dir, surf_type=surf_type, multi_inlets=multi_inlets, fix_centerline=fix_centerline)
+    volume_meshing(proj_dir=proj_dir, surf_type=surf_type, multi_inlets=multi_inlets)

@@ -19,7 +19,7 @@ def surface_process(proj_dir, proc_dir, surf_type, multi_inlets, ND, min_EL, max
     if not proj_dir.exists():
         proj_dir.mkdir()
 
-    proc_dir = Path(proc_dir)
+    proc_dir = Path(proc_dir) 
 
     surf_file = sorted(proc_dir.glob('*.vtp'))[0]
     #print(proj_dir)
@@ -28,7 +28,7 @@ def surface_process(proj_dir, proc_dir, surf_type, multi_inlets, ND, min_EL, max
     assert point_file.exists()
     
     if surf_type=='a':    
-        neckpoints_file = proj_dir / (surf_file.stem + '_neckpoints.vtm')    
+        neckpoints_file = proc_dir / (surf_file.stem + '_neckpoints.vtm')    
         assert neckpoints_file.exists()
         anubool=True
 
@@ -187,7 +187,7 @@ def surface_process(proj_dir, proc_dir, surf_type, multi_inlets, ND, min_EL, max
         # # plc_points = m.get_plc_points() 
 
         # m.surf.save(surf_output_file)
-        if (fix_centerline == 'reg') and (multi_inlets == 'multi'):
+        if (multi_inlets == 'multi'):
             #NOTE: Always check the result of this!!!
             m.generate_centerlines_multi(proj_dir)
         elif (multi_inlets == 'single') :
@@ -201,7 +201,7 @@ def surface_process(proj_dir, proc_dir, surf_type, multi_inlets, ND, min_EL, max
             m.branch_centerlines_pt()
             m.centerlines.save(centerlines_output_file)
         m.update_inlets_outlets()
-
+        
         if surf_type=='a':                            
             m.get_bifurcation_ref_systems_vectors()
             m.update_inlets_outlets()
@@ -212,7 +212,7 @@ def surface_process(proj_dir, proc_dir, surf_type, multi_inlets, ND, min_EL, max
             m.mark_distance_from_sacs(n_spheres)
             m.mark_near_vessel_regions(m.surf, n_spheres=n_spheres)
             m.update_inlets_outlets()
-
+        
         # m.surf.plot(scalars='sac_zones')
         
         m.surf.save(surf_output_file)
@@ -267,13 +267,15 @@ if __name__ == "__main__":
         ref = 'no_ref' 
         if endpoints_f.exists():
             endpoints_pv = pv.read(endpoints_f) 
+            surf_type = 'a'
         else:
             endpoints_pv = None
-            surf_type=sys.argv[2] 
+            surf_type = 'a'
         min_EL = 0.1
         max_EL = 0.4
         multi_inlets = 'single'
         ND = 'none'
+        fix_centerline = 'reg'
     elif len(sys.argv) > 3:
         endpoints_f = Path(sys.argv[2])
         if endpoints_f.exists():

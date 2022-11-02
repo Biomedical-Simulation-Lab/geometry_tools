@@ -186,9 +186,9 @@ class Mesher(Surfer):
         self.surf = surf
         self.update_inlets_outlets()
         if multi_inlets == 'multi':    
-            self.generate_centerlines_multi(proj_dir)
+            #self.generate_centerlines_multi(proj_dir)
             centerlines1 = self.centerlines
-            centerlines1.save(proj_dir / ('network_centerlines.vtp'))
+            #centerlines1.save(proj_dir / ('network_centerlines.vtp'))
         else:
             self.generate_centerlines(include_aneurysms=False)
             centerlines1 = self.centerlines

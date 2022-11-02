@@ -308,7 +308,7 @@ def create_edge_size_array(surf, fix_centerline, min_edge_size=0.1, max_edge_siz
     Then take min of each.
 
     Refinement regions incorporated:
-    Assume everywhere within the refinement region will be assigned an edge length that is 0.5x what it would be with regular remeshing
+    Assume everywhere within the refinement region will be assigned an edge length that is 0.8x what it would be with regular remeshing
     """
     distance_interp = interp1d([misr_min, misr_max], [min_edge_size, max_edge_size], 
         kind='linear',
@@ -440,6 +440,8 @@ class RefinementSelection_OLD():
         self.surf = surf.fill_holes(100)
         self.title = title
         self.name = name
+        self.select()
+        #self.define_surface()
         
     def select(self):
         #Define the surface we want to refine by clipping the surface

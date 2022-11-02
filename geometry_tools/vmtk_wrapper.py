@@ -293,10 +293,11 @@ def flow_extensions(surf, centerlines, interactive=0):
     extender.Surface = surf
     extender.Centerlines = centerlines
     extender.AdaptiveExtensionLength = 1
-    extender.ExtensionRatio = 2
+    extender.ExtensionRatio = 4
+    extender.TransitionRatio = 0.25
     extender.CenterlineNormalEstimationDistanceRatio = 1
     extender.Interactive = interactive
-    extender.ExtensionMode = 'boundarynormal' # 'centerlinedirection' # 
+    extender.ExtensionMode = 'boundarynormal' #'centerlinedirection' # 
     extender.InterpolationMode = 'thinplatespline' #'linear' # 
     extender.Execute()
     surf = pv.wrap(extender.Surface)
@@ -593,7 +594,7 @@ def network_extractor(surf):
 
     ext = vmtkscripts.vmtkNetworkExtraction()
     ext.Surface = surf 
-    ext.AdvancementRatio = 1.05
+    ext.AdvancementRatio = 1
     ext.RadiusArrayName = 'MaximumInscribedSphereRadius'
     ext.TopologyArrayName = 'Topology'
     ext.MarksArrayName = 'Marks'
@@ -908,9 +909,9 @@ def flow_ext(surf, centerlines, inlet_ids):
     flowExtensionsFilter.SetAdaptiveExtensionRadius(1)
     flowExtensionsFilter.SetAdaptiveNumberOfBoundaryPoints(0)
     flowExtensionsFilter.SetExtensionLength(2)
-    flowExtensionsFilter.SetExtensionRatio(2)
+    flowExtensionsFilter.SetExtensionRatio(4)
     flowExtensionsFilter.SetExtensionRadius(1)
-    flowExtensionsFilter.SetTransitionRatio(0.25)
+    flowExtensionsFilter.SetTransitionRatio(0.5)
     flowExtensionsFilter.SetCenterlineNormalEstimationDistanceRatio(1)
     flowExtensionsFilter.SetNumberOfBoundaryPoints(50)
     flowExtensionsFilter.SetExtensionModeToUseNormalToBoundary()

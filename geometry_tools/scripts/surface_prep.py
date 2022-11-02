@@ -21,7 +21,7 @@ def surface_prep(surf_file, proj_dir, surf_type):
         proj_dir.mkdir()
     
     '''
-    surf_output_dir = proj_dir / '01_clipped' 
+    surf_output_dir = proj_dir / '01_clipped'  
     points_output_dir = proj_dir / '01_points' 
     neckpoints_output_dir = proj_dir / '01_neckpoints' 
 
