@@ -1,0 +1,237 @@
+"""
+This file contains a method for preparing a segmented surface mesh that has been run through 'surface_prep.py'
+for creating the mappings for a PT surface mesh.
+
+Call this file using:
+
+
+Where
+-prep_dir is the directory your surface mesh from 'surface_prep.py' is stored
+-ss is a float indicating the Straight Sinus flow rate at peak systole in mL/s
+-lab is a float indicating the Labbe flow rate at peak systole mL/s
+-fen indicates True or False if there is a fenestration (surrently only set up for one)
+-nondom indicates if there is a nondominant side (True or False)
+-outflow1 indicates True or False if there is an extra outflow on the dominant side
+-outflow2 indicates True or False if there is an extra outflow on the nondominant side
+
+defaults to one flow rate for the whole geometry, which is 6.816019219 for peak systolic Superior Sinus inflow
+
+This will produce a number of useful attributes, including the boundary layer width to get y+<1
+
+"""
+import numpy as np
+import pyvista as pv
+from geometry_tools.meshing import Mesher
+import geometry_tools.vmtk_wrapper as vmtk
+import geometry_tools.common as cc
+from scipy.spatial import cKDTree as KDTree
+from scipy.interpolate import interp1d
+from pathlib import Path
+import sys
+
+def define_fr(obj_pt, flowrate=5.578888889):
+    cell_ids = obj_pt.surf.faces.reshape(-1, 4)[obj_pt.surf.cell_data[obj_pt.name]==1][:,1:]
+    ids = cell_ids.flatten()
+    obj_pt.surf.point_data[obj_pt.name][ids]=flowrate
+    return obj_pt.surf
+
+def mapped_info(prep_dir, ss, lab, fen, nondom, outflow1, outflow2):
+    out_dir = prep_dir.parent
+    surf0_file = sorted(out_dir.glob('*.stl'))[0]
+    surf_file = sorted(prep_dir.glob('*_cl.vtp'))[0]
+    cent_file = out_dir/(surf_file.stem + '_centerline_mapped.vtp')
+    mapped_file = out_dir/(surf_file.stem + '_mapped.vtp')
+    if not mapped_file.exists():
+        surf = pv.read(surf0_file) #use unprepped surface for the centerline map
+        m = Mesher(
+                surf,
+                include_aneurysms=False
+                )
+        m.clip_boundaries()
+        if not cent_file.exists():
+            #first, generate a centerline
+            #centers = m.get_open_profiles()
+            #centers_m = pv.wrap(centers)
+            #inlet_id = m._pick_points(pv.wrap(centers), 'Pick Major Inlet')
+            #other_ids = list(set(range(centers_m.n_points)) - set(inlet_id))
+            #m.inlet_ids = [inlet_id]
+            #m.inlet_points = centers[inlet_id]
+            #m.outlet_ids = other_ids
+            #m.outlet_points = [centers[i] for i in other_ids]
+            #m.generate_centerlines(include_aneurysms=False)
+            
+            m.centerlines, _= centerline, _ = vmtk.network_extractor(m.surf)#vmtk.centerline_geometry(m.centerlines)
+            m.centerlines = vmtk.resample_cl(m.centerlines)
+            m.centerlines = vmtk.centerline_geometry(m.centerlines)
+            tree1 = KDTree(m.centerlines.points)
+            tree2 = KDTree(m.surf.points)
+            dist, idx = tree2.query(m.centerlines.points) #closest dist to centerline point
+            for i in range(len(idx)):
+                for j in range(len(idx)):
+                    if (idx[j]==idx[i]) and (i != j):
+                        closest, _ = tree1.query(m.surf.points[idx[i]]) #closest centerline distance to the point
+                        dist[j]=closest
+            m.centerlines.point_data['MaximumInscribedSphereRadius']=dist
+
+            #Use the centerline points to create planes
+            m.centerlines.point_data['CSA']=np.array(m.centerlines.n_points)
+            m.centerlines.point_data['perimeter']=np.array(m.centerlines.n_points)
+            points = m.centerlines.points
+            normals = m.centerlines.point_data['FrenetTangent'] 
+            for ndx, pt in enumerate(points):
+                plane=pv.Plane(center = pt, direction = normals[ndx], i_size=20, j_size=20, i_resolution=100, j_resolution=100).triangulate()
+                plane_split = plane.clip_surface(surf)
+                split = plane_split.split_bodies()
+                if len(split)>1:
+                    cm = np.zeros((len(split),3))
+                    for i in range(len(split)):
+                        cm[i, :] = split[i].center_of_mass()
+                    tree = KDTree(cm)
+                    _, j = tree.query(pt) #closest center of mass to the centerline point
+                    plane_split = split[j]
+                CSsurf = plane_split.extract_surface() 
+                area = CSsurf.area
+                edges = CSsurf.extract_feature_edges(boundary_edges=True, non_manifold_edges=False, feature_edges=False, manifold_edges=False)
+                #p=pv.Plotter()
+                #p.add_mesh(CSsurf)
+                #p.add_mesh(edges, color='red')
+                #p.show()
+                sized = edges.compute_cell_sizes()
+                #print(sized)
+                perimeter = sum(sized['Length'])
+                m.centerlines.point_data['CSA'][ndx]=area
+                m.centerlines.point_data['perimeter'][ndx]=perimeter
+            m.centerlines.save(cent_file)
+        else:
+            m.centerlines = pv.read(cent_file)
+        #create mapping to surface
+        m.surf = pv.read(surf_file) #replace surface with flow extension surface to avoid the flow extension issues
+        tree = KDTree(m.centerlines.points)
+        _, idx_c = tree.query(m.surf.points)
+        m.surf.point_data['CSA']=m.centerlines.point_data['CSA'][idx_c]
+        m.surf.point_data['perimeter']=m.centerlines.point_data['perimeter'][idx_c]
+        m.surf.save(mapped_file)
+    else:
+        surf=pv.read(mapped_file)
+        centerlines=pv.read(cent_file)
+        m = Mesher(
+                surf,
+                include_aneurysms=False
+                )
+    
+    #select flowrate regions
+    m.surf.point_data['flowrate'] = np.zeros(m.surf.n_points)
+    sss_pt = cc.RefinementSelection(m.surf, name = 'flowrate', title='Choose SupSagSinus Flowrate Zone')
+    sss_pt.select() #Selects the region of interest
+    flowrate = 6.816019219 #Peak systolic
+    m.surf = define_fr(sss_pt, flowrate=flowrate) #Adds data attribute to point array called 'SSS'
+    if ss != 'False':
+        ss_pt = cc.RefinementSelection(m.surf, name = 'flowrate', title='Choose StrSinus Flowrate Zone')
+        ss_pt.select() #Selects the region of interest
+        m.surf = define_fr(ss_pt,flowrate=ss)
+        comb1_pt = cc.RefinementSelection(m.surf, name = 'flowrate', title='Choose StrSinus+SupSagSinus Flowrate Zone')
+        comb1_pt.select() #Selects the region of interest
+        flowrate+=float(ss)
+        m.surf = define_fr(comb1_pt, flowrate=flowrate) #Adds data attribute to point array called 'Comb1'
+    
+    #nondom stuff
+    if nondom !='False':
+        nd_pt = cc.RefinementSelection(m.surf, name = 'flowrate', title='Choose LessDom Flowrate Zone')
+        nd_pt.select() #Selects the region of interest
+        m.surf = define_fr(nd_pt, flowrate=flowrate*float(nondom))
+        comb0_pt = cc.RefinementSelection(m.surf, name = 'flowrate', title='Choose Dom Flowrate Zone')
+        comb0_pt.select() #Selects the region of interest
+        flowrate -= float(nondom)*flowrate
+        flowrate_nondom=float(nondom)*flowrate
+        m.surf = define_fr(comb0_pt, flowrate=flowrate)
+    if outflow2 !='False': #non-dom side outflow
+        of0_pt = cc.RefinementSelection(m.surf, name = 'flowrate', title='Choose Out2 (LessDom) Flowrate Zone')
+        of0_pt.select() #Selects the region of interest
+        m.surf = define_fr(of0_pt, flowrate=flowrate_nondom*float(outflow2))
+        comb4_pt = cc.RefinementSelection(m.surf, name = 'flowrate', title='Choose LessDom-Out0 Flowrate Zone')
+        comb4_pt.select() #Selects the region of interest
+        flowrate -= float(outflow2)*flowrate_nondom
+        m.surf = define_fr(comb4_pt, flowrate=flowrate_nondom)
+
+    #dom stuff
+    if lab !='False':
+        lab_pt = cc.RefinementSelection(m.surf, name = 'flowrate', title='Choose Labbe/Tant Flowrate Zone')
+        lab_pt.select() #Selects the region of interest
+        m.surf = define_fr(lab_pt, flowrate=lab)
+        comb2_pt = cc.RefinementSelection(m.surf, name = 'flowrate', title='Choose StrSinus+SupSagSinus+Labbe/Tant Flowrate Zone')
+        comb2_pt.select() #Selects the region of interest
+        flowrate += float(lab)
+        m.surf = define_fr(comb2_pt, flowrate=flowrate) #Adds data attribute to point array called 'SS
+    if outflow1 !='False':
+        of1_pt = cc.RefinementSelection(m.surf, name = 'flowrate', title='Choose Out1 Flowrate Zone')
+        of1_pt.select() #Selects the region of interest
+        m.surf = define_fr(of1_pt, flowrate=flowrate*float(outflow1))
+        comb3_pt = cc.RefinementSelection(m.surf, name = 'flowrate', title='Choose StrSinus+SupSagSinus+Labbe-Out1 Flowrate Zone')
+        comb3_pt.select() #Selects the region of interest
+        flowrate -= float(outflow1)*flowrate
+        m.surf = define_fr(comb3_pt, flowrate=flowrate) #Adds data attribute to point array called 'SS
+    m.surf.point_data['flowrate'][m.surf.point_data['flowrate']==0]=flowrate #make sure flowrate is nonzero everywhere
+    if fen !='False':
+        fen_pt1 = cc.RefinementSelection(m.surf, name = 'FEN1', title='Choose 1st Fenest Flowrate Zone')
+        fen_pt1.select() #Selects the region of interest
+        fen_pt1.define_surface() 
+        m.surf = fen_pt1.surf
+        fen_pt2 = cc.RefinementSelection(m.surf, name = 'FEN2', title='Choose 2nd Fenest Flowrate Zone')
+        fen_pt2.select() #Selects the region of interest
+        fen_pt2.define_surface() #Adds boolean data attribute to point array called 'AG'
+        m.surf = fen_pt2.surf
+        #get average CSA ratio between branches:
+        centerlines=pv.read(cent_file)
+        tree3 = KDTree(centerlines.points)
+        _, idx_a = tree3.query(m.surf.points[m.surf.point_data['FEN1']==1])
+        _, idx_b = tree3.query(m.surf.points[m.surf.point_data['FEN2']==1])
+        fen1 = np.mean(centerlines.point_data['CSA'][idx_a])
+        fen2 = np.mean(centerlines.point_data['CSA'][idx_b])
+        ratio1 = fen1/(fen1+fen2)
+        ratio2 = fen2/(fen1+fen2)
+        m.surf.point_data['flowrate'][m.surf.point_data['FEN1']==1]=m.surf.point_data['flowrate'][m.surf.point_data['FEN1']==1]*ratio1
+        m.surf.point_data['flowrate'][m.surf.point_data['FEN2']==1]=m.surf.point_data['flowrate'][m.surf.point_data['FEN2']==1]*ratio2
+    ref_pt = cc.RefinementSelection(m.surf, name = 'ref')
+    ref_pt.select() #Selects the region of interest
+    ref_pt.define_surface() #Adds boolean data attribute to point array called 'ref'
+    m.surf = ref_pt.surf
+    
+    #smooth data
+    m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='flowrate', func=np.mean, iterations = 5)
+    m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='CSA', func=np.mean, iterations = 5)
+    m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='perimeter', func=np.mean, iterations = 5)
+
+    nu = (0.0037/1057) #viscosity
+    L = 4*m.surf.point_data['CSA']/m.surf.point_data['perimeter']*0.001#Hydraulic diameter (m)
+    Deff=2*np.sqrt(m.surf.point_data['CSA']/(np.pi))*0.001 #Effective diameter (m)
+    U = (m.surf.point_data['flowrate']/m.surf.point_data['CSA']) #peak systolic velocity in m/s
+    Re = U*L/nu
+    Cf = 0.026/(Re**(1/7))
+    Tw_rho=Cf*(U**2)/2
+    Uf=np.sqrt(Tw_rho)
+    m.surf.point_data['Dh']=L
+    m.surf.point_data['Deff']=Deff
+    m.surf.point_data['mean_velocity']=U
+    m.surf.point_data['kolmog_len']=((nu**3)*L/(U**3))**(1/4)
+    m.surf.point_data['taylor_len']=np.sqrt(15)*(Re**(1/4))*(((nu**3)*L/(U**3))**(1/4))
+    m.surf.point_data['ds_max(y+=1)']=nu/Uf #   
+    m.surf.save(mapped_file)
+
+if __name__ == "__main__":
+    prep_dir = Path(sys.argv[1]) 
+    if len(sys.argv)>3:
+        ss=sys.argv[2]
+        lab=sys.argv[3]
+        fen=sys.argv[4]
+        nondom= sys.argv[5]
+        outflow1 = sys.argv[6]
+        outflow2 = sys.argv[7]
+    else:
+        ss='False'
+        lab='False'
+        fen='False'
+        nondom = 'False'
+        outflow1='False'
+        outflow2 = 'False'
+
+    mapped_info(prep_dir=prep_dir, ss = ss, lab = lab, fen = fen, nondom = nondom, outflow1=outflow1, outflow2=outflow2)

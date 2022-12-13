@@ -26,21 +26,53 @@
 <section>
 <h2 class="section-title" id="header-submodules">Sub-modules</h2>
 <dl>
+<dt><code class="name"><a title="geometry_tools.scripts.make_MISR_DTCL_meshes" href="make_MISR_DTCL_meshes.html">geometry_tools.scripts.make_MISR_DTCL_meshes</a></code></dt>
+<dd>
+<div class="desc"><p>This script contains a method to generate DTCL and MISR volume meshes in vtu format, and you can uncomment
+some things if you want to then run the …</p></div>
+</dd>
+<dt><code class="name"><a title="geometry_tools.scripts.make_centerlines" href="make_centerlines.html">geometry_tools.scripts.make_centerlines</a></code></dt>
+<dd>
+<div class="desc"><p>This file includes a method to create network centerlines for a surface mesh, which contains the VMTK
+attributes, as well as the cross-sectional area …</p></div>
+</dd>
+<dt><code class="name"><a title="geometry_tools.scripts.make_mesh" href="make_mesh.html">geometry_tools.scripts.make_mesh</a></code></dt>
+<dd>
+<div class="desc"><p>This file contains a method to produce all the outputs you would need to run a case using Mehdi's framework
+for a PT-specific case. Requires a surface …</p></div>
+</dd>
+<dt><code class="name"><a title="geometry_tools.scripts.make_spectro_points" href="make_spectro_points.html">geometry_tools.scripts.make_spectro_points</a></code></dt>
+<dd>
+<div class="desc"><p>This script contains a method for obtaining a surface of your geometry or a number of surface
+mesh spheres that can later be used to compute …</p></div>
+</dd>
+<dt><code class="name"><a title="geometry_tools.scripts.map_DTCL_MISR" href="map_DTCL_MISR.html">geometry_tools.scripts.map_DTCL_MISR</a></code></dt>
+<dd>
+<div class="desc"><p>This file contains a method to produce a surface mapping that includes the MISR, DTCL, and LS approaches for size
+for a PT-specific case. Requires a …</p></div>
+</dd>
+<dt><code class="name"><a title="geometry_tools.scripts.map_info" href="map_info.html">geometry_tools.scripts.map_info</a></code></dt>
+<dd>
+<div class="desc"><p>This file contains a method for preparing a segmented surface mesh that has been run through 'surface_prep.py'
+for creating the mappings for a PT …</p></div>
+</dd>
 <dt><code class="name"><a title="geometry_tools.scripts.meshquality" href="meshquality.html">geometry_tools.scripts.meshquality</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>This file contains a method to compute mesh quality parameters. You should always use this after making a mesh.</p></div>
 </dd>
 <dt><code class="name"><a title="geometry_tools.scripts.surface_prep" href="surface_prep.html">geometry_tools.scripts.surface_prep</a></code></dt>
 <dd>
-<div class="desc"><p>Clip boundaries, mark inlets, outlets, and aneurysm locations.</p></div>
+<div class="desc"><p>This is a script that processes a segmented mesh by cutting off the endcaps on the vessel(s) and
+adding flow extensions. Needed if you intend to use …</p></div>
 </dd>
 <dt><code class="name"><a title="geometry_tools.scripts.surface_process" href="surface_process.html">geometry_tools.scripts.surface_process</a></code></dt>
 <dd>
-<div class="desc"><p>Clip boundaries, mark inlets, outlets, and aneurysm locations.</p></div>
+<div class="desc"><p>This script is called to generate PT or aneurysm cases, but is currently set up for a PT case. You will need to change the inputs to
+the call …</p></div>
 </dd>
 <dt><code class="name"><a title="geometry_tools.scripts.volume_meshing" href="volume_meshing.html">geometry_tools.scripts.volume_meshing</a></code></dt>
 <dd>
-<div class="desc"><p>Generate volume mesh and relevant submission files.</p></div>
+<div class="desc"><p>This generates a volume mesh and relevant files for Mehdi's framework using the output from surface_process.py …</p></div>
 </dd>
 </dl>
 </section>
@@ -64,6 +96,12 @@
 </li>
 <li><h3><a href="#header-submodules">Sub-modules</a></h3>
 <ul>
+<li><code><a title="geometry_tools.scripts.make_MISR_DTCL_meshes" href="make_MISR_DTCL_meshes.html">geometry_tools.scripts.make_MISR_DTCL_meshes</a></code></li>
+<li><code><a title="geometry_tools.scripts.make_centerlines" href="make_centerlines.html">geometry_tools.scripts.make_centerlines</a></code></li>
+<li><code><a title="geometry_tools.scripts.make_mesh" href="make_mesh.html">geometry_tools.scripts.make_mesh</a></code></li>
+<li><code><a title="geometry_tools.scripts.make_spectro_points" href="make_spectro_points.html">geometry_tools.scripts.make_spectro_points</a></code></li>
+<li><code><a title="geometry_tools.scripts.map_DTCL_MISR" href="map_DTCL_MISR.html">geometry_tools.scripts.map_DTCL_MISR</a></code></li>
+<li><code><a title="geometry_tools.scripts.map_info" href="map_info.html">geometry_tools.scripts.map_info</a></code></li>
 <li><code><a title="geometry_tools.scripts.meshquality" href="meshquality.html">geometry_tools.scripts.meshquality</a></code></li>
 <li><code><a title="geometry_tools.scripts.surface_prep" href="surface_prep.html">geometry_tools.scripts.surface_prep</a></code></li>
 <li><code><a title="geometry_tools.scripts.surface_process" href="surface_process.html">geometry_tools.scripts.surface_process</a></code></li>

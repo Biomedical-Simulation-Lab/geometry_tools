@@ -12,6 +12,8 @@ Moving forward, it would be nice to re-write this using `vtkvmtk` and `PyVista` 
 
 VMTK has a lot of out-of-date requirements, so `surface`, `meshing`, and `vmtk_wrapper` rely on VMTK, but `common` and `resample_surface` may have different requirements. 
 
+The `Scripts` directory contains a number of useful scripts and information on how to call them.
+
 Requirements:
 - vtk
 - numpy
@@ -38,7 +40,7 @@ When installing on workstation (ubuntu), also had to `conda install llvm=3.3` an
 # Meshing
 For an example of using this for meshing, see the `meshing_example.sh` file in `scripts`.
 
-# TO INSTALL with VMTK 1.5 ON UBUNTU 
+# To install with VMTK 1.5 on ubuntu 
 (WARNING: There are issues with the rendering)
 
 1) clean up tarballs and unused packages
@@ -62,5 +64,5 @@ For an example of using this for meshing, see the `meshing_example.sh` file in `
 `pip install -e .`
 
 # Warning
-There are newer versions of pyvista that have more functionality. Do not be tempted!
+There are newer versions of pyvista that have more functionality. Do not be tempted! This will have to be updated at some point in the near future.
 

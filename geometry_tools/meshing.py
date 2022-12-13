@@ -386,8 +386,8 @@ class Mesher(Surfer):
 
         self.outlet_flow_divisions = dict(zip(new_out_flow_keys, out_flow_div_values))
 
-    def generate_volume_mesh(self):
-        mesh = vmtk.volume_meshing(self.surf)
+    def generate_volume_mesh(self, SkipRemeshing=0):
+        mesh = vmtk.volume_meshing(self.surf, SkipRemeshing=SkipRemeshing)
         self.mesh = mesh
 
 

@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>geometry_tools.scripts.surface_prep API documentation</title>
-<meta name="description" content="Clip boundaries, mark inlets, outlets, and aneurysm locations." />
+<meta name="description" content="This is a script that processes a segmented mesh by cutting off the endcaps on the vessel(s) and
+adding flow extensions. Needed if you intend to use …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,19 +23,38 @@
 <h1 class="title">Module <code>geometry_tools.scripts.surface_prep</code></h1>
 </header>
 <section id="section-intro">
-<p>Clip boundaries, mark inlets, outlets, and aneurysm locations.</p>
+<p>This is a script that processes a segmented mesh by cutting off the endcaps on the vessel(s) and
+adding flow extensions. Needed if you intend to use any of the scripts in this directory.</p>
+<p>Call this script using:
+surface_prep.py surf_file proj_dir surf_type</p>
+<p>Where
+-surf_file is the stl of your segmented geometry (eg. surf.stl)
+-proj_dir is the name of the directory you want your files to be stored in
+-surf_type is pt or a for PT or aneurysm case respectively</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">#!/usr/bin/env python3
-&#34;&#34;&#34; Clip boundaries, mark inlets, outlets, and aneurysm locations.
+&#34;&#34;&#34;
+This is a script that processes a segmented mesh by cutting off the endcaps on the vessel(s) and 
+adding flow extensions. Needed if you intend to use any of the scripts in this directory.
+
+Call this script using:
+surface_prep.py surf_file proj_dir surf_type
+
+Where
+-surf_file is the stl of your segmented geometry (eg. surf.stl)
+-proj_dir is the name of the directory you want your files to be stored in
+-surf_type is pt or a for PT or aneurysm case respectively
+
 &#34;&#34;&#34;
 
 from pathlib import Path 
 import pyvista as pv 
 from geometry_tools.meshing import Mesher
 from geometry_tools import common as cc
+from geometry_tools import vmtk_wrapper as vmtk
 import time
 from datetime import timedelta
 import sys 
@@ -49,7 +69,7 @@ def surface_prep(surf_file, proj_dir, surf_type):
         proj_dir.mkdir()
     
     &#39;&#39;&#39;
-    surf_output_dir = proj_dir / &#39;01_clipped&#39; 
+    surf_output_dir = proj_dir / &#39;01_clipped&#39;  
     points_output_dir = proj_dir / &#39;01_points&#39; 
     neckpoints_output_dir = proj_dir / &#39;01_neckpoints&#39; 
 
@@ -72,8 +92,10 @@ def surface_prep(surf_file, proj_dir, surf_type):
         surf = surf.compute_normals(auto_orient_normals=False)
         if surf_type==&#39;a&#39;: 
             m = Mesher(surf, include_aneurysms=True)
+            anubool=True
         else:
             m = Mesher(surf) 
+            anubool=False
 
         # Delete any sharp edges or small branches
         # if flag_inspect == True:
@@ -86,25 +108,28 @@ def surface_prep(surf_file, proj_dir, surf_type):
         flag_inspect = m.clip_boundaries()
 
         m.set_inlets_outlets()
+
         if surf_type==&#39;a&#39;:
             m.pick_aneurysm()
-            m.copy_structure() #this makes the surface mesh (m.surf) into a pv.PolyData object    
-        
-        m.surf.save(surf_file_out) #can only save in vtk, ply, or stl format (not vtp)
-           
+            m.copy_structure() #this makes the surface mesh (m.surf) into a pv.PolyData object  
+
         if surf_type==&#39;a&#39;:
             # Select aneurysms
             s = cc.SelectGeodesic(m.surf)
             s.interact(title=&#39;Isolate aneurysms.&#39;)
             s.save_stored_points(neck_file_out)
             m.surf = s.mesh 
-            
-
-        if surf_type==&#39;a&#39;:
-            anubool=True
+            m.generate_centerlines(include_aneurysms=True)
+            m.surf, m.centerlines = vmtk.flow_extensions(m.surf, m.centerlines)
         else:
-            anubool=False   
-        m.generate_centerlines(include_aneurysms=anubool)
+            m.generate_centerlines_multi(proj_dir)  
+            surf = vmtk.flow_ext(m.surf, m.centerlines, m.inlet_ids)
+            m.surf=pv.wrap(surf)
+            extender = cc.Flow_Extender(m.surf, m.centerlines,inlet_points=m.inlet_points, outlet_points=m.outlet_points)
+            m.surf = extender.surf
+            m.update_inlets_outlets()         
+
+        m.surf.save(surf_file_out) #can only save in vtk, ply, or stl format (not vtp)
         m.save_inlet_outlet_points(points_file_out, include_aneurysms=anubool, include_normals = True)
 
         time_spent = time.time() - case_start
@@ -149,7 +174,7 @@ if __name__ == &#34;__main__&#34;:
         proj_dir.mkdir()
     
     &#39;&#39;&#39;
-    surf_output_dir = proj_dir / &#39;01_clipped&#39; 
+    surf_output_dir = proj_dir / &#39;01_clipped&#39;  
     points_output_dir = proj_dir / &#39;01_points&#39; 
     neckpoints_output_dir = proj_dir / &#39;01_neckpoints&#39; 
 
@@ -172,8 +197,10 @@ if __name__ == &#34;__main__&#34;:
         surf = surf.compute_normals(auto_orient_normals=False)
         if surf_type==&#39;a&#39;: 
             m = Mesher(surf, include_aneurysms=True)
+            anubool=True
         else:
             m = Mesher(surf) 
+            anubool=False
 
         # Delete any sharp edges or small branches
         # if flag_inspect == True:
@@ -186,25 +213,28 @@ if __name__ == &#34;__main__&#34;:
         flag_inspect = m.clip_boundaries()
 
         m.set_inlets_outlets()
+
         if surf_type==&#39;a&#39;:
             m.pick_aneurysm()
-            m.copy_structure() #this makes the surface mesh (m.surf) into a pv.PolyData object    
-        
-        m.surf.save(surf_file_out) #can only save in vtk, ply, or stl format (not vtp)
-           
+            m.copy_structure() #this makes the surface mesh (m.surf) into a pv.PolyData object  
+
         if surf_type==&#39;a&#39;:
             # Select aneurysms
             s = cc.SelectGeodesic(m.surf)
             s.interact(title=&#39;Isolate aneurysms.&#39;)
             s.save_stored_points(neck_file_out)
             m.surf = s.mesh 
-            
-
-        if surf_type==&#39;a&#39;:
-            anubool=True
+            m.generate_centerlines(include_aneurysms=True)
+            m.surf, m.centerlines = vmtk.flow_extensions(m.surf, m.centerlines)
         else:
-            anubool=False   
-        m.generate_centerlines(include_aneurysms=anubool)
+            m.generate_centerlines_multi(proj_dir)  
+            surf = vmtk.flow_ext(m.surf, m.centerlines, m.inlet_ids)
+            m.surf=pv.wrap(surf)
+            extender = cc.Flow_Extender(m.surf, m.centerlines,inlet_points=m.inlet_points, outlet_points=m.outlet_points)
+            m.surf = extender.surf
+            m.update_inlets_outlets()         
+
+        m.surf.save(surf_file_out) #can only save in vtk, ply, or stl format (not vtp)
         m.save_inlet_outlet_points(points_file_out, include_aneurysms=anubool, include_normals = True)
 
         time_spent = time.time() - case_start

@@ -1,4 +1,13 @@
-""" Generate volume mesh and relevant submission files.
+"""
+This generates a volume mesh and relevant files for Mehdi's framework using the output from surface_process.py
+
+Call this script using:
+volume_meshing.py proj_dir surf_type multi_inlets
+
+proj_dir is the directory your surface file (ending in '_pr.vtp') is in
+surf_type: options are a for aneurysm or pt for pulsatile tinnitus
+multi_inlets: options are 'multi' or 'single' depending on if you have multiple inlets or not
+
 """
 
 from pathlib import Path 

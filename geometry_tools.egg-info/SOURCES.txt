@@ -13,6 +13,11 @@ geometry_tools.egg-info/PKG-INFO
 geometry_tools.egg-info/SOURCES.txt
 geometry_tools.egg-info/dependency_links.txt
 geometry_tools.egg-info/top_level.txt
+geometry_tools/scripts/make_MISR_DTCL_meshes.py
+geometry_tools/scripts/make_mesh.py
+geometry_tools/scripts/make_spectro_points.py
+geometry_tools/scripts/map_DTCL_MISR.py
+geometry_tools/scripts/map_info.py
 geometry_tools/scripts/meshquality.py
 geometry_tools/scripts/surface_prep.py
 geometry_tools/scripts/surface_process.py

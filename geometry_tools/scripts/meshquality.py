@@ -1,14 +1,15 @@
 #!/usr/bin/python
 
+"""
+This file contains a method to compute mesh quality parameters. You should always use this after making a mesh.
+"""
+
 ################################################################################
 ##   Project:   FEniCS CFD Simulation Setup / Mesh Quality Assessment
 ##   Date:      2017/08/21 04:05:44
 ##   Version:   1.0
 ##   Author:    Mehdi Najafi, (mnuoft at gmail). All rights reserved.
 ##
-##
-##   This script tries to generate a volume mesh and initial data for 
-##   FEniCS FEM Solver.
 ##
 ##   This script is distributed WITHOUT ANY WARRANTY; without even the implied 
 ##   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.

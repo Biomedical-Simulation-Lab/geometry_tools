@@ -320,15 +320,14 @@ def create_edge_size_array(surf, fix_centerline, min_edge_size=0.1, max_edge_siz
         bounds_error=False,
         fill_value=(max_edge_size, min_edge_size),
         )
-
-    surf = surf.compute_normals()
-    surf.point_data['SizeDistanceToCenterlinesArray'] = distance_interp(surf.point_data['DistanceToCenterlinesArray']) #np.ones(surf.n_points) 
-
     
     if (fix_centerline == 'fix') or (fix_centerline == 'network_fix'):
         surf.point_data['SizeMISR'] = distance_interp(surf.point_data['misr'])
         surf.point_data[name] = surf.point_data['SizeMISR']
     else:
+        surf = surf.compute_normals()
+        surf.point_data['SizeDistanceToCenterlinesArray'] = distance_interp(surf.point_data['DistanceToCenterlinesArray']) #np.ones(surf.n_points) 
+
         # The perfectly straight flow extensions end up having high curvature 
         # unless they are perturbed slightly
         # Some PT meshes have areas of really high curvature that need extra refinement

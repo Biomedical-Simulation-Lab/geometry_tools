@@ -1,5 +1,16 @@
 #!/usr/bin/env python3
-""" Clip boundaries, mark inlets, outlets, and aneurysm locations.
+"""
+This is a script that processes a segmented mesh by cutting off the endcaps on the vessel(s) and 
+adding flow extensions. Needed if you intend to use any of the scripts in this directory.
+
+Call this script using:
+surface_prep.py surf_file proj_dir surf_type
+
+Where
+-surf_file is the stl of your segmented geometry (eg. surf.stl)
+-proj_dir is the name of the directory you want your files to be stored in
+-surf_type is pt or a for PT or aneurysm case respectively
+
 """
 
 from pathlib import Path 

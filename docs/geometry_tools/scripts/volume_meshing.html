@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>geometry_tools.scripts.volume_meshing API documentation</title>
-<meta name="description" content="Generate volume mesh and relevant submission files." />
+<meta name="description" content="This generates a volume mesh and relevant files for Mehdi&#39;s framework using the output from surface_process.py …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,12 +22,26 @@
 <h1 class="title">Module <code>geometry_tools.scripts.volume_meshing</code></h1>
 </header>
 <section id="section-intro">
-<p>Generate volume mesh and relevant submission files.</p>
+<p>This generates a volume mesh and relevant files for Mehdi's framework using the output from surface_process.py</p>
+<p>Call this script using:
+volume_meshing.py proj_dir surf_type multi_inlets</p>
+<p>proj_dir is the directory your surface file (ending in '_pr.vtp') is in
+surf_type: options are a for aneurysm or pt for pulsatile tinnitus
+multi_inlets: options are 'multi' or 'single' depending on if you have multiple inlets or not</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34; Generate volume mesh and relevant submission files.
+<pre><code class="python">&#34;&#34;&#34;
+This generates a volume mesh and relevant files for Mehdi&#39;s framework using the output from surface_process.py
+
+Call this script using:
+volume_meshing.py proj_dir surf_type multi_inlets
+
+proj_dir is the directory your surface file (ending in &#39;_pr.vtp&#39;) is in
+surf_type: options are a for aneurysm or pt for pulsatile tinnitus
+multi_inlets: options are &#39;multi&#39; or &#39;single&#39; depending on if you have multiple inlets or not
+
 &#34;&#34;&#34;
 
 from pathlib import Path 
@@ -39,12 +53,12 @@ import time
 from datetime import timedelta
 import numpy as np
 
-def volume_meshing(proj_dir, surf_type, multi_inlets, fix_centerline):
+def volume_meshing(proj_dir, surf_type, multi_inlets):
     
     if surf_type == &#39;pt&#39;:
         anubool=False
     else:
-        anubool = True
+        anubool = True 
         
     surf_file = sorted(proj_dir.glob(&#39;*_pr.vtp&#39;))[0]
 
@@ -71,7 +85,7 @@ def volume_meshing(proj_dir, surf_type, multi_inlets, fix_centerline):
     if not xmlgzfile.exists():
         # try:
         surf = pv.read(surf_file)
-
+        surf.clean()
         points = pv.read(point_file)
         in_points = points[&#39;inlets&#39;].points
         out_points = points[&#39;outlets&#39;].points
@@ -108,11 +122,12 @@ def volume_meshing(proj_dir, surf_type, multi_inlets, fix_centerline):
         #WARNING: does not work with multiple inlets
         if multi_inlets == &#39;single&#39;:
             m.generate_flow_rates()
-        #m.generate_h5_file(meshfile)
+        m.generate_h5_file(meshfile)
         #m.generate_flow_rates_legacy() #why call?
         m.update_inlets_outlets()
-        #NOTE: INLET FLOWRATES ARE SUBJECT TO CHANGE AND NEED TO BE INSPECTED BEFORE RUN!!
-        m.generate_info_file(infofile, fcoeffsfile, multi_inlets, inlet_vel=False, inlet_flowrates=[5.578888889,        2.034444444, 0.63534717171], waveform=&#39;FC_VENOUS&#39;)  
+        #NOTE: INLET FLOWRATES ARE SUBJECT TO CHANGE AND NEED TO BE INSPECTED BEFORE RUN!! The following line may need to be changed if you are doing an aneurysm case:
+        m.generate_info_file(infofile, fcoeffsfile, multi_inlets, inlet_vel=False, inlet_flowrates=[5.578888889, 2.034444444, 0.63534717171], waveform=&#39;FC_VENOUS&#39;)  
+        #the inlet flowrates given are for SSS, SIS, and Labbe. You may need to change these for your PT case
         m.generate_xml_gz_file(xmlgzfile)
 
         # Create submission file
@@ -136,11 +151,9 @@ if __name__ == &#34;__main__&#34;:
     surf_type = sys.argv[2]
     if len(sys.argv) &gt; 3:
         multi_inlets = sys.argv[3]
-        fix_centerline = sys.argv[4]
     else:
         multi_inlets = &#39;single&#39;
-        fix_centerline = &#39;reg&#39;
-    volume_meshing(proj_dir=proj_dir, surf_type=surf_type, multi_inlets=multi_inlets, fix_centerline=fix_centerline)</code></pre>
+    volume_meshing(proj_dir=proj_dir, surf_type=surf_type, multi_inlets=multi_inlets)</code></pre>
 </details>
 </section>
 <section>
@@ -151,7 +164,7 @@ if __name__ == &#34;__main__&#34;:
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="geometry_tools.scripts.volume_meshing.volume_meshing"><code class="name flex">
-<span>def <span class="ident">volume_meshing</span></span>(<span>proj_dir, surf_type, multi_inlets, fix_centerline)</span>
+<span>def <span class="ident">volume_meshing</span></span>(<span>proj_dir, surf_type, multi_inlets)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -159,12 +172,12 @@ if __name__ == &#34;__main__&#34;:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def volume_meshing(proj_dir, surf_type, multi_inlets, fix_centerline):
+<pre><code class="python">def volume_meshing(proj_dir, surf_type, multi_inlets):
     
     if surf_type == &#39;pt&#39;:
         anubool=False
     else:
-        anubool = True
+        anubool = True 
         
     surf_file = sorted(proj_dir.glob(&#39;*_pr.vtp&#39;))[0]
 
@@ -191,7 +204,7 @@ if __name__ == &#34;__main__&#34;:
     if not xmlgzfile.exists():
         # try:
         surf = pv.read(surf_file)
-
+        surf.clean()
         points = pv.read(point_file)
         in_points = points[&#39;inlets&#39;].points
         out_points = points[&#39;outlets&#39;].points
@@ -228,11 +241,12 @@ if __name__ == &#34;__main__&#34;:
         #WARNING: does not work with multiple inlets
         if multi_inlets == &#39;single&#39;:
             m.generate_flow_rates()
-        #m.generate_h5_file(meshfile)
+        m.generate_h5_file(meshfile)
         #m.generate_flow_rates_legacy() #why call?
         m.update_inlets_outlets()
-        #NOTE: INLET FLOWRATES ARE SUBJECT TO CHANGE AND NEED TO BE INSPECTED BEFORE RUN!!
-        m.generate_info_file(infofile, fcoeffsfile, multi_inlets, inlet_vel=False, inlet_flowrates=[5.578888889,        2.034444444, 0.63534717171], waveform=&#39;FC_VENOUS&#39;)  
+        #NOTE: INLET FLOWRATES ARE SUBJECT TO CHANGE AND NEED TO BE INSPECTED BEFORE RUN!! The following line may need to be changed if you are doing an aneurysm case:
+        m.generate_info_file(infofile, fcoeffsfile, multi_inlets, inlet_vel=False, inlet_flowrates=[5.578888889, 2.034444444, 0.63534717171], waveform=&#39;FC_VENOUS&#39;)  
+        #the inlet flowrates given are for SSS, SIS, and Labbe. You may need to change these for your PT case
         m.generate_xml_gz_file(xmlgzfile)
 
         # Create submission file

@@ -83,6 +83,14 @@ def merge_centerlines(centerlines):
     merged.Execute()
     return pv.wrap(merged.Centerlines)
 
+def resample_cl(centerlines):
+    """Resample the centerline"""
+    resample=vmtkscripts.vmtkCenterlineResampling()
+    resample.Centerlines = centerlines
+    resample.Length = 1.5
+    resample.Execute()
+    return pv.wrap(resample.Centerlines)
+
 def surface_append(cl1, cl2):
     append_cl=vmtkscripts.vmtkSurfaceAppend()
     append_cl.Surface = cl1
@@ -313,7 +321,7 @@ def surface_remeshing(surf, edgelength=0.3, element_size_mode='edgelength', edge
     remesher.Surface = surf
     remesher.ElementSizeMode = element_size_mode
     remesher.TargetEdgeLengthArrayName = edgearray
-    remesher.Iterations = iterations
+    remesher.NumberOfIterations = iterations
     remesher.TargetEdgeLength = edgelength
     remesher.Execute()
     surf = pv.wrap(remesher.Surface)
@@ -344,7 +352,7 @@ def assert_all_quads(mesh):
     mesh_quad = mesh.extract_cells(quad_mask)
     return mesh_quad
 
-def volume_meshing(surf):
+def volume_meshing(surf, SkipRemeshing=0):
     """ VMTK volume meshing.
     
     More input options will be added.
@@ -352,7 +360,7 @@ def volume_meshing(surf):
 
     meshgen = vmtkscripts.vmtkMeshGenerator()
     meshgen.Surface = surf
-    #meshgen.SkipRemeshing = 1
+    meshgen.SkipRemeshing = SkipRemeshing
     meshgen.ElementSizeMode = "edgelengtharray"
     meshgen.TargetEdgeLengthArrayName = "Size"
     meshgen.BoundaryLayer = 1
@@ -594,7 +602,7 @@ def network_extractor(surf):
 
     ext = vmtkscripts.vmtkNetworkExtraction()
     ext.Surface = surf 
-    ext.AdvancementRatio = 1
+    ext.AdvancementRatio = 1.1
     ext.RadiusArrayName = 'MaximumInscribedSphereRadius'
     ext.TopologyArrayName = 'Topology'
     ext.MarksArrayName = 'Marks'
@@ -793,6 +801,34 @@ def write_mesh(mesh, outfile):
             zipped_file.writelines(orig_file)
     
     outfile.unlink()
+
+def write_mesh_tec(mesh, outfile):
+    """ Write volume mesh using VMTK.
+
+    Used for writing tecplot format meshes.
+    """
+    writer = vmtkscripts.vmtkMeshWriter()
+    writer.Mesh = mesh 
+    writer.Format = 'tecplot'
+    writer.Compressed = 0
+    writer.Mode = 'binary'
+    writer.CellEntityIdsArrayName = 'CellEntityIds'
+    writer.OutputFileName = str(outfile)
+    writer.Execute()
+
+def write_surf_tec(surf=None, outfile='outfile.vtp', surffile=None,formatting = 'tecplot'):
+    """
+    Write a surface file in tecplot format with vmtk
+    """
+
+    writer = vmtkscripts.vmtkSurfaceWriter()
+    if surf is not None:
+        writer.Surface = surf
+    else:
+        writer.MeshInputFileName = surffile
+    writer.Format=formatting
+    writer.OutputFileName = str(outfile)
+    writer.Execute()
 
 def surface_array_smoothing(surf, array_name='Size', connexity=1, relaxation=1.0, iterations=1):
     sm = vmtkscripts.vmtkSurfaceArraySmoothing()

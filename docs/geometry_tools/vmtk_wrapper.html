@@ -49,6 +49,7 @@ from email.utils import collapse_rfc2231_value
 from networkx.algorithms.distance_measures import center
 from numpy import testing
 from vmtk import vmtkscripts
+from vmtk import vtkvmtk
 from geometry_tools import utils 
 import pyvista as pv
 import numpy as np 
@@ -116,6 +117,14 @@ def merge_centerlines(centerlines):
     merged.TractIdsArrayName = &#39;TractIds&#39;
     merged.Execute()
     return pv.wrap(merged.Centerlines)
+
+def resample_cl(centerlines):
+    &#34;&#34;&#34;Resample the centerline&#34;&#34;&#34;
+    resample=vmtkscripts.vmtkCenterlineResampling()
+    resample.Centerlines = centerlines
+    resample.Length = 1.5
+    resample.Execute()
+    return pv.wrap(resample.Centerlines)
 
 def surface_append(cl1, cl2):
     append_cl=vmtkscripts.vmtkSurfaceAppend()
@@ -320,7 +329,7 @@ def surface_connectivity(surf, group_ids_name=utils.groupIDsArrayName, group_id=
     surf = pv.wrap(connector.Surface)
     return surf
 
-def flow_extensions(surf, centerlines):
+def flow_extensions(surf, centerlines, interactive=0):
     &#34;&#34;&#34; Add flow extensions. &#34;&#34;&#34;
 
     extender = vmtkscripts.vmtkFlowExtensions()
@@ -328,9 +337,10 @@ def flow_extensions(surf, centerlines):
     extender.Centerlines = centerlines
     extender.AdaptiveExtensionLength = 1
     extender.ExtensionRatio = 4
+    extender.TransitionRatio = 0.25
     extender.CenterlineNormalEstimationDistanceRatio = 1
-    extender.Interactive = 0
-    extender.ExtensionMode = &#39;boundarynormal&#39; # &#39;centerlinedirection&#39; # 
+    extender.Interactive = interactive
+    extender.ExtensionMode = &#39;boundarynormal&#39; #&#39;centerlinedirection&#39; # 
     extender.InterpolationMode = &#39;thinplatespline&#39; #&#39;linear&#39; # 
     extender.Execute()
     surf = pv.wrap(extender.Surface)
@@ -346,7 +356,7 @@ def surface_remeshing(surf, edgelength=0.3, element_size_mode=&#39;edgelength&#3
     remesher.Surface = surf
     remesher.ElementSizeMode = element_size_mode
     remesher.TargetEdgeLengthArrayName = edgearray
-    remesher.Iterations = iterations
+    remesher.NumberOfIterations = iterations
     remesher.TargetEdgeLength = edgelength
     remesher.Execute()
     surf = pv.wrap(remesher.Surface)
@@ -377,7 +387,7 @@ def assert_all_quads(mesh):
     mesh_quad = mesh.extract_cells(quad_mask)
     return mesh_quad
 
-def volume_meshing(surf):
+def volume_meshing(surf, SkipRemeshing=0):
     &#34;&#34;&#34; VMTK volume meshing.
     
     More input options will be added.
@@ -385,7 +395,7 @@ def volume_meshing(surf):
 
     meshgen = vmtkscripts.vmtkMeshGenerator()
     meshgen.Surface = surf
-    #meshgen.SkipRemeshing = 1
+    meshgen.SkipRemeshing = SkipRemeshing
     meshgen.ElementSizeMode = &#34;edgelengtharray&#34;
     meshgen.TargetEdgeLengthArrayName = &#34;Size&#34;
     meshgen.BoundaryLayer = 1
@@ -627,7 +637,7 @@ def network_extractor(surf):
 
     ext = vmtkscripts.vmtkNetworkExtraction()
     ext.Surface = surf 
-    ext.AdvancementRatio = 1.05
+    ext.AdvancementRatio = 1.1
     ext.RadiusArrayName = &#39;MaximumInscribedSphereRadius&#39;
     ext.TopologyArrayName = &#39;Topology&#39;
     ext.MarksArrayName = &#39;Marks&#39;
@@ -827,6 +837,34 @@ def write_mesh(mesh, outfile):
     
     outfile.unlink()
 
+def write_mesh_tec(mesh, outfile):
+    &#34;&#34;&#34; Write volume mesh using VMTK.
+
+    Used for writing tecplot format meshes.
+    &#34;&#34;&#34;
+    writer = vmtkscripts.vmtkMeshWriter()
+    writer.Mesh = mesh 
+    writer.Format = &#39;tecplot&#39;
+    writer.Compressed = 0
+    writer.Mode = &#39;binary&#39;
+    writer.CellEntityIdsArrayName = &#39;CellEntityIds&#39;
+    writer.OutputFileName = str(outfile)
+    writer.Execute()
+
+def write_surf_tec(surf=None, outfile=&#39;outfile.vtp&#39;, surffile=None,formatting = &#39;tecplot&#39;):
+    &#34;&#34;&#34;
+    Write a surface file in tecplot format with vmtk
+    &#34;&#34;&#34;
+
+    writer = vmtkscripts.vmtkSurfaceWriter()
+    if surf is not None:
+        writer.Surface = surf
+    else:
+        writer.MeshInputFileName = surffile
+    writer.Format=formatting
+    writer.OutputFileName = str(outfile)
+    writer.Execute()
+
 def surface_array_smoothing(surf, array_name=&#39;Size&#39;, connexity=1, relaxation=1.0, iterations=1):
     sm = vmtkscripts.vmtkSurfaceArraySmoothing()
     sm.Surface = surf 
@@ -926,7 +964,34 @@ def vmtkcenterlinemodeller(centerlines, arr, dims):
     alg.RadiusArrayName = arr
     alg.SampleDimensions = dims
     alg.Execute()
-    return pv.wrap(alg.Image)</code></pre>
+    return pv.wrap(alg.Image)
+
+def flow_ext(surf, centerlines, inlet_ids):
+    import vtk
+    boundaryIds = vtk.vtkIdList()
+    labels = inlet_ids
+    for label in labels:
+        boundaryIds.InsertNextId(label)
+    flowExtensionsFilter = vtkvmtk.vtkvmtkPolyDataFlowExtensionsFilter()
+    flowExtensionsFilter.SetInputData(surf)
+    flowExtensionsFilter.SetCenterlines(centerlines)
+    flowExtensionsFilter.SetSigma(1.0)
+    flowExtensionsFilter.SetAdaptiveExtensionLength(1)
+    flowExtensionsFilter.SetAdaptiveExtensionRadius(1)
+    flowExtensionsFilter.SetAdaptiveNumberOfBoundaryPoints(0)
+    flowExtensionsFilter.SetExtensionLength(2)
+    flowExtensionsFilter.SetExtensionRatio(4)
+    flowExtensionsFilter.SetExtensionRadius(1)
+    flowExtensionsFilter.SetTransitionRatio(0.5)
+    flowExtensionsFilter.SetCenterlineNormalEstimationDistanceRatio(1)
+    flowExtensionsFilter.SetNumberOfBoundaryPoints(50)
+    flowExtensionsFilter.SetExtensionModeToUseNormalToBoundary()
+    flowExtensionsFilter.SetInterpolationModeToThinPlateSpline()
+    flowExtensionsFilter.SetBoundaryIds(boundaryIds)
+    flowExtensionsFilter.Update()
+
+    Surface = flowExtensionsFilter.GetOutput()
+    return Surface</code></pre>
 </details>
 </section>
 <section>
@@ -1584,8 +1649,45 @@ fresh centerlines).</p>
     return edges, G</code></pre>
 </details>
 </dd>
+<dt id="geometry_tools.vmtk_wrapper.flow_ext"><code class="name flex">
+<span>def <span class="ident">flow_ext</span></span>(<span>surf, centerlines, inlet_ids)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def flow_ext(surf, centerlines, inlet_ids):
+    import vtk
+    boundaryIds = vtk.vtkIdList()
+    labels = inlet_ids
+    for label in labels:
+        boundaryIds.InsertNextId(label)
+    flowExtensionsFilter = vtkvmtk.vtkvmtkPolyDataFlowExtensionsFilter()
+    flowExtensionsFilter.SetInputData(surf)
+    flowExtensionsFilter.SetCenterlines(centerlines)
+    flowExtensionsFilter.SetSigma(1.0)
+    flowExtensionsFilter.SetAdaptiveExtensionLength(1)
+    flowExtensionsFilter.SetAdaptiveExtensionRadius(1)
+    flowExtensionsFilter.SetAdaptiveNumberOfBoundaryPoints(0)
+    flowExtensionsFilter.SetExtensionLength(2)
+    flowExtensionsFilter.SetExtensionRatio(4)
+    flowExtensionsFilter.SetExtensionRadius(1)
+    flowExtensionsFilter.SetTransitionRatio(0.5)
+    flowExtensionsFilter.SetCenterlineNormalEstimationDistanceRatio(1)
+    flowExtensionsFilter.SetNumberOfBoundaryPoints(50)
+    flowExtensionsFilter.SetExtensionModeToUseNormalToBoundary()
+    flowExtensionsFilter.SetInterpolationModeToThinPlateSpline()
+    flowExtensionsFilter.SetBoundaryIds(boundaryIds)
+    flowExtensionsFilter.Update()
+
+    Surface = flowExtensionsFilter.GetOutput()
+    return Surface</code></pre>
+</details>
+</dd>
 <dt id="geometry_tools.vmtk_wrapper.flow_extensions"><code class="name flex">
-<span>def <span class="ident">flow_extensions</span></span>(<span>surf, centerlines)</span>
+<span>def <span class="ident">flow_extensions</span></span>(<span>surf, centerlines, interactive=0)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add flow extensions.</p></div>
@@ -1593,7 +1695,7 @@ fresh centerlines).</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def flow_extensions(surf, centerlines):
+<pre><code class="python">def flow_extensions(surf, centerlines, interactive=0):
     &#34;&#34;&#34; Add flow extensions. &#34;&#34;&#34;
 
     extender = vmtkscripts.vmtkFlowExtensions()
@@ -1601,9 +1703,10 @@ fresh centerlines).</p>
     extender.Centerlines = centerlines
     extender.AdaptiveExtensionLength = 1
     extender.ExtensionRatio = 4
+    extender.TransitionRatio = 0.25
     extender.CenterlineNormalEstimationDistanceRatio = 1
-    extender.Interactive = 0
-    extender.ExtensionMode = &#39;boundarynormal&#39; # &#39;centerlinedirection&#39; # 
+    extender.Interactive = interactive
+    extender.ExtensionMode = &#39;boundarynormal&#39; #&#39;centerlinedirection&#39; # 
     extender.InterpolationMode = &#39;thinplatespline&#39; #&#39;linear&#39; # 
     extender.Execute()
     surf = pv.wrap(extender.Surface)
@@ -1828,7 +1931,7 @@ fresh centerlines).</p>
 
     ext = vmtkscripts.vmtkNetworkExtraction()
     ext.Surface = surf 
-    ext.AdvancementRatio = 1.05
+    ext.AdvancementRatio = 1.1
     ext.RadiusArrayName = &#39;MaximumInscribedSphereRadius&#39;
     ext.TopologyArrayName = &#39;Topology&#39;
     ext.MarksArrayName = &#39;Marks&#39;
@@ -1872,6 +1975,24 @@ fresh centerlines).</p>
         entity_ids_renumbered[entity_ids == p[0]] = p[1]
     mesh.cell_data[&#39;CellEntityIds&#39;] = entity_ids_renumbered
     return mesh </code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.resample_cl"><code class="name flex">
+<span>def <span class="ident">resample_cl</span></span>(<span>centerlines)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Resample the centerline</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def resample_cl(centerlines):
+    &#34;&#34;&#34;Resample the centerline&#34;&#34;&#34;
+    resample=vmtkscripts.vmtkCenterlineResampling()
+    resample.Centerlines = centerlines
+    resample.Length = 1.5
+    resample.Execute()
+    return pv.wrap(resample.Centerlines)</code></pre>
 </details>
 </dd>
 <dt id="geometry_tools.vmtk_wrapper.sac_mask_tool"><code class="name flex">
@@ -2175,7 +2296,7 @@ from the centerlines, projecting the group ids onto the surface.</p></div>
     remesher.Surface = surf
     remesher.ElementSizeMode = element_size_mode
     remesher.TargetEdgeLengthArrayName = edgearray
-    remesher.Iterations = iterations
+    remesher.NumberOfIterations = iterations
     remesher.TargetEdgeLength = edgelength
     remesher.Execute()
     surf = pv.wrap(remesher.Surface)
@@ -2215,7 +2336,7 @@ from the centerlines, projecting the group ids onto the surface.</p></div>
 </details>
 </dd>
 <dt id="geometry_tools.vmtk_wrapper.volume_meshing"><code class="name flex">
-<span>def <span class="ident">volume_meshing</span></span>(<span>surf)</span>
+<span>def <span class="ident">volume_meshing</span></span>(<span>surf, SkipRemeshing=0)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>VMTK volume meshing.</p>
@@ -2224,7 +2345,7 @@ from the centerlines, projecting the group ids onto the surface.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def volume_meshing(surf):
+<pre><code class="python">def volume_meshing(surf, SkipRemeshing=0):
     &#34;&#34;&#34; VMTK volume meshing.
     
     More input options will be added.
@@ -2232,7 +2353,7 @@ from the centerlines, projecting the group ids onto the surface.</p></div>
 
     meshgen = vmtkscripts.vmtkMeshGenerator()
     meshgen.Surface = surf
-    #meshgen.SkipRemeshing = 1
+    meshgen.SkipRemeshing = SkipRemeshing
     meshgen.ElementSizeMode = &#34;edgelengtharray&#34;
     meshgen.TargetEdgeLengthArrayName = &#34;Size&#34;
     meshgen.BoundaryLayer = 1
@@ -2284,6 +2405,55 @@ cellEntityIds array.</p></div>
     outfile.unlink()</code></pre>
 </details>
 </dd>
+<dt id="geometry_tools.vmtk_wrapper.write_mesh_tec"><code class="name flex">
+<span>def <span class="ident">write_mesh_tec</span></span>(<span>mesh, outfile)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Write volume mesh using VMTK.</p>
+<p>Used for writing tecplot format meshes.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def write_mesh_tec(mesh, outfile):
+    &#34;&#34;&#34; Write volume mesh using VMTK.
+
+    Used for writing tecplot format meshes.
+    &#34;&#34;&#34;
+    writer = vmtkscripts.vmtkMeshWriter()
+    writer.Mesh = mesh 
+    writer.Format = &#39;tecplot&#39;
+    writer.Compressed = 0
+    writer.Mode = &#39;binary&#39;
+    writer.CellEntityIdsArrayName = &#39;CellEntityIds&#39;
+    writer.OutputFileName = str(outfile)
+    writer.Execute()</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.vmtk_wrapper.write_surf_tec"><code class="name flex">
+<span>def <span class="ident">write_surf_tec</span></span>(<span>surf=None, outfile='outfile.vtp', surffile=None, formatting='tecplot')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Write a surface file in tecplot format with vmtk</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def write_surf_tec(surf=None, outfile=&#39;outfile.vtp&#39;, surffile=None,formatting = &#39;tecplot&#39;):
+    &#34;&#34;&#34;
+    Write a surface file in tecplot format with vmtk
+    &#34;&#34;&#34;
+
+    writer = vmtkscripts.vmtkSurfaceWriter()
+    if surf is not None:
+        writer.Surface = surf
+    else:
+        writer.MeshInputFileName = surffile
+    writer.Format=formatting
+    writer.OutputFileName = str(outfile)
+    writer.Execute()</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -2324,6 +2494,7 @@ cellEntityIds array.</p></div>
 <li><code><a title="geometry_tools.vmtk_wrapper.delaunay_voronoi" href="#geometry_tools.vmtk_wrapper.delaunay_voronoi">delaunay_voronoi</a></code></li>
 <li><code><a title="geometry_tools.vmtk_wrapper.distance_to_centerlines" href="#geometry_tools.vmtk_wrapper.distance_to_centerlines">distance_to_centerlines</a></code></li>
 <li><code><a title="geometry_tools.vmtk_wrapper.extract_group_adjacency" href="#geometry_tools.vmtk_wrapper.extract_group_adjacency">extract_group_adjacency</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.flow_ext" href="#geometry_tools.vmtk_wrapper.flow_ext">flow_ext</a></code></li>
 <li><code><a title="geometry_tools.vmtk_wrapper.flow_extensions" href="#geometry_tools.vmtk_wrapper.flow_extensions">flow_extensions</a></code></li>
 <li><code><a title="geometry_tools.vmtk_wrapper.get_bifurcation_vectors" href="#geometry_tools.vmtk_wrapper.get_bifurcation_vectors">get_bifurcation_vectors</a></code></li>
 <li><code><a title="geometry_tools.vmtk_wrapper.get_centerline_endpoints" href="#geometry_tools.vmtk_wrapper.get_centerline_endpoints">get_centerline_endpoints</a></code></li>
@@ -2333,6 +2504,7 @@ cellEntityIds array.</p></div>
 <li><code><a title="geometry_tools.vmtk_wrapper.mesh_centerline_projection_MISR" href="#geometry_tools.vmtk_wrapper.mesh_centerline_projection_MISR">mesh_centerline_projection_MISR</a></code></li>
 <li><code><a title="geometry_tools.vmtk_wrapper.network_extractor" href="#geometry_tools.vmtk_wrapper.network_extractor">network_extractor</a></code></li>
 <li><code><a title="geometry_tools.vmtk_wrapper.renumber_entity_ids" href="#geometry_tools.vmtk_wrapper.renumber_entity_ids">renumber_entity_ids</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.resample_cl" href="#geometry_tools.vmtk_wrapper.resample_cl">resample_cl</a></code></li>
 <li><code><a title="geometry_tools.vmtk_wrapper.sac_mask_tool" href="#geometry_tools.vmtk_wrapper.sac_mask_tool">sac_mask_tool</a></code></li>
 <li><code><a title="geometry_tools.vmtk_wrapper.surface_append" href="#geometry_tools.vmtk_wrapper.surface_append">surface_append</a></code></li>
 <li><code><a title="geometry_tools.vmtk_wrapper.surface_array_smoothing" href="#geometry_tools.vmtk_wrapper.surface_array_smoothing">surface_array_smoothing</a></code></li>
@@ -2347,6 +2519,8 @@ cellEntityIds array.</p></div>
 <li><code><a title="geometry_tools.vmtk_wrapper.vmtkdelaunayvoronoi" href="#geometry_tools.vmtk_wrapper.vmtkdelaunayvoronoi">vmtkdelaunayvoronoi</a></code></li>
 <li><code><a title="geometry_tools.vmtk_wrapper.volume_meshing" href="#geometry_tools.vmtk_wrapper.volume_meshing">volume_meshing</a></code></li>
 <li><code><a title="geometry_tools.vmtk_wrapper.write_mesh" href="#geometry_tools.vmtk_wrapper.write_mesh">write_mesh</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.write_mesh_tec" href="#geometry_tools.vmtk_wrapper.write_mesh_tec">write_mesh_tec</a></code></li>
+<li><code><a title="geometry_tools.vmtk_wrapper.write_surf_tec" href="#geometry_tools.vmtk_wrapper.write_surf_tec">write_surf_tec</a></code></li>
 </ul>
 </li>
 </ul>

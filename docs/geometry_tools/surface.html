@@ -234,6 +234,8 @@ class Surfer():
         inlet_ids = self._pick_points(centers_m, text=text)
         outlet_ids = list(set(range(centers_m.n_points)) - set(inlet_ids))
         
+        self.inlet_ids = inlet_ids
+
         assert inlet_ids[0] is not None, &#34;No inlet selected.&#34;
 
         self.inlet_points = [centers[i] for i in inlet_ids]
@@ -1502,6 +1504,8 @@ if __name__ == &#34;__main__&#34;:
         inlet_ids = self._pick_points(centers_m, text=text)
         outlet_ids = list(set(range(centers_m.n_points)) - set(inlet_ids))
         
+        self.inlet_ids = inlet_ids
+
         assert inlet_ids[0] is not None, &#34;No inlet selected.&#34;
 
         self.inlet_points = [centers[i] for i in inlet_ids]
@@ -3851,6 +3855,8 @@ To save these inlet-outlet points, see self.save_inlet_outlet_points()</p></div>
     inlet_ids = self._pick_points(centers_m, text=text)
     outlet_ids = list(set(range(centers_m.n_points)) - set(inlet_ids))
     
+    self.inlet_ids = inlet_ids
+
     assert inlet_ids[0] is not None, &#34;No inlet selected.&#34;
 
     self.inlet_points = [centers[i] for i in inlet_ids]

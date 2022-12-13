@@ -178,7 +178,7 @@ class Mesher(Surfer):
         surf = surf.clean()
 
         #AH&#39;s implementation of Dan&#39;s solution to the off-centre centrelines. There is no use for this atm
-        if (fix_centerline == &#39;fix&#39;) or (fix_centerline == &#39;network_fix&#39;):
+        if (fix_centerline == &#39;fix&#39;):
             surf.point_data[&#39;centerline_map&#39;]=np.array(surf.n_points)
             surf.point_data[&#39;misr&#39;]=np.array(surf.n_points)
             tree = KDTree(centerlines1.points)
@@ -208,15 +208,15 @@ class Mesher(Surfer):
         # if smooth:
         #     surf = cc.vtk_taubin_smooth(surf, pass_band=0.05, iterations=100)
 
-        surf, centerlines1 = vmtk.flow_extensions(surf, centerlines1)
+        #moved the flow extensions to surface_prep!!
         surf = surf.clean()
-        
+
         self.surf = surf
         self.update_inlets_outlets()
         if multi_inlets == &#39;multi&#39;:    
-            self.generate_centerlines_multi(proj_dir)
+            #self.generate_centerlines_multi(proj_dir)
             centerlines1 = self.centerlines
-            centerlines1.save(proj_dir / (&#39;network_centerlines.vtp&#39;))
+            #centerlines1.save(proj_dir / (&#39;network_centerlines.vtp&#39;))
         else:
             self.generate_centerlines(include_aneurysms=False)
             centerlines1 = self.centerlines
@@ -228,6 +228,8 @@ class Mesher(Surfer):
             surf = s.mesh
         else:
             surf = surf.interpolate(surf_og, n_points=1, pass_point_data=True) #radius=0.5, strategy=&#39;null_value&#39;, null_value=0)
+        #surf.save(proj_dir/&#39;after_interp0.vtp&#39;)
+        
         #print(surf.point_data)
         surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines1)
         surf = surf.clean()
@@ -269,11 +271,11 @@ class Mesher(Surfer):
         #in the point array. Still needed for the refinement points and mask points. 
         #Must re-calculate the size array for when the meshgenerator needs it, though...
         else:
-            surf_rm = surf_rm.interpolate(surf_og, n_points=5, pass_point_data=True) #radius=0.5, strategy=&#39;null_value&#39;, null_value=0)
+            surf_rm = surf_rm.interpolate(surf_og, n_points=1, pass_point_data=True) #radius=0.5, strategy=&#39;null_value&#39;, null_value=0)
             surf_rm = surf_rm.clean()
-
-        surf_rm = surf_rm.interpolate(surf, radius=0.5, pass_point_data=True)
-            
+        #surf_rm.save(proj_dir/&#39;after_interp1.vtp&#39;)
+        surf_rm = surf_rm.interpolate(surf, radius=0.7, pass_point_data=True)
+        #surf_rm.save(proj_dir/&#39;after_interp2.vtp&#39;)    
         surf_rm = cc.create_edge_size_array(surf_rm, fix_centerline, min_edge_size=min_edge_size, max_edge_size=max_edge_size, sac_size=sac_size, 
             misr_min=misr_min, misr_max=misr_max, name=&#39;Size&#39;, ref_edge_ratio=0.5)
             
@@ -412,8 +414,8 @@ class Mesher(Surfer):
 
         self.outlet_flow_divisions = dict(zip(new_out_flow_keys, out_flow_div_values))
 
-    def generate_volume_mesh(self):
-        mesh = vmtk.volume_meshing(self.surf)
+    def generate_volume_mesh(self, SkipRemeshing=0):
+        mesh = vmtk.volume_meshing(self.surf, SkipRemeshing=SkipRemeshing)
         self.mesh = mesh
 
 
@@ -825,7 +827,7 @@ based on CellEntityIds.</p></div>
         surf = surf.clean()
 
         #AH&#39;s implementation of Dan&#39;s solution to the off-centre centrelines. There is no use for this atm
-        if (fix_centerline == &#39;fix&#39;) or (fix_centerline == &#39;network_fix&#39;):
+        if (fix_centerline == &#39;fix&#39;):
             surf.point_data[&#39;centerline_map&#39;]=np.array(surf.n_points)
             surf.point_data[&#39;misr&#39;]=np.array(surf.n_points)
             tree = KDTree(centerlines1.points)
@@ -855,15 +857,15 @@ based on CellEntityIds.</p></div>
         # if smooth:
         #     surf = cc.vtk_taubin_smooth(surf, pass_band=0.05, iterations=100)
 
-        surf, centerlines1 = vmtk.flow_extensions(surf, centerlines1)
+        #moved the flow extensions to surface_prep!!
         surf = surf.clean()
-        
+
         self.surf = surf
         self.update_inlets_outlets()
         if multi_inlets == &#39;multi&#39;:    
-            self.generate_centerlines_multi(proj_dir)
+            #self.generate_centerlines_multi(proj_dir)
             centerlines1 = self.centerlines
-            centerlines1.save(proj_dir / (&#39;network_centerlines.vtp&#39;))
+            #centerlines1.save(proj_dir / (&#39;network_centerlines.vtp&#39;))
         else:
             self.generate_centerlines(include_aneurysms=False)
             centerlines1 = self.centerlines
@@ -875,6 +877,8 @@ based on CellEntityIds.</p></div>
             surf = s.mesh
         else:
             surf = surf.interpolate(surf_og, n_points=1, pass_point_data=True) #radius=0.5, strategy=&#39;null_value&#39;, null_value=0)
+        #surf.save(proj_dir/&#39;after_interp0.vtp&#39;)
+        
         #print(surf.point_data)
         surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines1)
         surf = surf.clean()
@@ -916,11 +920,11 @@ based on CellEntityIds.</p></div>
         #in the point array. Still needed for the refinement points and mask points. 
         #Must re-calculate the size array for when the meshgenerator needs it, though...
         else:
-            surf_rm = surf_rm.interpolate(surf_og, n_points=5, pass_point_data=True) #radius=0.5, strategy=&#39;null_value&#39;, null_value=0)
+            surf_rm = surf_rm.interpolate(surf_og, n_points=1, pass_point_data=True) #radius=0.5, strategy=&#39;null_value&#39;, null_value=0)
             surf_rm = surf_rm.clean()
-
-        surf_rm = surf_rm.interpolate(surf, radius=0.5, pass_point_data=True)
-            
+        #surf_rm.save(proj_dir/&#39;after_interp1.vtp&#39;)
+        surf_rm = surf_rm.interpolate(surf, radius=0.7, pass_point_data=True)
+        #surf_rm.save(proj_dir/&#39;after_interp2.vtp&#39;)    
         surf_rm = cc.create_edge_size_array(surf_rm, fix_centerline, min_edge_size=min_edge_size, max_edge_size=max_edge_size, sac_size=sac_size, 
             misr_min=misr_min, misr_max=misr_max, name=&#39;Size&#39;, ref_edge_ratio=0.5)
             
@@ -1059,8 +1063,8 @@ based on CellEntityIds.</p></div>
 
         self.outlet_flow_divisions = dict(zip(new_out_flow_keys, out_flow_div_values))
 
-    def generate_volume_mesh(self):
-        mesh = vmtk.volume_meshing(self.surf)
+    def generate_volume_mesh(self, SkipRemeshing=0):
+        mesh = vmtk.volume_meshing(self.surf, SkipRemeshing=SkipRemeshing)
         self.mesh = mesh
 
 
@@ -1674,7 +1678,7 @@ area, radius, flow divisions, etc of inlet/outlet</p>
 </details>
 </dd>
 <dt id="geometry_tools.meshing.Mesher.generate_volume_mesh"><code class="name flex">
-<span>def <span class="ident">generate_volume_mesh</span></span>(<span>self)</span>
+<span>def <span class="ident">generate_volume_mesh</span></span>(<span>self, SkipRemeshing=0)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -1682,8 +1686,8 @@ area, radius, flow divisions, etc of inlet/outlet</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def generate_volume_mesh(self):
-    mesh = vmtk.volume_meshing(self.surf)
+<pre><code class="python">def generate_volume_mesh(self, SkipRemeshing=0):
+    mesh = vmtk.volume_meshing(self.surf, SkipRemeshing=SkipRemeshing)
     self.mesh = mesh</code></pre>
 </details>
 </dd>
@@ -1831,7 +1835,7 @@ and curvature, then does a final remshing and cleaning.</p></div>
     surf = surf.clean()
 
     #AH&#39;s implementation of Dan&#39;s solution to the off-centre centrelines. There is no use for this atm
-    if (fix_centerline == &#39;fix&#39;) or (fix_centerline == &#39;network_fix&#39;):
+    if (fix_centerline == &#39;fix&#39;):
         surf.point_data[&#39;centerline_map&#39;]=np.array(surf.n_points)
         surf.point_data[&#39;misr&#39;]=np.array(surf.n_points)
         tree = KDTree(centerlines1.points)
@@ -1861,15 +1865,15 @@ and curvature, then does a final remshing and cleaning.</p></div>
     # if smooth:
     #     surf = cc.vtk_taubin_smooth(surf, pass_band=0.05, iterations=100)
 
-    surf, centerlines1 = vmtk.flow_extensions(surf, centerlines1)
+    #moved the flow extensions to surface_prep!!
     surf = surf.clean()
-    
+
     self.surf = surf
     self.update_inlets_outlets()
     if multi_inlets == &#39;multi&#39;:    
-        self.generate_centerlines_multi(proj_dir)
+        #self.generate_centerlines_multi(proj_dir)
         centerlines1 = self.centerlines
-        centerlines1.save(proj_dir / (&#39;network_centerlines.vtp&#39;))
+        #centerlines1.save(proj_dir / (&#39;network_centerlines.vtp&#39;))
     else:
         self.generate_centerlines(include_aneurysms=False)
         centerlines1 = self.centerlines
@@ -1881,6 +1885,8 @@ and curvature, then does a final remshing and cleaning.</p></div>
         surf = s.mesh
     else:
         surf = surf.interpolate(surf_og, n_points=1, pass_point_data=True) #radius=0.5, strategy=&#39;null_value&#39;, null_value=0)
+    #surf.save(proj_dir/&#39;after_interp0.vtp&#39;)
+    
     #print(surf.point_data)
     surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines1)
     surf = surf.clean()
@@ -1922,11 +1928,11 @@ and curvature, then does a final remshing and cleaning.</p></div>
     #in the point array. Still needed for the refinement points and mask points. 
     #Must re-calculate the size array for when the meshgenerator needs it, though...
     else:
-        surf_rm = surf_rm.interpolate(surf_og, n_points=5, pass_point_data=True) #radius=0.5, strategy=&#39;null_value&#39;, null_value=0)
+        surf_rm = surf_rm.interpolate(surf_og, n_points=1, pass_point_data=True) #radius=0.5, strategy=&#39;null_value&#39;, null_value=0)
         surf_rm = surf_rm.clean()
-
-    surf_rm = surf_rm.interpolate(surf, radius=0.5, pass_point_data=True)
-        
+    #surf_rm.save(proj_dir/&#39;after_interp1.vtp&#39;)
+    surf_rm = surf_rm.interpolate(surf, radius=0.7, pass_point_data=True)
+    #surf_rm.save(proj_dir/&#39;after_interp2.vtp&#39;)    
     surf_rm = cc.create_edge_size_array(surf_rm, fix_centerline, min_edge_size=min_edge_size, max_edge_size=max_edge_size, sac_size=sac_size, 
         misr_min=misr_min, misr_max=misr_max, name=&#39;Size&#39;, ref_edge_ratio=0.5)
         

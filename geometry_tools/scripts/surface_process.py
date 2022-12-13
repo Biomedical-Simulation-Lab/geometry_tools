@@ -1,4 +1,33 @@
-""" Clip boundaries, mark inlets, outlets, and aneurysm locations.
+"""
+This script is called to generate PT or aneurysm cases, but is currently set up for a PT case. You will need to change the inputs to 
+the call m.surface_preparation if you want to use this for aneurysms, and SHOULD NOT be used with the defaults for the PT
+meshes. You can use these arguments for aneurysm cases: min_edge_size=0.1, max_edge_size=0.4, sac_size=0.15, misr_min=0.1, misr_max=2.5
+but BE CAREFUL!
+
+Call this script using the following formula:
+surface_process.py path/to/case surf_type multi_inlets ref fix_centerline min_EL max_EL ND
+
+Info about the input arguments:
+
+path/to/case: must be a path with a target separated with min two/max three underscores, eg. ./case_1_proc or ./case_1_proc_refined.
+It will look in the directory ./case_1 for your prepared surface.
+
+surf_type: options are a for aneurysm or pt for pulsatile tinnitus
+
+multi_inlets: options are multi for multiple inlet cases or single for single inlet cases
+
+ref: options are refine or no_ref. Use if you want a refinment patch
+
+fix_centerline: options are reg, fix. Use the 'fix' option for if you want to use MISR instead of distance to centerlines
+
+min_EL/max_EL: specify floats that correspond to the minimum and maximum desired edgelengths
+
+ND: options are none or nd for whether or not you want to enlarge certain edge lengths (eg. the non-dominant side in a PT case)
+
+A full example of a command to put in a terminal that would call this script is as follows:
+surface_process.py ./case_1_low pt multi no_ref fix 0.4 0.5 nd
+
+NOTE: you do not need to precede this command with python because it already knows it is a python script.
 """
 
 from configparser import NoOptionError
@@ -227,32 +256,6 @@ def surface_process(proj_dir, proc_dir, surf_type, multi_inlets, ND, min_EL, max
 
 
 if __name__ == "__main__":
-    """
-    Call this script using the following formula:
-    surface_process.py path/to/case surf_type multi_inlets ref fix_centerline min_EL max_EL ND
-    
-    Info about the input arguments:
-
-    path/to/case: must be a path with a target separated with min two/max three underscores, eg. ./case_1_proc or ./case_1_proc_refined.
-    It will look in the directory ./case_1 for your prepared surface.
-
-    surf_type: options are a for aneurysm or pt for pulsatile tinnitus
-    
-    multi_inlets: options are multi for multiple inlet cases or single for single inlet cases
-    
-    ref: options are refine or no_ref. Use if you want a refinment patch
-    
-    fix_centerline: options are reg, fix. Use the 'fix' option for if you want to use MISR instead of distance to centerlines
-    
-    min_EL/max_EL: specify floats that correspond to the minimum and maximum desired edgelengths
-    
-    ND: options are none or nd for whether or not you want to enlarge certain edge lengths (eg. the non-dominant side in a PT case)
-    
-    A full example of a command to put in a terminal that would call this script is as follows:
-    surface_process.py ./case_1_low pt multi no_ref fix 0.4 0.5 nd
-
-    NOTE: you do not need to precede this command with python because it already knows it is a python script.
-    """
     proj_dir = Path(sys.argv[1])  
 
     if len(sys.argv[1].split('_')) == 4:
