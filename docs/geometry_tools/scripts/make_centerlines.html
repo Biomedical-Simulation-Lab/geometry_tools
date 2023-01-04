@@ -49,6 +49,7 @@ import numpy as np
 import pyvista as pv
 from geometry_tools.meshing import Mesher
 from geometry_tools import vmtk_wrapper as vmtk
+from geometry_tools import common as cc
 from scipy.spatial import cKDTree as KDTree 
 from pathlib import Path
 import sys
@@ -73,6 +74,9 @@ def make_cl(proj_dir, case_name):
     m.centerlines, _ = vmtk.network_extractor(m.surf)
     m.centerlines = vmtk.resample_cl(m.centerlines)
     m.centerlines = vmtk.centerline_geometry(m.centerlines)
+    usable_centerlines = cc.Remove_UnusableCLs(m.surf, m.centerlines)
+    m.centerlines.point_data[&#39;unusable&#39;]=usable_centerlines.centerline.point_data[&#39;branch_centerlines&#39;]
+  
     tree1 = KDTree(m.centerlines.points)
     tree2 = KDTree(m.surf.points)
     dist, idx = tree2.query(m.centerlines.points) #closest dist to centerline point
@@ -116,6 +120,7 @@ def make_cl(proj_dir, case_name):
         perimeter = sum(sized[&#39;Length&#39;])
         m.centerlines.point_data[&#39;CSA&#39;][ndx]=area
         m.centerlines.point_data[&#39;perimeter&#39;][ndx]=perimeter
+
     m.centerlines.save(out_dir/(case_name+&#39;_centerline.vtp&#39;))
 
 if __name__ == &#34;__main__&#34;:
@@ -160,6 +165,9 @@ if __name__ == &#34;__main__&#34;:
     m.centerlines, _ = vmtk.network_extractor(m.surf)
     m.centerlines = vmtk.resample_cl(m.centerlines)
     m.centerlines = vmtk.centerline_geometry(m.centerlines)
+    usable_centerlines = cc.Remove_UnusableCLs(m.surf, m.centerlines)
+    m.centerlines.point_data[&#39;unusable&#39;]=usable_centerlines.centerline.point_data[&#39;branch_centerlines&#39;]
+  
     tree1 = KDTree(m.centerlines.points)
     tree2 = KDTree(m.surf.points)
     dist, idx = tree2.query(m.centerlines.points) #closest dist to centerline point
@@ -203,6 +211,7 @@ if __name__ == &#34;__main__&#34;:
         perimeter = sum(sized[&#39;Length&#39;])
         m.centerlines.point_data[&#39;CSA&#39;][ndx]=area
         m.centerlines.point_data[&#39;perimeter&#39;][ndx]=perimeter
+
     m.centerlines.save(out_dir/(case_name+&#39;_centerline.vtp&#39;))</code></pre>
 </details>
 </dd>

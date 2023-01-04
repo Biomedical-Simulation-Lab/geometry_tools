@@ -14,6 +14,7 @@ import numpy as np
 import pyvista as pv
 from geometry_tools.meshing import Mesher
 from geometry_tools import vmtk_wrapper as vmtk
+from geometry_tools import common as cc
 from scipy.spatial import cKDTree as KDTree 
 from pathlib import Path
 import sys
@@ -38,6 +39,9 @@ def make_cl(proj_dir, case_name):
     m.centerlines, _ = vmtk.network_extractor(m.surf)
     m.centerlines = vmtk.resample_cl(m.centerlines)
     m.centerlines = vmtk.centerline_geometry(m.centerlines)
+    usable_centerlines = cc.Remove_UnusableCLs(m.surf, m.centerlines)
+    m.centerlines.point_data['unusable']=usable_centerlines.centerline.point_data['branch_centerlines']
+  
     tree1 = KDTree(m.centerlines.points)
     tree2 = KDTree(m.surf.points)
     dist, idx = tree2.query(m.centerlines.points) #closest dist to centerline point
@@ -81,6 +85,7 @@ def make_cl(proj_dir, case_name):
         perimeter = sum(sized['Length'])
         m.centerlines.point_data['CSA'][ndx]=area
         m.centerlines.point_data['perimeter'][ndx]=perimeter
+
     m.centerlines.save(out_dir/(case_name+'_centerline.vtp'))
 
 if __name__ == "__main__":

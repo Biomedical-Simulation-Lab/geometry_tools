@@ -427,7 +427,7 @@ class RefinementSelection():
 
 class RefinementSelection_OLD():
     """ 
-    Not relevant anymore!!
+    Still used!!
     Interactively create a refinement region by clipping away 
     parts of a surface mesh that are not required to be refined, then storing a boolean at 
     the selected surface points on the original mesh. 
@@ -465,6 +465,54 @@ class RefinementSelection_OLD():
         p.show()
         self.surf.point_data[self.name]=self.refsurf.point_data['SelectedPoints']
 
+class Remove_UnusableCLs():
+    """ 
+    Identify parts of the centerline that shouldn't be used to calculate parameters based 
+    on CSA and perimeter
+    """ 
+    def __init__(self, surf, centerline, name = 'branch_centerlines'):
+        #split up the centerline into branches
+        self.surf = surf 
+        self.centerline=centerline
+        self.name = name
+        self.centerline.point_data[self.name]=np.zeros(self.centerline.n_points)
+        self.get_main_branch_points()
+        self.select()
+        self.identify_points()
+
+        p=pv.Plotter()
+        p.add_mesh(self.surf, opacity=0.3, color='grey')
+        p.add_mesh(self.centerline, scalars=self.name)
+        p.show()
+
+    def get_main_branch_points(self):
+        self.centerline.cell_data['main_branch'] = np.zeros(self.centerline.n_cells, dtype=bool)
+        self.centerline.point_data['main_branch'] = np.zeros(self.centerline.n_points, dtype=bool)
+        #identify the cells
+        select = ClickDragSelect(self.centerline, title = 'Select main branch cells')
+        self.centerline.cell_data['main_branch']=select.mesh.cell_data['PickedMask']
+        #identify the points
+        self.centerline = self.centerline.cell_data_to_point_data()
+        #for idx in range(self.centerline.n_cells):
+        #    if self.centerline.cell_data['main_branch'][idx]==1:
+        #        self.centerline.point_data['main_branch'][self.centerline.cell_point_ids(idx)]=1 
+
+    def select(self):
+        warnings.formatwarning = warning_on_one_line
+        warnings.warn("Holes from clipping must be fillable. May result in inability to close surface!")
+        new_surf = ClickDragDelete(self.surf, title='Clip off small branches')
+        temprefsurf=new_surf.mesh.triangulate()
+        if type(temprefsurf) != pv.core.pointset.PolyData:
+                temprefsurf = pv.PolyData(temprefsurf.points, temprefsurf.cells)
+        self.temprefsurf=temprefsurf.fill_holes(100).clean()
+        self.temprefsurf = self.temprefsurf.connectivity(largest=True)
+        
+    def identify_points(self):
+        temp=self.centerline.select_enclosed_points(self.temprefsurf, tolerance=0.01)
+        #all the enclosed points are ones, all the external points are zeros
+        self.centerline.point_data[self.name]=temp.point_data['SelectedPoints']
+        #all the main branch points are zeros
+        self.centerline.point_data[self.name][self.centerline.point_data['main_branch']==1]=0
 
 class SacSelectTool():
     """ Interactively mark points using a probe.

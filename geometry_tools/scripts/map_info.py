@@ -63,6 +63,9 @@ def mapped_info(prep_dir, ss, lab, fen, nondom, outflow1, outflow2):
             m.centerlines, _= centerline, _ = vmtk.network_extractor(m.surf)#vmtk.centerline_geometry(m.centerlines)
             m.centerlines = vmtk.resample_cl(m.centerlines)
             m.centerlines = vmtk.centerline_geometry(m.centerlines)
+            usable_centerlines = cc.Remove_UnusableCLs(m.surf, m.centerlines)
+            m.centerlines.point_data['unusable']=usable_centerlines.centerline.point_data['branch_centerlines']
+  
             tree1 = KDTree(m.centerlines.points)
             tree2 = KDTree(m.surf.points)
             dist, idx = tree2.query(m.centerlines.points) #closest dist to centerline point
@@ -106,10 +109,13 @@ def mapped_info(prep_dir, ss, lab, fen, nondom, outflow1, outflow2):
             m.centerlines = pv.read(cent_file)
         #create mapping to surface
         m.surf = pv.read(surf_file) #replace surface with flow extension surface to avoid the flow extension issues
-        tree = KDTree(m.centerlines.points)
+        usable_CL=m.centerlines.points[m.centerlines.point_data['unusable']==0]
+        usable_CL_CSA=m.centerlines.point_data['CSA'][m.centerlines.point_data['unusable']==0]
+        usable_CL_perimeter=m.centerlines.point_data['perimeter'][m.centerlines.point_data['unusable']==0]
+        tree = KDTree(usable_CL) #only include the usable centerlines
         _, idx_c = tree.query(m.surf.points)
-        m.surf.point_data['CSA']=m.centerlines.point_data['CSA'][idx_c]
-        m.surf.point_data['perimeter']=m.centerlines.point_data['perimeter'][idx_c]
+        m.surf.point_data['CSA']=usable_CL_CSA[idx_c]
+        m.surf.point_data['perimeter']=usable_CL_perimeter[idx_c]
         m.surf.save(mapped_file)
     else:
         surf=pv.read(mapped_file)

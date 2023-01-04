@@ -455,7 +455,7 @@ class RefinementSelection():
 
 class RefinementSelection_OLD():
     &#34;&#34;&#34; 
-    Not relevant anymore!!
+    Still used!!
     Interactively create a refinement region by clipping away 
     parts of a surface mesh that are not required to be refined, then storing a boolean at 
     the selected surface points on the original mesh. 
@@ -493,6 +493,54 @@ class RefinementSelection_OLD():
         p.show()
         self.surf.point_data[self.name]=self.refsurf.point_data[&#39;SelectedPoints&#39;]
 
+class Remove_UnusableCLs():
+    &#34;&#34;&#34; 
+    Identify parts of the centerline that shouldn&#39;t be used to calculate parameters based 
+    on CSA and perimeter
+    &#34;&#34;&#34; 
+    def __init__(self, surf, centerline, name = &#39;branch_centerlines&#39;):
+        #split up the centerline into branches
+        self.surf = surf 
+        self.centerline=centerline
+        self.name = name
+        self.centerline.point_data[self.name]=np.zeros(self.centerline.n_points)
+        self.get_main_branch_points()
+        self.select()
+        self.identify_points()
+
+        p=pv.Plotter()
+        p.add_mesh(self.surf, opacity=0.3, color=&#39;grey&#39;)
+        p.add_mesh(self.centerline, scalars=self.name)
+        p.show()
+
+    def get_main_branch_points(self):
+        self.centerline.cell_data[&#39;main_branch&#39;] = np.zeros(self.centerline.n_cells, dtype=bool)
+        self.centerline.point_data[&#39;main_branch&#39;] = np.zeros(self.centerline.n_points, dtype=bool)
+        #identify the cells
+        select = ClickDragSelect(self.centerline, title = &#39;Select main branch cells&#39;)
+        self.centerline.cell_data[&#39;main_branch&#39;]=select.mesh.cell_data[&#39;PickedMask&#39;]
+        #identify the points
+        self.centerline = self.centerline.cell_data_to_point_data()
+        #for idx in range(self.centerline.n_cells):
+        #    if self.centerline.cell_data[&#39;main_branch&#39;][idx]==1:
+        #        self.centerline.point_data[&#39;main_branch&#39;][self.centerline.cell_point_ids(idx)]=1 
+
+    def select(self):
+        warnings.formatwarning = warning_on_one_line
+        warnings.warn(&#34;Holes from clipping must be fillable. May result in inability to close surface!&#34;)
+        new_surf = ClickDragDelete(self.surf, title=&#39;Clip off small branches&#39;)
+        temprefsurf=new_surf.mesh.triangulate()
+        if type(temprefsurf) != pv.core.pointset.PolyData:
+                temprefsurf = pv.PolyData(temprefsurf.points, temprefsurf.cells)
+        self.temprefsurf=temprefsurf.fill_holes(100).clean()
+        self.temprefsurf = self.temprefsurf.connectivity(largest=True)
+        
+    def identify_points(self):
+        temp=self.centerline.select_enclosed_points(self.temprefsurf, tolerance=0.01)
+        #all the enclosed points are ones, all the external points are zeros
+        self.centerline.point_data[self.name]=temp.point_data[&#39;SelectedPoints&#39;]
+        #all the main branch points are zeros
+        self.centerline.point_data[self.name][self.centerline.point_data[&#39;main_branch&#39;]==1]=0
 
 class SacSelectTool():
     &#34;&#34;&#34; Interactively mark points using a probe.
@@ -2794,7 +2842,7 @@ remesh the surface, and ultimately the volumetric mesh.</p></div>
 <span>(</span><span>surf, name='RefinementPoints', title='Clip Refinement Zone')</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Not relevant anymore!!
+<div class="desc"><p>Still used!!
 Interactively create a refinement region by clipping away
 parts of a surface mesh that are not required to be refined, then storing a boolean at
 the selected surface points on the original mesh. </p>
@@ -2806,7 +2854,7 @@ remesh the surface, and ultimately the volumetric mesh.</p></div>
 </summary>
 <pre><code class="python">class RefinementSelection_OLD():
     &#34;&#34;&#34; 
-    Not relevant anymore!!
+    Still used!!
     Interactively create a refinement region by clipping away 
     parts of a surface mesh that are not required to be refined, then storing a boolean at 
     the selected surface points on the original mesh. 
@@ -2882,6 +2930,126 @@ remesh the surface, and ultimately the volumetric mesh.</p></div>
     warnings.formatwarning = warning_on_one_line
     warnings.warn(&#34;Holes from clipping must be fillable. May result in inability to close surface!&#34;)
     new_surf = ClickDragDelete(self.surf, title=self.title)
+    temprefsurf=new_surf.mesh.triangulate()
+    if type(temprefsurf) != pv.core.pointset.PolyData:
+            temprefsurf = pv.PolyData(temprefsurf.points, temprefsurf.cells)
+    self.temprefsurf=temprefsurf.fill_holes(100).clean()
+    self.temprefsurf = self.temprefsurf.connectivity(largest=True)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="geometry_tools.common.Remove_UnusableCLs"><code class="flex name class">
+<span>class <span class="ident">Remove_UnusableCLs</span></span>
+<span>(</span><span>surf, centerline, name='branch_centerlines')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Identify parts of the centerline that shouldn't be used to calculate parameters based
+on CSA and perimeter</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Remove_UnusableCLs():
+    &#34;&#34;&#34; 
+    Identify parts of the centerline that shouldn&#39;t be used to calculate parameters based 
+    on CSA and perimeter
+    &#34;&#34;&#34; 
+    def __init__(self, surf, centerline, name = &#39;branch_centerlines&#39;):
+        #split up the centerline into branches
+        self.surf = surf 
+        self.centerline=centerline
+        self.name = name
+        self.centerline.point_data[self.name]=np.zeros(self.centerline.n_points)
+        self.get_main_branch_points()
+        self.select()
+        self.identify_points()
+
+        p=pv.Plotter()
+        p.add_mesh(self.surf, opacity=0.3, color=&#39;grey&#39;)
+        p.add_mesh(self.centerline, scalars=self.name)
+        p.show()
+
+    def get_main_branch_points(self):
+        self.centerline.cell_data[&#39;main_branch&#39;] = np.zeros(self.centerline.n_cells, dtype=bool)
+        self.centerline.point_data[&#39;main_branch&#39;] = np.zeros(self.centerline.n_points, dtype=bool)
+        #identify the cells
+        select = ClickDragSelect(self.centerline, title = &#39;Select main branch cells&#39;)
+        self.centerline.cell_data[&#39;main_branch&#39;]=select.mesh.cell_data[&#39;PickedMask&#39;]
+        #identify the points
+        self.centerline = self.centerline.cell_data_to_point_data()
+        #for idx in range(self.centerline.n_cells):
+        #    if self.centerline.cell_data[&#39;main_branch&#39;][idx]==1:
+        #        self.centerline.point_data[&#39;main_branch&#39;][self.centerline.cell_point_ids(idx)]=1 
+
+    def select(self):
+        warnings.formatwarning = warning_on_one_line
+        warnings.warn(&#34;Holes from clipping must be fillable. May result in inability to close surface!&#34;)
+        new_surf = ClickDragDelete(self.surf, title=&#39;Clip off small branches&#39;)
+        temprefsurf=new_surf.mesh.triangulate()
+        if type(temprefsurf) != pv.core.pointset.PolyData:
+                temprefsurf = pv.PolyData(temprefsurf.points, temprefsurf.cells)
+        self.temprefsurf=temprefsurf.fill_holes(100).clean()
+        self.temprefsurf = self.temprefsurf.connectivity(largest=True)
+        
+    def identify_points(self):
+        temp=self.centerline.select_enclosed_points(self.temprefsurf, tolerance=0.01)
+        #all the enclosed points are ones, all the external points are zeros
+        self.centerline.point_data[self.name]=temp.point_data[&#39;SelectedPoints&#39;]
+        #all the main branch points are zeros
+        self.centerline.point_data[self.name][self.centerline.point_data[&#39;main_branch&#39;]==1]=0</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="geometry_tools.common.Remove_UnusableCLs.get_main_branch_points"><code class="name flex">
+<span>def <span class="ident">get_main_branch_points</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_main_branch_points(self):
+    self.centerline.cell_data[&#39;main_branch&#39;] = np.zeros(self.centerline.n_cells, dtype=bool)
+    self.centerline.point_data[&#39;main_branch&#39;] = np.zeros(self.centerline.n_points, dtype=bool)
+    #identify the cells
+    select = ClickDragSelect(self.centerline, title = &#39;Select main branch cells&#39;)
+    self.centerline.cell_data[&#39;main_branch&#39;]=select.mesh.cell_data[&#39;PickedMask&#39;]
+    #identify the points
+    self.centerline = self.centerline.cell_data_to_point_data()</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.Remove_UnusableCLs.identify_points"><code class="name flex">
+<span>def <span class="ident">identify_points</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def identify_points(self):
+    temp=self.centerline.select_enclosed_points(self.temprefsurf, tolerance=0.01)
+    #all the enclosed points are ones, all the external points are zeros
+    self.centerline.point_data[self.name]=temp.point_data[&#39;SelectedPoints&#39;]
+    #all the main branch points are zeros
+    self.centerline.point_data[self.name][self.centerline.point_data[&#39;main_branch&#39;]==1]=0</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.common.Remove_UnusableCLs.select"><code class="name flex">
+<span>def <span class="ident">select</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def select(self):
+    warnings.formatwarning = warning_on_one_line
+    warnings.warn(&#34;Holes from clipping must be fillable. May result in inability to close surface!&#34;)
+    new_surf = ClickDragDelete(self.surf, title=&#39;Clip off small branches&#39;)
     temprefsurf=new_surf.mesh.triangulate()
     if type(temprefsurf) != pv.core.pointset.PolyData:
             temprefsurf = pv.PolyData(temprefsurf.points, temprefsurf.cells)
@@ -3732,6 +3900,14 @@ remesh the surface, and ultimately the volumetric mesh.</p></div>
 <ul class="">
 <li><code><a title="geometry_tools.common.RefinementSelection_OLD.define_surface" href="#geometry_tools.common.RefinementSelection_OLD.define_surface">define_surface</a></code></li>
 <li><code><a title="geometry_tools.common.RefinementSelection_OLD.select" href="#geometry_tools.common.RefinementSelection_OLD.select">select</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="geometry_tools.common.Remove_UnusableCLs" href="#geometry_tools.common.Remove_UnusableCLs">Remove_UnusableCLs</a></code></h4>
+<ul class="">
+<li><code><a title="geometry_tools.common.Remove_UnusableCLs.get_main_branch_points" href="#geometry_tools.common.Remove_UnusableCLs.get_main_branch_points">get_main_branch_points</a></code></li>
+<li><code><a title="geometry_tools.common.Remove_UnusableCLs.identify_points" href="#geometry_tools.common.Remove_UnusableCLs.identify_points">identify_points</a></code></li>
+<li><code><a title="geometry_tools.common.Remove_UnusableCLs.select" href="#geometry_tools.common.Remove_UnusableCLs.select">select</a></code></li>
 </ul>
 </li>
 <li>
