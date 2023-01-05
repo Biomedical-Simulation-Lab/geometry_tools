@@ -465,17 +465,23 @@ class RefinementSelection_OLD():
         p.show()
         self.surf.point_data[self.name]=self.refsurf.point_data['SelectedPoints']
 
-class Remove_UnusableCLs():
+class Label_CLs():
     """ 
     Identify parts of the centerline that shouldn't be used to calculate parameters based 
-    on CSA and perimeter
+    on CSA and perimeter.
+    Also label the other branch points
     """ 
-    def __init__(self, surf, centerline, name = 'branch_centerlines'):
+    def __init__(self, surf, centerline, main_segs, branches, fen, name = 'branch_centerlines'):
         #split up the centerline into branches
         self.surf = surf 
         self.centerline=centerline
+        self.main_segs=main_segs
+        self.branches=branches
+        self.fen=fen
         self.name = name
         self.centerline.point_data[self.name]=np.zeros(self.centerline.n_points)
+        self.tree=KDTree(self.centerline.points)
+        self.iter_branches()
         self.get_main_branch_points()
         self.select()
         self.identify_points()
@@ -485,19 +491,44 @@ class Remove_UnusableCLs():
         p.add_mesh(self.centerline, scalars=self.name)
         p.show()
 
+    def iter_branches(self):
+        for b in self.branches:
+            self.get_branch_points(branch=b, title= 'Select '+b+' segment')  
+        if self.fen != 'False':
+            self.get_branch_points(branch='fen1', title= 'Select first side of fenestration')
+            self.get_branch_points(branch='fen2', title= 'Select second side of fenestration')     
+
     def get_main_branch_points(self):
-        self.centerline.cell_data['main_branch'] = np.zeros(self.centerline.n_cells, dtype=bool)
-        self.centerline.point_data['main_branch'] = np.zeros(self.centerline.n_points, dtype=bool)
+        #Note: if there is a fenestration, include it all in the same branch segment
+        self.centerline.cell_data['main_branch'] = np.zeros(self.centerline.n_cells, dtype=int)
+        self.centerline.point_data['main_branch'] = np.zeros(self.centerline.n_points, dtype=int)
         #identify the cells
-        select = ClickDragSelect(self.centerline, title = 'Select main branch cells')
-        self.centerline.cell_data['main_branch']=select.mesh.cell_data['PickedMask']
+        if self.main_segs == 1: #only one branch
+            self.centerline.cell_data['main_branch']=1
+        else:
+            for seg in range(self.main_segs):
+                select = ClickDragSelect(self.centerline, title = 'Select main branch segment #'+str(seg+1))
+                self.centerline.cell_data['main_branch'] += int(seg+1)*select.mesh.cell_data['PickedMask']
         #identify the points
         self.centerline = self.centerline.cell_data_to_point_data()
-        #for idx in range(self.centerline.n_cells):
-        #    if self.centerline.cell_data['main_branch'][idx]==1:
-        #        self.centerline.point_data['main_branch'][self.centerline.cell_point_ids(idx)]=1 
+
+    def get_branch_points(self, branch='Labbe', title='Select Labbe segment'):
+        self.centerline.cell_data[branch] = np.zeros(self.centerline.n_cells, dtype=bool)
+        self.centerline.point_data[branch] = np.zeros(self.centerline.n_points, dtype=bool)
+        #identify the cells
+        select = ClickDragSelect(self.centerline, title = title)
+        self.centerline.cell_data[branch]=select.mesh.cell_data['PickedMask']
+        #identify the points when main branch points identified
 
     def select(self):
+        #select a junction point on the main branch for each small branch
+        #create sphere at point based on center (point) and hydraulic diameter
+        for b in self.branches:
+            pl = pv.Plotter()
+            pl.add_mesh(self.centerline)
+            pl.enable_point_picking(callback = self.point_cb, show_message="Press P to select junction point for " + b)
+            pl.show()
+        '''
         warnings.formatwarning = warning_on_one_line
         warnings.warn("Holes from clipping must be fillable. May result in inability to close surface!")
         new_surf = ClickDragDelete(self.surf, title='Clip off small branches')
@@ -506,13 +537,17 @@ class Remove_UnusableCLs():
                 temprefsurf = pv.PolyData(temprefsurf.points, temprefsurf.cells)
         self.temprefsurf=temprefsurf.fill_holes(100).clean()
         self.temprefsurf = self.temprefsurf.connectivity(largest=True)
-        
+        '''
+    def point_cb(self, pt):
+        _, pt_id = self.tree.query(pt)
+        Dh = 4*self.centerline.point_data['CSA'][pt_id]/self.centerline.point_data['perimeter'][pt_id]
+        sphere = pv.Sphere(radius=1.4*Dh/2, center=pt)
+        temp=self.centerline.select_enclosed_points(sphere, tolerance=0.01)
+        self.centerline.point_data[self.name] += temp.point_data['SelectedPoints']
+
     def identify_points(self):
-        temp=self.centerline.select_enclosed_points(self.temprefsurf, tolerance=0.01)
-        #all the enclosed points are ones, all the external points are zeros
-        self.centerline.point_data[self.name]=temp.point_data['SelectedPoints']
-        #all the main branch points are zeros
-        self.centerline.point_data[self.name][self.centerline.point_data['main_branch']==1]=0
+        #all the main branch points are zeros, so reset all of these back to what they should be
+        self.centerline.point_data[self.name][self.centerline.point_data['main_branch']!=0]=0
 
 class SacSelectTool():
     """ Interactively mark points using a probe.
@@ -1262,11 +1297,12 @@ def get_normal_component(surf, array='u', normals='Normals',):
 class Flow_Extender():
     def __init__(self, surf = None, centerlines = None, inlet_points=None, outlet_points=None,length = 2):
         self.surf = surf
+        #self.surf_og=surf
         self.centerlines = centerlines
         self.length=length
         self.inlet_points=inlet_points
         self.outlet_points = outlet_points
-
+        self.accept = True
         self.get_boundary_pts()
         self.get_normal_radius_effective()
         self.extrude()
@@ -1337,8 +1373,16 @@ class Flow_Extender():
                 boundary_edges=True, 
                 feature_edges=False, 
                 manifold_edges=False)
+
+        def _reject():
+            self.accept = False
+
         pl2=pv.Plotter()
         pl2.add_title(title = "Inspect for unfilled holes")
         pl2.add_mesh(edges, color='red')
         pl2.add_mesh(self.surf, opacity=0.5)
+        pl2.add_text('r+q: reject and redo', position=(0.05, 25), font_size=12)
+        pl2.add_text('q: accept', position=(0.05, 50), font_size=12)
+        pl2.add_key_event('r',_reject)
         pl2.show()
+    

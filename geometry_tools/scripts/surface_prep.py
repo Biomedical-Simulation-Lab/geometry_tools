@@ -42,6 +42,7 @@ def surface_prep(surf_file, proj_dir, surf_type):
     '''
     # Output files
     surf_file_out = proj_dir / (surf_file.stem + '_cl.vtp')
+    clipped_surf = proj_dir / (surf_file.stem + '_noext.vtp')
     if surf_type=='a':
         neck_file_out = proj_dir / (surf_file.stem + '_cl_neckpoints.vtm')
     #else:
@@ -60,23 +61,11 @@ def surface_prep(surf_file, proj_dir, surf_type):
             m = Mesher(surf) 
             anubool=False
 
-        # Delete any sharp edges or small branches
-        # if flag_inspect == True:
-        # s = cc.SelectGeodesic(m.surf, scalars='Delete', )
-        # s.interact(title='Isolate region to delete and fill.')
-        # m.surf = s.mesh
-        # m.surf = m.surf.fill_holes(10.0)
- 
-        # Uses m.clip_boundaries uses cc.ClickDragDelete to delete boundaries.
-        flag_inspect = m.clip_boundaries()
-
-        m.set_inlets_outlets()
-
         if surf_type=='a':
+            flag_inspect = m.clip_boundaries()
+            m.set_inlets_outlets()
             m.pick_aneurysm()
             m.copy_structure() #this makes the surface mesh (m.surf) into a pv.PolyData object  
-
-        if surf_type=='a':
             # Select aneurysms
             s = cc.SelectGeodesic(m.surf)
             s.interact(title='Isolate aneurysms.')
@@ -85,14 +74,19 @@ def surface_prep(surf_file, proj_dir, surf_type):
             m.generate_centerlines(include_aneurysms=True)
             m.surf, m.centerlines = vmtk.flow_extensions(m.surf, m.centerlines)
         else:
-            m.generate_centerlines_multi(proj_dir)  
-            surf = vmtk.flow_ext(m.surf, m.centerlines, m.inlet_ids)
-            m.surf=pv.wrap(surf)
-            extender = cc.Flow_Extender(m.surf, m.centerlines,inlet_points=m.inlet_points, outlet_points=m.outlet_points)
+            accept = False
+            while not accept:
+                m.clip_boundaries()
+                m.set_inlets_outlets()
+                m.surf.save(clipped_surf)
+                m.generate_centerlines_multi(proj_dir)  
+                surf = vmtk.flow_ext(m.surf, m.centerlines, m.inlet_ids)
+                extender = cc.Flow_Extender(pv.wrap(surf), m.centerlines,inlet_points=m.inlet_points, outlet_points=m.outlet_points)
+                accept = extender.accept
             m.surf = extender.surf
             m.update_inlets_outlets()         
 
-        m.surf.save(surf_file_out) #can only save in vtk, ply, or stl format (not vtp)
+        m.surf.save(surf_file_out) #saves the clipped surface with extensions
         m.save_inlet_outlet_points(points_file_out, include_aneurysms=anubool, include_normals = True)
 
         time_spent = time.time() - case_start

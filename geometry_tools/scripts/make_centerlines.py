@@ -39,9 +39,6 @@ def make_cl(proj_dir, case_name):
     m.centerlines, _ = vmtk.network_extractor(m.surf)
     m.centerlines = vmtk.resample_cl(m.centerlines)
     m.centerlines = vmtk.centerline_geometry(m.centerlines)
-    usable_centerlines = cc.Remove_UnusableCLs(m.surf, m.centerlines)
-    m.centerlines.point_data['unusable']=usable_centerlines.centerline.point_data['branch_centerlines']
-  
     tree1 = KDTree(m.centerlines.points)
     tree2 = KDTree(m.surf.points)
     dist, idx = tree2.query(m.centerlines.points) #closest dist to centerline point

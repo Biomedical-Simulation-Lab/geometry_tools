@@ -24,16 +24,17 @@ for creating the mappings for a PT …" />
 </header>
 <section id="section-intro">
 <p>This file contains a method for preparing a segmented surface mesh that has been run through 'surface_prep.py'
-for creating the mappings for a PT surface mesh.</p>
-<p>Call this file using:</p>
+for creating the mappings for a PT surface mesh. Currently only does unilateral.</p>
+<p>Call this file using:
+map_info.py prep_dir ss lab fen syl emissary condylar</p>
 <p>Where
 -prep_dir is the directory your surface mesh from 'surface_prep.py' is stored
 -ss is a float indicating the Straight Sinus flow rate at peak systole in mL/s
 -lab is a float indicating the Labbe flow rate at peak systole mL/s
--fen indicates True or False if there is a fenestration (surrently only set up for one)
--nondom indicates if there is a nondominant side (True or False)
--outflow1 indicates True or False if there is an extra outflow on the dominant side
--outflow2 indicates True or False if there is an extra outflow on the nondominant side</p>
+-fen indicates True or False if there is a fenestration (currently only set up for one)
+-syl is a float indicating the Sylvian vein flow rate at peak systole mL/s
+-emissary is a float indicating the Emissary vein outlet ratio
+-condylar is a float indicating the Condylar vein outlet ratio</p>
 <p>defaults to one flow rate for the whole geometry, which is 6.816019219 for peak systolic Superior Sinus inflow</p>
 <p>This will produce a number of useful attributes, including the boundary layer width to get y+&lt;1</p>
 <details class="source">
@@ -42,19 +43,19 @@ for creating the mappings for a PT surface mesh.</p>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;
 This file contains a method for preparing a segmented surface mesh that has been run through &#39;surface_prep.py&#39;
-for creating the mappings for a PT surface mesh.
+for creating the mappings for a PT surface mesh. Currently only does unilateral.
 
 Call this file using:
-
+map_info.py prep_dir ss lab fen syl emissary condylar
 
 Where
 -prep_dir is the directory your surface mesh from &#39;surface_prep.py&#39; is stored
 -ss is a float indicating the Straight Sinus flow rate at peak systole in mL/s
 -lab is a float indicating the Labbe flow rate at peak systole mL/s
--fen indicates True or False if there is a fenestration (surrently only set up for one)
--nondom indicates if there is a nondominant side (True or False)
--outflow1 indicates True or False if there is an extra outflow on the dominant side
--outflow2 indicates True or False if there is an extra outflow on the nondominant side
+-fen indicates True or False if there is a fenestration (currently only set up for one)
+-syl is a float indicating the Sylvian vein flow rate at peak systole mL/s
+-emissary is a float indicating the Emissary vein outlet ratio
+-condylar is a float indicating the Condylar vein outlet ratio
 
 defaults to one flow rate for the whole geometry, which is 6.816019219 for peak systolic Superior Sinus inflow
 
@@ -77,9 +78,13 @@ def define_fr(obj_pt, flowrate=5.578888889):
     obj_pt.surf.point_data[obj_pt.name][ids]=flowrate
     return obj_pt.surf
 
-def mapped_info(prep_dir, ss, lab, fen, nondom, outflow1, outflow2):
+def inlet_ratio(FR_SSS, CSA_avg_SSS, CSA_avg_branch): #not quite it...
+    FR_branch = (CSA_avg_branch/CSA_avg_SSS)*FR_SSS
+    return FR_branch
+
+def mapped_info(prep_dir, ss, lab, fen, syl, emissary, condylar):
     out_dir = prep_dir.parent
-    surf0_file = sorted(out_dir.glob(&#39;*.stl&#39;))[0]
+    surf0_file = sorted(prep_dir.glob(&#39;*_noext.vtp&#39;))[0]
     surf_file = sorted(prep_dir.glob(&#39;*_cl.vtp&#39;))[0]
     cent_file = out_dir/(surf_file.stem + &#39;_centerline_mapped.vtp&#39;)
     mapped_file = out_dir/(surf_file.stem + &#39;_mapped.vtp&#39;)
@@ -89,7 +94,8 @@ def mapped_info(prep_dir, ss, lab, fen, nondom, outflow1, outflow2):
                 surf,
                 include_aneurysms=False
                 )
-        m.clip_boundaries()
+        #m.clip_boundaries()
+        #print(cent_file)
         if not cent_file.exists():
             #first, generate a centerline
             #centers = m.get_open_profiles()
@@ -105,9 +111,7 @@ def mapped_info(prep_dir, ss, lab, fen, nondom, outflow1, outflow2):
             m.centerlines, _= centerline, _ = vmtk.network_extractor(m.surf)#vmtk.centerline_geometry(m.centerlines)
             m.centerlines = vmtk.resample_cl(m.centerlines)
             m.centerlines = vmtk.centerline_geometry(m.centerlines)
-            usable_centerlines = cc.Remove_UnusableCLs(m.surf, m.centerlines)
-            m.centerlines.point_data[&#39;unusable&#39;]=usable_centerlines.centerline.point_data[&#39;branch_centerlines&#39;]
-  
+            
             tree1 = KDTree(m.centerlines.points)
             tree2 = KDTree(m.surf.points)
             dist, idx = tree2.query(m.centerlines.points) #closest dist to centerline point
@@ -149,7 +153,38 @@ def mapped_info(prep_dir, ss, lab, fen, nondom, outflow1, outflow2):
             m.centerlines.save(cent_file)
         else:
             m.centerlines = pv.read(cent_file)
-        #create mapping to surface
+        #Create mapping to surface
+        #Label segments
+        #How many main segments do we have? Assuming only unilateral wiht current options
+        main_segs=1
+        branches = []
+        if ss != &#39;False&#39;:
+            branches.append(&#39;Straight_Sinus&#39;)
+            main_segs += 1
+        if lab != &#39;False&#39;:
+            branches.append(&#39;Labbe&#39;)
+            main_segs += 1
+        if syl != &#39;False&#39;:
+            branches.append(&#39;Sylvian_Vein&#39;)
+            main_segs += 1
+        if emissary != &#39;False&#39;:
+            branches.append(&#39;Emissary_Vein&#39;)
+            main_segs += 1
+        if condylar != &#39;False&#39;:
+            branches.append(&#39;Condylar_Vein&#39;)
+            main_segs += 1 
+
+        #Some parts of the centerline shouldn&#39;t be used to calculate parameters, so take these bits out
+        #While we are at it, identify the other branches for later 
+        labelled_centerlines = cc.Label_CLs(m.surf, m.centerlines, main_segs, branches, fen)
+        m.centerlines.point_data[&#39;unusable&#39;]=labelled_centerlines.centerline.point_data[&#39;branch_centerlines&#39;]
+        for b in branches: #get all labelled branch centerline points
+            m.centerlines.point_data[b]=labelled_centerlines.centerline.point_data[b]
+        if fen == &#39;True&#39;:
+            m.centerlines.point_data[&#39;fen1&#39;]=labelled_centerlines.centerline.point_data[&#39;fen1&#39;]
+            m.centerlines.point_data[&#39;fen2&#39;]=labelled_centerlines.centerline.point_data[&#39;fen2&#39;]
+        m.centerlines.point_data[&#39;main_branch&#39;]=labelled_centerlines.centerline.point_data[&#39;main_branch&#39;]
+
         m.surf = pv.read(surf_file) #replace surface with flow extension surface to avoid the flow extension issues
         usable_CL=m.centerlines.points[m.centerlines.point_data[&#39;unusable&#39;]==0]
         usable_CL_CSA=m.centerlines.point_data[&#39;CSA&#39;][m.centerlines.point_data[&#39;unusable&#39;]==0]
@@ -158,92 +193,65 @@ def mapped_info(prep_dir, ss, lab, fen, nondom, outflow1, outflow2):
         _, idx_c = tree.query(m.surf.points)
         m.surf.point_data[&#39;CSA&#39;]=usable_CL_CSA[idx_c]
         m.surf.point_data[&#39;perimeter&#39;]=usable_CL_perimeter[idx_c]
+        m.surf, _ = cc.smooth_mesh_data_local(m.surf, array=&#39;CSA&#39;, func=np.mean, iterations = 5)
+        m.surf, _ = cc.smooth_mesh_data_local(m.surf, array=&#39;perimeter&#39;, func=np.mean, iterations = 5)
         m.surf.save(mapped_file)
-    else:
-        surf=pv.read(mapped_file)
-        centerlines=pv.read(cent_file)
-        m = Mesher(
-                surf,
-                include_aneurysms=False
-                )
-    
-    #select flowrate regions
+        m.centerlines.save(cent_file)
+ 
+    surf=pv.read(mapped_file) #for some reason have to read in again. boolean array dimension error. Fix this.
+    m = Mesher(
+            surf,
+            include_aneurysms=False,
+            )
+    m.centerlines=pv.read(cent_file)
+    #Select flowrate regions assuming unilateral
+    flowrate = 6.816019219 #Superior Saggital Sinus at Peak systolic
     m.surf.point_data[&#39;flowrate&#39;] = np.zeros(m.surf.n_points)
-    sss_pt = cc.RefinementSelection(m.surf, name = &#39;flowrate&#39;, title=&#39;Choose SupSagSinus Flowrate Zone&#39;)
-    sss_pt.select() #Selects the region of interest
-    flowrate = 6.816019219 #Peak systolic
-    m.surf = define_fr(sss_pt, flowrate=flowrate) #Adds data attribute to point array called &#39;SSS&#39;
+    m.centerlines.point_data[&#39;flowrate&#39;]=np.zeros(m.centerlines.n_points)
+    #Superior Saggital Sinus branch:
+    #Use the first main branch segment to define SSS flowrate
+    main_branch_seg=1
+    m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;main_branch&#39;]==main_branch_seg]=flowrate
     if ss != &#39;False&#39;:
-        ss_pt = cc.RefinementSelection(m.surf, name = &#39;flowrate&#39;, title=&#39;Choose StrSinus Flowrate Zone&#39;)
-        ss_pt.select() #Selects the region of interest
-        m.surf = define_fr(ss_pt,flowrate=ss)
-        comb1_pt = cc.RefinementSelection(m.surf, name = &#39;flowrate&#39;, title=&#39;Choose StrSinus+SupSagSinus Flowrate Zone&#39;)
-        comb1_pt.select() #Selects the region of interest
-        flowrate+=float(ss)
-        m.surf = define_fr(comb1_pt, flowrate=flowrate) #Adds data attribute to point array called &#39;Comb1&#39;
-    
-    #nondom stuff
-    if nondom !=&#39;False&#39;:
-        nd_pt = cc.RefinementSelection(m.surf, name = &#39;flowrate&#39;, title=&#39;Choose LessDom Flowrate Zone&#39;)
-        nd_pt.select() #Selects the region of interest
-        m.surf = define_fr(nd_pt, flowrate=flowrate*float(nondom))
-        comb0_pt = cc.RefinementSelection(m.surf, name = &#39;flowrate&#39;, title=&#39;Choose Dom Flowrate Zone&#39;)
-        comb0_pt.select() #Selects the region of interest
-        flowrate -= float(nondom)*flowrate
-        flowrate_nondom=float(nondom)*flowrate
-        m.surf = define_fr(comb0_pt, flowrate=flowrate)
-    if outflow2 !=&#39;False&#39;: #non-dom side outflow
-        of0_pt = cc.RefinementSelection(m.surf, name = &#39;flowrate&#39;, title=&#39;Choose Out2 (LessDom) Flowrate Zone&#39;)
-        of0_pt.select() #Selects the region of interest
-        m.surf = define_fr(of0_pt, flowrate=flowrate_nondom*float(outflow2))
-        comb4_pt = cc.RefinementSelection(m.surf, name = &#39;flowrate&#39;, title=&#39;Choose LessDom-Out0 Flowrate Zone&#39;)
-        comb4_pt.select() #Selects the region of interest
-        flowrate -= float(outflow2)*flowrate_nondom
-        m.surf = define_fr(comb4_pt, flowrate=flowrate_nondom)
-
-    #dom stuff
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;Straight_Sinus&#39;]==1]=ss
+        flowrate += float(ss) #this is the current flowrate of the main branch
+        main_branch_seg +=1
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;main_branch&#39;]==main_branch_seg]=flowrate
     if lab !=&#39;False&#39;:
-        lab_pt = cc.RefinementSelection(m.surf, name = &#39;flowrate&#39;, title=&#39;Choose Labbe/Tant Flowrate Zone&#39;)
-        lab_pt.select() #Selects the region of interest
-        m.surf = define_fr(lab_pt, flowrate=lab)
-        comb2_pt = cc.RefinementSelection(m.surf, name = &#39;flowrate&#39;, title=&#39;Choose StrSinus+SupSagSinus+Labbe/Tant Flowrate Zone&#39;)
-        comb2_pt.select() #Selects the region of interest
-        flowrate += float(lab)
-        m.surf = define_fr(comb2_pt, flowrate=flowrate) #Adds data attribute to point array called &#39;SS
-    if outflow1 !=&#39;False&#39;:
-        of1_pt = cc.RefinementSelection(m.surf, name = &#39;flowrate&#39;, title=&#39;Choose Out1 Flowrate Zone&#39;)
-        of1_pt.select() #Selects the region of interest
-        m.surf = define_fr(of1_pt, flowrate=flowrate*float(outflow1))
-        comb3_pt = cc.RefinementSelection(m.surf, name = &#39;flowrate&#39;, title=&#39;Choose StrSinus+SupSagSinus+Labbe-Out1 Flowrate Zone&#39;)
-        comb3_pt.select() #Selects the region of interest
-        flowrate -= float(outflow1)*flowrate
-        m.surf = define_fr(comb3_pt, flowrate=flowrate) #Adds data attribute to point array called &#39;SS
-    m.surf.point_data[&#39;flowrate&#39;][m.surf.point_data[&#39;flowrate&#39;]==0]=flowrate #make sure flowrate is nonzero everywhere
-    if fen !=&#39;False&#39;:
-        fen_pt1 = cc.RefinementSelection(m.surf, name = &#39;FEN1&#39;, title=&#39;Choose 1st Fenest Flowrate Zone&#39;)
-        fen_pt1.select() #Selects the region of interest
-        fen_pt1.define_surface() 
-        m.surf = fen_pt1.surf
-        fen_pt2 = cc.RefinementSelection(m.surf, name = &#39;FEN2&#39;, title=&#39;Choose 2nd Fenest Flowrate Zone&#39;)
-        fen_pt2.select() #Selects the region of interest
-        fen_pt2.define_surface() #Adds boolean data attribute to point array called &#39;AG&#39;
-        m.surf = fen_pt2.surf
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;Labbe&#39;]==1]=lab
+        flowrate += float(lab) #this is the current flowrate of the main branch
+        main_branch_seg +=1
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;main_branch&#39;]==main_branch_seg]=flowrate
+    if syl !=&#39;False&#39;:
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;Sylvian_Vein&#39;]==1]=lab
+        flowrate += float(lab) #this is the current flowrate of the main branch
+        main_branch_seg +=1
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;main_branch&#39;]==main_branch_seg]=flowrate
+    if emissary !=&#39;False&#39;:
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;Emissary_Vein&#39;]==1]=flowrate*float(emissary)
+        flowrate -=flowrate*float(emissary) #this is the current flowrate of the main branch
+        main_branch_seg +=1
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;main_branch&#39;]==main_branch_seg]=flowrate
+    if condylar !=&#39;False&#39;:
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;Condylar_Vein&#39;]==1]=flowrate*float(condylar)
+        flowrate -=flowrate*float(emissary) #this is the current flowrate of the main branch
+        main_branch_seg +=1
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;main_branch&#39;]==main_branch_seg]=flowrate
+    if fen != &#39;False&#39;:
         #get average CSA ratio between branches:
-        centerlines=pv.read(cent_file)
-        tree3 = KDTree(centerlines.points)
-        _, idx_a = tree3.query(m.surf.points[m.surf.point_data[&#39;FEN1&#39;]==1])
-        _, idx_b = tree3.query(m.surf.points[m.surf.point_data[&#39;FEN2&#39;]==1])
-        fen1 = np.mean(centerlines.point_data[&#39;CSA&#39;][idx_a])
-        fen2 = np.mean(centerlines.point_data[&#39;CSA&#39;][idx_b])
-        ratio1 = fen1/(fen1+fen2)
-        ratio2 = fen2/(fen1+fen2)
-        m.surf.point_data[&#39;flowrate&#39;][m.surf.point_data[&#39;FEN1&#39;]==1]=m.surf.point_data[&#39;flowrate&#39;][m.surf.point_data[&#39;FEN1&#39;]==1]*ratio1
-        m.surf.point_data[&#39;flowrate&#39;][m.surf.point_data[&#39;FEN2&#39;]==1]=m.surf.point_data[&#39;flowrate&#39;][m.surf.point_data[&#39;FEN2&#39;]==1]*ratio2
-    ref_pt = cc.RefinementSelection(m.surf, name = &#39;ref&#39;)
-    ref_pt.select() #Selects the region of interest
-    ref_pt.define_surface() #Adds boolean data attribute to point array called &#39;ref&#39;
-    m.surf = ref_pt.surf
+        fen1_CSA = np.mean(m.centerlines.point_data[&#39;CSA&#39;][m.centerlines.point_data[&#39;fen1&#39;]==1])
+        fen2_CSA = np.mean(m.centerlines.point_data[&#39;CSA&#39;][m.centerlines.point_data[&#39;fen2&#39;]==1])
+        ratio1 = fen1_CSA/(fen1_CSA+fen2_CSA)
+        ratio2 = fen2_CSA/(fen1_CSA+fen2_CSA)
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;fen1&#39;]==1]=ratio1*m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;fen1&#39;]==1]
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;fen2&#39;]==1]=ratio2*m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;fen2&#39;]==1]
     
+    usable_CL=m.centerlines.points[m.centerlines.point_data[&#39;unusable&#39;]==0]
+    usable_CL_flowrate=m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;unusable&#39;]==0]
+    tree3 = KDTree(usable_CL) #only include the usable centerlines
+    _, idx_c3 = tree3.query(m.surf.points)
+    m.surf.point_data[&#39;flowrate&#39;]=usable_CL_flowrate[idx_c3]
+
     #smooth data
     m.surf, _ = cc.smooth_mesh_data_local(m.surf, array=&#39;flowrate&#39;, func=np.mean, iterations = 5)
     m.surf, _ = cc.smooth_mesh_data_local(m.surf, array=&#39;CSA&#39;, func=np.mean, iterations = 5)
@@ -271,144 +279,22 @@ if __name__ == &#34;__main__&#34;:
         ss=sys.argv[2]
         lab=sys.argv[3]
         fen=sys.argv[4]
-        nondom= sys.argv[5]
-        outflow1 = sys.argv[6]
-        outflow2 = sys.argv[7]
+        syl= sys.argv[5]
+        emissary = sys.argv[6]
+        condylar = sys.argv[7]
     else:
         ss=&#39;False&#39;
         lab=&#39;False&#39;
         fen=&#39;False&#39;
-        nondom = &#39;False&#39;
-        outflow1=&#39;False&#39;
-        outflow2 = &#39;False&#39;
+        syl = &#39;False&#39;
+        emissary=&#39;False&#39;
+        condylar = &#39;False&#39;
 
-    mapped_info(prep_dir=prep_dir, ss = ss, lab = lab, fen = fen, nondom = nondom, outflow1=outflow1, outflow2=outflow2)</code></pre>
-</details>
-</section>
-<section>
-</section>
-<section>
-</section>
-<section>
-<h2 class="section-title" id="header-functions">Functions</h2>
-<dl>
-<dt id="geometry_tools.scripts.map_info.define_fr"><code class="name flex">
-<span>def <span class="ident">define_fr</span></span>(<span>obj_pt, flowrate=5.578888889)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def define_fr(obj_pt, flowrate=5.578888889):
-    cell_ids = obj_pt.surf.faces.reshape(-1, 4)[obj_pt.surf.cell_data[obj_pt.name]==1][:,1:]
-    ids = cell_ids.flatten()
-    obj_pt.surf.point_data[obj_pt.name][ids]=flowrate
-    return obj_pt.surf</code></pre>
-</details>
-</dd>
-<dt id="geometry_tools.scripts.map_info.mapped_info"><code class="name flex">
-<span>def <span class="ident">mapped_info</span></span>(<span>prep_dir, ss, lab, fen, nondom, outflow1, outflow2)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def mapped_info(prep_dir, ss, lab, fen, nondom, outflow1, outflow2):
-    out_dir = prep_dir.parent
-    surf0_file = sorted(out_dir.glob(&#39;*.stl&#39;))[0]
-    surf_file = sorted(prep_dir.glob(&#39;*_cl.vtp&#39;))[0]
-    cent_file = out_dir/(surf_file.stem + &#39;_centerline_mapped.vtp&#39;)
-    mapped_file = out_dir/(surf_file.stem + &#39;_mapped.vtp&#39;)
-    if not mapped_file.exists():
-        surf = pv.read(surf0_file) #use unprepped surface for the centerline map
-        m = Mesher(
-                surf,
-                include_aneurysms=False
-                )
-        m.clip_boundaries()
-        if not cent_file.exists():
-            #first, generate a centerline
-            #centers = m.get_open_profiles()
-            #centers_m = pv.wrap(centers)
-            #inlet_id = m._pick_points(pv.wrap(centers), &#39;Pick Major Inlet&#39;)
-            #other_ids = list(set(range(centers_m.n_points)) - set(inlet_id))
-            #m.inlet_ids = [inlet_id]
-            #m.inlet_points = centers[inlet_id]
-            #m.outlet_ids = other_ids
-            #m.outlet_points = [centers[i] for i in other_ids]
-            #m.generate_centerlines(include_aneurysms=False)
-            
-            m.centerlines, _= centerline, _ = vmtk.network_extractor(m.surf)#vmtk.centerline_geometry(m.centerlines)
-            m.centerlines = vmtk.resample_cl(m.centerlines)
-            m.centerlines = vmtk.centerline_geometry(m.centerlines)
-            usable_centerlines = cc.Remove_UnusableCLs(m.surf, m.centerlines)
-            m.centerlines.point_data[&#39;unusable&#39;]=usable_centerlines.centerline.point_data[&#39;branch_centerlines&#39;]
-  
-            tree1 = KDTree(m.centerlines.points)
-            tree2 = KDTree(m.surf.points)
-            dist, idx = tree2.query(m.centerlines.points) #closest dist to centerline point
-            for i in range(len(idx)):
-                for j in range(len(idx)):
-                    if (idx[j]==idx[i]) and (i != j):
-                        closest, _ = tree1.query(m.surf.points[idx[i]]) #closest centerline distance to the point
-                        dist[j]=closest
-            m.centerlines.point_data[&#39;MaximumInscribedSphereRadius&#39;]=dist
+    mapped_info(prep_dir=prep_dir, ss = ss, lab = lab, fen = fen, syl = syl, emissary=emissary, condylar=condylar)
 
-            #Use the centerline points to create planes
-            m.centerlines.point_data[&#39;CSA&#39;]=np.array(m.centerlines.n_points)
-            m.centerlines.point_data[&#39;perimeter&#39;]=np.array(m.centerlines.n_points)
-            points = m.centerlines.points
-            normals = m.centerlines.point_data[&#39;FrenetTangent&#39;] 
-            for ndx, pt in enumerate(points):
-                plane=pv.Plane(center = pt, direction = normals[ndx], i_size=20, j_size=20, i_resolution=100, j_resolution=100).triangulate()
-                plane_split = plane.clip_surface(surf)
-                split = plane_split.split_bodies()
-                if len(split)&gt;1:
-                    cm = np.zeros((len(split),3))
-                    for i in range(len(split)):
-                        cm[i, :] = split[i].center_of_mass()
-                    tree = KDTree(cm)
-                    _, j = tree.query(pt) #closest center of mass to the centerline point
-                    plane_split = split[j]
-                CSsurf = plane_split.extract_surface() 
-                area = CSsurf.area
-                edges = CSsurf.extract_feature_edges(boundary_edges=True, non_manifold_edges=False, feature_edges=False, manifold_edges=False)
-                #p=pv.Plotter()
-                #p.add_mesh(CSsurf)
-                #p.add_mesh(edges, color=&#39;red&#39;)
-                #p.show()
-                sized = edges.compute_cell_sizes()
-                #print(sized)
-                perimeter = sum(sized[&#39;Length&#39;])
-                m.centerlines.point_data[&#39;CSA&#39;][ndx]=area
-                m.centerlines.point_data[&#39;perimeter&#39;][ndx]=perimeter
-            m.centerlines.save(cent_file)
-        else:
-            m.centerlines = pv.read(cent_file)
-        #create mapping to surface
-        m.surf = pv.read(surf_file) #replace surface with flow extension surface to avoid the flow extension issues
-        usable_CL=m.centerlines.points[m.centerlines.point_data[&#39;unusable&#39;]==0]
-        usable_CL_CSA=m.centerlines.point_data[&#39;CSA&#39;][m.centerlines.point_data[&#39;unusable&#39;]==0]
-        usable_CL_perimeter=m.centerlines.point_data[&#39;perimeter&#39;][m.centerlines.point_data[&#39;unusable&#39;]==0]
-        tree = KDTree(usable_CL) #only include the usable centerlines
-        _, idx_c = tree.query(m.surf.points)
-        m.surf.point_data[&#39;CSA&#39;]=usable_CL_CSA[idx_c]
-        m.surf.point_data[&#39;perimeter&#39;]=usable_CL_perimeter[idx_c]
-        m.surf.save(mapped_file)
-    else:
-        surf=pv.read(mapped_file)
-        centerlines=pv.read(cent_file)
-        m = Mesher(
-                surf,
-                include_aneurysms=False
-                )
-    
-    #select flowrate regions
-    m.surf.point_data[&#39;flowrate&#39;] = np.zeros(m.surf.n_points)
+
+&#39;&#39;&#39;
+    Old crappy way. Leaving this here for reference, not for use!
     sss_pt = cc.RefinementSelection(m.surf, name = &#39;flowrate&#39;, title=&#39;Choose SupSagSinus Flowrate Zone&#39;)
     sss_pt.select() #Selects the region of interest
     flowrate = 6.816019219 #Peak systolic
@@ -483,7 +369,225 @@ if __name__ == &#34;__main__&#34;:
     ref_pt.select() #Selects the region of interest
     ref_pt.define_surface() #Adds boolean data attribute to point array called &#39;ref&#39;
     m.surf = ref_pt.surf
+    &#39;&#39;&#39;</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="geometry_tools.scripts.map_info.define_fr"><code class="name flex">
+<span>def <span class="ident">define_fr</span></span>(<span>obj_pt, flowrate=5.578888889)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def define_fr(obj_pt, flowrate=5.578888889):
+    cell_ids = obj_pt.surf.faces.reshape(-1, 4)[obj_pt.surf.cell_data[obj_pt.name]==1][:,1:]
+    ids = cell_ids.flatten()
+    obj_pt.surf.point_data[obj_pt.name][ids]=flowrate
+    return obj_pt.surf</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.map_info.inlet_ratio"><code class="name flex">
+<span>def <span class="ident">inlet_ratio</span></span>(<span>FR_SSS, CSA_avg_SSS, CSA_avg_branch)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def inlet_ratio(FR_SSS, CSA_avg_SSS, CSA_avg_branch): #not quite it...
+    FR_branch = (CSA_avg_branch/CSA_avg_SSS)*FR_SSS
+    return FR_branch</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.map_info.mapped_info"><code class="name flex">
+<span>def <span class="ident">mapped_info</span></span>(<span>prep_dir, ss, lab, fen, syl, emissary, condylar)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mapped_info(prep_dir, ss, lab, fen, syl, emissary, condylar):
+    out_dir = prep_dir.parent
+    surf0_file = sorted(prep_dir.glob(&#39;*_noext.vtp&#39;))[0]
+    surf_file = sorted(prep_dir.glob(&#39;*_cl.vtp&#39;))[0]
+    cent_file = out_dir/(surf_file.stem + &#39;_centerline_mapped.vtp&#39;)
+    mapped_file = out_dir/(surf_file.stem + &#39;_mapped.vtp&#39;)
+    if not mapped_file.exists():
+        surf = pv.read(surf0_file) #use unprepped surface for the centerline map
+        m = Mesher(
+                surf,
+                include_aneurysms=False
+                )
+        #m.clip_boundaries()
+        #print(cent_file)
+        if not cent_file.exists():
+            #first, generate a centerline
+            #centers = m.get_open_profiles()
+            #centers_m = pv.wrap(centers)
+            #inlet_id = m._pick_points(pv.wrap(centers), &#39;Pick Major Inlet&#39;)
+            #other_ids = list(set(range(centers_m.n_points)) - set(inlet_id))
+            #m.inlet_ids = [inlet_id]
+            #m.inlet_points = centers[inlet_id]
+            #m.outlet_ids = other_ids
+            #m.outlet_points = [centers[i] for i in other_ids]
+            #m.generate_centerlines(include_aneurysms=False)
+            
+            m.centerlines, _= centerline, _ = vmtk.network_extractor(m.surf)#vmtk.centerline_geometry(m.centerlines)
+            m.centerlines = vmtk.resample_cl(m.centerlines)
+            m.centerlines = vmtk.centerline_geometry(m.centerlines)
+            
+            tree1 = KDTree(m.centerlines.points)
+            tree2 = KDTree(m.surf.points)
+            dist, idx = tree2.query(m.centerlines.points) #closest dist to centerline point
+            for i in range(len(idx)):
+                for j in range(len(idx)):
+                    if (idx[j]==idx[i]) and (i != j):
+                        closest, _ = tree1.query(m.surf.points[idx[i]]) #closest centerline distance to the point
+                        dist[j]=closest
+            m.centerlines.point_data[&#39;MaximumInscribedSphereRadius&#39;]=dist
+
+            #Use the centerline points to create planes
+            m.centerlines.point_data[&#39;CSA&#39;]=np.array(m.centerlines.n_points)
+            m.centerlines.point_data[&#39;perimeter&#39;]=np.array(m.centerlines.n_points)
+            points = m.centerlines.points
+            normals = m.centerlines.point_data[&#39;FrenetTangent&#39;] 
+            for ndx, pt in enumerate(points):
+                plane=pv.Plane(center = pt, direction = normals[ndx], i_size=20, j_size=20, i_resolution=100, j_resolution=100).triangulate()
+                plane_split = plane.clip_surface(surf)
+                split = plane_split.split_bodies()
+                if len(split)&gt;1:
+                    cm = np.zeros((len(split),3))
+                    for i in range(len(split)):
+                        cm[i, :] = split[i].center_of_mass()
+                    tree = KDTree(cm)
+                    _, j = tree.query(pt) #closest center of mass to the centerline point
+                    plane_split = split[j]
+                CSsurf = plane_split.extract_surface() 
+                area = CSsurf.area
+                edges = CSsurf.extract_feature_edges(boundary_edges=True, non_manifold_edges=False, feature_edges=False, manifold_edges=False)
+                #p=pv.Plotter()
+                #p.add_mesh(CSsurf)
+                #p.add_mesh(edges, color=&#39;red&#39;)
+                #p.show()
+                sized = edges.compute_cell_sizes()
+                #print(sized)
+                perimeter = sum(sized[&#39;Length&#39;])
+                m.centerlines.point_data[&#39;CSA&#39;][ndx]=area
+                m.centerlines.point_data[&#39;perimeter&#39;][ndx]=perimeter
+            m.centerlines.save(cent_file)
+        else:
+            m.centerlines = pv.read(cent_file)
+        #Create mapping to surface
+        #Label segments
+        #How many main segments do we have? Assuming only unilateral wiht current options
+        main_segs=1
+        branches = []
+        if ss != &#39;False&#39;:
+            branches.append(&#39;Straight_Sinus&#39;)
+            main_segs += 1
+        if lab != &#39;False&#39;:
+            branches.append(&#39;Labbe&#39;)
+            main_segs += 1
+        if syl != &#39;False&#39;:
+            branches.append(&#39;Sylvian_Vein&#39;)
+            main_segs += 1
+        if emissary != &#39;False&#39;:
+            branches.append(&#39;Emissary_Vein&#39;)
+            main_segs += 1
+        if condylar != &#39;False&#39;:
+            branches.append(&#39;Condylar_Vein&#39;)
+            main_segs += 1 
+
+        #Some parts of the centerline shouldn&#39;t be used to calculate parameters, so take these bits out
+        #While we are at it, identify the other branches for later 
+        labelled_centerlines = cc.Label_CLs(m.surf, m.centerlines, main_segs, branches, fen)
+        m.centerlines.point_data[&#39;unusable&#39;]=labelled_centerlines.centerline.point_data[&#39;branch_centerlines&#39;]
+        for b in branches: #get all labelled branch centerline points
+            m.centerlines.point_data[b]=labelled_centerlines.centerline.point_data[b]
+        if fen == &#39;True&#39;:
+            m.centerlines.point_data[&#39;fen1&#39;]=labelled_centerlines.centerline.point_data[&#39;fen1&#39;]
+            m.centerlines.point_data[&#39;fen2&#39;]=labelled_centerlines.centerline.point_data[&#39;fen2&#39;]
+        m.centerlines.point_data[&#39;main_branch&#39;]=labelled_centerlines.centerline.point_data[&#39;main_branch&#39;]
+
+        m.surf = pv.read(surf_file) #replace surface with flow extension surface to avoid the flow extension issues
+        usable_CL=m.centerlines.points[m.centerlines.point_data[&#39;unusable&#39;]==0]
+        usable_CL_CSA=m.centerlines.point_data[&#39;CSA&#39;][m.centerlines.point_data[&#39;unusable&#39;]==0]
+        usable_CL_perimeter=m.centerlines.point_data[&#39;perimeter&#39;][m.centerlines.point_data[&#39;unusable&#39;]==0]
+        tree = KDTree(usable_CL) #only include the usable centerlines
+        _, idx_c = tree.query(m.surf.points)
+        m.surf.point_data[&#39;CSA&#39;]=usable_CL_CSA[idx_c]
+        m.surf.point_data[&#39;perimeter&#39;]=usable_CL_perimeter[idx_c]
+        m.surf, _ = cc.smooth_mesh_data_local(m.surf, array=&#39;CSA&#39;, func=np.mean, iterations = 5)
+        m.surf, _ = cc.smooth_mesh_data_local(m.surf, array=&#39;perimeter&#39;, func=np.mean, iterations = 5)
+        m.surf.save(mapped_file)
+        m.centerlines.save(cent_file)
+ 
+    surf=pv.read(mapped_file) #for some reason have to read in again. boolean array dimension error. Fix this.
+    m = Mesher(
+            surf,
+            include_aneurysms=False,
+            )
+    m.centerlines=pv.read(cent_file)
+    #Select flowrate regions assuming unilateral
+    flowrate = 6.816019219 #Superior Saggital Sinus at Peak systolic
+    m.surf.point_data[&#39;flowrate&#39;] = np.zeros(m.surf.n_points)
+    m.centerlines.point_data[&#39;flowrate&#39;]=np.zeros(m.centerlines.n_points)
+    #Superior Saggital Sinus branch:
+    #Use the first main branch segment to define SSS flowrate
+    main_branch_seg=1
+    m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;main_branch&#39;]==main_branch_seg]=flowrate
+    if ss != &#39;False&#39;:
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;Straight_Sinus&#39;]==1]=ss
+        flowrate += float(ss) #this is the current flowrate of the main branch
+        main_branch_seg +=1
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;main_branch&#39;]==main_branch_seg]=flowrate
+    if lab !=&#39;False&#39;:
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;Labbe&#39;]==1]=lab
+        flowrate += float(lab) #this is the current flowrate of the main branch
+        main_branch_seg +=1
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;main_branch&#39;]==main_branch_seg]=flowrate
+    if syl !=&#39;False&#39;:
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;Sylvian_Vein&#39;]==1]=lab
+        flowrate += float(lab) #this is the current flowrate of the main branch
+        main_branch_seg +=1
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;main_branch&#39;]==main_branch_seg]=flowrate
+    if emissary !=&#39;False&#39;:
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;Emissary_Vein&#39;]==1]=flowrate*float(emissary)
+        flowrate -=flowrate*float(emissary) #this is the current flowrate of the main branch
+        main_branch_seg +=1
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;main_branch&#39;]==main_branch_seg]=flowrate
+    if condylar !=&#39;False&#39;:
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;Condylar_Vein&#39;]==1]=flowrate*float(condylar)
+        flowrate -=flowrate*float(emissary) #this is the current flowrate of the main branch
+        main_branch_seg +=1
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;main_branch&#39;]==main_branch_seg]=flowrate
+    if fen != &#39;False&#39;:
+        #get average CSA ratio between branches:
+        fen1_CSA = np.mean(m.centerlines.point_data[&#39;CSA&#39;][m.centerlines.point_data[&#39;fen1&#39;]==1])
+        fen2_CSA = np.mean(m.centerlines.point_data[&#39;CSA&#39;][m.centerlines.point_data[&#39;fen2&#39;]==1])
+        ratio1 = fen1_CSA/(fen1_CSA+fen2_CSA)
+        ratio2 = fen2_CSA/(fen1_CSA+fen2_CSA)
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;fen1&#39;]==1]=ratio1*m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;fen1&#39;]==1]
+        m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;fen2&#39;]==1]=ratio2*m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;fen2&#39;]==1]
     
+    usable_CL=m.centerlines.points[m.centerlines.point_data[&#39;unusable&#39;]==0]
+    usable_CL_flowrate=m.centerlines.point_data[&#39;flowrate&#39;][m.centerlines.point_data[&#39;unusable&#39;]==0]
+    tree3 = KDTree(usable_CL) #only include the usable centerlines
+    _, idx_c3 = tree3.query(m.surf.points)
+    m.surf.point_data[&#39;flowrate&#39;]=usable_CL_flowrate[idx_c3]
+
     #smooth data
     m.surf, _ = cc.smooth_mesh_data_local(m.surf, array=&#39;flowrate&#39;, func=np.mean, iterations = 5)
     m.surf, _ = cc.smooth_mesh_data_local(m.surf, array=&#39;CSA&#39;, func=np.mean, iterations = 5)
@@ -525,6 +629,7 @@ if __name__ == &#34;__main__&#34;:
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="geometry_tools.scripts.map_info.define_fr" href="#geometry_tools.scripts.map_info.define_fr">define_fr</a></code></li>
+<li><code><a title="geometry_tools.scripts.map_info.inlet_ratio" href="#geometry_tools.scripts.map_info.inlet_ratio">inlet_ratio</a></code></li>
 <li><code><a title="geometry_tools.scripts.map_info.mapped_info" href="#geometry_tools.scripts.map_info.mapped_info">mapped_info</a></code></li>
 </ul>
 </li>
