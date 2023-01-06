@@ -87,7 +87,7 @@ def resample_cl(centerlines):
     """Resample the centerline"""
     resample=vmtkscripts.vmtkCenterlineResampling()
     resample.Centerlines = centerlines
-    resample.Length = 0.5
+    resample.Length = 0.25
     resample.Execute()
     return pv.wrap(resample.Centerlines)
 

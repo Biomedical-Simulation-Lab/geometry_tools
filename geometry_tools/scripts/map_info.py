@@ -35,10 +35,6 @@ def define_fr(obj_pt, flowrate=5.578888889):
     obj_pt.surf.point_data[obj_pt.name][ids]=flowrate
     return obj_pt.surf
 
-def inlet_ratio(FR_SSS, CSA_avg_SSS, CSA_avg_branch): #not quite it...
-    FR_branch = (CSA_avg_branch/CSA_avg_SSS)*FR_SSS
-    return FR_branch
-
 def mapped_info(prep_dir, ss, lab, fen, syl, emissary, condylar):
     out_dir = prep_dir.parent
     surf0_file = sorted(prep_dir.glob('*_noext.vtp'))[0]
@@ -154,13 +150,13 @@ def mapped_info(prep_dir, ss, lab, fen, syl, emissary, condylar):
         m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='perimeter', func=np.mean, iterations = 5)
         m.surf.save(mapped_file)
         m.centerlines.save(cent_file)
- 
-    surf=pv.read(mapped_file) #for some reason have to read in again. boolean array dimension error. Fix this.
-    m = Mesher(
-            surf,
-            include_aneurysms=False,
-            )
-    m.centerlines=pv.read(cent_file)
+    else:
+        surf=pv.read(mapped_file) #for some reason have to read in again. boolean array dimension error. Fix this.
+        m = Mesher(
+                surf,
+                include_aneurysms=False,
+                )
+        m.centerlines=pv.read(cent_file)
     #Select flowrate regions assuming unilateral
     flowrate = 6.816019219 #Superior Saggital Sinus at Peak systolic
     m.surf.point_data['flowrate'] = np.zeros(m.surf.n_points)
@@ -170,18 +166,18 @@ def mapped_info(prep_dir, ss, lab, fen, syl, emissary, condylar):
     main_branch_seg=1
     m.centerlines.point_data['flowrate'][m.centerlines.point_data['main_branch']==main_branch_seg]=flowrate
     if ss != 'False':
-        m.centerlines.point_data['flowrate'][m.centerlines.point_data['Straight_Sinus']==1]=ss
+        m.centerlines.point_data['flowrate'][m.centerlines.point_data['Straight_Sinus']==1]=float(ss)
         flowrate += float(ss) #this is the current flowrate of the main branch
         main_branch_seg +=1
         m.centerlines.point_data['flowrate'][m.centerlines.point_data['main_branch']==main_branch_seg]=flowrate
     if lab !='False':
-        m.centerlines.point_data['flowrate'][m.centerlines.point_data['Labbe']==1]=lab
+        m.centerlines.point_data['flowrate'][m.centerlines.point_data['Labbe']==1]=float(lab)
         flowrate += float(lab) #this is the current flowrate of the main branch
         main_branch_seg +=1
         m.centerlines.point_data['flowrate'][m.centerlines.point_data['main_branch']==main_branch_seg]=flowrate
     if syl !='False':
-        m.centerlines.point_data['flowrate'][m.centerlines.point_data['Sylvian_Vein']==1]=lab
-        flowrate += float(lab) #this is the current flowrate of the main branch
+        m.centerlines.point_data['flowrate'][m.centerlines.point_data['Sylvian_Vein']==1]=float(syl)
+        flowrate += float(syl) #this is the current flowrate of the main branch
         main_branch_seg +=1
         m.centerlines.point_data['flowrate'][m.centerlines.point_data['main_branch']==main_branch_seg]=flowrate
     if emissary !='False':
@@ -191,7 +187,7 @@ def mapped_info(prep_dir, ss, lab, fen, syl, emissary, condylar):
         m.centerlines.point_data['flowrate'][m.centerlines.point_data['main_branch']==main_branch_seg]=flowrate
     if condylar !='False':
         m.centerlines.point_data['flowrate'][m.centerlines.point_data['Condylar_Vein']==1]=flowrate*float(condylar)
-        flowrate -=flowrate*float(emissary) #this is the current flowrate of the main branch
+        flowrate -=flowrate*float(condylar) #this is the current flowrate of the main branch
         main_branch_seg +=1
         m.centerlines.point_data['flowrate'][m.centerlines.point_data['main_branch']==main_branch_seg]=flowrate
     if fen != 'False':
