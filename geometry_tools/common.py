@@ -409,7 +409,7 @@ class RefinementSelection():
     Later, these booleans will be used to assign a target edge length that will 
     remesh the surface, and ultimately the volumetric mesh.
     """ 
-    def __init__(self, surf, name = 'RefinementPoints', title='Clip Refinement Zone'):
+    def __init__(self, surf, name = 'RefinementPoints', title='Select Refinement Zone'):
         self.surf = surf
         self.title = title
         self.name = name
