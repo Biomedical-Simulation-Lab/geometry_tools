@@ -150,13 +150,13 @@ def mapped_info(prep_dir, ss, lab, fen, syl, emissary, condylar):
         m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='perimeter', func=np.mean, iterations = 5)
         m.surf.save(mapped_file)
         m.centerlines.save(cent_file)
-    else:
-        surf=pv.read(mapped_file) #for some reason have to read in again. boolean array dimension error. Fix this.
-        m = Mesher(
-                surf,
-                include_aneurysms=False,
-                )
-        m.centerlines=pv.read(cent_file)
+
+    surf=pv.read(mapped_file) #for some reason have to read in again. boolean array dimension error. Fix this.
+    m = Mesher(
+            surf,
+            include_aneurysms=False,
+            )
+    m.centerlines=pv.read(cent_file)
     #Select flowrate regions assuming unilateral
     flowrate = 6.816019219 #Superior Saggital Sinus at Peak systolic
     m.surf.point_data['flowrate'] = np.zeros(m.surf.n_points)
