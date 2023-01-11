@@ -61,8 +61,8 @@ def mapped_info(prep_dir, ss, lab, fen, syl, emissary, condylar):
             #m.outlet_points = [centers[i] for i in other_ids]
             #m.generate_centerlines(include_aneurysms=False)
             
-            m.centerlines, _= centerline, _ = vmtk.network_extractor(m.surf)#vmtk.centerline_geometry(m.centerlines)
-            m.centerlines = vmtk.resample_cl(m.centerlines)
+            m.centerlines, _= centerline, _ = vmtk.network_extractor(m.surf, ratio=1)#vmtk.centerline_geometry(m.centerlines)
+            #m.centerlines = vmtk.resample_cl(m.centerlines)
             m.centerlines = vmtk.centerline_geometry(m.centerlines)
             
             tree1 = KDTree(m.centerlines.points)

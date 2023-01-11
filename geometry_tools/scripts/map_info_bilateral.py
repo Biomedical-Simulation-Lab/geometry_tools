@@ -59,7 +59,7 @@ def mapped_info(prep_dir, sss, ss, split_flow, lab, fen, syl, emissary, condylar
 
         if not cent_file.exists():       
             m.centerlines, _= centerline, _ = vmtk.network_extractor(m.surf)#vmtk.centerline_geometry(m.centerlines)
-            m.centerlines = vmtk.resample_cl(m.centerlines)
+            #m.centerlines = vmtk.resample_cl(m.centerlines) #turning this on could cause the centerline to be wonky
             #new_centerline = m.centerlines.copy()
             m.centerlines = vmtk.centerline_geometry(m.centerlines)
             tree1 = KDTree(m.centerlines.points)

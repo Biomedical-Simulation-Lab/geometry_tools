@@ -597,12 +597,12 @@ def kite_removal(surf, factor=0.1):
     kite.Execute()
     return pv.wrap(kite.Surface)
 
-def network_extractor(surf):
+def network_extractor(surf, ratio=1.1):
     """ Extract a basic network and graph layout of a surfaces. """
 
     ext = vmtkscripts.vmtkNetworkExtraction()
     ext.Surface = surf 
-    ext.AdvancementRatio = 1.1
+    ext.AdvancementRatio = ratio
     ext.RadiusArrayName = 'MaximumInscribedSphereRadius'
     ext.TopologyArrayName = 'Topology'
     ext.MarksArrayName = 'Marks'
