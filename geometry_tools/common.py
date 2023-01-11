@@ -480,6 +480,7 @@ class Label_CLs():
         self.fen=fen
         self.name = name
         self.centerline.point_data[self.name]=np.zeros(self.centerline.n_points)
+        self.centerline.cell_data[self.name]=np.zeros(self.centerline.n_cells)
         self.tree=KDTree(self.centerline.points)
         self.iter_branches()
         self.get_main_branch_points()
@@ -496,7 +497,10 @@ class Label_CLs():
             self.get_branch_points(branch=b, title= 'Select '+b+' segment')  
         if self.fen != 'False':
             self.get_branch_points(branch='fen1', title= 'Select first side of fenestration')
-            self.get_branch_points(branch='fen2', title= 'Select second side of fenestration')     
+            self.get_branch_points(branch='fen2', title= 'Select second side of fenestration')  
+        #also want to select any other other "branches" of the centerline we don't want included in the calcs
+        select = ClickDragSelect(self.centerline, title='Select extraneous branches to exclude')
+        self.centerline.cell_data[self.name] = select.mesh.cell_data['PickedMask']   
 
     def get_main_branch_points(self):
         #Note: if there is a fenestration, include it all in the same branch segment
@@ -548,10 +552,6 @@ class Label_CLs():
     def identify_points(self):
         #reset all of these back to what they should be
         self.centerline.point_data[self.name][self.centerline.point_data['main_branch']!=0]=0
-        #also want to select any other other "branches" of the centerline we don't want included in the calcs
-        select = ClickDragSelect(self.centerline, title='Select extraneous branches to exclude')
-        self.centerline.cell_data[self.name]+=select.mesh.cell_data['PickedMask']
-        self.centerline = self.centerline.cell_data_to_point_data()
 
 class SacSelectTool():
     """ Interactively mark points using a probe.
