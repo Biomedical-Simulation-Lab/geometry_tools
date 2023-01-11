@@ -48,6 +48,7 @@ def mapped_info(prep_dir, sss, ss, split_flow, lab, fen, syl, emissary, condylar
     surf0_file = sorted(prep_dir.glob('*_noext.vtp'))[0]
     surf_file = sorted(prep_dir.glob('*_cl.vtp'))[0]
     cent_file = out_dir/(surf_file.stem + '_centerline_mapped.vtp')
+    #newcent_file = out_dir/(surf_file.stem + '_centerline_cm.vtp')
     mapped_file = out_dir/(surf_file.stem + '_mapped.vtp')
     if not mapped_file.exists():
         surf = pv.read(surf0_file) #use unprepped surface for the centerline map
@@ -59,8 +60,8 @@ def mapped_info(prep_dir, sss, ss, split_flow, lab, fen, syl, emissary, condylar
         if not cent_file.exists():       
             m.centerlines, _= centerline, _ = vmtk.network_extractor(m.surf)#vmtk.centerline_geometry(m.centerlines)
             m.centerlines = vmtk.resample_cl(m.centerlines)
+            #new_centerline = m.centerlines.copy()
             m.centerlines = vmtk.centerline_geometry(m.centerlines)
-            
             tree1 = KDTree(m.centerlines.points)
             tree2 = KDTree(m.surf.points)
             dist, idx = tree2.query(m.centerlines.points) #closest dist to centerline point
@@ -88,6 +89,7 @@ def mapped_info(prep_dir, sss, ss, split_flow, lab, fen, syl, emissary, condylar
                     _, j = tree.query(pt) #closest center of mass to the centerline point
                     plane_split = split[j]
                 CSsurf = plane_split.extract_surface() 
+                #new_centerline.points[ndx]=plane_split.center_of_mass()
                 area = CSsurf.area
                 edges = CSsurf.extract_feature_edges(boundary_edges=True, non_manifold_edges=False, feature_edges=False, manifold_edges=False)
                 #p=pv.Plotter()
@@ -100,6 +102,7 @@ def mapped_info(prep_dir, sss, ss, split_flow, lab, fen, syl, emissary, condylar
                 m.centerlines.point_data['CSA'][ndx]=area
                 m.centerlines.point_data['perimeter'][ndx]=perimeter
             m.centerlines.save(cent_file)
+            #new_centerline.save(newcent_file)
         else:
             m.centerlines = pv.read(cent_file)
         #Create mapping to surface

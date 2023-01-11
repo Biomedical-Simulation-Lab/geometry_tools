@@ -546,8 +546,12 @@ class Label_CLs():
         self.centerline.point_data[self.name] += temp.point_data['SelectedPoints']
 
     def identify_points(self):
-        #all the main branch points are zeros, so reset all of these back to what they should be
+        #reset all of these back to what they should be
         self.centerline.point_data[self.name][self.centerline.point_data['main_branch']!=0]=0
+        #also want to select any other other "branches" of the centerline we don't want included in the calcs
+        select = ClickDragSelect(self.centerline, title='Select extraneous branches to exclude')
+        self.centerline.cell_data[self.name]+=select.mesh.cell_data['PickedMask']
+        self.centerline = self.centerline.cell_data_to_point_data()
 
 class SacSelectTool():
     """ Interactively mark points using a probe.

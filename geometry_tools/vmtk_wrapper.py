@@ -83,11 +83,11 @@ def merge_centerlines(centerlines):
     merged.Execute()
     return pv.wrap(merged.Centerlines)
 
-def resample_cl(centerlines):
+def resample_cl(centerlines, length=0.25):
     """Resample the centerline"""
     resample=vmtkscripts.vmtkCenterlineResampling()
     resample.Centerlines = centerlines
-    resample.Length = 0.25
+    resample.Length = length
     resample.Execute()
     return pv.wrap(resample.Centerlines)
 
