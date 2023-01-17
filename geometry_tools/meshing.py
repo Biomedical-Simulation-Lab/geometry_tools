@@ -530,11 +530,12 @@ class Mesher(Surfer):
             fcoeffsfile.close()
         # # Get branch center, normal, rad, area
         center_points = vmtk.branch_center_normal_rad_area(self.mesh)
-        if multi_inlets !='single':
-            outlet_area = 0
-            for cdx, entity_id in enumerate(self.caps):
-                if entity_id in self.outlet_entity_ids:
-                    outlet_area += center_points[entity_id].point_data['Area'][0]
+        
+        #only used for the pt outlet divisions
+        outlet_area = 0
+        for cdx, entity_id in enumerate(self.caps):
+            if entity_id in self.outlet_entity_ids:
+                outlet_area += center_points[entity_id].point_data['Area'][0]
         # # Match GroupIds from self.centerlines_branched to CellEntityIds
         # # Or match GroupIds with inlet points, inlets points is matched with entity ids
 
@@ -578,11 +579,14 @@ class Mesher(Surfer):
 
             elif (entity_id in self.outlet_entity_ids) and multi_inlets=='single':
                 # FIX! Need to match GroupIds with CellEntityIds
-                if len(self.outlet_flow_divisions) != 0: #ie. if there is only one outlet
+                if len(self.outlet_flow_divisions) != 0: #ie. if there is more than one outlet and this is an arterial mesh
                     flow_division = self.outlet_flow_divisions[entity_id]
                     dataline.append("{:.12f}".format(flow_division))
-                else:
+                elif len(self.outlet_entity_ids) == 1: #if only one outlet
                     flow_division = 1.00
+                    dataline.append("{:.12f}".format(flow_division))
+                else: #if single inlet, multiple outlets
+                    flow_division = area_/outlet_area
                     dataline.append("{:.12f}".format(flow_division))
             elif (entity_id in self.outlet_entity_ids) and multi_inlets!='single':
                 #WARNING: Not the greatest!
