@@ -32,9 +32,10 @@ def create_size_array(surf, min_el=0.2, max_el=0.7, ref='False'):
         bounds_error=False,
         fill_value=(min_el, max_el),
         )
-    surf, _ = cc.smooth_mesh_data_local(surf, array='taylor_len', func=np.mean, iterations = 2)
+    #need to not do the Taylor smoothing here
+    #surf, _ = cc.smooth_mesh_data_local(surf, array='taylor_len', func=np.mean, iterations = 2)
     surf.point_data['Size'] = interp(surf.point_data['taylor_len'])
-    surf, _ = cc.smooth_mesh_data_local(surf, array='Size', func=np.mean, iterations = 2)
+    surf, _ = cc.smooth_mesh_data_local(surf, array='Size', func=np.mean, iterations = 5)
     if ref !='False':
         if float(ref) < 1:
             surf.point_data['Size'][surf.point_data['ref']==1]=float(ref)*surf.point_data['Size'][surf.point_data['ref']==1]
@@ -73,7 +74,7 @@ def make_mesh(proj_dir, proj_name, min_el, max_el, multi_inlets,ref):
         ref_select.define_surface()
         m.surf = ref_select.surf
         m.surf.save(mapped_file)
-        
+
     m.surf = create_size_array(m.surf, min_el=min_el, max_el=max_el, ref=ref)
     m.surf.clean()
     m.surf.save(mapped_file) #add size array to file
