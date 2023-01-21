@@ -62,7 +62,7 @@ def surface_prep(surf_file, proj_dir, surf_type):
             anubool=False
 
         if surf_type=='a':
-            flag_inspect = m.clip_boundaries()
+            m.clip_boundaries()
             m.set_inlets_outlets()
             m.pick_aneurysm()
             m.copy_structure() #this makes the surface mesh (m.surf) into a pv.PolyData object  
@@ -76,7 +76,7 @@ def surface_prep(surf_file, proj_dir, surf_type):
         else:
             accept = False
             while not accept:
-                m.clip_boundaries()
+                m.clip_boundaries(method='box')
                 m.set_inlets_outlets()
                 m.surf.save(clipped_surf)
                 m.generate_centerlines_multi(proj_dir)  

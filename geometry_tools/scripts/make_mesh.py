@@ -32,10 +32,8 @@ def create_size_array(surf, min_el=0.2, max_el=0.7, ref='False'):
         bounds_error=False,
         fill_value=(min_el, max_el),
         )
-    #need to not do the Taylor smoothing here
-    #surf, _ = cc.smooth_mesh_data_local(surf, array='taylor_len', func=np.mean, iterations = 2)
     surf.point_data['Size'] = interp(surf.point_data['taylor_len'])
-    surf, _ = cc.smooth_mesh_data_local(surf, array='Size', func=np.mean, iterations = 5)
+    surf, _ = cc.smooth_mesh_data_local(surf, array='Size', func=np.mean, iterations = 6)
     if ref !='False':
         if float(ref) < 1:
             surf.point_data['Size'][surf.point_data['ref']==1]=float(ref)*surf.point_data['Size'][surf.point_data['ref']==1]

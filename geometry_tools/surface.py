@@ -509,7 +509,7 @@ class Surfer():
         surf = surf.clean() 
 
         self.surf = surf    
-        return cb.flag_inspect 
+        #return cb.flag_inspect 
 
     def save_inlet_outlet_points(self, points_file, centerlines='centerlines', include_aneurysms=True, include_normals=False):
         """ Save inlet_points and outlet_points to a single h5 file.

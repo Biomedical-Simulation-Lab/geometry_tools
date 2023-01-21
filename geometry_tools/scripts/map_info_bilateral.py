@@ -61,7 +61,7 @@ def mapped_info(prep_dir, sss, ss, split_flow, lab, fen, syl, emissary, condylar
         if not cent_file.exists():  
             planes = pv.MultiBlock()     
             m.centerlines, _= centerline, _ = vmtk.network_extractor(m.surf)#vmtk.centerline_geometry(m.centerlines)
-            #m.centerlines = vmtk.resample_cl(m.centerlines) #turning this on could cause the centerline to be wonky
+            #m.centerlines = vmtk.resample_cl(m.centerlines) #turning this on could cause the centerline to be wonky - make sure you turn this off in other scripts if you keep this commented.
             #new_centerline = m.centerlines.copy()
             m.centerlines = vmtk.centerline_geometry(m.centerlines)
             tree1 = KDTree(m.centerlines.points)
@@ -198,8 +198,8 @@ def mapped_info(prep_dir, sss, ss, split_flow, lab, fen, syl, emissary, condylar
         m.surf.point_data['CSA']=usable_CL_CSA[merged_usable_planes.point_data['centerline_id'][idx_p].astype(int)]
         m.surf.point_data['perimeter']=usable_CL_perimeter[merged_usable_planes.point_data['centerline_id'][idx_p].astype(int)]
 
-        m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='CSA', func=np.mean, iterations = 5)
-        m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='perimeter', func=np.mean, iterations = 5)
+        m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='CSA', func=np.mean, iterations = 2)
+        m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='perimeter', func=np.mean, iterations = 2)
         m.surf.save(mapped_file)
         m.centerlines.save(cent_file)
     #else:
