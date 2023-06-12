@@ -45,14 +45,21 @@ def define_fr(obj_pt, flowrate=5.578888889):
 
 def mapped_info(prep_dir, sss, ss, split_flow, lab, fen, syl, emissary, condylar):
     out_dir = prep_dir.parent
-    surf0_file = sorted(prep_dir.glob('*_noext.vtp'))[0]
+    #surf0_file = sorted(prep_dir.glob('*_noext.vtp'))[0]
     surf_file = sorted(prep_dir.glob('*_cl.vtp'))[0]
-    cent_file = out_dir/(surf_file.stem + '_centerline_mapped.vtp')
+    remeshed_file = out_dir/(surf_file.stem  +'_remeshed.vtp')
+    cent_graph_file = out_dir/(surf_file.stem  +'_graph.vtp')
+    cent_file = out_dir/(surf_file.stem + '_centerline_mapped_' + sss + '.vtp')
     #newcent_file = out_dir/(surf_file.stem + '_centerline_cm.vtp')
-    mapped_file = out_dir/(surf_file.stem + '_mapped.vtp')
-    planes_files = out_dir/(surf_file.stem + '_planes.vtm')
+    mapped_file = out_dir/(surf_file.stem + '_mapped_' + sss + '.vtp')
+    planes_files = out_dir/(surf_file.stem + '_planes_' + sss + '.vtm')
     if not mapped_file.exists():
-        surf = pv.read(surf0_file) #use unprepped surface for the centerline map
+        #surf = pv.read(surf0_file) #use unprepped surface for the centerline map
+        if not remeshed_file.exists(): #use remeshed surface for the centerline map
+            surf = vmtk.surface_remeshing(pv.read(surf_file), edgelength=0.5)
+            surf.save(remeshed_file)
+        else:
+            surf=pv.read(remeshed_file)
         m = Mesher(
                 surf,
                 include_aneurysms=False
@@ -60,10 +67,24 @@ def mapped_info(prep_dir, sss, ss, split_flow, lab, fen, syl, emissary, condylar
 
         if not cent_file.exists():  
             planes = pv.MultiBlock()     
-            m.centerlines, _= centerline, _ = vmtk.network_extractor(m.surf)#vmtk.centerline_geometry(m.centerlines)
-            #m.centerlines = vmtk.resample_cl(m.centerlines) #turning this on could cause the centerline to be wonky - make sure you turn this off in other scripts if you keep this commented.
-            #new_centerline = m.centerlines.copy()
-            m.centerlines = vmtk.centerline_geometry(m.centerlines)
+            _ , graph = vmtk.network_extractor(m.surf)#vmtk.centerline_geometry(m.centerlines)
+            graph.save(cent_graph_file)
+            #use vmtk for each segment
+            centerline = pv.PolyData()
+            for idx in range(1, len(graph.points), 2):
+                    inlet_id = [idx-1]
+                    m.inlet_points = graph.points[inlet_id]
+                    outlet_id = [idx]
+                    m.outlet_points = graph.points[outlet_id]
+                    m.generate_centerlines(include_aneurysms=False)
+                    if idx == 1:
+                        centerline = m.centerlines
+                    else:
+                        centerline += m.centerlines
+            m.centerlines = centerline
+            m.centerlines = vmtk.resample_cl(m.centerlines, length=1.5) #so we don't have as many planes and points are equispaced
+            #m.centerlines = vmtk.centerline_geometry(m.centerlines)
+            ''' # don't need this anymore because this is automatically generated with vmtk
             tree1 = KDTree(m.centerlines.points)
             tree2 = KDTree(m.surf.points)
             dist, idx = tree2.query(m.centerlines.points) #closest dist to centerline point
@@ -73,6 +94,7 @@ def mapped_info(prep_dir, sss, ss, split_flow, lab, fen, syl, emissary, condylar
                         closest, _ = tree1.query(m.surf.points[idx[i]]) #closest centerline distance to the point
                         dist[j]=closest
             m.centerlines.point_data['MaximumInscribedSphereRadius']=dist
+            '''
 
             #Use the centerline points to create planes
             m.centerlines.point_data['CSA']=np.array(m.centerlines.n_points)
@@ -170,7 +192,8 @@ def mapped_info(prep_dir, sss, ss, split_flow, lab, fen, syl, emissary, condylar
         m.centerlines.point_data['main_branch_l']=labelled_centerlines_l.centerline.point_data['main_branch']
         m.centerlines.point_data['main_branch_r']=labelled_centerlines_r.centerline.point_data['main_branch']
 
-        m.surf = pv.read(surf_file) #replace surface with flow extension surface to avoid the flow extension issues
+        #don't need to do this next line anymore since we remeshed the surface already
+        #m.surf = pv.read(surf_file) #replace surface with flow extension surface to avoid the flow extension issues
 
         '''
         usable_CL=m.centerlines.points[m.centerlines.point_data['unusable']==0]
@@ -300,6 +323,12 @@ def mapped_info(prep_dir, sss, ss, split_flow, lab, fen, syl, emissary, condylar
         ratio2 = fen2_CSA/(fen1_CSA+fen2_CSA)
         m.centerlines.point_data['flowrate'][m.centerlines.point_data['fen1_r']==1]=ratio1*m.centerlines.point_data['flowrate'][m.centerlines.point_data['fen1_r']==1]
         m.centerlines.point_data['flowrate'][m.centerlines.point_data['fen2_r']==1]=ratio2*m.centerlines.point_data['flowrate'][m.centerlines.point_data['fen2_r']==1]
+    
+    #get the dP value at every point on the entire centerline
+    U_c = m.centerlines.point_data['flowrate']/m.centerlines.point_data['CSA']
+    rho = 1057
+    m.centerlines.point_data['dP']=0.5*rho*(3/2*U_c)**2/133.322 #dP based on max centerline velocity in mmHg calculated in every branch
+    
     '''
     usable_CL=m.centerlines.points[m.centerlines.point_data['unusable']==0]
     usable_CL_flowrate=m.centerlines.point_data['flowrate'][m.centerlines.point_data['unusable']==0]
@@ -338,7 +367,9 @@ def mapped_info(prep_dir, sss, ss, split_flow, lab, fen, syl, emissary, condylar
     m.surf.point_data['mean_velocity']=U
     m.surf.point_data['kolmog_len']=((nu**3)*L/(U**3))**(1/4)
     m.surf.point_data['taylor_len']=np.sqrt(15)*(Re**(1/4))*(((nu**3)*L/(U**3))**(1/4))
-    m.surf.point_data['ds_max(y+=1)']=nu/Uf #   
+    m.surf.point_data['ds_max(y+=1)']=nu/Uf # 
+    m.surf.point_data['dP']=0.5*rho*(3/2*U)**2/133.322 #dP based on max centerline velocity in mmHg calculated in every branch  
+    m.centerlines.save(cent_file)
     m.surf.save(mapped_file)
 
 if __name__ == "__main__":

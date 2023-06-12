@@ -305,7 +305,7 @@ class Surfer():
                 )
             #NOTE: If your vessels are really tortuous, you are going to want to turn the 
             # smoothing wayyy down...    
-            centerlines = vmtk.centerlines_smooth(centerlines, iterations=100, sm_factor=0.1)
+            #centerlines = vmtk.centerlines_smooth(centerlines, iterations=100, sm_factor=0.1)
 
             self.centerlines = centerlines
             self.centerlines = vmtk.centerline_geometry(self.centerlines)

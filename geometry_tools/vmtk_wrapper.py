@@ -67,6 +67,7 @@ def centerlines(surf, seed_selector='pickpoint', resampling=1,
     centerline_filt.TargetIds = target_ids
     centerline_filt.SourcePoints = src_pts
     centerline_filt.TargetPoints = target_pts
+    centerline_filt.AppendEndPoints = 0
     centerline_filt.Execute()
     centerlines = centerline_filt.Centerlines
     return pv.wrap(centerlines)
@@ -598,7 +599,7 @@ def kite_removal(surf, factor=0.1):
     return pv.wrap(kite.Surface)
 
 def network_extractor(surf, ratio=1.1):
-    """ Extract a basic network and graph layout of a surfaces. """
+    """ Extract a basic network and graph layout of a surface. """
 
     ext = vmtkscripts.vmtkNetworkExtraction()
     ext.Surface = surf 
@@ -609,6 +610,24 @@ def network_extractor(surf, ratio=1.1):
     ext.Execute()
 
     return pv.wrap(ext.Network), pv.wrap(ext.GraphLayout)
+
+def centerline_network(surf):
+    ctrnet= vmtkscripts.vmtkCenterlinesNetwork()
+    ctrnet.Surface=surf
+    ctrnet.Execute()
+
+    return pv.wrap(ctrnet.Centerlines)
+
+def network_edit(network):
+    ed = vmtkscripts.vmtkNetworkEditor()
+    ed.Network = network
+    ed.SplineInterpolation = False
+    ed.UseActiveTubes = True
+    ed.NumberOfIterations = 100
+    ed.StiffnessWeight = 0
+    ed.PotentialWeight = 1
+
+    return pv.wrap(ed.Network)
 
 def surface_capper(surf):
     """ Add caps to surface. """

@@ -14,5 +14,6 @@ setup(
     		'geometry_tools/scripts/map_info_bilateral.py',
     		'geometry_tools/scripts/map_DTCL_MISR.py',
     		'geometry_tools/scripts/make_spectro_points.py',
-    		'geometry_tools/scripts/make_centerlines.py',],
+    		'geometry_tools/scripts/make_centerlines.py',
+    		'geometry_tools/scripts/centerlines_fixed.py',],
 )
