@@ -49,7 +49,7 @@ def mapped_info(prep_dir, sss, ss, split_flow, lab, fen, syl, emissary, condylar
     surf_file = sorted(prep_dir.glob('*_cl.vtp'))[0]
     remeshed_file = out_dir/(surf_file.stem  +'_remeshed.vtp')
     cent_graph_file = out_dir/(surf_file.stem  +'_graph.vtp')
-    cent_file = out_dir/(surf_file.stem + '_centerline_mapped_' + sss + '.vtp')
+    cent_file = out_dir/(surf_file.stem + '_' + sss + '_centerline_mapped.vtp')
     #newcent_file = out_dir/(surf_file.stem + '_centerline_cm.vtp')
     mapped_file = out_dir/(surf_file.stem + '_mapped_' + sss + '.vtp')
     planes_files = out_dir/(surf_file.stem + '_planes_' + sss + '.vtm')

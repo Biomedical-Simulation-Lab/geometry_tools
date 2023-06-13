@@ -3,7 +3,7 @@ This file contains a method for preparing a segmented surface mesh that has been
 for creating the mappings for a PT surface mesh. Currently only does unilateral.
 
 Call this file using:
-map_info.py prep_dir ss lab fen syl emissary condylar
+map_info.py prep_dir sss ss lab fen syl emissary condylar
 
 Where
 -prep_dir is the directory your surface mesh from 'surface_prep.py' is stored
@@ -43,7 +43,7 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
     remeshed_file = out_dir/(surf_file.stem  +'_remeshed.vtp')
     cent_graph_file = out_dir/(surf_file.stem  +'_centerline_graph_' + sss + '.vtp')
     graphed_cl_file = out_dir/(surf_file.stem +'_centerline_graph.vtp')
-    cent_file = out_dir/(surf_file.stem + '_centerline_mapped_' + sss + '.vtp')
+    cent_file = out_dir/(surf_file.stem + '__' + sss + 'centerline_mapped.vtp')
     mapped_file = out_dir/(surf_file.stem + '_mappedsys_' + sss + '.vtp')
     planes_files = out_dir/(surf_file.stem + '_planes_' + sss + '.vtm')
     if not mapped_file.exists():
