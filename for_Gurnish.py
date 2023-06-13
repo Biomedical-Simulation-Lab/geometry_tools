@@ -25,6 +25,7 @@ def line_cm(pts,axis=0):
 
 #Order the points along the main branch - this will work for the unilateral case
 unordered_points = m.centerlines.points[m.centerlines.point_data['main_branch']==1] #for bilateral case, use [m.centerlines.point_data['main_branch_l'] != 0] or [m.centerlines.point_data['main_branch_r'] != 0] as the index instead
+map_indices = m.centerlines.point_data['main_branch']==1
 
 # Set a seed point to start the ordering
 # Find the index of the point with the highest Z value, which should be the SSS inlet, but check this!! Can also choose a different seed point (eg. the outlet
@@ -35,19 +36,22 @@ seed_index = highest_z_index
 # Remove the seed point from the list of unordered points
 remaining_points = np.delete(unordered_points, seed_index, axis=0)
 ordered_points = [seed_point]
+ordered_indices = [seed_index]
 
 while remaining_points.shape[0] > 0:
 	kdtree = cKDTree(remaining_points)
     dist, index = kdtree.query(ordered_points[-1])
     nearest_point = remaining_points[index]
     ordered_points.append(nearest_point)
+    ordered_indices.append(index)
     remaining_points = np.delete(remaining_points, index, axis=0)
 
 ordered_points = np.array(ordered_points)
+ordered_indices = np.array(ordered_indices)
         
 x = line_cm(ordered_points)
 plt.figure(figsize=(7, 4))
-dP_main = m.centerlines.point_data['dP'][m.centerlines.points['main_branch']==1] #only take the pressure drop calculated on the main branch
+dP_main = m.centerlines.point_data['dP'][map_indices[ordered_indices]] #only take the pressure drop calculated on the main branch
 plt.plot(x, dP_main,color='b', label='$dP$', linewidth=0.5)
 plt.xlabel('Axial Position (cm)', labelpad=-1)
 plt.ylabel('Pressure Drop (mmHg)', labelpad=-4)
