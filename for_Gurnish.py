@@ -27,17 +27,17 @@ def line_cm(pts,axis=0):
 unordered_points = m.centerlines.points[m.centerlines.point_data['main_branch']==1] #for bilateral case, use [m.centerlines.point_data['main_branch_l'] != 0] or [m.centerlines.point_data['main_branch_r'] != 0] as the index instead
 
 # Set a seed point to start the ordering
-seed_index = # Find the index of the point with the highest Z value, which should be the SSS inlet, but check this!! Can also choose a different seed point (eg. the outlet
+# Find the index of the point with the highest Z value, which should be the SSS inlet, but check this!! Can also choose a different seed point (eg. the outlet
 highest_z_index = np.argmax(unordered_points[:, 2])
 seed_point = unordered_points[highest_z_index]
+seed_index = highest_z_index
 
 # Remove the seed point from the list of unordered points
 remaining_points = np.delete(unordered_points, seed_index, axis=0)
-kdtree = cKDTree(remaining_points)
-
 ordered_points = [seed_point]
 
 while remaining_points.shape[0] > 0:
+	kdtree = cKDTree(remaining_points)
     dist, index = kdtree.query(ordered_points[-1])
     nearest_point = remaining_points[index]
     ordered_points.append(nearest_point)
