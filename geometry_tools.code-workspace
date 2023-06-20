@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "geometry_tools"
+		},
+		{
+			"path": "../../geometry_test/NewCases"
+		}
+	],
+    "settings": {}
+}

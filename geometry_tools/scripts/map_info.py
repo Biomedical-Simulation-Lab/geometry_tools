@@ -43,6 +43,7 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
     remeshed_file = out_dir/(surf_file.stem  +'_remeshed.vtp')
     cent_graph_file = out_dir/(surf_file.stem  +'_centerline_graph_' + sss + '.vtp')
     graphed_cl_file = out_dir/(surf_file.stem +'_centerline_graph.vtp')
+    cent_graph_vmtk = out_dir/out_dir/(surf_file.stem +'_centerline_graph_vmtk.vtp')
     cent_file = out_dir/(surf_file.stem + '__' + sss + 'centerline_mapped.vtp')
     mapped_file = out_dir/(surf_file.stem + '_mappedsys_' + sss + '.vtp')
     planes_files = out_dir/(surf_file.stem + '_planes_' + sss + '.vtm')
@@ -61,9 +62,11 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
         #m.clip_boundaries()
         #print(cent_file)
         if not cent_file.exists():
+        
+        	m.centerlines = pv.read(cent_graph_vmtk)
+        	'''
             #first, generate a centerline
-            planes = pv.MultiBlock()
-            cent , graph = vmtk.network_extractor(m.surf)#vmtk.centerline_geometry(m.centerlines)
+            cent, graph = vmtk.network_extractor(m.surf)#vmtk.centerline_geometry(m.centerlines)
             graph.save(cent_graph_file)
             cent.save(graphed_cl_file)
             #use vmtk for each segment
@@ -81,19 +84,10 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
             m.centerlines = centerline
             m.centerlines = vmtk.resample_cl(m.centerlines, length=1.5) #so we don't have as many planes and points are equispaced
             #m.centerlines = vmtk.centerline_geometry(m.centerlines)
-            ''' # don't need this anymore because this is automatically generated with vmtk
-            tree1 = KDTree(m.centerlines.points)
-            tree2 = KDTree(m.surf.points)
-            dist, idx = tree2.query(m.centerlines.points) #closest dist to centerline point
-            for i in range(len(idx)):
-                for j in range(len(idx)):
-                    if (idx[j]==idx[i]) and (i != j):
-                        closest, _ = tree1.query(m.surf.points[idx[i]]) #closest centerline distance to the point
-                        dist[j]=closest
-            m.centerlines.point_data['MaximumInscribedSphereRadius']=dist
             '''
 
             #Use the centerline points to create planes
+            planes = pv.MultiBlock()
             m.centerlines.point_data['CSA']=np.array(m.centerlines.n_points)
             m.centerlines.point_data['perimeter']=np.array(m.centerlines.n_points)
             points = m.centerlines.points

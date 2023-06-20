@@ -49,6 +49,7 @@ def mapped_info(prep_dir, sss, ss, split_flow, lab, fen, syl, emissary, condylar
     surf_file = sorted(prep_dir.glob('*_cl.vtp'))[0]
     remeshed_file = out_dir/(surf_file.stem  +'_remeshed.vtp')
     cent_graph_file = out_dir/(surf_file.stem  +'_graph.vtp')
+    cent_graph_vmtk = out_dir/out_dir/(surf_file.stem +'_centerline_graph_vmtk.vtp')
     cent_file = out_dir/(surf_file.stem + '_' + sss + '_centerline_mapped.vtp')
     #newcent_file = out_dir/(surf_file.stem + '_centerline_cm.vtp')
     mapped_file = out_dir/(surf_file.stem + '_mapped_' + sss + '.vtp')
@@ -66,7 +67,8 @@ def mapped_info(prep_dir, sss, ss, split_flow, lab, fen, syl, emissary, condylar
                 )
 
         if not cent_file.exists():  
-            planes = pv.MultiBlock()     
+            m.centerlines = pv.read(cent_graph_vmtk)     
+            '''
             _ , graph = vmtk.network_extractor(m.surf)#vmtk.centerline_geometry(m.centerlines)
             graph.save(cent_graph_file)
             #use vmtk for each segment
@@ -84,19 +86,9 @@ def mapped_info(prep_dir, sss, ss, split_flow, lab, fen, syl, emissary, condylar
             m.centerlines = centerline
             m.centerlines = vmtk.resample_cl(m.centerlines, length=1.5) #so we don't have as many planes and points are equispaced
             #m.centerlines = vmtk.centerline_geometry(m.centerlines)
-            ''' # don't need this anymore because this is automatically generated with vmtk
-            tree1 = KDTree(m.centerlines.points)
-            tree2 = KDTree(m.surf.points)
-            dist, idx = tree2.query(m.centerlines.points) #closest dist to centerline point
-            for i in range(len(idx)):
-                for j in range(len(idx)):
-                    if (idx[j]==idx[i]) and (i != j):
-                        closest, _ = tree1.query(m.surf.points[idx[i]]) #closest centerline distance to the point
-                        dist[j]=closest
-            m.centerlines.point_data['MaximumInscribedSphereRadius']=dist
             '''
-
             #Use the centerline points to create planes
+            planes = pv.MultiBlock()
             m.centerlines.point_data['CSA']=np.array(m.centerlines.n_points)
             m.centerlines.point_data['perimeter']=np.array(m.centerlines.n_points)
             points = m.centerlines.points
