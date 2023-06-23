@@ -4,10 +4,10 @@ attributes.
 
 Call this using:
 
-centerlines_fixed.py proj_dir case_name
+centerlines_fixed.py prep_dir case_name
 
-where proj_dir is the directory you are looking for the surface file in (should end in "cl_mapped.vtp"),
-and the case_name is what you want your centerline to be called ("case_name_centerline.vtp")
+where prep_dir is the directory you are looking for the surface file in (should end in "cl.vtp"),
+and the case_name is what you want your centerline to be called ("case_name_centerline_graph_vmtk.vtp")
 """
 
 import numpy as np
@@ -18,60 +18,65 @@ from scipy.spatial import cKDTree as KDTree
 from pathlib import Path
 import sys
 
-def make_cl(proj_dir, case_name):
-    out_dir = proj_dir
-    surf_file = sorted(proj_dir.glob('*cl.vtp'))[0]
+def make_cl(prep_dir, case_name):
+    out_dir = prep_dir.parent
+    surf_file = sorted(prep_dir.glob('*cl.vtp'))[0]
     surf=pv.read(surf_file)
     remeshed_file = out_dir/(case_name+'_remeshed.vtp')
     graphed_cl_file = out_dir/(case_name+'_centerline_graph_vmtk.vtp')
     resampled_file =  out_dir/(case_name+'_centerline_resampled.vtp')
     if not remeshed_file.exists():
-        surf = vmtk.surface_remeshing(surf, edgelength=0.5)
+        surf = vmtk.surface_remeshing(surf, edgelength=0.5, iterations = 5)
         surf.save(remeshed_file)
         
-    m = Mesher(
-            surf,
-            include_aneurysms=False
-            )
+    m = Mesher(include_aneurysms=False)
     
     if not graphed_cl_file.exists():
-        centerlines, graph = vmtk.network_extractor(m.surf)
+        centerlines, graph = vmtk.network_extractor(surf)
+        #print(centerlines.cell_data)
         #m.centerlines = vmtk.resample_cl(m.centerlines, length=0.2)
-        #m.centerlines = vmtk.centerline_geometry(m.centerlines)
+        #centerlines = vmtk.centerline_geometry(centerlines)
         #m.centerlines.save(out_dir/(case_name+'_centerline.vtp'))
         #m.centerlines = vmtk.centerlines_smooth(m.centerlines, iterations=1, sm_factor=0.1)
         centerlines.save(out_dir/(case_name+'_centerline_graph.vtp'))
         graph.save(out_dir/(case_name+'_graph.vtp'))
+        
         #use vmtk for each segment
-        centerline = pv.PolyData()
+        m.centerlines = pv.PolyData()
         for idx in range(1, len(graph.points), 2):
-                inlet_id = [idx-1]
-                m.inlet_points = graph.points[inlet_id]
-                outlet_id = [idx]
-                m.outlet_points = graph.points[outlet_id]
-                m.generate_centerlines(include_aneurysms=False)
-                '''
-                surf = surf.compute_normals()
-                surf_perturb = surf.copy()
-                perturbed_vec = np.einsum(
-                    'ij,i->ij', 
-                    surf_perturb.point_arrays['Normals'], 
-                    np.random.normal(0, 0.005, surf_perturb.n_points)
-                    )
-                surf_perturb.points = surf_perturb.points + perturbed_vec
-                m.centerlines = vmtk.centerlines(surf_perturb, seed_selector = 'pointlist', src_pts = m.inlet_points, target_pts = m.outlet_points)
-                '''
-                if idx == 1:
-                    centerline = m.centerlines
-                else:
-                    centerline += m.centerlines
+            inlet_id = [idx-1]
+            inlet_points = graph.points[inlet_id]
+            #print(inlet_points)
+            outlet_id = [idx]
+            outlet_points = graph.points[outlet_id]
+
+            tree = KDTree(surf.points)
+            inlet_ids = [tree.query(i, k=1)[1] for i in inlet_points]
+            outlet_ids = [tree.query(o, k=1)[1] for o in outlet_points]
+            centerlines_seg = vmtk.centerlines(
+	            surf, 
+	            seed_selector='idlist', 
+	            resampling_step_length = 1,
+	            src_ids=inlet_ids,
+	            target_ids=outlet_ids,
+	            )
+	        #make sure to set the first and last points to the inlet and outlet points
+            centerlines_seg.points[0]=outlet_points
+            centerlines_seg.points[-1]=inlet_points
+            if idx == 1:
+	            centerline = centerlines_seg
+            else:
+	            centerline += centerlines_seg
+	            
+        centerline = vmtk.centerline_geometry(centerline)
         m.centerlines = centerline
-        centerline.save(graphed_cl_file)
+        m.centerlines.save(graphed_cl_file)
+
     else:
         m.centerlines =  pv.read(graphed_cl_file)
         centerline_resampled = vmtk.resample_cl(m.centerlines, length=1.5)
         centerline_resampled.save(resampled_file)
 if __name__ == "__main__":
-    proj_dir = Path(sys.argv[1])
+    prep_dir = Path(sys.argv[1])
     case_name = sys.argv[2] 
-    make_cl(proj_dir=proj_dir, case_name=case_name)
+    make_cl(prep_dir=prep_dir, case_name=case_name)

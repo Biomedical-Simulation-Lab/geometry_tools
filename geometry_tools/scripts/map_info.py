@@ -50,7 +50,7 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
     if not mapped_file.exists():
         #surf = pv.read(surf0_file) #use unprepped surface for the centerline map
         if not remeshed_file.exists(): #use remeshed surface
-            surf = vmtk.surface_remeshing(pv.read(surf_file), edgelength=0.5)
+            surf = vmtk.surface_remeshing(pv.read(surf_file), edgelength=0.5, iterations=5)
             surf.save(remeshed_file)
         else:
             surf=pv.read(remeshed_file)
@@ -82,10 +82,8 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
                 else:
                     centerline += m.centerlines
             m.centerlines = centerline
-            m.centerlines = vmtk.resample_cl(m.centerlines, length=1.5) #so we don't have as many planes and points are equispaced
-            #m.centerlines = vmtk.centerline_geometry(m.centerlines)
             '''
-
+            m.centerlines = vmtk.resample_cl(m.centerlines, length=1.5) #so we don't have as many planes and points are equispaced
             #Use the centerline points to create planes
             planes = pv.MultiBlock()
             m.centerlines.point_data['CSA']=np.array(m.centerlines.n_points)
