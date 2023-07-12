@@ -38,9 +38,14 @@ def make_cl(prep_dir, case_name):
         #centerlines = vmtk.centerline_geometry(centerlines)
         #m.centerlines.save(out_dir/(case_name+'_centerline.vtp'))
         #m.centerlines = vmtk.centerlines_smooth(m.centerlines, iterations=1, sm_factor=0.1)
-        centerlines = vmtk.centerline_geometry(centerlines)
-        centerlines.save(out_dir/(case_name+'_centerline_graph.vtp'))
         graph.save(out_dir/(case_name+'_graph.vtp'))
+        val = input("Is there a fenestration in this case? [y/n]: ")
+        centerlines = vmtk.centerline_geometry(centerlines)
+        if val == 'y':
+	        centerlines.save(out_dir/(case_name+'_centerline_graph_vmtk.vtp'))
+	        sys.exit()
+	    else:
+	    	centerlines.save(out_dir/(case_name+'_centerline_graph.vtp'))
         
         #use vmtk for each segment
         m.centerlines = pv.PolyData()
