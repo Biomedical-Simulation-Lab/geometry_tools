@@ -210,8 +210,8 @@ def mapped_info(prep_dir, sss, ss, split_flow, lab, fen, syl, emissary, condylar
         tree = KDTree(planes_points) #only include usable planes
         _, idx_p = tree.query(m.surf.points) #get plane points closest to surf points
 
-        m.surf.point_data['CSA']=usable_CL_CSA[merged_usable_planes.point_data['centerline_id'][idx_p].astype(int)]
-        m.surf.point_data['perimeter']=usable_CL_perimeter[merged_usable_planes.point_data['centerline_id'][idx_p].astype(int)]
+        m.surf.point_data['CSA']=m.centerlines.point_data['CSA'][merged_usable_planes.point_data['centerline_id'][idx_p].astype(int)]
+        m.surf.point_data['perimeter']=m.centerlines.point_data['perimeter'][merged_usable_planes.point_data['centerline_id'][idx_p].astype(int)]
 
         m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='CSA', func=np.mean, iterations = 2)
         m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='perimeter', func=np.mean, iterations = 2)
@@ -339,7 +339,7 @@ def mapped_info(prep_dir, sss, ss, split_flow, lab, fen, syl, emissary, condylar
     tree3 = KDTree(planes_points) #only include usable planes
     _, idx_p3 = tree3.query(m.surf.points)
 
-    m.surf.point_data['flowrate']=usable_CL_flowrate[merged_usable_planes.point_data['centerline_id'][idx_p3].astype(int)]
+    m.surf.point_data['flowrate']=m.centerlines.point_data['flowrate'][merged_usable_planes.point_data['centerline_id'][idx_p3].astype(int)]
 
     #smooth data
     m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='flowrate', func=np.mean, iterations = 5)
