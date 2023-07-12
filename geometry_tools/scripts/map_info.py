@@ -43,7 +43,7 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
     remeshed_file = out_dir/(surf_file.stem  +'_remeshed.vtp')
     cent_graph_file = out_dir/(surf_file.stem  +'_centerline_graph_' + sss + '.vtp')
     graphed_cl_file = out_dir/(surf_file.stem +'_centerline_graph.vtp')
-    cent_graph_vmtk = out_dir/out_dir/(surf_file.stem +'_centerline_graph_vmtk.vtp')
+    cent_graph_vmtk = out_dir/(surf_file.stem +'_centerline_graph_vmtk.vtp')
     cent_file = out_dir/(surf_file.stem + '__' + sss + 'centerline_mapped.vtp')
     mapped_file = out_dir/(surf_file.stem + '_mappedsys_' + sss + '.vtp')
     planes_files = out_dir/(surf_file.stem + '_planes_' + sss + '.vtm')
@@ -63,8 +63,8 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
         #print(cent_file)
         if not cent_file.exists():
         
-        	m.centerlines = pv.read(cent_graph_vmtk)
-        	'''
+            m.centerlines = pv.read(cent_graph_vmtk)
+            '''
             #first, generate a centerline
             cent, graph = vmtk.network_extractor(m.surf)#vmtk.centerline_geometry(m.centerlines)
             graph.save(cent_graph_file)
@@ -154,10 +154,10 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
 
         #don't need to do this next line anymore since we remeshed the surface already
         #m.surf = pv.read(surf_file) #replace surface with flow extension surface to avoid the flow extension issues
-        usable_CL=m.centerlines.points[m.centerlines.point_data['unusable']==0]
-        usable_CL_CSA=m.centerlines.point_data['CSA'][m.centerlines.point_data['unusable']==0]
-        usable_CL_perimeter=m.centerlines.point_data['perimeter'][m.centerlines.point_data['unusable']==0]
         usable_ids = np.asarray(np.where(m.centerlines.point_data['unusable']==0))[0]
+        usable_CL=m.centerlines.points[usable_ids]
+        usable_CL_CSA=m.centerlines.point_data['CSA'][usable_ids]
+        usable_CL_perimeter=m.centerlines.point_data['perimeter'][usable_ids]
         usable_planes = pv.MultiBlock()
         for i in usable_ids:
             usable_planes.append(planes[i])
@@ -167,9 +167,11 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
         
         tree = KDTree(planes_points) #only include usable planes
         _, idx_p = tree.query(m.surf.points) #get plane points closest to surf points
-
-        m.surf.point_data['CSA']=usable_CL_CSA[merged_usable_planes.point_data['centerline_id'][idx_p].astype(int)]
-        m.surf.point_data['perimeter']=usable_CL_perimeter[merged_usable_planes.point_data['centerline_id'][idx_p].astype(int)]
+        
+        #get the centerline id of the usable plane and assign the CSA at that centerline point to the surface
+        #print(m.centerlines.points.shape, np.max(usable_ids))
+        m.surf.point_data['CSA']=m.centerlines.point_data['CSA'][merged_usable_planes.point_data['centerline_id'][idx_p].astype(int)]
+        m.surf.point_data['perimeter']=m.centerlines.point_data['perimeter'][merged_usable_planes.point_data['centerline_id'][idx_p].astype(int)]
         m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='CSA', func=np.mean, iterations = 2)
         m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='perimeter', func=np.mean, iterations = 2)
         m.surf.save(mapped_file)
