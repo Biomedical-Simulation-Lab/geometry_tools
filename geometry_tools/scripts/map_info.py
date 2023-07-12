@@ -186,7 +186,7 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
     m.centerlines=pv.read(cent_file)
     planes = pv.read(planes_files)
     #Select flowrate regions assuming unilateral
-    flowrate = sss #Superior Saggital Sinus at Peak systolic
+    flowrate = float(sss) #Superior Saggital Sinus at Peak systolic
     m.surf.point_data['flowrate'] = np.zeros(m.surf.n_points)
     m.centerlines.point_data['flowrate']=np.zeros(m.centerlines.n_points)
     #Superior Saggital Sinus branch:
@@ -250,7 +250,7 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
     tree3 = KDTree(planes_points) #only include usable planes
     _, idx_p3 = tree3.query(m.surf.points)
 
-    m.surf.point_data['flowrate']=usable_CL_flowrate[merged_usable_planes.point_data['centerline_id'][idx_p3].astype(int)]
+    m.surf.point_data['flowrate']=m.centerlines.point_data['flowrate'][merged_usable_planes.point_data['centerline_id'][idx_p3].astype(int)]
     #smooth data
     m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='flowrate', func=np.mean, iterations = 2)
     m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='CSA', func=np.mean, iterations = 2)

@@ -189,7 +189,7 @@ def smooth_mesh_data_local(surf, array='GroupIds',
         old_array = new_array.copy()
         for pt_id in list(range(surf.n_points)):
             # Uses 2 connexity by default
-            neighbours = neighbour_pt_ids[neighbour_pt_ids[pt_id]]
+            neighbours = neighbour_pt_ids[neighbour_pt_ids[pt_id].astype(int)]
             neighbours = np.unique([item for sublist in neighbours for item in sublist])
             # neighbours = neighbour_pt_ids[pt_id]
 
@@ -203,7 +203,7 @@ def smooth_mesh_data_local(surf, array='GroupIds',
                 new_val = neighbour_vals[center_index]
 
             else:
-                new_val = func(old_array[neighbours])
+                new_val = func(old_array[neighbours.astype(int)])
 
             new_array[pt_id] = new_val                        
 
