@@ -47,7 +47,7 @@ def make_mesh(proj_dir, proj_name, min_el, max_el, multi_inlets,ref):
     if not proj_dir.exists():
         proj_dir.mkdir()
     main_dir = proj_dir.parent
-    mapped_file = sorted(main_dir.glob('*_cl_mapped.vtp'))[0]
+    mapped_file = sorted(main_dir.glob('*_mappedsys.vtp'))[0]
     mesh_out_dir = proj_dir / 'mesh' 
     data_out_dir = proj_dir / 'data' 
     vtufile = mesh_out_dir / (proj_name + '.vtu')

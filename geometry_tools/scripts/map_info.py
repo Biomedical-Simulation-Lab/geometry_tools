@@ -41,12 +41,13 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
     #surf0_file = sorted(prep_dir.glob('*_noext.vtp'))[0]
     surf_file = sorted(prep_dir.glob('*_cl.vtp'))[0]
     remeshed_file = out_dir/(surf_file.stem  +'_remeshed.vtp')
-    cent_graph_file = out_dir/(surf_file.stem  +'_centerline_graph_' + sss + '.vtp')
+    dec = str(int(round(float(sss) - int(float(sss)), 1)*10))
+    cent_graph_file = out_dir/(surf_file.stem  +'_centerline_graph_' + str(int(float(sss))) + 'p' + dec + '.vtp')
     graphed_cl_file = out_dir/(surf_file.stem +'_centerline_graph.vtp')
     cent_graph_vmtk = out_dir/(surf_file.stem +'_centerline_graph_vmtk.vtp')
-    cent_file = out_dir/(surf_file.stem + '__' + sss + 'centerline_mapped.vtp')
-    mapped_file = out_dir/(surf_file.stem + '_mappedsys_' + sss + '.vtp')
-    planes_files = out_dir/(surf_file.stem + '_planes_' + sss + '.vtm')
+    cent_file = out_dir/(surf_file.stem + '__' + str(int(float(sss))) + 'p' + dec + 'centerline_mapped.vtp')
+    mapped_file = out_dir/(surf_file.stem + '_' + str(int(float(sss))) + 'p' + dec + '_mappedsys.vtp')
+    planes_files = out_dir/(surf_file.stem + '_planes_' + str(int(float(sss))) + 'p' + dec + '.vtm')
     if not mapped_file.exists():
         #surf = pv.read(surf0_file) #use unprepped surface for the centerline map
         if not remeshed_file.exists(): #use remeshed surface
@@ -155,6 +156,7 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
         #don't need to do this next line anymore since we remeshed the surface already
         #m.surf = pv.read(surf_file) #replace surface with flow extension surface to avoid the flow extension issues
         usable_ids = np.asarray(np.where(m.centerlines.point_data['unusable']==0))[0]
+        print(usable_ids, m.centerlines.points.shape, m.centerlines.points[usable_ids].shape)
         usable_CL=m.centerlines.points[usable_ids]
         usable_CL_CSA=m.centerlines.point_data['CSA'][usable_ids]
         usable_CL_perimeter=m.centerlines.point_data['perimeter'][usable_ids]
@@ -169,9 +171,11 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
         _, idx_p = tree.query(m.surf.points) #get plane points closest to surf points
         
         #get the centerline id of the usable plane and assign the CSA at that centerline point to the surface
-        #print(m.centerlines.points.shape, np.max(usable_ids))
-        m.surf.point_data['CSA']=m.centerlines.point_data['CSA'][merged_usable_planes.point_data['centerline_id'][idx_p].astype(int)]
-        m.surf.point_data['perimeter']=m.centerlines.point_data['perimeter'][merged_usable_planes.point_data['centerline_id'][idx_p].astype(int)]
+        cntr_ids = merged_usable_planes.point_data['centerline_id'][idx_p].astype(int) #centerline ids corresponding to the plane on the surface
+        m.surf.point_data['CSA']=m.centerlines.point_data['CSA'][cntr_ids]
+        m.surf.point_data['perimeter']=m.centerlines.point_data['perimeter'][cntr_ids]
+        
+        print(np.isnan(np.sum(m.surf.point_data['CSA'])), type(m.surf.point_data['CSA'][2]))
         m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='CSA', func=np.mean, iterations = 2)
         m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='perimeter', func=np.mean, iterations = 2)
         m.surf.save(mapped_file)
@@ -250,11 +254,10 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
     tree3 = KDTree(planes_points) #only include usable planes
     _, idx_p3 = tree3.query(m.surf.points)
 
-    m.surf.point_data['flowrate']=m.centerlines.point_data['flowrate'][merged_usable_planes.point_data['centerline_id'][idx_p3].astype(int)]
+    ctr_ids2 = merged_usable_planes.point_data['centerline_id'][idx_p3].astype(int)
+    m.surf.point_data['flowrate']=m.centerlines.point_data['flowrate'][ctr_ids2]
     #smooth data
     m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='flowrate', func=np.mean, iterations = 2)
-    m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='CSA', func=np.mean, iterations = 2)
-    m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='perimeter', func=np.mean, iterations = 2)
 
     nu = (0.0037/1057) #viscosity
     L = 4*m.surf.point_data['CSA']/m.surf.point_data['perimeter']*0.001#Hydraulic diameter (m)
