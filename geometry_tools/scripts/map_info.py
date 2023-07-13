@@ -156,7 +156,7 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
         #don't need to do this next line anymore since we remeshed the surface already
         #m.surf = pv.read(surf_file) #replace surface with flow extension surface to avoid the flow extension issues
         usable_ids = np.asarray(np.where(m.centerlines.point_data['unusable']==0))[0]
-        print(usable_ids, m.centerlines.points.shape, m.centerlines.points[usable_ids].shape)
+        #print(usable_ids, m.centerlines.points.shape, m.centerlines.points[usable_ids].shape)
         usable_CL=m.centerlines.points[usable_ids]
         usable_CL_CSA=m.centerlines.point_data['CSA'][usable_ids]
         usable_CL_perimeter=m.centerlines.point_data['perimeter'][usable_ids]
@@ -175,9 +175,11 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
         m.surf.point_data['CSA']=m.centerlines.point_data['CSA'][cntr_ids]
         m.surf.point_data['perimeter']=m.centerlines.point_data['perimeter'][cntr_ids]
         
-        print(np.isnan(np.sum(m.surf.point_data['CSA'])), type(m.surf.point_data['CSA'][2]))
-        m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='CSA', func=np.mean, iterations = 2)
-        m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='perimeter', func=np.mean, iterations = 2)
+        #Smoothing no longer works?
+        #print(np.isnan(np.sum(m.surf.point_data['CSA'])), np.isnan(np.sum(m.surf.point_data['perimeter'])))
+        #m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='CSA', func=np.mean, iterations = 2)
+        #m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='perimeter', func=np.mean, iterations = 2)
+        #print(np.isnan(np.sum(m.surf.point_data['CSA'])), np.isnan(np.sum(m.surf.point_data['perimeter'])))
         m.surf.save(mapped_file)
         m.centerlines.save(cent_file)
 
@@ -257,7 +259,7 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
     ctr_ids2 = merged_usable_planes.point_data['centerline_id'][idx_p3].astype(int)
     m.surf.point_data['flowrate']=m.centerlines.point_data['flowrate'][ctr_ids2]
     #smooth data
-    m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='flowrate', func=np.mean, iterations = 2)
+    #m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='flowrate', func=np.mean, iterations = 2)
 
     nu = (0.0037/1057) #viscosity
     L = 4*m.surf.point_data['CSA']/m.surf.point_data['perimeter']*0.001#Hydraulic diameter (m)
