@@ -191,7 +191,7 @@ def smooth_mesh_data_local(surf, array='GroupIds',
             # Uses 2 connexity by default
             neighbours = neighbour_pt_ids[neighbour_pt_ids[pt_id]]
             neighbours = np.unique([item for sublist in neighbours for item in sublist])
-            print(neighbours)
+            #print(neighbours)
             # neighbours = neighbour_pt_ids[pt_id]
 
             # Unfortunately, np.median has the undesired "fallback" 
@@ -283,7 +283,8 @@ def get_neighbour_map(surf):#, n_points):
     # create a map between them
     tree = KDTree(surf.points)
     _, ii = tree.query(edges.points, k=1)
-
+    #print(surf.n_points, ii.shape)
+	
     ee = edges.lines.reshape(-1, 3)[:,1:]
     
     for e in ee:
@@ -291,7 +292,7 @@ def get_neighbour_map(surf):#, n_points):
         neighbour_pt_ids[ii[e[1]]].append(ii[e[0]])
 
     neighbour_pt_ids = np.array([np.unique(x) for x in neighbour_pt_ids], dtype='object')
-
+    #print(neighbour_pt_ids)
     return neighbour_pt_ids
 
 

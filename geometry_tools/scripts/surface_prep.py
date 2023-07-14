@@ -76,9 +76,12 @@ def surface_prep(surf_file, proj_dir, surf_type):
         else:
             accept = False
             while not accept:
-                m.clip_boundaries(method='box')
-                m.set_inlets_outlets()
+            	if not clipped_surf.exists(): 
+            	    m.clip_boundaries(method='box')
+            	else:
+                    m.surf = pv.read(clipped_surf)
                 m.surf.save(clipped_surf)
+                m.set_inlets_outlets()
                 m.generate_centerlines_multi(proj_dir)  
                 surf = vmtk.flow_ext(m.surf, m.centerlines, m.inlet_ids)
                 extender = cc.Flow_Extender(pv.wrap(surf), m.centerlines,inlet_points=m.inlet_points, outlet_points=m.outlet_points)
