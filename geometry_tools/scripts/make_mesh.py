@@ -19,6 +19,7 @@ Note: if you run this script a second time with the same mesh, it will remesh th
 import numpy as np
 import pyvista as pv
 from geometry_tools.meshing import Mesher
+from vmtk import vmtkscripts
 import geometry_tools.vmtk_wrapper as vmtk
 import geometry_tools.common as cc
 from geometry_tools.make_submission_file import SubmissionTemplate
@@ -77,15 +78,22 @@ def make_mesh(proj_dir, proj_name, min_el, max_el, multi_inlets,ref):
         m.surf.save(mapped_file)
 	
     if 'Size' in m.surf.point_data:
-        m.surf = vmtk.surface_remeshing(m.surf, element_size_mode='edgelengtharray', edgearray='Size', iterations=2)
+        surf = vmtk.surface_remeshing(m.surf, element_size_mode='edgelengtharray', edgearray='Size', iterations=12)
+        projection = vmtkscripts.vmtkSurfaceProjection()
+        projection.Surface = surf
+        projection.ReferenceSurface = m.surf
+        projection.Execute()
+        m.surf = pv.wrap(projection.Surface)
+        skip_remeshing=1
     else:
         m.surf = create_size_array(m.surf, min_el=float(min_el), max_el=float(max_el), ref=ref)
         m.surf.clean()
         m.surf.save(mapped_file) #add size array to file
+        skip_remeshing=0
     m.set_inlets_outlets()
     #send surface to vmtk
     if not vtufile.exists():
-        m.generate_volume_mesh()
+        m.generate_volume_mesh(SkipRemeshing = skip_remeshing)
         m.mesh.save(vtufile)
     else:
         m.mesh = pv.read(vtufile)
