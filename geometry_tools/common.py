@@ -212,6 +212,35 @@ def smooth_mesh_data_local(surf, array='GroupIds',
 
     return surf, neighbour_pt_ids
 
+def smooth_mesh_data_local_alt(surf, array='GroupIds', neighbour_pt_ids=None, iterations=1):
+    """ Smooth mesh data based on local connectivity.
+        Uses an inverse distance weighted averaging.
+
+    Args:
+        surf (polydata): Input surface.
+        array (str): Name of array to be smoothed.
+    Returns:
+        surf (polydata): Surface with smoothed array
+        neighbour_pt_ids (list of lists): numpy array of neighbouring point ids
+    """
+    if neighbour_pt_ids == None:
+        neighbour_pt_ids = get_neighbour_map_alt(surf) #return list of numpy arrays
+    surf = surf.copy()
+    new_array = surf.point_data[array].copy()
+    
+    for idx in range(iterations):
+        old_array = new_array.copy()
+        for pt_id, neigh in enumerate(neighbour_pt_ids):
+            if neigh.size>0:
+                neighbours = neigh.T
+                distance = np.linalg.norm(surf.points[neighbours]-surf.points[pt_id], axis = 1)
+                new_val = np.average(surf.point_data[array][neighbours], weights = 1/distance)
+                new_array[pt_id] = new_val                        
+
+    surf.point_data[array] = new_array
+
+    return surf, neighbour_pt_ids
+
 # def get_neighbour_map_broken(surf):#, n_points):
 #     """ Get full list of adjacent neighbour pts.
 
@@ -295,6 +324,22 @@ def get_neighbour_map(surf):#, n_points):
     #print(neighbour_pt_ids)
     return neighbour_pt_ids
 
+def get_neighbour_map_alt(surf):
+    neighbour_pt_ids = [] #empty list for storing numpy arrays
+    
+    for ind in range(surf.n_points):
+        pts = []
+        pcids = point_cell_ids(surf, ind)
+        for cell in pcids:
+            cell_pts = pv.vtk_id_list_to_array(surf.GetCell(cell).GetPointIds())
+            pts.extend([i for i in cell_pts if i != ind])
+        neighbour_pt_ids.append(np.array(list(set(pts))))
+    return neighbour_pt_ids #list of numpy arrays
+        
+def point_cell_ids(surf, ind):
+    ids = vtk.vtkIdList()
+    surf.GetPointCells(ind, ids)
+    return [ids.GetId(i) for i in range(ids.GetNumberOfIds())]
 
 def create_edge_size_array(surf, fix_centerline, min_edge_size=0.1, max_edge_size=0.4, sac_size=0.15, misr_min=0.1, misr_max=2.5, name='Size', ref_edge_ratio=0.8):
     """ Create "Size" array incorporating distance to centerlines and curvature.
@@ -1391,4 +1436,3 @@ class Flow_Extender():
         pl2.add_text('q: accept', position=(0.05, 50), font_size=12)
         pl2.add_key_event('r',_reject)
         pl2.show()
-    
