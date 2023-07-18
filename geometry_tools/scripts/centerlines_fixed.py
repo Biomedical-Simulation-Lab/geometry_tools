@@ -32,7 +32,7 @@ def make_cl(prep_dir, case_name):
     m = Mesher(include_aneurysms=False)
     
     if not graphed_cl_file.exists():
-        centerlines, graph = vmtk.network_extractor(surf)
+        centerlines, graph = vmtk.network_extractor(surf, ratio = 1.1)
         #print(centerlines.cell_data)
         #m.centerlines = vmtk.resample_cl(m.centerlines, length=0.2)
         #centerlines = vmtk.centerline_geometry(centerlines)

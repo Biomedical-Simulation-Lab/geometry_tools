@@ -599,6 +599,10 @@ class Label_CLs():
     def identify_points(self):
         #reset all of these back to what they should be
         self.centerline.point_data[self.name][self.centerline.point_data['main_branch']!=0]=0
+        #make sure that the fenestration points also aren't affected by the sphere of unusable points
+        if self.fen != 'False':
+            self.centerline.point_data[self.name][self.centerline.point_data['fen1']!=0]=0
+            self.centerline.point_data[self.name][self.centerline.point_data['fen2']!=0]=0
 
 class SacSelectTool():
     """ Interactively mark points using a probe.

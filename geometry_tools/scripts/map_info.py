@@ -259,7 +259,7 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
     ctr_ids2 = merged_usable_planes.point_data['centerline_id'][idx_p3].astype(int)
     m.surf.point_data['flowrate']=m.centerlines.point_data['flowrate'][ctr_ids2]
     #smooth data
-    m.surf, _ = cc.smooth_mesh_data_local_alt(m.surf, array='flowrate', neighbour_pt_ids = neighbour_pts, iterations = 2)
+    m.surf, _ = cc.smooth_mesh_data_local_alt(m.surf, array='flowrate', iterations = 2)
 
     nu = (0.0037/1057) #viscosity
     L = 4*m.surf.point_data['CSA']/m.surf.point_data['perimeter']*0.001#Hydraulic diameter (m)
@@ -273,7 +273,7 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
     m.surf.point_data['Deff']=Deff
     m.surf.point_data['mean_velocity']=U
     m.surf.point_data['kolmog_len']=((nu**3)*L/(U**3))**(1/4)
-    m.surf.point_data['taylor_len']=np.sqrt(15)*(Re**(1/4))*(((nu**3)*L/(U**3))**(1/4))
+    m.surf.point_data['taylor_len']=np.sqrt(10)*(Re**(1/4))*(((nu**3)*L/(U**3))**(1/4))
     m.surf.point_data['ds_max(y+=1)']=nu/Uf #  
     m.surf.point_data['dP']=0.5*rho*(3/2*U)**2/133.322 #dP based on max centerline velocity in mmHg calculated in every branch
     m.centerlines.save(cent_file) 
