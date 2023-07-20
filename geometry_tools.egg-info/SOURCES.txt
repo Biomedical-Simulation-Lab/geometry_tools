@@ -21,6 +21,7 @@ geometry_tools/scripts/make_spectro_points.py
 geometry_tools/scripts/map_DTCL_MISR.py
 geometry_tools/scripts/map_info.py
 geometry_tools/scripts/map_info_bilateral.py
+geometry_tools/scripts/map_info_direct.py
 geometry_tools/scripts/meshquality.py
 geometry_tools/scripts/surface_prep.py
 geometry_tools/scripts/surface_process.py

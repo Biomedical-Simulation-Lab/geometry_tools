@@ -65,26 +65,7 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
         if not cent_file.exists():
         
             m.centerlines = pv.read(cent_graph_vmtk)
-            '''
-            #first, generate a centerline
-            cent, graph = vmtk.network_extractor(m.surf)#vmtk.centerline_geometry(m.centerlines)
-            graph.save(cent_graph_file)
-            cent.save(graphed_cl_file)
-            #use vmtk for each segment
-            centerline = pv.PolyData()
-            for idx in range(1, len(graph.points), 2):
-                inlet_id = [idx-1]
-                m.inlet_points = graph.points[inlet_id]
-                outlet_id = [idx]
-                m.outlet_points = graph.points[outlet_id]
-                m.generate_centerlines(include_aneurysms=False)
-                if idx == 1:
-                    centerline = m.centerlines
-                else:
-                    centerline += m.centerlines
-            m.centerlines = centerline
-            '''
-            m.centerlines = vmtk.resample_cl(m.centerlines, length=1.5) #so we don't have as many planes and points are equispaced
+            m.centerlines = vmtk.resample_cl(m.centerlines, length=1.4) #so we don't have as many planes and points are equispaced
             #Use the centerline points to create planes
             planes = pv.MultiBlock()
             m.centerlines.point_data['CSA']=np.array(m.centerlines.n_points)
@@ -154,26 +135,17 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
         m.centerlines.point_data['main_branch']=labelled_centerlines.centerline.point_data['main_branch']
 
         #don't need to do this next line anymore since we remeshed the surface already
-        #m.surf = pv.read(surf_file) #replace surface with flow extension surface to avoid the flow extension issues
         usable_ids = np.asarray(np.where(m.centerlines.point_data['unusable']==0))[0]
-        #print(usable_ids, m.centerlines.points.shape, m.centerlines.points[usable_ids].shape)
         usable_CL=m.centerlines.points[usable_ids]
         usable_CL_CSA=m.centerlines.point_data['CSA'][usable_ids]
         usable_CL_perimeter=m.centerlines.point_data['perimeter'][usable_ids]
-        usable_planes = pv.MultiBlock()
-        for i in usable_ids:
-            usable_planes.append(planes[i])
-        #usable_planes.save(out_dir/(surf_file.stem + '_usable_planes.vtm'))
-        merged_usable_planes=usable_planes.combine()   
-        planes_points = merged_usable_planes.points
+
+        tree = KDTree(usable_CL) #only include usable centerlines
+        _, idx_c = tree.query(m.surf.points) #get usable centerline points closest to surf points
         
-        tree = KDTree(planes_points) #only include usable planes
-        _, idx_p = tree.query(m.surf.points) #get plane points closest to surf points
-        
-        #get the centerline id of the usable plane and assign the CSA at that centerline point to the surface
-        cntr_ids = merged_usable_planes.point_data['centerline_id'][idx_p].astype(int) #centerline ids corresponding to the plane on the surface
-        m.surf.point_data['CSA']=m.centerlines.point_data['CSA'][cntr_ids]
-        m.surf.point_data['perimeter']=m.centerlines.point_data['perimeter'][cntr_ids]
+        #assign the CSA at that centerline point to the surface
+        m.surf.point_data['CSA']=m.centerlines.point_data['CSA'][idx_c]
+        m.surf.point_data['perimeter']=m.centerlines.point_data['perimeter'][idx_c]
         
         #print(np.isnan(np.sum(m.surf.point_data['CSA'])), np.isnan(np.sum(m.surf.point_data['perimeter'])))
         m.surf, neighbour_pts = cc.smooth_mesh_data_local_alt(m.surf, array='CSA', iterations = 5)
@@ -238,26 +210,13 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
     rho = 1057
     m.centerlines.point_data['dP']=0.5*rho*(3/2*U_c)**2/133.322 #dP based on max centerline velocity in mmHg calculated in every branch
 
-    '''
-    usable_CL=m.centerlines.points[m.centerlines.point_data['unusable']==0]
-    usable_CL_flowrate=m.centerlines.point_data['flowrate'][m.centerlines.point_data['unusable']==0]
-    tree3 = KDTree(usable_CL) #only include the usable centerlines
-    _, idx_c3 = tree3.query(m.surf.points)
-    m.surf.point_data['flowrate']=usable_CL_flowrate[idx_c3]
-    '''
     usable_ids = np.asarray(np.where(m.centerlines.point_data['unusable']==0))[0]
-    usable_planes = pv.MultiBlock()
-    for i in usable_ids:
-        usable_planes.append(planes[i])
-    merged_usable_planes=usable_planes.combine()      
-    planes_points = merged_usable_planes.points
-    usable_CL_flowrate=m.centerlines.point_data['flowrate'][m.centerlines.point_data['unusable']==0]
+    usable_CL_flowrate=m.centerlines.point_data['flowrate'][usable_ids]
 
-    tree3 = KDTree(planes_points) #only include usable planes
-    _, idx_p3 = tree3.query(m.surf.points)
+    tree3 = KDTree(m.centerlines.points[usable_ids]) #only include usable centerline points
+    _, idx_c3 = tree3.query(m.surf.points)
 
-    ctr_ids2 = merged_usable_planes.point_data['centerline_id'][idx_p3].astype(int)
-    m.surf.point_data['flowrate']=m.centerlines.point_data['flowrate'][ctr_ids2]
+    m.surf.point_data['flowrate']=m.centerlines.point_data['flowrate'][idx_c3]
     #smooth data
     m.surf, _ = cc.smooth_mesh_data_local_alt(m.surf, array='flowrate', iterations = 5)
 

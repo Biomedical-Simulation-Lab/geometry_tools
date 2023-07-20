@@ -592,7 +592,7 @@ class Label_CLs():
     def point_cb(self, pt):
         _, pt_id = self.tree.query(pt)
         Dh = 4*self.centerline.point_data['CSA'][pt_id]/self.centerline.point_data['perimeter'][pt_id]
-        sphere = pv.Sphere(radius=1.4*Dh/2, center=pt)
+        sphere = pv.Sphere(radius=1.2*Dh/2, center=pt)
         temp=self.centerline.select_enclosed_points(sphere, tolerance=0.01)
         self.centerline.point_data[self.name] += temp.point_data['SelectedPoints']
 
