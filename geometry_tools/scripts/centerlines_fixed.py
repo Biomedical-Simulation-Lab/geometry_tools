@@ -56,6 +56,8 @@ def make_cl(prep_dir, case_name):
             outlet_id = [idx]
             outlet_points = graph.points[outlet_id]
 
+            surf_capped = pv.PolyData()
+            surf_capped.copy_structure(vmtk.surface_capper(surf))
             tree = KDTree(surf.points)
             inlet_ids = [tree.query(i, k=1)[1] for i in inlet_points]
             outlet_ids = [tree.query(o, k=1)[1] for o in outlet_points]

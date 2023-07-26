@@ -76,9 +76,9 @@ def surface_prep(surf_file, proj_dir, surf_type):
         else:
             accept = False
             while not accept:
-            	if not clipped_surf.exists(): 
+                if not clipped_surf.exists(): 
             	    m.clip_boundaries(method='box')
-            	else:
+                else:
                     m.surf = pv.read(clipped_surf)
                 m.surf.save(clipped_surf)
                 m.set_inlets_outlets()
