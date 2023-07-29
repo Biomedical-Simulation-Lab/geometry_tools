@@ -1398,8 +1398,8 @@ class Flow_Extender():
 
         #get normals for profiles using centerlines
         self.tree = KDTree(self.centerlines.points)
-        inlets, in_ids = self.tree.query(self.inlet_points)
-        outlets, out_ids = self.tree.query(self.outlet_points)
+        _, in_ids = self.tree.query(self.inlet_points)
+        _, out_ids = self.tree.query(self.outlet_points)
         self.in_normals = self.centerlines.point_data['FrenetTangent'][in_ids]
         self.out_normals = -self.centerlines.point_data['FrenetTangent'][out_ids]
 
@@ -1408,7 +1408,8 @@ class Flow_Extender():
             #check that z is negative (should always be for outlets, but the Frenet Tangent isn't always oriented properly)
             if self.out_normals[id][2]>0:
                 #look for closest neighbour centerline pt
-                p2, _ = self.tree.query(pt)
+                _, pidx = self.tree.query(pt)
+                p2 = self.centerlines.points[pidx]
                 #if the vector between the two points still has a positive Z, do nothing, otherwise invert the normal vector
                 #otherwise the Frenet Tangent is inverted
                 if (pt-p2)[2]<0:
