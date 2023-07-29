@@ -1397,17 +1397,22 @@ class Flow_Extender():
         self.outlet_points = [centers[i] for i in outlet_ids]
 
         #get normals for profiles using centerlines
-        tree = KDTree(self.centerlines.points)
-        inlets, in_ids = tree.query(self.inlet_points)
-        outlets, out_ids = tree.query(self.outlet_points)
+        self.tree = KDTree(self.centerlines.points)
+        inlets, in_ids = self.tree.query(self.inlet_points)
+        outlets, out_ids = self.tree.query(self.outlet_points)
         self.in_normals = self.centerlines.point_data['FrenetTangent'][in_ids]
         self.out_normals = -self.centerlines.point_data['FrenetTangent'][out_ids]
 
     def extrude(self):
         for id, pt in enumerate(self.outlet_points):
-            #check that z is negative (should always be for outlets?)
+            #check that z is negative (should always be for outlets, but the Frenet Tangent isn't always oriented properly)
             if self.out_normals[id][2]>0:
-                self.out_normals[id]=-self.out_normals[id]
+                #look for closest neighbour centerline pt
+                p2, _ = self.tree.query(pt)
+                #if the vector between the two points still has a positive Z, do nothing, otherwise invert the normal vector
+                #otherwise the Frenet Tangent is inverted
+                if (pt-p2)[2]<0:
+                    self.out_normals[id]=-self.out_normals[id]
             center=pt+self.out_normals[id]*self.lengths_out[id]
             plane = pv.Plane(center=center, direction=self.out_normals[id], i_size = 30, j_size=30)
             self.prof_surf[id] = self.prof_surf[id].extrude(self.out_normals[id]*self.lengths_out[id]*1.5, capping=False)
