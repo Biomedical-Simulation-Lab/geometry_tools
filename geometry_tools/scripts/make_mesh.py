@@ -78,7 +78,12 @@ def make_mesh(proj_dir, proj_name, min_el, max_el, multi_inlets,ref):
         m.surf.save(mapped_file)
 	
     if 'Size' in m.surf.point_data:
-        surf = vmtk.surface_remeshing(m.surf, element_size_mode='edgelengtharray', edgearray='Size', iterations=10)
+        #check if the min and max edge lengths have changed in the command (rounded to one decimal place)
+        if (round(max(m.surf.point_data['Size']), 1)!=round(float(max_el), 1)) or (round(min(m.surf.point_data['Size']), 1)!=round(float(min_el), 1)):
+            m.surf = create_size_array(m.surf, min_el=float(min_el), max_el=float(max_el), ref=ref)
+            m.surf.clean()
+            m.surf.save(mapped_file) #add size array to file
+        surf = vmtk.surface_remeshing(m.surf, element_size_mode='edgelengtharray', edgearray='Size', iterations=4)
         projection = vmtkscripts.vmtkSurfaceProjection()
         projection.Surface = surf
         projection.ReferenceSurface = m.surf
