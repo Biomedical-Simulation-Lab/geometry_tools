@@ -37,14 +37,14 @@ def create_size_array(surf, min_el=0.2, max_el=0.7, ref='False'):
         fill_value=(min_el, max_el),
         )
     surf.point_data['Size'] = interp(surf.point_data['taylor_len'])
-    surf, neighbour_pts = cc.smooth_mesh_data_local_alt(surf, array='Size', iterations = 6)
+    surf, neighbour_pts = cc.smooth_mesh_data_local_alt(surf, array='Size', iterations = 10)
     if ref !='False':
         if float(ref) < 1:
             surf.point_data['Size'][surf.point_data['ref']==1]=float(ref)*surf.point_data['Size'][surf.point_data['ref']==1]
-            surf, _ = cc.smooth_mesh_data_local_alt(surf, array='Size', neighbour_pt_ids = neighbour_pts, iterations = 3)
+            surf, _ = cc.smooth_mesh_data_local_alt(surf, array='Size', neighbour_pt_ids = neighbour_pts, iterations = 10)
         else:
             surf.point_data['Size'][surf.point_data['ref']==0]=float(ref)*surf.point_data['Size'][surf.point_data['ref']==0]
-            surf, _ = cc.smooth_mesh_data_local_alt(surf, array='Size', neighbour_pt_ids = neighbour_pts, iterations = 3)
+            surf, _ = cc.smooth_mesh_data_local_alt(surf, array='Size', neighbour_pt_ids = neighbour_pts, iterations = 10)
     return surf
 
 def make_mesh(proj_dir, proj_name, min_el, max_el, multi_inlets,ref):
@@ -78,7 +78,7 @@ def make_mesh(proj_dir, proj_name, min_el, max_el, multi_inlets,ref):
         m.surf.save(mapped_file)
 	
     if 'Size' in m.surf.point_data:
-        surf = vmtk.surface_remeshing(m.surf, element_size_mode='edgelengtharray', edgearray='Size', iterations=12)
+        surf = vmtk.surface_remeshing(m.surf, element_size_mode='edgelengtharray', edgearray='Size', iterations=10)
         projection = vmtkscripts.vmtkSurfaceProjection()
         projection.Surface = surf
         projection.ReferenceSurface = m.surf
