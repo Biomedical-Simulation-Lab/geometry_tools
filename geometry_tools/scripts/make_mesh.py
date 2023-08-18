@@ -52,6 +52,7 @@ def make_mesh(proj_dir, proj_name, min_el, max_el, multi_inlets,ref):
         proj_dir.mkdir()
     main_dir = proj_dir.parent
     mapped_file = sorted(main_dir.glob('*_mappedsys.vtp'))[0]
+    backup_file = proj_dir / (mapped_file.name.split('.')[0] + '_backup.vtp')
     mesh_out_dir = proj_dir / 'mesh' 
     data_out_dir = proj_dir / 'data' 
     vtufile = mesh_out_dir / (proj_name + '.vtu')
@@ -83,7 +84,7 @@ def make_mesh(proj_dir, proj_name, min_el, max_el, multi_inlets,ref):
             m.surf = create_size_array(m.surf, min_el=float(min_el), max_el=float(max_el), ref=ref)
             m.surf.clean()
             m.surf.save(mapped_file) #add size array to file
-        surf = vmtk.surface_remeshing(m.surf, element_size_mode='edgelengtharray', edgearray='Size', iterations=4)
+        surf = vmtk.surface_remeshing(m.surf, element_size_mode='edgelengtharray', edgearray='Size', iterations=11)
         projection = vmtkscripts.vmtkSurfaceProjection()
         projection.Surface = surf
         projection.ReferenceSurface = m.surf
@@ -91,6 +92,8 @@ def make_mesh(proj_dir, proj_name, min_el, max_el, multi_inlets,ref):
         m.surf = pv.wrap(projection.Surface)
         skip_remeshing=1
     else:
+        #save mapped surface file that isn't yet remeshed
+        m.surf.save(backup_file)
         m.surf = create_size_array(m.surf, min_el=float(min_el), max_el=float(max_el), ref=ref)
         m.surf.clean()
         skip_remeshing=0
