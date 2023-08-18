@@ -26,7 +26,7 @@ def make_cl(prep_dir, case_name):
     graphed_cl_file = out_dir/(case_name+'_centerline_graph_vmtk.vtp')
     resampled_file =  out_dir/(case_name+'_centerline_resampled.vtp')
     if not remeshed_file.exists():
-        surf = vmtk.surface_remeshing(surf, edgelength=0.5, iterations = 5)
+        surf = vmtk.surface_remeshing(surf, edgelength=0.5, iterations = 6)
         surf.save(remeshed_file)
         
     m = Mesher(include_aneurysms=False)
@@ -72,10 +72,10 @@ def make_cl(prep_dir, case_name):
             centerlines_seg.points[0]=outlet_points
             centerlines_seg.points[-1]=inlet_points
             if idx == 1:
-	            centerline = centerlines_seg
+                centerline = centerlines_seg
             else:
-	            centerline += centerlines_seg
-	            
+                centerline += centerlines_seg
+                
         centerline = vmtk.centerline_geometry(centerline)
         m.centerlines = centerline
         m.centerlines.save(graphed_cl_file)
