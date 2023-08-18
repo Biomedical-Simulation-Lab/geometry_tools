@@ -83,7 +83,7 @@ def make_mesh(proj_dir, proj_name, min_el, max_el, multi_inlets,ref):
             m.surf = create_size_array(m.surf, min_el=float(min_el), max_el=float(max_el), ref=ref)
             m.surf.clean()
             m.surf.save(mapped_file) #add size array to file
-        surf = vmtk.surface_remeshing(m.surf, element_size_mode='edgelengtharray', edgearray='Size', iterations=4)
+        surf = vmtk.surface_remeshing(m.surf, element_size_mode='edgelengtharray', edgearray='Size', iterations=10)
         projection = vmtkscripts.vmtkSurfaceProjection()
         projection.Surface = surf
         projection.ReferenceSurface = m.surf
@@ -93,8 +93,8 @@ def make_mesh(proj_dir, proj_name, min_el, max_el, multi_inlets,ref):
     else:
         m.surf = create_size_array(m.surf, min_el=float(min_el), max_el=float(max_el), ref=ref)
         m.surf.clean()
-        m.surf.save(mapped_file) #add size array to file
         skip_remeshing=0
+    m.surf.save(mapped_file) #add size array to file
     m.set_inlets_outlets()
     #send surface to vmtk
     if not vtufile.exists():
