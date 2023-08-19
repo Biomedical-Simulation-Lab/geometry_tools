@@ -26,13 +26,13 @@ def make_cl(prep_dir, case_name):
     graphed_cl_file = out_dir/(case_name+'_centerline_graph_vmtk.vtp')
     resampled_file =  out_dir/(case_name+'_centerline_resampled.vtp')
     if not remeshed_file.exists():
-        surf = vmtk.surface_remeshing(surf, edgelength=0.5, iterations = 6)
+        surf = vmtk.surface_remeshing(surf, edgelength=0.5, iterations = 3)
         surf.save(remeshed_file)
         
     m = Mesher(include_aneurysms=False)
     
     if not graphed_cl_file.exists():
-        centerlines, graph = vmtk.network_extractor(surf, ratio = 1.1)
+        centerlines, graph = vmtk.network_extractor(surf, ratio = 1.01)
         #print(centerlines.cell_data)
         #m.centerlines = vmtk.resample_cl(m.centerlines, length=0.2)
         #centerlines = vmtk.centerline_geometry(centerlines)
@@ -56,8 +56,8 @@ def make_cl(prep_dir, case_name):
             outlet_id = [idx]
             outlet_points = graph.points[outlet_id]
 
-#            surf_capped = pv.PolyData()
-#            surf_capped.copy_structure(vmtk.surface_capper(surf))
+            #surf_capped = pv.PolyData()
+            #surf_capped.copy_structure(vmtk.surface_capper(surf))
             tree = KDTree(surf.points)
             inlet_ids = [tree.query(i, k=1)[1] for i in inlet_points]
             outlet_ids = [tree.query(o, k=1)[1] for o in outlet_points]

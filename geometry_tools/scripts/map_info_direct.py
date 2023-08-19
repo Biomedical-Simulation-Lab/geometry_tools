@@ -148,8 +148,8 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
         m.surf.point_data['perimeter']=m.centerlines.point_data['perimeter'][idx_c]
         
         #print(np.isnan(np.sum(m.surf.point_data['CSA'])), np.isnan(np.sum(m.surf.point_data['perimeter'])))
-        m.surf, neighbour_pts = cc.smooth_mesh_data_local_alt(m.surf, array='CSA', iterations = 5)
-        m.surf, _ = cc.smooth_mesh_data_local_alt(m.surf, array='perimeter', neighbour_pt_ids = neighbour_pts, iterations = 5)
+        m.surf, neighbour_pts = cc.smooth_mesh_data_local_alt(m.surf, array='CSA', iterations = 10)
+        m.surf, _ = cc.smooth_mesh_data_local_alt(m.surf, array='perimeter', neighbour_pt_ids = neighbour_pts, iterations = 10)
         #print(np.isnan(np.sum(m.surf.point_data['CSA'])), np.isnan(np.sum(m.surf.point_data['perimeter'])))
         
         m.surf.save(mapped_file)

@@ -253,7 +253,7 @@ class Surfer():
         return pts
 
 
-    def generate_centerlines(self, include_aneurysms=True, seed_selector='idlist'):
+    def generate_centerlines(self, include_aneurysms=True, seed_selector='idlist', endpoints=0):
         """ Generate centerlines using VMTK.
 
         Watch the centerline smoothing at the end!! May need tweaking for your case.
@@ -279,7 +279,7 @@ class Surfer():
                 surf_capped, 
                 seed_selector=seed_selector, 
                 src_ids=self.inlet_ids,
-                target_ids=target_ids,
+                target_ids=target_ids
                 )
             centerlines = vmtk.centerlines_smooth(centerlines, iterations=100, sm_factor=0.1)
             self.centerlines_aneurysm = centerlines
@@ -302,6 +302,7 @@ class Surfer():
                 seed_selector=seed_selector, 
                 src_ids=self.inlet_ids,
                 target_ids=target_ids,
+                endpoints=endpoints
                 )
             #NOTE: If your vessels are really tortuous, you are going to want to turn the 
             # smoothing wayyy down...    

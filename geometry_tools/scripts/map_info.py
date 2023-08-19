@@ -163,7 +163,7 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
         usable_planes = pv.MultiBlock()
         for i in usable_ids:
             usable_planes.append(planes[i])
-        #usable_planes.save(out_dir/(surf_file.stem + '_usable_planes.vtm'))
+        usable_planes.save(out_dir/(surf_file.stem + '_usable_planes.vtm'))
         merged_usable_planes=usable_planes.combine()   
         planes_points = merged_usable_planes.points
         
@@ -176,8 +176,8 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
         m.surf.point_data['perimeter']=m.centerlines.point_data['perimeter'][cntr_ids]
         
         #print(np.isnan(np.sum(m.surf.point_data['CSA'])), np.isnan(np.sum(m.surf.point_data['perimeter'])))
-        m.surf, neighbour_pts = cc.smooth_mesh_data_local_alt(m.surf, array='CSA', iterations = 5)
-        m.surf, _ = cc.smooth_mesh_data_local_alt(m.surf, array='perimeter', neighbour_pt_ids = neighbour_pts, iterations = 5)
+        m.surf, neighbour_pts = cc.smooth_mesh_data_local_alt(m.surf, array='CSA', iterations = 10)
+        m.surf, _ = cc.smooth_mesh_data_local_alt(m.surf, array='perimeter', neighbour_pt_ids = neighbour_pts, iterations = 10)
         #print(np.isnan(np.sum(m.surf.point_data['CSA'])), np.isnan(np.sum(m.surf.point_data['perimeter'])))
         
         m.surf.save(mapped_file)

@@ -39,7 +39,7 @@ def clipper(surf):
 def centerlines(surf, seed_selector='pickpoint', resampling=1, 
                 resampling_step_length=0.05, smoothing=True, 
                 iterations=100, sm_factor=0.1, src_ids=[], 
-                target_ids=[], src_pts=[], target_pts=[]):
+                target_ids=[], src_pts=[], target_pts=[], endpoints=0):
     """ Generate centerlines from a surface with open profiles.
 
     Before generating the centerlines, the surface is slightly 
@@ -67,7 +67,7 @@ def centerlines(surf, seed_selector='pickpoint', resampling=1,
     centerline_filt.TargetIds = target_ids
     centerline_filt.SourcePoints = src_pts
     centerline_filt.TargetPoints = target_pts
-    centerline_filt.AppendEndPoints = 0
+    centerline_filt.AppendEndPoints = endpoints
     centerline_filt.Execute()
     centerlines = centerline_filt.Centerlines
     return pv.wrap(centerlines)

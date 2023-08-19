@@ -577,7 +577,8 @@ class Label_CLs():
         for b in self.branches:
             pl = pv.Plotter()
             pl.add_mesh(self.centerline)
-            pl.enable_point_picking(callback = self.point_cb, show_message="Press P to select junction point for " + b)
+            if b != 'Straight_Sinus':
+                pl.enable_point_picking(callback = self.point_cb, show_message="Press P to select junction point for " + b)
             pl.show()
         '''
         warnings.formatwarning = warning_on_one_line
@@ -598,6 +599,13 @@ class Label_CLs():
 
     def identify_points(self):
         #reset all of these back to what they should be
+        '''
+        if 'Straight_Sinus' in self.branches:
+            #if there is a straight sinus in a unilateral model, then there is a torcula, and if there is a torcula,
+            #the centerlines there are wonky.
+            #self.centerline.point_data[self.name][self.centerline.point_data['main_branch']>1]=0
+            self.centerline.point_data[self.name][self.centerline.point_data['Straight_Sinus']==1]=0
+        else:'''
         self.centerline.point_data[self.name][self.centerline.point_data['main_branch']!=0]=0
         #make sure that the fenestration points also aren't affected by the sphere of unusable points
         if self.fen != 'False':

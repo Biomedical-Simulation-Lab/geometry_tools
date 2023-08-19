@@ -1,6 +1,7 @@
 """
 This file includes a method to create network centerlines for a surface mesh, which contains the VMTK
 attributes, as well as the cross-sectional area and perimeter of the surface mesh.
+Commented out lines may be useful. Two other ways to generate centerlines included.
 
 Call this using:
 
@@ -21,21 +22,67 @@ import sys
 
 def make_cl(proj_dir, case_name):
     out_dir = proj_dir
-    surf_file = sorted(proj_dir.glob('*cl_mapped.vtp'))[0]
+    surf_file = sorted(proj_dir.glob('*cl.vtp'))[0]
     surf=pv.read(surf_file)
 
     m = Mesher(
             surf,
             include_aneurysms=False
             )
-    #centers = m.get_open_profiles()
-    #inlet_id = m._pick_points(pv.wrap(centers), 'Pick Major Inlet')
-    #outlet_id = m._pick_points(pv.wrap(centers), 'Pick Major Outlet')
-    #m.inlet_ids = [inlet_id]
-    #m.inlet_points = centers[inlet_id]
-    #m.outlet_ids = [outlet_id]
-    #m.outlet_points = centers[outlet_id]
-    #m.generate_centerlines(include_aneurysms=False)
+    #m.set_inlets_outlets()
+    #m.generate_centerlines(include_aneurysms=False, endpoints=1)
+    
+    centers = m.get_open_profiles()
+    inlet_id = m._pick_points(pv.wrap(centers), 'Pick Major Inlet')
+    outlet_id = m._pick_points(pv.wrap(centers), 'Pick Major Outlet')
+    m.inlet_ids = [inlet_id]
+    m.inlet_points = centers[inlet_id]
+    m.outlet_ids = [outlet_id]
+    m.outlet_points = centers[outlet_id]
+    m.generate_centerlines(include_aneurysms=False, endpoints=1)
+    #_ , graph = vmtk.network_extractor(surf, ratio = 1.01)
+    #graph.save(out_dir/('graph.vtp'))
+    graph = pv.read(out_dir/('graph.vtp'))
+    inlet_point = graph.points[2]
+    tree2 = KDTree(m.centerlines.points)
+    out_point = graph.points[5]
+    out_id=tree2.query(out_point, k=1)[1]
+    outlet_point = m.centerlines.points[out_id]
+
+    surf_capped = pv.PolyData()
+    surf_capped.copy_structure(vmtk.surface_capper(surf))
+    tree = KDTree(surf_capped.points)
+    inlet_ids = tree.query(inlet_point, k=1)[1]
+    
+    outlet_ids = tree.query(outlet_point, k=1)[1]
+    centerlines_seg = vmtk.centerlines(
+        surf_capped, 
+        seed_selector='idlist', 
+        resampling_step_length = 1,
+        src_ids=[inlet_ids],
+        target_ids=[outlet_ids]
+        )
+    #make sure to set the first and last points to the inlet and outlet points
+    centerlines_seg.points[0]=m.centerlines.points[tree2.query(outlet_point, k=1)[1]]
+    centerlines_seg.points[-1]=inlet_point
+    centerlines = centerlines_seg
+
+    def polyline_from_points(points):
+        poly = pv.PolyData()
+        poly.points = points
+        the_cell = np.arange(0, len(points), dtype=np.int_)
+        the_cell = np.insert(the_cell, 0, len(points))
+        poly.lines = the_cell
+        return poly
+
+    points = m.centerlines.points[0:out_id]
+    line = polyline_from_points(points)
+    centerlines +=line
+    points2 = m.centerlines.points[out_id:]
+    line2 = polyline_from_points(points2)
+    centerlines +=line2
+    centerlines = vmtk.centerline_geometry(centerlines)
+    '''
     m.centerlines, _ = vmtk.network_extractor(m.surf)
     m.centerlines = vmtk.resample_cl(m.centerlines, length=1.5) #make sure this matches with other files!
     m.centerlines = vmtk.centerline_geometry(m.centerlines)
@@ -83,8 +130,8 @@ def make_cl(proj_dir, case_name):
         perimeter = sum(sized['Length'])
         m.centerlines.point_data['CSA'][ndx]=area
         m.centerlines.point_data['perimeter'][ndx]=perimeter
-
-    m.centerlines.save(out_dir/(case_name+'_centerline.vtp'))
+    '''
+    centerlines.save(out_dir/(case_name+'_centerline.vtp'))
 
 if __name__ == "__main__":
     proj_dir = Path(sys.argv[1])
