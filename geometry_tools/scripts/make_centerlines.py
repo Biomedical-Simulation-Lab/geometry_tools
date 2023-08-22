@@ -40,12 +40,20 @@ def make_cl(proj_dir, case_name):
     m.outlet_ids = [outlet_id]
     m.outlet_points = centers[outlet_id]
     m.generate_centerlines(include_aneurysms=False, endpoints=1)
-    #_ , graph = vmtk.network_extractor(surf, ratio = 1.01)
+    _ , graph = vmtk.network_extractor(surf, ratio = 1.01)
     #graph.save(out_dir/('graph.vtp'))
-    graph = pv.read(out_dir/('graph.vtp'))
-    inlet_point = graph.points[2]
+    p = pv.Plotter()
+    p.add_mesh(surf, opacity=0.3)
+    labels = [str(i) for i in range(len(graph.points))]
+    p.add_point_labels(graph.points, labels, point_size=10, font_size=20, always_visible=True, render_points_as_spheres=True)
+    p.add_text("Look for inlet and outlet labels for branches",position='upper_left', font_size = 14)
+    p.add_text("Note: graph points in the main branch will have multiple values, Choose one.",position='lower_left', font_size = 12)
+    p.show()
+    val_in = input("What is the inlet point id?")
+    val_out = input("What is the outlet point id?")
+    inlet_point = graph.points[int(val_in)]
     tree2 = KDTree(m.centerlines.points)
-    out_point = graph.points[5]
+    out_point = graph.points[int(val_out)]
     out_id=tree2.query(out_point, k=1)[1]
     outlet_point = m.centerlines.points[out_id]
 
