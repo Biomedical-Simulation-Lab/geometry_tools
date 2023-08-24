@@ -3,7 +3,7 @@ This file contains a method for preparing a segmented surface mesh that has been
 for creating the mappings for a PT surface mesh. Currently only does unilateral.
 
 Call this file using:
-map_info.py prep_dir sss ss lab fen syl emissary condylar
+map_info.py prep_dir sss ss lab fen syl trol emissary condylar
 
 Where
 -prep_dir is the directory your surface mesh from 'surface_prep.py' is stored
@@ -12,6 +12,7 @@ Where
 -lab is a float indicating the Labbe flow rate at peak systole mL/s
 -fen indicates True or False if there is a fenestration (currently only set up for one)
 -syl is a float indicating the Sylvian vein flow rate at peak systole mL/s
+-trol is a float indicating the Trolard vein flow rate at peak systole mL/s
 -emissary is a float indicating the Emissary vein outlet ratio
 -condylar is a float indicating the Condylar vein outlet ratio
 
@@ -36,7 +37,7 @@ def define_fr(obj_pt, flowrate=5.578888889):
     obj_pt.surf.point_data[obj_pt.name][ids]=flowrate
     return obj_pt.surf
 
-def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
+def mapped_info(prep_dir, sss, ss, lab, fen, syl, trol, emissary, condylar):
     out_dir = prep_dir.parent
     #surf0_file = sorted(prep_dir.glob('*_noext.vtp'))[0]
     surf_file = sorted(prep_dir.glob('*_cl.vtp'))[0]
@@ -135,6 +136,9 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
         if syl != 'False':
             branches.append('Sylvian_Vein')
             main_segs += 1
+        if trol != 'False':
+            branches.append('Trolard_Vein')
+            main_segs += 1
         if emissary != 'False':
             branches.append('Emissary_Vein')
             main_segs += 1
@@ -214,6 +218,11 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, emissary, condylar):
         flowrate += float(syl) #this is the current flowrate of the main branch
         main_branch_seg +=1
         m.centerlines.point_data['flowrate'][m.centerlines.point_data['main_branch']==main_branch_seg]=flowrate
+    if trol !='False':
+        m.centerlines.point_data['flowrate'][m.centerlines.point_data['Trolard_Vein']==1]=float(trol)
+        flowrate += float(trol) #this is the current flowrate of the main branch
+        main_branch_seg +=1
+        m.centerlines.point_data['flowrate'][m.centerlines.point_data['main_branch']==main_branch_seg]=flowrate
     if emissary !='False':
         m.centerlines.point_data['flowrate'][m.centerlines.point_data['Emissary_Vein']==1]=flowrate*float(emissary)
         flowrate -=flowrate*float(emissary) #this is the current flowrate of the main branch
@@ -287,18 +296,20 @@ if __name__ == "__main__":
         lab=sys.argv[4]
         fen=sys.argv[5]
         syl= sys.argv[6]
-        emissary = sys.argv[7]
-        condylar = sys.argv[8]
+        trol= sys.argv[7]
+        emissary = sys.argv[8]
+        condylar = sys.argv[9]
     else:
         sss = sys.argv[2]#6.816019219
         ss='False'
         lab='False'
         fen='False'
         syl = 'False'
+        trol='False'
         emissary='False'
         condylar = 'False'
 
-    mapped_info(prep_dir=prep_dir, sss = sss, ss = ss, lab = lab, fen = fen, syl = syl, emissary=emissary, condylar=condylar)
+    mapped_info(prep_dir=prep_dir, sss = sss, ss = ss, lab = lab, fen = fen, syl = syl, trol=trol, emissary=emissary, condylar=condylar)
 
 
 '''

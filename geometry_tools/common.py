@@ -578,8 +578,14 @@ class Label_CLs():
             pl = pv.Plotter()
             pl.add_mesh(self.centerline)
             if b != 'Straight_Sinus':
-                pl.enable_point_picking(callback = self.point_cb, show_message="Press P to select junction point for " + b)
-            pl.show()
+                #if both of these veins are in the list, then you'll need to select planes
+                if ('Trolard_Vein' not in self.branches) and ('Sylvian_Vein' not in self.branches):
+                    pl.enable_point_picking(callback = self.point_cb, show_message="Press P to select junction point for " + b)
+                    pl.show()
+                else:
+                    print('Trolard vein and Sylvian vein present! Need to select planes to delete manually!!')
+            else:
+                print('Straight sinus present! Need to select planes to delete manually!!')
         '''
         warnings.formatwarning = warning_on_one_line
         warnings.warn("Holes from clipping must be fillable. May result in inability to close surface!")
