@@ -28,8 +28,18 @@ import geometry_tools.vmtk_wrapper as vmtk
 import geometry_tools.common as cc
 from scipy.spatial import cKDTree as KDTree
 from scipy.interpolate import interp1d
+import matplotlib as plt
+from matplotlib import pyplot
 from pathlib import Path
 import sys
+
+size = 10
+plt.rc('font', size=size) #controls default text size
+plt.rc('axes', titlesize=size) #fontsize of the title
+plt.rc('axes', labelsize=size) #fontsize of the x and y labels
+plt.rc('xtick', labelsize=size) #fontsize of the x tick labels
+plt.rc('ytick', labelsize=size) #fontsize of the y tick labels
+plt.rc('legend', fontsize=size) #fontsize of the legend
 
 def define_fr(obj_pt, flowrate=5.578888889):
     cell_ids = obj_pt.surf.faces.reshape(-1, 4)[obj_pt.surf.cell_data[obj_pt.name]==1][:,1:]
@@ -37,7 +47,7 @@ def define_fr(obj_pt, flowrate=5.578888889):
     obj_pt.surf.point_data[obj_pt.name][ids]=flowrate
     return obj_pt.surf
 
-def mapped_info(prep_dir, sss, ss, lab, fen, syl, trol, emissary, condylar):
+def mapped_info(prep_dir, sss, ss, lab, fen, syl, trol, emissary, condylar, plot_pressure):
     out_dir = prep_dir.parent
     #surf0_file = sorted(prep_dir.glob('*_noext.vtp'))[0]
     surf_file = sorted(prep_dir.glob('*_cl.vtp'))[0]
@@ -165,9 +175,10 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, trol, emissary, condylar):
         usable_CL_CSA=m.centerlines.point_data['CSA'][usable_ids]
         usable_CL_perimeter=m.centerlines.point_data['perimeter'][usable_ids]
         usable_planes = pv.MultiBlock()
+        #print(usable_ids)
         for i in usable_ids:
             usable_planes.append(planes[i])
-        usable_planes.save(out_dir/(surf_file.stem + '_usable_planes.vtm'))
+        #usable_planes.save(out_dir/(surf_file.stem + '_usable_planes.vtm'))
         merged_usable_planes=usable_planes.combine()   
         planes_points = merged_usable_planes.points
         
@@ -178,6 +189,15 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, trol, emissary, condylar):
         cntr_ids = merged_usable_planes.point_data['centerline_id'][idx_p].astype(int) #centerline ids corresponding to the plane on the surface
         m.surf.point_data['CSA']=m.centerlines.point_data['CSA'][cntr_ids]
         m.surf.point_data['perimeter']=m.centerlines.point_data['perimeter'][cntr_ids]
+
+        #if wonky planes were deleted, we need to remove the data at those centerline points and replace with averaged data between the two neighbouring points
+        cntr_ids_avg = np.asarray([x for x in range(len(m.centerlines.points)) if x not in cntr_ids.tolist()])
+        if cntr_ids_avg.size != 0:
+            tree_ctr_avg = KDTree(m.centerlines.points)
+            _, cind = tree_ctr_avg.query(m.centerlines.points[cntr_ids_avg], k=2) #get two closest points
+            #since points on centerline should be equally spaced, we can do a straight average
+            m.centerlines.point_data['CSA'][cntr_ids_avg]=(m.centerlines.point_data['CSA'][cind[:, 0]]+m.centerlines.point_data['CSA'][cind[:, 1]])/2
+            m.centerlines.point_data['perimeter'][cntr_ids_avg]=(m.centerlines.point_data['perimeter'][cind[:, 0]]+m.centerlines.point_data['perimeter'][cind[:, 1]])/2
         
         #print(np.isnan(np.sum(m.surf.point_data['CSA'])), np.isnan(np.sum(m.surf.point_data['perimeter'])))
         m.surf, neighbour_pts = cc.smooth_mesh_data_local_alt(m.surf, array='CSA', iterations = 10)
@@ -246,7 +266,8 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, trol, emissary, condylar):
     U_c = m.centerlines.point_data['flowrate']/m.centerlines.point_data['CSA']
     rho = 1057
     m.centerlines.point_data['dP']=0.5*rho*(3/2*U_c)**2/133.322 #dP based on max centerline velocity in mmHg calculated in every branch
-
+    U_c_cycleaverage = (m.centerlines.point_data['flowrate']/1.221752101)/m.centerlines.point_data['CSA']
+    m.centerlines.point_data['dP_cycle_average']= 0.5*rho*(3/2*U_c_cycleaverage)**2/133.322
     '''
     usable_CL=m.centerlines.points[m.centerlines.point_data['unusable']==0]
     usable_CL_flowrate=m.centerlines.point_data['flowrate'][m.centerlines.point_data['unusable']==0]
@@ -254,6 +275,59 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, trol, emissary, condylar):
     _, idx_c3 = tree3.query(m.surf.points)
     m.surf.point_data['flowrate']=usable_CL_flowrate[idx_c3]
     '''
+    if plot_pressure == True:
+        def line_cm(pts,axis=0):
+            seg_lens=np.zeros(len(pts))
+            seg_lens[1:-1]=np.sqrt(np.sum(np.square(pts[0:-2,:]-pts[1:-1, :]),1)) #length of each segment
+            disp=np.array([np.sum(seg_lens[0:ii]) for ii in range(len(seg_lens))]) #displacement in mm
+            return disp/10 #displacement in cm
+
+        #Order the points along the main branch - this will work for the unilateral case
+        unordered_points = m.centerlines.points[m.centerlines.point_data['main_branch'] > 0]  #for bilateral case, use [m.centerlines.   ['main_branch_l'] != 0] or [m.centerlines.point_data['main_branch_r'] != 0] as the index instead
+        map_indices = m.centerlines.point_data['main_branch'] > 0
+        #map_indices = m.centerlines.point_data['fen2']!= 1
+
+        # Set a seed point to start the ordering
+        # Find the index of the point with the highest Z value, which should be the SSS inlet, but check this!! Can also choose a different seed point (eg. the outlet
+        highest_z_index = np.argmax(unordered_points[:, 2])
+        seed_point = unordered_points[highest_z_index]
+        seed_index = highest_z_index
+
+        # Remove the seed point from the list of unordered points
+        remaining_points = np.delete(unordered_points, seed_index, axis=0)
+        ordered_points = [seed_point]
+        ordered_indices = [seed_index]
+
+        kdtree_orig = KDTree(unordered_points)
+
+        while remaining_points.shape[0] > 0:
+            kdtree = KDTree(remaining_points)
+            dist, index = kdtree.query(ordered_points[-1])
+            _, ndx = kdtree_orig.query(remaining_points[index])
+            nearest_point = remaining_points[index]
+            ordered_points.append(nearest_point)
+            ordered_indices.append(ndx)
+            remaining_points = np.delete(remaining_points, index, axis=0)
+            
+
+        ordered_points = np.array(ordered_points)
+        ordered_indices = np.array(ordered_indices)
+        x = np.flip(line_cm(ordered_points))
+        #Peak Systolic Pressure Drop
+        pyplot.figure(1,figsize=(7, 4))
+        dP_main = m.centerlines.point_data['dP'][map_indices][ordered_indices] #only take the pressure drop calculated on the main branch
+        dP_main = np.flip(dP_main[0] - dP_main)
+        dP_cycleaverage = m.centerlines.point_data['dP_cycle_average'][map_indices][ordered_indices]
+        dP_cycleaverage = np.flip(dP_cycleaverage[0]- dP_cycleaverage)
+        pyplot.plot(x, dP_main,color='b', label='$P_{peak}$', linewidth=0.5)
+        pyplot.plot(x, dP_cycleaverage,color='r', label='$P_{avg}$', linewidth=0.5)
+        pyplot.xlabel('Axial Position (cm)', labelpad=-1)
+        pyplot.ylabel('Pressure Drop (mmHg)', labelpad=-4)
+        pyplot.legend()
+        pyplot.title('Pressure Peak Systole')
+        pyplot.savefig(out_dir/(surf_file.stem + '_' + str(int(float(sss))) + 'p' + dec + 'Pressuredrop_1D.png')) #save figure
+        np.savez(out_dir/(surf_file.stem + '_' + str(int(float(sss))) + 'p' + dec + 'Pressuredrop_1D.npz'), x=x, dP_main=dP_main, dP_average = dP_cycleaverage) #save the data for later
+
     usable_ids = np.asarray(np.where(m.centerlines.point_data['unusable']==0))[0]
     usable_planes = pv.MultiBlock()
     for i in usable_ids:
@@ -274,6 +348,7 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, trol, emissary, condylar):
     L = 4*m.surf.point_data['CSA']/m.surf.point_data['perimeter']*0.001#Hydraulic diameter (m)
     Deff=2*np.sqrt(m.surf.point_data['CSA']/(np.pi))*0.001 #Effective diameter (m)
     U = (m.surf.point_data['flowrate']/m.surf.point_data['CSA']) #peak systolic velocity in m/s
+    U_cycleaverage = ((m.surf.point_data['flowrate']/1.221752101)/m.surf.point_data['CSA'])
     Re = U*L/nu
     Cf = 0.026/(Re**(1/7))
     Tw_rho=Cf*(U**2)/2
@@ -285,6 +360,7 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, trol, emissary, condylar):
     m.surf.point_data['taylor_len']=np.sqrt(10)*(Re**(1/4))*(((nu**3)*L/(U**3))**(1/4))
     m.surf.point_data['ds_max(y+=1)']=nu/Uf #  
     m.surf.point_data['dP']=0.5*rho*(3/2*U)**2/133.322 #dP based on max centerline velocity in mmHg calculated in every branch
+    m.surf.point_data['dP_cycle_average']= 0.5*rho*(3/2*U_cycleaverage)**2/133.322
     m.centerlines.save(cent_file) 
     m.surf.save(mapped_file)
 
@@ -299,6 +375,10 @@ if __name__ == "__main__":
         trol= sys.argv[7]
         emissary = sys.argv[8]
         condylar = sys.argv[9]
+        if len(sys.argv)>10:
+            plot_pressure = sys.argv[10]
+        else:
+            plot_pressure = True #default is true
     else:
         sss = sys.argv[2]#6.816019219
         ss='False'
@@ -308,8 +388,12 @@ if __name__ == "__main__":
         trol='False'
         emissary='False'
         condylar = 'False'
+        if len(sys.argv)>3:
+            plot_pressure = sys.argv[3]
+        else:
+            plot_pressure = True #default is true
 
-    mapped_info(prep_dir=prep_dir, sss = sss, ss = ss, lab = lab, fen = fen, syl = syl, trol=trol, emissary=emissary, condylar=condylar)
+    mapped_info(prep_dir=prep_dir, sss = sss, ss = ss, lab = lab, fen = fen, syl = syl, trol=trol, emissary=emissary, condylar=condylar, plot_pressure = plot_pressure)
 
 
 '''
