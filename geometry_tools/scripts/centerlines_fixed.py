@@ -26,7 +26,7 @@ def make_cl(prep_dir, case_name):
     graphed_cl_file = out_dir/(case_name+'_centerline_graph_vmtk.vtp')
     resampled_file =  out_dir/(case_name+'_centerline_resampled.vtp')
     if not remeshed_file.exists():
-        surf = vmtk.surface_remeshing(surf, edgelength=0.5, iterations = 3)
+        surf = vmtk.surface_remeshing(surf, edgelength=0.4, iterations = 3)
         surf.save(remeshed_file)
         
     m = Mesher(include_aneurysms=False)

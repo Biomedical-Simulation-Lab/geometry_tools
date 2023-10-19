@@ -53,9 +53,11 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, trol, emissary, condylar, plot
     surf_file = sorted(prep_dir.glob('*_cl.vtp'))[0]
     remeshed_file = out_dir/(surf_file.stem  +'_remeshed.vtp')
     dec = str(int(round(float(sss) - int(float(sss)), 1)*10))
-    cent_graph_file = out_dir/(surf_file.stem  +'_centerline_graph_' + str(int(float(sss))) + 'p' + dec + '.vtp')
-    graphed_cl_file = out_dir/(surf_file.stem +'_centerline_graph.vtp')
+    #cent_graph_file = out_dir/(surf_file.stem  +'_centerline_graph_' + str(int(float(sss))) + 'p' + dec + '.vtp')
+    #graphed_cl_file = out_dir/(surf_file.stem +'_centerline_graph.vtp')
     cent_graph_vmtk = out_dir/(surf_file.stem +'_centerline_graph_vmtk.vtp')
+    if not cent_graph_vmtk.exists(): #if not using centerlines_fixed but rather make_centerlines
+        cent_graph_vmtk = prep_dir/(surf_file.stem +'_centerline.vtp')
     cent_file = out_dir/(surf_file.stem + '__' + str(int(float(sss))) + 'p' + dec + 'centerline_mapped.vtp')
     mapped_file = out_dir/(surf_file.stem + '_' + str(int(float(sss))) + 'p' + dec + '_mappedsys.vtp')
     planes_files = out_dir/(surf_file.stem + '_planes_' + str(int(float(sss))) + 'p' + dec + '.vtm')
@@ -178,7 +180,7 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, trol, emissary, condylar, plot
         #print(usable_ids)
         for i in usable_ids:
             usable_planes.append(planes[i])
-        #usable_planes.save(out_dir/(surf_file.stem + '_usable_planes.vtm'))
+        usable_planes.save(out_dir/(surf_file.stem + '_usable_planes.vtm'))
         merged_usable_planes=usable_planes.combine()   
         planes_points = merged_usable_planes.points
         
@@ -193,11 +195,11 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, trol, emissary, condylar, plot
         #if wonky planes were deleted, we need to remove the data at those centerline points and replace with averaged data between the two neighbouring points
         cntr_ids_avg = np.asarray([x for x in range(len(m.centerlines.points)) if x not in cntr_ids.tolist()])
         if cntr_ids_avg.size != 0:
-            tree_ctr_avg = KDTree(m.centerlines.points)
-            _, cind = tree_ctr_avg.query(m.centerlines.points[cntr_ids_avg], k=2) #get two closest points
-            #since points on centerline should be equally spaced, we can do a straight average
-            m.centerlines.point_data['CSA'][cntr_ids_avg]=(m.centerlines.point_data['CSA'][cind[:, 0]]+m.centerlines.point_data['CSA'][cind[:, 1]])/2
-            m.centerlines.point_data['perimeter'][cntr_ids_avg]=(m.centerlines.point_data['perimeter'][cind[:, 0]]+m.centerlines.point_data['perimeter'][cind[:, 1]])/2
+            tree_ctr_avg = KDTree(planes_points) #look at the closest planes
+            dist_avg, cind = tree_ctr_avg.query(m.centerlines.points[cntr_ids_avg], k=2) #get two closest points on planes
+            #inverse distance average
+            m.centerlines.point_data['CSA'][cntr_ids_avg]=((1/dist_avg[:, 0])*m.centerlines.point_data['CSA'][merged_usable_planes.point_data['centerline_id'][cind[:, 0]].astype(int)]+(1/dist_avg[:, 1])*m.centerlines.point_data['CSA'][merged_usable_planes.point_data['centerline_id'][cind[:, 1]].astype(int)])/((1/dist_avg[:, 0])+(1/dist_avg[:, 1]))
+            m.centerlines.point_data['perimeter'][cntr_ids_avg]=((1/dist_avg[:, 0])*m.centerlines.point_data['perimeter'][merged_usable_planes.point_data['centerline_id'][cind[:, 0]].astype(int)]+(1/dist_avg[:, 1])*m.centerlines.point_data['perimeter'][merged_usable_planes.point_data['centerline_id'][cind[:, 1]].astype(int)])/((1/dist_avg[:, 0])+(1/dist_avg[:, 1]))
         
         #print(np.isnan(np.sum(m.surf.point_data['CSA'])), np.isnan(np.sum(m.surf.point_data['perimeter'])))
         m.surf, neighbour_pts = cc.smooth_mesh_data_local_alt(m.surf, array='CSA', iterations = 10)
