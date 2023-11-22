@@ -257,8 +257,8 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, trol, emissary, condylar, plot
         m.centerlines.point_data['flowrate'][m.centerlines.point_data['main_branch']==main_branch_seg]=flowrate
     if fen != 'False':
         #get average CSA ratio between branches:
-        fen1_CSA = np.mean(m.centerlines.point_data['CSA'][m.centerlines.point_data['fen1']==1])
-        fen2_CSA = np.mean(m.centerlines.point_data['CSA'][m.centerlines.point_data['fen2']==1])
+        fen1_CSA = np.min(m.centerlines.point_data['CSA'][m.centerlines.point_data['fen1']==1])
+        fen2_CSA = np.min(m.centerlines.point_data['CSA'][m.centerlines.point_data['fen2']==1])
         ratio1 = fen1_CSA/(fen1_CSA+fen2_CSA)
         ratio2 = fen2_CSA/(fen1_CSA+fen2_CSA)
         m.centerlines.point_data['flowrate'][m.centerlines.point_data['fen1']==1]=ratio1*m.centerlines.point_data['flowrate'][m.centerlines.point_data['fen1']==1]
