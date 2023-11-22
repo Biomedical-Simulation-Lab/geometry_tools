@@ -210,8 +210,18 @@ def mapped_info(prep_dir, sss, ss, split_flow, lab, fen, syl, emissary, condylar
         tree = KDTree(planes_points) #only include usable planes
         _, idx_p = tree.query(m.surf.points) #get plane points closest to surf points
 
-        m.surf.point_data['CSA']=m.centerlines.point_data['CSA'][merged_usable_planes.point_data['centerline_id'][idx_p].astype(int)]
-        m.surf.point_data['perimeter']=m.centerlines.point_data['perimeter'][merged_usable_planes.point_data['centerline_id'][idx_p].astype(int)]
+        cntr_ids = merged_usable_planes.point_data['centerline_id'][idx_p].astype(int) #centerline ids corresponding to the plane on the surface
+        m.surf.point_data['CSA']=m.centerlines.point_data['CSA'][cntr_ids]
+        m.surf.point_data['perimeter']=m.centerlines.point_data['perimeter'][cntr_ids]
+
+        #if wonky planes were deleted, we need to remove the data at those centerline points and replace with weighted average data between the two neighbouring points
+        cntr_ids_avg = np.asarray([x for x in range(len(m.centerlines.points)) if x not in cntr_ids.tolist()])
+        if cntr_ids_avg.size != 0:
+            tree_ctr_avg = KDTree(planes_points) #look at the closest planes
+            dist_avg, cind = tree_ctr_avg.query(m.centerlines.points[cntr_ids_avg], k=2) #get two closest points on planes
+            #inverse distance average
+            m.centerlines.point_data['CSA'][cntr_ids_avg]=((1/dist_avg[:, 0])*m.centerlines.point_data['CSA'][merged_usable_planes.point_data['centerline_id'][cind[:, 0]].astype(int)]+(1/dist_avg[:, 1])*m.centerlines.point_data['CSA'][merged_usable_planes.point_data['centerline_id'][cind[:, 1]].astype(int)])/((1/dist_avg[:, 0])+(1/dist_avg[:, 1]))
+            m.centerlines.point_data['perimeter'][cntr_ids_avg]=((1/dist_avg[:, 0])*m.centerlines.point_data['perimeter'][merged_usable_planes.point_data['centerline_id'][cind[:, 0]].astype(int)]+(1/dist_avg[:, 1])*m.centerlines.point_data['perimeter'][merged_usable_planes.point_data['centerline_id'][cind[:, 1]].astype(int)])/((1/dist_avg[:, 0])+(1/dist_avg[:, 1]))
 
         m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='CSA', func=np.mean, iterations = 2)
         m.surf, _ = cc.smooth_mesh_data_local(m.surf, array='perimeter', func=np.mean, iterations = 2)

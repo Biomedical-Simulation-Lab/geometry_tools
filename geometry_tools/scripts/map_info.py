@@ -192,7 +192,7 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, trol, emissary, condylar, plot
         m.surf.point_data['CSA']=m.centerlines.point_data['CSA'][cntr_ids]
         m.surf.point_data['perimeter']=m.centerlines.point_data['perimeter'][cntr_ids]
 
-        #if wonky planes were deleted, we need to remove the data at those centerline points and replace with averaged data between the two neighbouring points
+        #if wonky planes were deleted, we need to remove the data at those centerline points and replace with weighted average data between the two neighbouring points
         cntr_ids_avg = np.asarray([x for x in range(len(m.centerlines.points)) if x not in cntr_ids.tolist()])
         if cntr_ids_avg.size != 0:
             tree_ctr_avg = KDTree(planes_points) #look at the closest planes
