@@ -1,4 +1,13 @@
-""" Generate volume mesh and relevant submission files.
+"""
+This generates a volume mesh and relevant files for Mehdi's framework using the output from surface_process.py
+
+Call this script using:
+volume_meshing.py proj_dir surf_type multi_inlets
+
+proj_dir is the directory your surface file (ending in '_pr.vtp') is in
+surf_type: options are a for aneurysm or pt for pulsatile tinnitus
+multi_inlets: options are 'multi' or 'single' depending on if you have multiple inlets or not
+
 """
 
 from pathlib import Path 
@@ -8,22 +17,23 @@ from geometry_tools.make_submission_file import SubmissionTemplate
 import sys
 import time
 from datetime import timedelta
+import numpy as np
 
-def volume_meshing(proj_dir):
-    proj_dir = Path(proj_dir)
-    clipped_dir = proj_dir / '02_processed' 
-    surf_file = sorted(clipped_dir.glob('*.vtp'))[0]
+def volume_meshing(proj_dir, surf_type, multi_inlets):
+    
+    if surf_type == 'pt':
+        anubool=False
+    else:
+        anubool = True 
+        
+    surf_file = sorted(proj_dir.glob('*_pr.vtp'))[0]
 
-    proj_dir = surf_file.parents[1]
-
-    points_dir = proj_dir / '02_points' 
-
-    point_file = points_dir / (surf_file.stem + '_endpoints.vtm') 
+    point_file = proj_dir / (surf_file.stem + '_endpoints.vtm') 
     assert point_file.exists()
 
-    mesh_out_dir = proj_dir / '03_mesh' 
-    data_out_dir = proj_dir / '03_data'  
-    submission_out_dir = proj_dir / '03_submissions' 
+    mesh_out_dir = proj_dir / 'mesh' 
+    data_out_dir = proj_dir / 'data'  
+    submission_out_dir = proj_dir
 
     for f in [mesh_out_dir, data_out_dir, submission_out_dir]:
         if not f.exists():
@@ -32,6 +42,7 @@ def volume_meshing(proj_dir):
     vtufile = mesh_out_dir / (surf_file.stem + '.vtu')
     meshfile = data_out_dir / (surf_file.stem + '.h5')
     infofile = data_out_dir / (surf_file.stem + '.info')
+    fcoeffsfile = data_out_dir / ('FC_VENOUS')
     xmlgzfile = data_out_dir / (surf_file.stem + '.xml.gz')
 
     start = time.time()
@@ -40,17 +51,21 @@ def volume_meshing(proj_dir):
     if not xmlgzfile.exists():
         # try:
         surf = pv.read(surf_file)
-
+        surf.clean()
         points = pv.read(point_file)
         in_points = points['inlets'].points
         out_points = points['outlets'].points
-        an_points = points['aneurysms'].points
+        if surf_type == 'a':
+            an_points = points['aneurysms'].points
+        else:
+            an_points = None
 
         m = Mesher(
             surf,
             inlet_points=in_points, 
             outlet_points=out_points,
             aneurysm_points=an_points,
+            include_aneurysms=anubool
             )
         m.update_inlets_outlets()
 
@@ -59,21 +74,35 @@ def volume_meshing(proj_dir):
             m.mesh.save(vtufile)
         else:
             m.mesh = pv.read(vtufile)
-
+        
         m.update_inlets_outlets()
+        if surf_type == 'a':
+            m.generate_centerlines()
 
-        m.generate_centerlines()
-        m.generate_centerlines(include_aneurysms=False)
+        if (multi_inlets == 'multi'):
+            m.generate_centerlines_multi(proj_dir)
+            #m.centerlines.save(proj_dir/('volume_centerlines.vtp'))
+        elif multi_inlets == 'single':
+            m.generate_centerlines(include_aneurysms=False)
 
-        m.generate_flow_rates()
+        #WARNING: does not work with multiple inlets
+        if multi_inlets == 'single':
+            m.generate_flow_rates()
         m.generate_h5_file(meshfile)
-        m.generate_flow_rates_legacy()
+        #m.generate_flow_rates_legacy() #why call?
         m.update_inlets_outlets()
-        m.generate_info_file(infofile,)  
+        #NOTE: INLET FLOWRATES ARE SUBJECT TO CHANGE AND NEED TO BE INSPECTED BEFORE RUN!! The following line may need to be changed if you are doing an aneurysm case:
+        m.generate_info_file(infofile, fcoeffsfile, multi_inlets, inlet_vel=False, inlet_flowrates=[5.578888889, 2.034444444, 0.63534717171], waveform='FC_VENOUS')  
+        #the inlet flowrates given are for SSS, SIS, and Labbe. You may need to change these for your PT case
         m.generate_xml_gz_file(xmlgzfile)
 
         # Create submission file
-        s = SubmissionTemplate(meshfile.stem)
+        if surf_type == 'pt':
+            min_EL = 0.5*np.min(surf.point_arrays['Size'])
+            tstep_per_cycle = int(951/min_EL) #assuming 2 mm/ms is the max velocity
+        else:
+            tstep_per_cycle=9600
+        s = SubmissionTemplate(meshfile.stem, timesteps_per_cycle=tstep_per_cycle)
         s.save_script(submission_out_dir)
 
         print('\n Case done', timedelta(seconds=time.time() - start))
@@ -85,4 +114,9 @@ def volume_meshing(proj_dir):
 
 if __name__ == "__main__":
     proj_dir = Path(sys.argv[1]) 
-    volume_meshing(proj_dir=proj_dir)
+    surf_type = sys.argv[2]
+    if len(sys.argv) > 3:
+        multi_inlets = sys.argv[3]
+    else:
+        multi_inlets = 'single'
+    volume_meshing(proj_dir=proj_dir, surf_type=surf_type, multi_inlets=multi_inlets)

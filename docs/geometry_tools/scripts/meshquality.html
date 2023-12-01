@@ -1,0 +1,2234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>geometry_tools.scripts.meshquality API documentation</title>
+<meta name="description" content="This file contains a method to compute mesh quality parameters. You should always use this after making a mesh." />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>geometry_tools.scripts.meshquality</code></h1>
+</header>
+<section id="section-intro">
+<p>This file contains a method to compute mesh quality parameters. You should always use this after making a mesh.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#!/usr/bin/python
+
+&#34;&#34;&#34;
+This file contains a method to compute mesh quality parameters. You should always use this after making a mesh.
+&#34;&#34;&#34;
+
+################################################################################
+##   Project:   FEniCS CFD Simulation Setup / Mesh Quality Assessment
+##   Date:      2017/08/21 04:05:44
+##   Version:   1.0
+##   Author:    Mehdi Najafi, (mnuoft at gmail). All rights reserved.
+##
+##
+##   This script is distributed WITHOUT ANY WARRANTY; without even the implied 
+##   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+##
+################################################################################
+
+import os, sys
+import math
+import vtk
+import numpy
+from collections import OrderedDict
+
+# ----------------------------------------------------------------------
+def getNominalA(h):
+    return 0.25 * (3**0.5) * h*h
+# ----------------------------------------------------------------------
+class Logger(object):
+    def __init__(self, filename):
+        self.terminal = sys.stdout
+        if filename:
+            self.log = open(filename, &#39;w&#39;)
+        else:
+            self.log = None
+
+    def __del__(self):
+        if self.log:
+            self.log.close()
+    
+    def write(self, message):
+        self.terminal.write(message)
+        if self.log:
+            self.log.write(message)
+
+    def flush(self):
+        #this flush method is needed for python 3 compatibility.
+        #this handles the flush command by doing nothing.
+        #you might want to specify some extra behavior here.
+        pass
+
+
+
+# =====================================================================
+class MeshDisplay3D:
+    def __init__(self, title, _dir):
+        self.Data = None
+        self._Surface = None
+        self._CaseName = None
+        self._path = _dir
+        self._SeedIds = None
+        self._TargetSeedIds = vtk.vtkIdList()
+        self.PickedSeedIds = vtk.vtkIdList()
+        self.PickedSeeds = vtk.vtkPolyData()
+        self.vtkRenderer = None
+        self.KeyBindings = {}
+        self.Script = None
+        self.selectedpointindex = 0
+        self.SeedActors = []
+        self.TextActor = None
+        self.TextInputMode = 0
+        self.ExitAfterTextInputMode = True
+        self.ExitTextInputCallback = None
+        self.surfaceActor = None
+        self.surfaceOpacity = 1.0
+        self.selectedMapper = None
+        self.selectedActor = None
+        self.selectedCellsCount = 0
+
+    def HighlightCells(self, lstCells):
+        ids = vtk.vtkIdTypeArray()
+        ids.SetNumberOfComponents(1)
+        for id in lstCells:
+            ids.InsertNextValue(id)
+
+        selectionNode = vtk.vtkSelectionNode()
+        selectionNode.SetFieldType(vtk.vtkSelectionNode.CELL)
+        selectionNode.SetContentType(vtk.vtkSelectionNode.INDICES)
+        selectionNode.SetSelectionList(ids)
+
+        selection = vtk.vtkSelection()
+        selection.AddNode(selectionNode)
+
+        extractSelection = vtk.vtkExtractSelection()
+        if vtk.VTK_MAJOR_VERSION &lt;= 5:
+            extractSelection.SetInput(0, self.Data)
+            extractSelection.SetInput(1, selection)
+        else:
+            extractSelection.SetInputData(0, self.Data)
+            extractSelection.SetInputData(1, selection)
+        extractSelection.Update()
+
+        # In selection
+        selected = vtk.vtkUnstructuredGrid()
+        selected.ShallowCopy(extractSelection.GetOutput())
+
+        self.selectedMapper = vtk.vtkDataSetMapper()
+        if vtk.VTK_MAJOR_VERSION &lt;= 5:
+            self.selectedMapper.SetInputConnection(selected.GetProducerPort())
+        else:
+            self.selectedMapper.SetInputData(selected)
+
+        self.selectedActor = vtk.vtkActor()
+        self.selectedActor.SetMapper(self.selectedMapper)
+        self.selectedActor.GetProperty().EdgeVisibilityOn()
+        self.selectedActor.GetProperty().SetEdgeColor(1.0, 0.6, 0.0)
+        self.selectedActor.GetProperty().SetLineWidth(2)
+        #self.selectedActor.GetProperty().SetVertexColor(0.8, 0.48, 0.0)
+
+        self.glyph = vtk.vtkGlyph3D()
+        glyphSource = vtk.vtkArrowSource()
+        glyphSource.InvertOn()
+        self.glyph.SetSourceConnection(glyphSource.GetOutputPort())
+        self.glyph.SetInputData(selected)
+        #self.glyph.SetColorModeToColorByScalar()
+        #self.glyph.SetScaleModeToDataScalingOff() 
+        #self.glyph.SetVectorModeToUseVector()
+        self.glyph.SetScaleFactor(self._Surface.GetLength()*0.012)
+        self.glyph.Update()
+
+        self.gylphmapper = vtk.vtkPolyDataMapper()
+        self.gylphmapper.SetInputData(self.glyph.GetOutput())
+        
+        self.gylphactor = vtk.vtkActor()
+        self.gylphactor.SetMapper(self.gylphmapper)
+        self.gylphactor.VisibilityOff()
+        self.gylphactor.GetProperty().SetOpacity(0.15)
+        self.gylphactor.GetProperty().SetColor(0.8, 0.48, 0.0)
+
+        self.selectedCellsCount = len(lstCells)
+
+
+    def SetSurface(self, surface, casename):
+        self._Surface = surface
+        self._CaseName = casename
+        self.Data = self._Surface
+
+
+    def GetSurface(self):
+        return self._Surface
+
+    def GetTargetSeedIds(self):
+        return self._TargetSeedIds
+
+    def GetText(self):
+        if self.selectedCellsCount&gt;0:
+            if self.selectedCellsCount == 1:
+                text = &#39;Please rotate the model to observe a cell with difficulties.&#39;
+            else:
+                text = &#39;Please rotate the model to observe %d cells with difficulties.&#39;%(self.selectedCellsCount)
+        else:
+            text = &#39;The model looks fine. You may press \&#39;q\&#39; to quit.&#39;
+        return text
+
+    def ToggleHelpCallback(self, obj):
+        self.Text.SetVisibility(1-self.Text.GetVisibility())
+        self.TextActor.SetVisibility(1-self.TextActor.GetVisibility())
+        self.TextInputActor.SetVisibility(1-self.TextInputActor.GetVisibility())
+        self.RenderWindow.Render()
+
+    def ToggleSelectedCellsCallback(self, obj):
+        self.selectedActor.SetVisibility(1-self.selectedActor.GetVisibility())
+        self.RenderWindow.Render()
+
+    def ToggleGylphSelectedCellsCallback(self, obj):
+        self.gylphactor.SetVisibility(1-self.gylphactor.GetVisibility())
+        self.RenderWindow.Render()
+
+    def ToggleSurfaceCallback(self, obj):
+        self.surfaceActor.SetVisibility(1-self.surfaceActor.GetVisibility())
+        self.RenderWindow.Render()
+
+    def IncSurfaceOpacityCallback(self, obj):
+        self.surfaceOpacity += 0.1
+        if self.surfaceOpacity &gt; 1:
+            self.surfaceOpacity = 1
+        self.surfaceActor.GetProperty().SetOpacity(self.surfaceOpacity)
+        self.RenderWindow.Render()
+    def DecSurfaceOpacityCallback(self, obj):
+        self.surfaceOpacity -= 0.1
+        if self.surfaceOpacity &lt; 0:
+            self.surfaceOpacity = 0
+        self.surfaceActor.GetProperty().SetOpacity(self.surfaceOpacity)
+        self.RenderWindow.Render()
+
+    def SolidEdgeModeCallback(self, obj):
+        self.surfaceActor.GetProperty().SetRepresentationToSurface()
+        self.surfaceActor.GetProperty().EdgeVisibilityOn()#(1-self.surfaceActor.GetProperty().GetEdgeVisibility())
+        self.RenderWindow.Render()
+    def SolidModeCallback(self, obj):
+        self.surfaceActor.GetProperty().SetRepresentationToSurface()
+        self.surfaceActor.GetProperty().EdgeVisibilityOff()
+        self.RenderWindow.Render()
+    def WireframeModeCallback(self, obj):
+        self.surfaceActor.GetProperty().SetRepresentationToWireframe()
+        self.surfaceActor.GetProperty().EdgeVisibilityOff()
+        self.RenderWindow.Render()
+
+    def ScreenshotCallback(self, obj):
+        self.ShowAllText(False)
+        filePrefix = self._CaseName+&#39;-meshquality-screenshot&#39;
+        fileNumber = 0
+        fileName = &#34;%s-%d.png&#34; % (filePrefix,fileNumber)
+        existingFiles = os.listdir(os.path.dirname(self._CaseName))
+        while fileName in existingFiles:
+            fileNumber += 1
+            fileName = &#34;%s-%d.png&#34; % (filePrefix,fileNumber)
+        #fileName = self._path + fileName
+        print(&#39;Saving screenshot to &#39; + fileName)
+        windowToImage = vtk.vtkWindowToImageFilter()
+        windowToImage.SetInput(self.RenderWindow)
+        windowToImage.SetMagnification(4)
+        windowToImage.Update()
+        writer = vtk.vtkPNGWriter()
+        writer.SetInputConnection(windowToImage.GetOutputPort())
+        writer.SetFileName(fileName)
+        writer.Write()
+        self.ShowAllText()
+
+    def ShowAllText(self, on=True):
+        self.Text.SetVisibility(on)
+        self.TextInputActor.SetVisibility(on)
+        self.TextActor.SetVisibility(on)
+        self.RenderWindow.Render()
+
+    def QuitRendererCallback(self, obj):
+        #print(&#39;User quit request - 3D View terminated.&#39;)
+        self.CleanUp()
+        self.RenderWindowInteractor.ExitCallback()
+
+    def ResetCameraCallback(self, obj):
+        self.vtkRenderer.ResetCamera()
+        self.RenderWindow.Render()
+
+    def UpdateTextInput(self):
+        if self.TextInputQuery:
+            if self.CurrentTextInput or self.CurrentTextInput == &#39;&#39;:
+                self.TextInputActor.SetInput(self.TextInputQuery+self.CurrentTextInput+&#39;_&#39;)
+            else:
+                self.TextInputActor.SetInput(self.TextInputQuery)
+            self.vtkRenderer.AddActor(self.TextInputActor)
+        else:
+            self.vtkRenderer.RemoveActor(self.TextInputActor)
+        self.RenderWindow.Render()
+
+    def KeyPressCallback(self, obj, event):
+        key = self.RenderWindowInteractor.GetKeySym()
+        if key ==&#39;Escape&#39;:
+            if self.TextInputMode:
+                self.TextInputMode = 0
+            else:
+                self.TextInputMode = 1
+        if self.TextInputMode:
+            if key in [&#39;Return&#39;,&#39;Enter&#39;]:
+                self.ExitTextInputMode()
+                return
+            if key.startswith(&#39;KP_&#39;):
+                key = key[3:]
+            if key == &#39;space&#39;:
+                key = &#39; &#39;
+            elif key in [&#39;minus&#39;,&#39;Subtract&#39;]:
+                key = &#39;-&#39;
+            elif key in [&#39;period&#39;,&#39;Decimal&#39;]:
+                key = &#39;.&#39;
+            elif len(key) &gt; 1 and key not in [&#39;Backspace&#39;,&#39;BackSpace&#39;]:
+                key = None
+            if key in [&#39;Backspace&#39;,&#39;BackSpace&#39;]:
+                textInput = self.CurrentTextInput
+                if len(textInput) &gt; 0:
+                    self.CurrentTextInput = textInput[:-1]
+            elif key:
+                self.CurrentTextInput += key
+            self.UpdateTextInput()
+            return
+
+        if key in self.KeyBindings and self.KeyBindings[key][&#39;callback&#39;] != None:
+            self.KeyBindings[key][&#39;callback&#39;](obj)
+        else:
+            if key == &#39;plus&#39;:
+                key = &#39;+&#39;
+            if key == &#39;minus&#39;:
+                key = &#39;-&#39;
+            if key == &#39;equal&#39;:
+                key = &#39;=&#39;
+            if key in self.KeyBindings and self.KeyBindings[key][&#39;callback&#39;] != None:
+                self.KeyBindings[key][&#39;callback&#39;](obj)
+
+    def AddKeyBinding(self, key, text, callback=None, group=&#39;1&#39;):
+        self.KeyBindings[key] = {&#39;text&#39;: text, &#39;callback&#39;: callback, &#39;group&#39;: group}
+
+    def RemoveKeyBinding(self, key):
+        if key in self.KeyBindings:   
+            del self.KeyBindings[key]
+            
+    def InitializeSeeds(self):
+        self.PickedSeedIds.Initialize()
+        self.PickedSeeds.Initialize()
+        seedPoints = vtk.vtkPoints()
+        self.PickedSeeds.SetPoints(seedPoints)
+
+    def CleanUp(self):
+        self.vtkRenderer.RemoveActor(self.TextActor)
+        self.vtkRenderer.RemoveActor(self.TextInputActor)
+
+    def ShowHelpText(self):
+        groups = list(set([self.KeyBindings[el][&#39;group&#39;] for el in self.KeyBindings]))
+        #groups.sort(reverse=True)
+        textActorInputsList = []
+        for group in groups:
+            sortedKeys = [key for key in self.KeyBindings.keys() if self.KeyBindings[key][&#39;group&#39;] == group]
+            sortedKeys.sort()
+            textActorInputs = [&#39;[%s]: %s&#39; % (key, self.KeyBindings[key][&#39;text&#39;]) for key in sortedKeys]
+            textActorInputsList.append(&#39;\n&#39;.join(textActorInputs))
+        self.TextActor.SetInput(&#39;\n\n&#39;.join(textActorInputsList))
+        #self.RenderWindow.Render()
+
+    def ShowKnownTypeHelp(self):
+        self.ShowHelpText()
+        self.updateTitle() 
+
+
+    def updateTitle(self):
+        prefix = self._CaseName
+        self.RenderWindow.SetWindowName(prefix + &#34; - Mesh Inspection Tool :: BioMedical Simulations Lab&#34;)
+
+    def Execute(self):
+
+        if (self._Surface == None):
+            print(&#39;Error: No input Surface set.&#39;)
+            return
+
+        self._TargetSeedIds.Initialize()
+
+        if not self.vtkRenderer:
+            self.vtkRenderer = vtk.vtkRenderer()
+            self.vtkRenderer.SetBackground(0.15, 0.49, 0.37) #0.37, 0.49)
+            if self.selectedCellsCount &gt; 0:
+                self.vtkRenderer.SetBackground(0.15, 0.25, 0.27) #0.37, 0.49)
+            
+            self.RenderWindow = vtk.vtkRenderWindow()
+            self.updateTitle()
+            self.RenderWindow.AddRenderer(self.vtkRenderer)
+            self.RenderWindow.SetSize(800,600)
+            self.RenderWindow.SetPosition(10,10)
+            self.RenderWindow.SetPointSmoothing(1)
+            self.RenderWindow.SetLineSmoothing(1)
+            self.RenderWindow.SetPolygonSmoothing(0)
+            self.RenderWindowInteractor = vtk.vtkRenderWindowInteractor()
+            self.RenderWindow.SetInteractor(self.RenderWindowInteractor)
+            self.RenderWindowInteractor.SetInteractorStyle(vtk.vtkInteractorStyleTrackballCamera())
+            self.RenderWindowInteractor.GetInteractorStyle().KeyPressActivationOff()
+            self.RenderWindowInteractor.GetInteractorStyle().AddObserver(&#34;KeyPressEvent&#34;,self.KeyPressCallback)
+
+            self.AddKeyBinding(&#39;x&#39;,&#39;Take Screenshot&#39;,self.ScreenshotCallback,&#39;0&#39;)
+            self.AddKeyBinding(&#39;r&#39;,&#39;Reset Camera&#39;,self.ResetCameraCallback,&#39;0&#39;)
+            self.AddKeyBinding(&#39;w&#39;,&#39;Wireframe Mode&#39;,self.WireframeModeCallback,&#39;0&#39;)
+            self.AddKeyBinding(&#39;s&#39;,&#39;Solid Mode&#39;, self.SolidModeCallback,&#39;0&#39;)
+            self.AddKeyBinding(&#39;a&#39;,&#39;Solid+Edge Mode&#39;, self.SolidEdgeModeCallback,&#39;0&#39;)
+            self.AddKeyBinding(&#39;q&#39;,&#39;Quit/Ignore&#39;,self.QuitRendererCallback,&#39;0&#39;)
+            self.AddKeyBinding(&#39;c&#39;,&#39;Toggle Odd Cells&#39;,self.ToggleSelectedCellsCallback,&#39;0&#39;)
+            self.AddKeyBinding(&#39;g&#39;,&#39;Toggle Geometry&#39;,self.ToggleSurfaceCallback, &#39;0&#39;)
+            self.AddKeyBinding(&#39;m&#39;,&#39;Toggle Markers&#39;,self.ToggleGylphSelectedCellsCallback, &#39;0&#39;)
+            self.AddKeyBinding(&#39;h&#39;,&#39;Toggle Help&#39;,self.ToggleHelpCallback, &#39;0&#39;)
+            self.AddKeyBinding(&#39;+&#39;,&#39;Increase Opacity&#39;,self.IncSurfaceOpacityCallback, &#39;0&#39;)
+            self.AddKeyBinding(&#39;-&#39;,&#39;Decrease Opacity&#39;,self.DecSurfaceOpacityCallback, &#39;0&#39;)
+
+            self.TextActor = vtk.vtkTextActor()
+            self.TextActor.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
+            self.TextActor.GetPosition2Coordinate().SetCoordinateSystemToNormalizedViewport()
+            self.TextActor.SetPosition([0.005, 0.1])
+            self.TextActor.GetTextProperty().SetFontSize(15)
+            self.TextActor.GetTextProperty().SetFontFamilyToCourier()
+            self.TextActor.GetTextProperty().SetColor(0.6,0.6,0.6)
+
+            self.ShowHelpText()
+            self.vtkRenderer.AddActor(self.TextActor)
+
+            self.TextInputActor = vtk.vtkTextActor()
+            self.TextInputActor.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
+            self.TextInputActor.GetPosition2Coordinate().SetCoordinateSystemToNormalizedViewport()
+            self.TextInputActor.SetPosition([0.25, 0.1])
+
+            self.vtkRenderer.AddActor(self.TextInputActor)
+
+            self.ShowKnownTypeHelp()
+
+
+        # create a text actor
+        self.Text = vtk.vtkTextActor()
+        self.Text.SetInput(self.GetText())
+        txtprop=self.Text.GetTextProperty()
+        txtprop.SetFontFamilyToArial()
+        txtprop.SetFontSize(15)
+        #txtprop.SetColor(0.8,0.9,0.3)
+        txtprop.SetColor(0.9,0.9,0.9)
+        self.Text.SetDisplayPosition(20,10)
+        self.vtkRenderer.AddActor(self.Text)
+
+        #surfaceMapper = vtk.vtkPolyDataMapper()
+
+        #surfaceMapper.SetInputData(self._Surface)
+        #surfaceMapper.ScalarVisibilityOff()
+
+        surfaceMapper = vtk.vtkDataSetMapper()
+        if vtk.VTK_MAJOR_VERSION &lt;= 5:
+            surfaceMapper.SetInputConnection(self._Surface.GetProducerPort())
+        else:
+            surfaceMapper.SetInputData(self._Surface)
+
+
+        self.surfaceActor = vtk.vtkActor()
+        self.surfaceActor.SetMapper(surfaceMapper)
+        self.surfaceActor.GetProperty().SetOpacity(1.0)
+        self.surfaceActor.GetProperty().SetEdgeColor(0.0, 0.2, 0.6)
+
+        self.vtkRenderer.AddActor(self.surfaceActor)
+
+        if self.selectedActor:
+            self.vtkRenderer.AddActor(self.selectedActor)
+            self.vtkRenderer.AddActor(self.gylphactor)
+
+        self.InitializeSeeds()
+        
+        self.RenderWindowInteractor.Initialize()
+        self.RenderWindow.Render()
+
+        self.RenderWindowInteractor.Start()
+
+        #self.PickedSeedIds.GetNumberOfIds()
+
+        self._TargetSeedIds.DeepCopy(self.PickedSeedIds)
+
+        self.RenderWindowInteractor = None
+        self.RenderWindow = None
+        self.vtkRenderer = None 
+# =====================================================================
+    
+
+# ----------------------------------------------------------------------
+def check(value):
+    if abs(value) &lt; 1E-5 or abs(value) &gt; 1E2:
+        return False
+    return True
+
+# ----------------------------------------------------------------------
+def MeshQualityMeasures(title, polyDataVolMesh, outputfilename = &#39;&#39;, 
+                        only_check_surface = False, display_cells = False):
+    if polyDataVolMesh == None:
+        return -1
+
+    out = Logger(outputfilename)
+
+    quality = vtk.vtkMeshQuality()
+    vtk_version = vtk.vtkVersion().GetVTKMajorVersion()
+    if vtk_version &lt; 6:
+        quality.SetInput(polyDataVolMesh)
+    else:
+        quality.SetInputData(polyDataVolMesh)
+    quality.SaveCellQualityOn()
+#    quality.SetTriangleQualityMeasureToRadiusRatio()
+#    quality.Update()
+
+    # Here we define the various mesh types and labels for output.
+    meshTypes = [
+                 [&#39;Triangle&#39;, &#39;Triangle&#39;,
+                  [
+                   [&#39;QualityMeasureToArea&#39;, &#39;Area&#39;],
+                   [&#39;QualityMeasureToEdgeRatio&#39;, &#39;Edge Ratio&#39;],
+                   [&#39;QualityMeasureToAspectRatio&#39;, &#39;Aspect Ratio&#39;],
+                   [&#39;QualityMeasureToRadiusRatio&#39;, &#39;Radius Ratio&#39;],
+                   [&#39;QualityMeasureToAspectFrobenius&#39;, &#39;Frobenius Norm&#39;],
+                   [&#39;QualityMeasureToMinAngle&#39;, &#39;Min Angle&#39;]
+                   ]
+                  ],
+
+                 [&#39;Tet&#39;, &#39;Tetrahedron&#39;,
+                  [
+                   [&#39;QualityMeasureToVolume&#39;, &#39;Volume&#39;],
+                   [&#39;QualityMeasureToEdgeRatio&#39;, &#39;Edge Ratio&#39;],
+                   [&#39;QualityMeasureToAspectRatio&#39;, &#39;Aspect Ratio&#39;],
+                   [&#39;QualityMeasureToRadiusRatio&#39;, &#39;Radius Ratio&#39;],
+                   [&#39;QualityMeasureToAspectFrobenius&#39;, &#39;Frobenius Norm&#39;],
+                   [&#39;QualityMeasureToMinAngle&#39;, &#39;Min Dihedral Angle&#39;],
+                   [&#39;QualityMeasureToCollapseRatio&#39;, &#39;Collapse Ratio&#39;],
+                   [&#39;QualityMeasureToScaledJacobian&#39;, &#39;Scaled Jacobian&#39;],
+                   [&#39;QualityMeasureToJacobian&#39;, &#39;Positive Jacobian&#39;],
+                   [&#39;QualityMeasureToJacobian&#39;, &#39;Negative Jacobian&#39;]
+                   ]
+                 ]]
+
+    # remove volume check if surface triangles are to be checked
+    if only_check_surface:
+        del meshTypes[-1]
+
+        edge = []
+        for i in range(polyDataVolMesh.GetNumberOfCells()):
+            npts = polyDataVolMesh.GetCell(i).GetPoints().GetNumberOfPoints()
+            for k in range(npts):
+                point0 = [0.0, 0.0, 0.0]
+                point1 = [0.0, 0.0, 0.0]
+                polyDataVolMesh.GetCell(i).GetPoints().GetPoint(k, point0)
+                polyDataVolMesh.GetCell(i).GetPoints().GetPoint((k+1)%npts, point1)
+                d = math.sqrt(vtk.vtkMath.Distance2BetweenPoints(point0,point1))
+                edge.append(d)
+        min = numpy.amin(edge)
+        max = numpy.amax(edge)
+        average = numpy.mean(edge)
+        median = numpy.median(edge)
+        stddev = numpy.std(edge)
+        q75, q25 = numpy.percentile(edge, [75 ,25])
+        irqrange = &#39;%7.5g,%7.5g&#39;%(q25,q75)
+        outliers = [ [[],[]], [[],[]], [[],[]], [[],[]], [[],[]] ]
+        for qe in edge:
+            if abs(average - qe) &gt; 4 * stddev:
+                if qe &lt; average:
+                    outliers[4][0].append(qe)
+                else:
+                    outliers[4][1].append(qe)
+            elif abs(average - qe) &gt; 3 * stddev:
+                if qe &lt; average:
+                    outliers[3][0].append(qe)
+                else:
+                    outliers[3][1].append(qe)
+            elif abs(average - qe) &gt; 2 * stddev:
+                if qe &lt; average:
+                    outliers[2][0].append(qe)
+                else:
+                    outliers[2][1].append(qe)
+            elif abs(average - qe) &gt; 1 * stddev:
+                if qe &lt; average:
+                    outliers[1][0].append(qe)
+                else:
+                    outliers[1][1].append(qe)
+        len_outliers = []
+        for i in range(len(outliers)):
+            len_outliers.append(len(outliers[i][0]) + len(outliers[i][1]))
+        len_out = &#39;%8d|%8d|%8d&#39;%(len_outliers[2],len_outliers[3],len_outliers[4])
+
+        edge_line = &#39; %6s|%19s|%12.5g|%12.5g|%12.5g|%12.5g|%12.5g|%23s|%23s\n&#39;%(&#39;CHECK&#39;,&#39;EdgeLength&#39;,min,max,median,average,stddev,irqrange,len_out)
+        edge_line += &#39; %6s|%19s|%12.5g|%12.5g|%12.5g|%12.5g|%12.5g|%23s|%23s\n&#39;%(&#39;CHECK&#39;,&#39;NominalArea&#39;,getNominalA(min),getNominalA(max),getNominalA(median),getNominalA(average),stddev,irqrange,len_out)
+    else:
+        edge_line = &#39;&#39;
+
+
+    disp = OrderedDict()
+
+    good_mesh = 1
+    if polyDataVolMesh.GetNumberOfCells() &gt; 0:
+        res = &#39;&#39;
+        out.write (&#39;*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***\n&#39;)
+        out.write (&#39;*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***\n&#39;)
+        out.write (&#39;--- Mesh Quality Check : \n&#39;)
+        out.write (&#39;Number of cells: %i, Number of points: %i\n&#39; % (polyDataVolMesh.GetNumberOfCells(), polyDataVolMesh.GetNumberOfPoints()))
+        if (polyDataVolMesh.GetNumberOfCells() &gt; 6000000) or (polyDataVolMesh.GetNumberOfCells() &lt; 1000):
+            out.write (&#39; \n WARNING: the number of cells is suspicious. \n &#39;)
+        for meshType in meshTypes:
+            out.write (&#39;\n&#39;)
+            eval(&#39;quality.Set&#39; + meshType[0] + meshType[2][0][0])
+            quality.Update()
+            statQuality = quality.GetOutput().GetFieldData().GetArray(&#39;Mesh &#39; + meshType[1] + &#39; Quality&#39;)
+            n = int(statQuality.GetComponent(0, 4))
+
+            out.write (&#39; -------------------------------------------- \n&#39;)
+            out.write (&#39;  Mesh Element/Cell: %10d%12ss |\n&#39;%(n,meshType[1]))
+            out.write (&#39; ----------------------------------------------------------------------------------------------------------------------------------------------\n&#39;)
+            out.write (&#39; status|      measure      |    min     |    max     |   median   |   average  |   stddev   |  interquartile range  |    #outliers: 2, 3, 4    \n&#39;)
+            out.write (&#39; ------+-------------------+------------+------------+------------+------------+------------+-----------------------+--------+--------+--------\n&#39;)
+            if edge_line:
+                out.write(edge_line)
+            for measure in meshType[2]:
+                eval(&#39;quality.Set&#39; + meshType[0] + measure[0] + &#39;()&#39;)
+                quality.Update()
+                statQuality = quality.GetOutput().GetFieldData().GetArray(&#39;Mesh &#39; + meshType[1] + &#39; Quality&#39;)
+                n = int(statQuality.GetComponent(0, 4))
+                qArray = quality.GetOutput().GetCellData().GetArray(&#39;Quality&#39;)
+
+                q = []
+                min = 1E30
+                max = -min
+                for i in range(n):
+                    v = qArray.GetValue(i)
+                    if measure[1]==&#39;Volume&#39; or measure[1]==&#39;Area&#39;:
+                        v = abs(v)
+                    if measure[1]==&#39;Positive Jacobian&#39; and v&lt;0:
+                        pass
+                    elif measure[1]==&#39;Negative Jacobian&#39; and v&gt;0:
+                        pass
+                    else:
+                        q.append(v)
+
+                    if check(v) == False:
+                        # add i to the list of cells to be displayed in different color
+                        disp[i] = True
+
+                if len(q) == 0:
+                    continue
+                min = numpy.amin(q)
+                max = numpy.amax(q)
+                average = numpy.mean(q)
+                median = numpy.median(q)
+                stddev = numpy.std(q)
+
+                q75, q25 = numpy.percentile(q, [75 ,25])
+                irqrange = &#39;%7.5g,%7.5g&#39;%(q25,q75)
+                outliers = [ [[],[]], [[],[]], [[],[]], [[],[]], [[],[]] ]
+                for qe in q:
+                    if abs(average - qe) &gt; 4 * stddev:
+                        if qe &lt; average:
+                            outliers[4][0].append(qe)
+                        else:
+                            outliers[4][1].append(qe)
+                    elif abs(average - qe) &gt; 3 * stddev:
+                        if qe &lt; average:
+                            outliers[3][0].append(qe)
+                        else:
+                            outliers[3][1].append(qe)
+                    elif abs(average - qe) &gt; 2 * stddev:
+                        if qe &lt; average:
+                            outliers[2][0].append(qe)
+                        else:
+                            outliers[2][1].append(qe)
+                    elif abs(average - qe) &gt; 1 * stddev:
+                        if qe &lt; average:
+                            outliers[1][0].append(qe)
+                        else:
+                            outliers[1][1].append(qe)
+                len_outliers = []
+                for i in range(len(outliers)):
+                    len_outliers.append(len(outliers[i][0]) + len(outliers[i][1]))
+                len_out = &#39;%8d|%8d|%8d&#39;%(len_outliers[2],len_outliers[3],len_outliers[4])
+
+                status = &#39;  OK  &#39;
+
+                if len_outliers[3] &gt; n/10:
+                    status = &#39;fair?&#39;
+
+                if (measure[1]==&#39;Area&#39;) and (average &lt; 1E-6 or min &lt; 1E-6):
+                    status = &#39; !!!! &#39;
+
+                if (measure[1]==&#39;Volume&#39;) and (average &lt; 1E-6 or min &lt; 1E-7):
+                    status = &#39; !!!! &#39;
+
+                if measure[1].rfind(&#39;Jacobian&#39;) &gt; 0 and (abs(min) &lt; 2E-6 or abs(max) &lt; 2E-6):
+                    status = &#39; !!!! &#39;
+
+                if (max &gt; 500):
+                    status = &#39; !!!! &#39;
+
+                if status.find(&#39; OK &#39;) &lt; 0:
+                    good_mesh = -1
+
+                # VTK limitation trap
+                if meshType[0] == &#39;Triangle&#39; and only_check_surface == False:
+                    min = statQuality.GetComponent(0, 0)
+                    max = statQuality.GetComponent(0, 2)
+                    average = statQuality.GetComponent(0, 1)
+                    median = &#39;NoDataAccess&#39;
+                    stddev = math.sqrt(statQuality.GetComponent(0, 3))
+                    line = &#39; %6s|%19s|%12.5g|%12.5g|%12s|%12.5g|%12.5g|%23s|%23s\n&#39;%(status,measure[1],min,max,median,average,stddev,median,median)
+                else:
+                    line = &#39; %6s|%19s|%12.5g|%12.5g|%12.5g|%12.5g|%12.5g|%23s|%23s\n&#39;%(status,measure[1],min,max,median,average,stddev,irqrange,len_out)
+                out.write (line)
+            out.write (&#39;\n&#39;)
+
+        out.write (&#39;*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***\n&#39;)
+
+        if outputfilename:
+            file = open(outputfilename,&#39;w&#39;)
+            res.replace(&#39;\n&#39;,&#39;\r\n&#39;)
+            file.write(res)
+            file.close()
+    else:
+        raise RuntimeError(&#39;The mesh has no cells.&#39;)
+
+    if display_cells:
+        # display a 3D enviroment with those cells in different colors
+        dispWnd = MeshDisplay3D(title, os.path.dirname(outputfilename))
+        dispWnd.SetSurface(polyDataVolMesh, title)
+        dispWnd.HighlightCells(disp)
+        dispWnd.Execute()
+
+    return good_mesh
+
+
+if __name__ == &#34;__main__&#34;:
+        surface_check_only = False
+
+        fileName = sys.argv[1]
+        ## Load the given file, and pass the vtkPolyData object
+        fileType = fileName[-3:]
+        if fileType == &#39;&#39;:
+                raise RuntimeError(&#39;The file does not have an extension&#39;)
+        if fileType == &#39;stl&#39;:
+                reader = vtk.vtkSTLReader()
+                reader.MergingOn()
+                surface_check_only = True
+        elif fileType == &#39;vtk&#39;:
+                reader = vtk.vtkPolyDataReader()
+        elif fileType == &#39;vtp&#39;:
+                reader = vtk.vtkXMLPolyDataReader()
+        elif fileType == &#39;vtu&#39;:
+                reader = vtk.vtkXMLUnstructuredGridReader()
+        else:
+                raise RuntimeError(&#39;Unknown file type %s&#39; % fileType)
+        reader.SetFileName(fileName)
+        reader.Update()
+        polyData = reader.GetOutput()
+
+        outputfilename = os.path.splitext(sys.argv[1])[0]+&#39;_mesh_quality.txt&#39;
+
+        if MeshQualityMeasures(fileName, polyData, outputfilename, surface_check_only, True) &lt; 0:
+            print (&#39;NOT a good mesh! Be careful.&#39;)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="geometry_tools.scripts.meshquality.MeshQualityMeasures"><code class="name flex">
+<span>def <span class="ident">MeshQualityMeasures</span></span>(<span>title, polyDataVolMesh, outputfilename='', only_check_surface=False, display_cells=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def MeshQualityMeasures(title, polyDataVolMesh, outputfilename = &#39;&#39;, 
+                        only_check_surface = False, display_cells = False):
+    if polyDataVolMesh == None:
+        return -1
+
+    out = Logger(outputfilename)
+
+    quality = vtk.vtkMeshQuality()
+    vtk_version = vtk.vtkVersion().GetVTKMajorVersion()
+    if vtk_version &lt; 6:
+        quality.SetInput(polyDataVolMesh)
+    else:
+        quality.SetInputData(polyDataVolMesh)
+    quality.SaveCellQualityOn()
+#    quality.SetTriangleQualityMeasureToRadiusRatio()
+#    quality.Update()
+
+    # Here we define the various mesh types and labels for output.
+    meshTypes = [
+                 [&#39;Triangle&#39;, &#39;Triangle&#39;,
+                  [
+                   [&#39;QualityMeasureToArea&#39;, &#39;Area&#39;],
+                   [&#39;QualityMeasureToEdgeRatio&#39;, &#39;Edge Ratio&#39;],
+                   [&#39;QualityMeasureToAspectRatio&#39;, &#39;Aspect Ratio&#39;],
+                   [&#39;QualityMeasureToRadiusRatio&#39;, &#39;Radius Ratio&#39;],
+                   [&#39;QualityMeasureToAspectFrobenius&#39;, &#39;Frobenius Norm&#39;],
+                   [&#39;QualityMeasureToMinAngle&#39;, &#39;Min Angle&#39;]
+                   ]
+                  ],
+
+                 [&#39;Tet&#39;, &#39;Tetrahedron&#39;,
+                  [
+                   [&#39;QualityMeasureToVolume&#39;, &#39;Volume&#39;],
+                   [&#39;QualityMeasureToEdgeRatio&#39;, &#39;Edge Ratio&#39;],
+                   [&#39;QualityMeasureToAspectRatio&#39;, &#39;Aspect Ratio&#39;],
+                   [&#39;QualityMeasureToRadiusRatio&#39;, &#39;Radius Ratio&#39;],
+                   [&#39;QualityMeasureToAspectFrobenius&#39;, &#39;Frobenius Norm&#39;],
+                   [&#39;QualityMeasureToMinAngle&#39;, &#39;Min Dihedral Angle&#39;],
+                   [&#39;QualityMeasureToCollapseRatio&#39;, &#39;Collapse Ratio&#39;],
+                   [&#39;QualityMeasureToScaledJacobian&#39;, &#39;Scaled Jacobian&#39;],
+                   [&#39;QualityMeasureToJacobian&#39;, &#39;Positive Jacobian&#39;],
+                   [&#39;QualityMeasureToJacobian&#39;, &#39;Negative Jacobian&#39;]
+                   ]
+                 ]]
+
+    # remove volume check if surface triangles are to be checked
+    if only_check_surface:
+        del meshTypes[-1]
+
+        edge = []
+        for i in range(polyDataVolMesh.GetNumberOfCells()):
+            npts = polyDataVolMesh.GetCell(i).GetPoints().GetNumberOfPoints()
+            for k in range(npts):
+                point0 = [0.0, 0.0, 0.0]
+                point1 = [0.0, 0.0, 0.0]
+                polyDataVolMesh.GetCell(i).GetPoints().GetPoint(k, point0)
+                polyDataVolMesh.GetCell(i).GetPoints().GetPoint((k+1)%npts, point1)
+                d = math.sqrt(vtk.vtkMath.Distance2BetweenPoints(point0,point1))
+                edge.append(d)
+        min = numpy.amin(edge)
+        max = numpy.amax(edge)
+        average = numpy.mean(edge)
+        median = numpy.median(edge)
+        stddev = numpy.std(edge)
+        q75, q25 = numpy.percentile(edge, [75 ,25])
+        irqrange = &#39;%7.5g,%7.5g&#39;%(q25,q75)
+        outliers = [ [[],[]], [[],[]], [[],[]], [[],[]], [[],[]] ]
+        for qe in edge:
+            if abs(average - qe) &gt; 4 * stddev:
+                if qe &lt; average:
+                    outliers[4][0].append(qe)
+                else:
+                    outliers[4][1].append(qe)
+            elif abs(average - qe) &gt; 3 * stddev:
+                if qe &lt; average:
+                    outliers[3][0].append(qe)
+                else:
+                    outliers[3][1].append(qe)
+            elif abs(average - qe) &gt; 2 * stddev:
+                if qe &lt; average:
+                    outliers[2][0].append(qe)
+                else:
+                    outliers[2][1].append(qe)
+            elif abs(average - qe) &gt; 1 * stddev:
+                if qe &lt; average:
+                    outliers[1][0].append(qe)
+                else:
+                    outliers[1][1].append(qe)
+        len_outliers = []
+        for i in range(len(outliers)):
+            len_outliers.append(len(outliers[i][0]) + len(outliers[i][1]))
+        len_out = &#39;%8d|%8d|%8d&#39;%(len_outliers[2],len_outliers[3],len_outliers[4])
+
+        edge_line = &#39; %6s|%19s|%12.5g|%12.5g|%12.5g|%12.5g|%12.5g|%23s|%23s\n&#39;%(&#39;CHECK&#39;,&#39;EdgeLength&#39;,min,max,median,average,stddev,irqrange,len_out)
+        edge_line += &#39; %6s|%19s|%12.5g|%12.5g|%12.5g|%12.5g|%12.5g|%23s|%23s\n&#39;%(&#39;CHECK&#39;,&#39;NominalArea&#39;,getNominalA(min),getNominalA(max),getNominalA(median),getNominalA(average),stddev,irqrange,len_out)
+    else:
+        edge_line = &#39;&#39;
+
+
+    disp = OrderedDict()
+
+    good_mesh = 1
+    if polyDataVolMesh.GetNumberOfCells() &gt; 0:
+        res = &#39;&#39;
+        out.write (&#39;*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***\n&#39;)
+        out.write (&#39;*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***\n&#39;)
+        out.write (&#39;--- Mesh Quality Check : \n&#39;)
+        out.write (&#39;Number of cells: %i, Number of points: %i\n&#39; % (polyDataVolMesh.GetNumberOfCells(), polyDataVolMesh.GetNumberOfPoints()))
+        if (polyDataVolMesh.GetNumberOfCells() &gt; 6000000) or (polyDataVolMesh.GetNumberOfCells() &lt; 1000):
+            out.write (&#39; \n WARNING: the number of cells is suspicious. \n &#39;)
+        for meshType in meshTypes:
+            out.write (&#39;\n&#39;)
+            eval(&#39;quality.Set&#39; + meshType[0] + meshType[2][0][0])
+            quality.Update()
+            statQuality = quality.GetOutput().GetFieldData().GetArray(&#39;Mesh &#39; + meshType[1] + &#39; Quality&#39;)
+            n = int(statQuality.GetComponent(0, 4))
+
+            out.write (&#39; -------------------------------------------- \n&#39;)
+            out.write (&#39;  Mesh Element/Cell: %10d%12ss |\n&#39;%(n,meshType[1]))
+            out.write (&#39; ----------------------------------------------------------------------------------------------------------------------------------------------\n&#39;)
+            out.write (&#39; status|      measure      |    min     |    max     |   median   |   average  |   stddev   |  interquartile range  |    #outliers: 2, 3, 4    \n&#39;)
+            out.write (&#39; ------+-------------------+------------+------------+------------+------------+------------+-----------------------+--------+--------+--------\n&#39;)
+            if edge_line:
+                out.write(edge_line)
+            for measure in meshType[2]:
+                eval(&#39;quality.Set&#39; + meshType[0] + measure[0] + &#39;()&#39;)
+                quality.Update()
+                statQuality = quality.GetOutput().GetFieldData().GetArray(&#39;Mesh &#39; + meshType[1] + &#39; Quality&#39;)
+                n = int(statQuality.GetComponent(0, 4))
+                qArray = quality.GetOutput().GetCellData().GetArray(&#39;Quality&#39;)
+
+                q = []
+                min = 1E30
+                max = -min
+                for i in range(n):
+                    v = qArray.GetValue(i)
+                    if measure[1]==&#39;Volume&#39; or measure[1]==&#39;Area&#39;:
+                        v = abs(v)
+                    if measure[1]==&#39;Positive Jacobian&#39; and v&lt;0:
+                        pass
+                    elif measure[1]==&#39;Negative Jacobian&#39; and v&gt;0:
+                        pass
+                    else:
+                        q.append(v)
+
+                    if check(v) == False:
+                        # add i to the list of cells to be displayed in different color
+                        disp[i] = True
+
+                if len(q) == 0:
+                    continue
+                min = numpy.amin(q)
+                max = numpy.amax(q)
+                average = numpy.mean(q)
+                median = numpy.median(q)
+                stddev = numpy.std(q)
+
+                q75, q25 = numpy.percentile(q, [75 ,25])
+                irqrange = &#39;%7.5g,%7.5g&#39;%(q25,q75)
+                outliers = [ [[],[]], [[],[]], [[],[]], [[],[]], [[],[]] ]
+                for qe in q:
+                    if abs(average - qe) &gt; 4 * stddev:
+                        if qe &lt; average:
+                            outliers[4][0].append(qe)
+                        else:
+                            outliers[4][1].append(qe)
+                    elif abs(average - qe) &gt; 3 * stddev:
+                        if qe &lt; average:
+                            outliers[3][0].append(qe)
+                        else:
+                            outliers[3][1].append(qe)
+                    elif abs(average - qe) &gt; 2 * stddev:
+                        if qe &lt; average:
+                            outliers[2][0].append(qe)
+                        else:
+                            outliers[2][1].append(qe)
+                    elif abs(average - qe) &gt; 1 * stddev:
+                        if qe &lt; average:
+                            outliers[1][0].append(qe)
+                        else:
+                            outliers[1][1].append(qe)
+                len_outliers = []
+                for i in range(len(outliers)):
+                    len_outliers.append(len(outliers[i][0]) + len(outliers[i][1]))
+                len_out = &#39;%8d|%8d|%8d&#39;%(len_outliers[2],len_outliers[3],len_outliers[4])
+
+                status = &#39;  OK  &#39;
+
+                if len_outliers[3] &gt; n/10:
+                    status = &#39;fair?&#39;
+
+                if (measure[1]==&#39;Area&#39;) and (average &lt; 1E-6 or min &lt; 1E-6):
+                    status = &#39; !!!! &#39;
+
+                if (measure[1]==&#39;Volume&#39;) and (average &lt; 1E-6 or min &lt; 1E-7):
+                    status = &#39; !!!! &#39;
+
+                if measure[1].rfind(&#39;Jacobian&#39;) &gt; 0 and (abs(min) &lt; 2E-6 or abs(max) &lt; 2E-6):
+                    status = &#39; !!!! &#39;
+
+                if (max &gt; 500):
+                    status = &#39; !!!! &#39;
+
+                if status.find(&#39; OK &#39;) &lt; 0:
+                    good_mesh = -1
+
+                # VTK limitation trap
+                if meshType[0] == &#39;Triangle&#39; and only_check_surface == False:
+                    min = statQuality.GetComponent(0, 0)
+                    max = statQuality.GetComponent(0, 2)
+                    average = statQuality.GetComponent(0, 1)
+                    median = &#39;NoDataAccess&#39;
+                    stddev = math.sqrt(statQuality.GetComponent(0, 3))
+                    line = &#39; %6s|%19s|%12.5g|%12.5g|%12s|%12.5g|%12.5g|%23s|%23s\n&#39;%(status,measure[1],min,max,median,average,stddev,median,median)
+                else:
+                    line = &#39; %6s|%19s|%12.5g|%12.5g|%12.5g|%12.5g|%12.5g|%23s|%23s\n&#39;%(status,measure[1],min,max,median,average,stddev,irqrange,len_out)
+                out.write (line)
+            out.write (&#39;\n&#39;)
+
+        out.write (&#39;*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***\n&#39;)
+
+        if outputfilename:
+            file = open(outputfilename,&#39;w&#39;)
+            res.replace(&#39;\n&#39;,&#39;\r\n&#39;)
+            file.write(res)
+            file.close()
+    else:
+        raise RuntimeError(&#39;The mesh has no cells.&#39;)
+
+    if display_cells:
+        # display a 3D enviroment with those cells in different colors
+        dispWnd = MeshDisplay3D(title, os.path.dirname(outputfilename))
+        dispWnd.SetSurface(polyDataVolMesh, title)
+        dispWnd.HighlightCells(disp)
+        dispWnd.Execute()
+
+    return good_mesh</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.check"><code class="name flex">
+<span>def <span class="ident">check</span></span>(<span>value)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check(value):
+    if abs(value) &lt; 1E-5 or abs(value) &gt; 1E2:
+        return False
+    return True</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.getNominalA"><code class="name flex">
+<span>def <span class="ident">getNominalA</span></span>(<span>h)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getNominalA(h):
+    return 0.25 * (3**0.5) * h*h</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="geometry_tools.scripts.meshquality.Logger"><code class="flex name class">
+<span>class <span class="ident">Logger</span></span>
+<span>(</span><span>filename)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Logger(object):
+    def __init__(self, filename):
+        self.terminal = sys.stdout
+        if filename:
+            self.log = open(filename, &#39;w&#39;)
+        else:
+            self.log = None
+
+    def __del__(self):
+        if self.log:
+            self.log.close()
+    
+    def write(self, message):
+        self.terminal.write(message)
+        if self.log:
+            self.log.write(message)
+
+    def flush(self):
+        #this flush method is needed for python 3 compatibility.
+        #this handles the flush command by doing nothing.
+        #you might want to specify some extra behavior here.
+        pass</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="geometry_tools.scripts.meshquality.Logger.flush"><code class="name flex">
+<span>def <span class="ident">flush</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def flush(self):
+    #this flush method is needed for python 3 compatibility.
+    #this handles the flush command by doing nothing.
+    #you might want to specify some extra behavior here.
+    pass</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.Logger.write"><code class="name flex">
+<span>def <span class="ident">write</span></span>(<span>self, message)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def write(self, message):
+    self.terminal.write(message)
+    if self.log:
+        self.log.write(message)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D"><code class="flex name class">
+<span>class <span class="ident">MeshDisplay3D</span></span>
+<span>(</span><span>title, _dir)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MeshDisplay3D:
+    def __init__(self, title, _dir):
+        self.Data = None
+        self._Surface = None
+        self._CaseName = None
+        self._path = _dir
+        self._SeedIds = None
+        self._TargetSeedIds = vtk.vtkIdList()
+        self.PickedSeedIds = vtk.vtkIdList()
+        self.PickedSeeds = vtk.vtkPolyData()
+        self.vtkRenderer = None
+        self.KeyBindings = {}
+        self.Script = None
+        self.selectedpointindex = 0
+        self.SeedActors = []
+        self.TextActor = None
+        self.TextInputMode = 0
+        self.ExitAfterTextInputMode = True
+        self.ExitTextInputCallback = None
+        self.surfaceActor = None
+        self.surfaceOpacity = 1.0
+        self.selectedMapper = None
+        self.selectedActor = None
+        self.selectedCellsCount = 0
+
+    def HighlightCells(self, lstCells):
+        ids = vtk.vtkIdTypeArray()
+        ids.SetNumberOfComponents(1)
+        for id in lstCells:
+            ids.InsertNextValue(id)
+
+        selectionNode = vtk.vtkSelectionNode()
+        selectionNode.SetFieldType(vtk.vtkSelectionNode.CELL)
+        selectionNode.SetContentType(vtk.vtkSelectionNode.INDICES)
+        selectionNode.SetSelectionList(ids)
+
+        selection = vtk.vtkSelection()
+        selection.AddNode(selectionNode)
+
+        extractSelection = vtk.vtkExtractSelection()
+        if vtk.VTK_MAJOR_VERSION &lt;= 5:
+            extractSelection.SetInput(0, self.Data)
+            extractSelection.SetInput(1, selection)
+        else:
+            extractSelection.SetInputData(0, self.Data)
+            extractSelection.SetInputData(1, selection)
+        extractSelection.Update()
+
+        # In selection
+        selected = vtk.vtkUnstructuredGrid()
+        selected.ShallowCopy(extractSelection.GetOutput())
+
+        self.selectedMapper = vtk.vtkDataSetMapper()
+        if vtk.VTK_MAJOR_VERSION &lt;= 5:
+            self.selectedMapper.SetInputConnection(selected.GetProducerPort())
+        else:
+            self.selectedMapper.SetInputData(selected)
+
+        self.selectedActor = vtk.vtkActor()
+        self.selectedActor.SetMapper(self.selectedMapper)
+        self.selectedActor.GetProperty().EdgeVisibilityOn()
+        self.selectedActor.GetProperty().SetEdgeColor(1.0, 0.6, 0.0)
+        self.selectedActor.GetProperty().SetLineWidth(2)
+        #self.selectedActor.GetProperty().SetVertexColor(0.8, 0.48, 0.0)
+
+        self.glyph = vtk.vtkGlyph3D()
+        glyphSource = vtk.vtkArrowSource()
+        glyphSource.InvertOn()
+        self.glyph.SetSourceConnection(glyphSource.GetOutputPort())
+        self.glyph.SetInputData(selected)
+        #self.glyph.SetColorModeToColorByScalar()
+        #self.glyph.SetScaleModeToDataScalingOff() 
+        #self.glyph.SetVectorModeToUseVector()
+        self.glyph.SetScaleFactor(self._Surface.GetLength()*0.012)
+        self.glyph.Update()
+
+        self.gylphmapper = vtk.vtkPolyDataMapper()
+        self.gylphmapper.SetInputData(self.glyph.GetOutput())
+        
+        self.gylphactor = vtk.vtkActor()
+        self.gylphactor.SetMapper(self.gylphmapper)
+        self.gylphactor.VisibilityOff()
+        self.gylphactor.GetProperty().SetOpacity(0.15)
+        self.gylphactor.GetProperty().SetColor(0.8, 0.48, 0.0)
+
+        self.selectedCellsCount = len(lstCells)
+
+
+    def SetSurface(self, surface, casename):
+        self._Surface = surface
+        self._CaseName = casename
+        self.Data = self._Surface
+
+
+    def GetSurface(self):
+        return self._Surface
+
+    def GetTargetSeedIds(self):
+        return self._TargetSeedIds
+
+    def GetText(self):
+        if self.selectedCellsCount&gt;0:
+            if self.selectedCellsCount == 1:
+                text = &#39;Please rotate the model to observe a cell with difficulties.&#39;
+            else:
+                text = &#39;Please rotate the model to observe %d cells with difficulties.&#39;%(self.selectedCellsCount)
+        else:
+            text = &#39;The model looks fine. You may press \&#39;q\&#39; to quit.&#39;
+        return text
+
+    def ToggleHelpCallback(self, obj):
+        self.Text.SetVisibility(1-self.Text.GetVisibility())
+        self.TextActor.SetVisibility(1-self.TextActor.GetVisibility())
+        self.TextInputActor.SetVisibility(1-self.TextInputActor.GetVisibility())
+        self.RenderWindow.Render()
+
+    def ToggleSelectedCellsCallback(self, obj):
+        self.selectedActor.SetVisibility(1-self.selectedActor.GetVisibility())
+        self.RenderWindow.Render()
+
+    def ToggleGylphSelectedCellsCallback(self, obj):
+        self.gylphactor.SetVisibility(1-self.gylphactor.GetVisibility())
+        self.RenderWindow.Render()
+
+    def ToggleSurfaceCallback(self, obj):
+        self.surfaceActor.SetVisibility(1-self.surfaceActor.GetVisibility())
+        self.RenderWindow.Render()
+
+    def IncSurfaceOpacityCallback(self, obj):
+        self.surfaceOpacity += 0.1
+        if self.surfaceOpacity &gt; 1:
+            self.surfaceOpacity = 1
+        self.surfaceActor.GetProperty().SetOpacity(self.surfaceOpacity)
+        self.RenderWindow.Render()
+    def DecSurfaceOpacityCallback(self, obj):
+        self.surfaceOpacity -= 0.1
+        if self.surfaceOpacity &lt; 0:
+            self.surfaceOpacity = 0
+        self.surfaceActor.GetProperty().SetOpacity(self.surfaceOpacity)
+        self.RenderWindow.Render()
+
+    def SolidEdgeModeCallback(self, obj):
+        self.surfaceActor.GetProperty().SetRepresentationToSurface()
+        self.surfaceActor.GetProperty().EdgeVisibilityOn()#(1-self.surfaceActor.GetProperty().GetEdgeVisibility())
+        self.RenderWindow.Render()
+    def SolidModeCallback(self, obj):
+        self.surfaceActor.GetProperty().SetRepresentationToSurface()
+        self.surfaceActor.GetProperty().EdgeVisibilityOff()
+        self.RenderWindow.Render()
+    def WireframeModeCallback(self, obj):
+        self.surfaceActor.GetProperty().SetRepresentationToWireframe()
+        self.surfaceActor.GetProperty().EdgeVisibilityOff()
+        self.RenderWindow.Render()
+
+    def ScreenshotCallback(self, obj):
+        self.ShowAllText(False)
+        filePrefix = self._CaseName+&#39;-meshquality-screenshot&#39;
+        fileNumber = 0
+        fileName = &#34;%s-%d.png&#34; % (filePrefix,fileNumber)
+        existingFiles = os.listdir(os.path.dirname(self._CaseName))
+        while fileName in existingFiles:
+            fileNumber += 1
+            fileName = &#34;%s-%d.png&#34; % (filePrefix,fileNumber)
+        #fileName = self._path + fileName
+        print(&#39;Saving screenshot to &#39; + fileName)
+        windowToImage = vtk.vtkWindowToImageFilter()
+        windowToImage.SetInput(self.RenderWindow)
+        windowToImage.SetMagnification(4)
+        windowToImage.Update()
+        writer = vtk.vtkPNGWriter()
+        writer.SetInputConnection(windowToImage.GetOutputPort())
+        writer.SetFileName(fileName)
+        writer.Write()
+        self.ShowAllText()
+
+    def ShowAllText(self, on=True):
+        self.Text.SetVisibility(on)
+        self.TextInputActor.SetVisibility(on)
+        self.TextActor.SetVisibility(on)
+        self.RenderWindow.Render()
+
+    def QuitRendererCallback(self, obj):
+        #print(&#39;User quit request - 3D View terminated.&#39;)
+        self.CleanUp()
+        self.RenderWindowInteractor.ExitCallback()
+
+    def ResetCameraCallback(self, obj):
+        self.vtkRenderer.ResetCamera()
+        self.RenderWindow.Render()
+
+    def UpdateTextInput(self):
+        if self.TextInputQuery:
+            if self.CurrentTextInput or self.CurrentTextInput == &#39;&#39;:
+                self.TextInputActor.SetInput(self.TextInputQuery+self.CurrentTextInput+&#39;_&#39;)
+            else:
+                self.TextInputActor.SetInput(self.TextInputQuery)
+            self.vtkRenderer.AddActor(self.TextInputActor)
+        else:
+            self.vtkRenderer.RemoveActor(self.TextInputActor)
+        self.RenderWindow.Render()
+
+    def KeyPressCallback(self, obj, event):
+        key = self.RenderWindowInteractor.GetKeySym()
+        if key ==&#39;Escape&#39;:
+            if self.TextInputMode:
+                self.TextInputMode = 0
+            else:
+                self.TextInputMode = 1
+        if self.TextInputMode:
+            if key in [&#39;Return&#39;,&#39;Enter&#39;]:
+                self.ExitTextInputMode()
+                return
+            if key.startswith(&#39;KP_&#39;):
+                key = key[3:]
+            if key == &#39;space&#39;:
+                key = &#39; &#39;
+            elif key in [&#39;minus&#39;,&#39;Subtract&#39;]:
+                key = &#39;-&#39;
+            elif key in [&#39;period&#39;,&#39;Decimal&#39;]:
+                key = &#39;.&#39;
+            elif len(key) &gt; 1 and key not in [&#39;Backspace&#39;,&#39;BackSpace&#39;]:
+                key = None
+            if key in [&#39;Backspace&#39;,&#39;BackSpace&#39;]:
+                textInput = self.CurrentTextInput
+                if len(textInput) &gt; 0:
+                    self.CurrentTextInput = textInput[:-1]
+            elif key:
+                self.CurrentTextInput += key
+            self.UpdateTextInput()
+            return
+
+        if key in self.KeyBindings and self.KeyBindings[key][&#39;callback&#39;] != None:
+            self.KeyBindings[key][&#39;callback&#39;](obj)
+        else:
+            if key == &#39;plus&#39;:
+                key = &#39;+&#39;
+            if key == &#39;minus&#39;:
+                key = &#39;-&#39;
+            if key == &#39;equal&#39;:
+                key = &#39;=&#39;
+            if key in self.KeyBindings and self.KeyBindings[key][&#39;callback&#39;] != None:
+                self.KeyBindings[key][&#39;callback&#39;](obj)
+
+    def AddKeyBinding(self, key, text, callback=None, group=&#39;1&#39;):
+        self.KeyBindings[key] = {&#39;text&#39;: text, &#39;callback&#39;: callback, &#39;group&#39;: group}
+
+    def RemoveKeyBinding(self, key):
+        if key in self.KeyBindings:   
+            del self.KeyBindings[key]
+            
+    def InitializeSeeds(self):
+        self.PickedSeedIds.Initialize()
+        self.PickedSeeds.Initialize()
+        seedPoints = vtk.vtkPoints()
+        self.PickedSeeds.SetPoints(seedPoints)
+
+    def CleanUp(self):
+        self.vtkRenderer.RemoveActor(self.TextActor)
+        self.vtkRenderer.RemoveActor(self.TextInputActor)
+
+    def ShowHelpText(self):
+        groups = list(set([self.KeyBindings[el][&#39;group&#39;] for el in self.KeyBindings]))
+        #groups.sort(reverse=True)
+        textActorInputsList = []
+        for group in groups:
+            sortedKeys = [key for key in self.KeyBindings.keys() if self.KeyBindings[key][&#39;group&#39;] == group]
+            sortedKeys.sort()
+            textActorInputs = [&#39;[%s]: %s&#39; % (key, self.KeyBindings[key][&#39;text&#39;]) for key in sortedKeys]
+            textActorInputsList.append(&#39;\n&#39;.join(textActorInputs))
+        self.TextActor.SetInput(&#39;\n\n&#39;.join(textActorInputsList))
+        #self.RenderWindow.Render()
+
+    def ShowKnownTypeHelp(self):
+        self.ShowHelpText()
+        self.updateTitle() 
+
+
+    def updateTitle(self):
+        prefix = self._CaseName
+        self.RenderWindow.SetWindowName(prefix + &#34; - Mesh Inspection Tool :: BioMedical Simulations Lab&#34;)
+
+    def Execute(self):
+
+        if (self._Surface == None):
+            print(&#39;Error: No input Surface set.&#39;)
+            return
+
+        self._TargetSeedIds.Initialize()
+
+        if not self.vtkRenderer:
+            self.vtkRenderer = vtk.vtkRenderer()
+            self.vtkRenderer.SetBackground(0.15, 0.49, 0.37) #0.37, 0.49)
+            if self.selectedCellsCount &gt; 0:
+                self.vtkRenderer.SetBackground(0.15, 0.25, 0.27) #0.37, 0.49)
+            
+            self.RenderWindow = vtk.vtkRenderWindow()
+            self.updateTitle()
+            self.RenderWindow.AddRenderer(self.vtkRenderer)
+            self.RenderWindow.SetSize(800,600)
+            self.RenderWindow.SetPosition(10,10)
+            self.RenderWindow.SetPointSmoothing(1)
+            self.RenderWindow.SetLineSmoothing(1)
+            self.RenderWindow.SetPolygonSmoothing(0)
+            self.RenderWindowInteractor = vtk.vtkRenderWindowInteractor()
+            self.RenderWindow.SetInteractor(self.RenderWindowInteractor)
+            self.RenderWindowInteractor.SetInteractorStyle(vtk.vtkInteractorStyleTrackballCamera())
+            self.RenderWindowInteractor.GetInteractorStyle().KeyPressActivationOff()
+            self.RenderWindowInteractor.GetInteractorStyle().AddObserver(&#34;KeyPressEvent&#34;,self.KeyPressCallback)
+
+            self.AddKeyBinding(&#39;x&#39;,&#39;Take Screenshot&#39;,self.ScreenshotCallback,&#39;0&#39;)
+            self.AddKeyBinding(&#39;r&#39;,&#39;Reset Camera&#39;,self.ResetCameraCallback,&#39;0&#39;)
+            self.AddKeyBinding(&#39;w&#39;,&#39;Wireframe Mode&#39;,self.WireframeModeCallback,&#39;0&#39;)
+            self.AddKeyBinding(&#39;s&#39;,&#39;Solid Mode&#39;, self.SolidModeCallback,&#39;0&#39;)
+            self.AddKeyBinding(&#39;a&#39;,&#39;Solid+Edge Mode&#39;, self.SolidEdgeModeCallback,&#39;0&#39;)
+            self.AddKeyBinding(&#39;q&#39;,&#39;Quit/Ignore&#39;,self.QuitRendererCallback,&#39;0&#39;)
+            self.AddKeyBinding(&#39;c&#39;,&#39;Toggle Odd Cells&#39;,self.ToggleSelectedCellsCallback,&#39;0&#39;)
+            self.AddKeyBinding(&#39;g&#39;,&#39;Toggle Geometry&#39;,self.ToggleSurfaceCallback, &#39;0&#39;)
+            self.AddKeyBinding(&#39;m&#39;,&#39;Toggle Markers&#39;,self.ToggleGylphSelectedCellsCallback, &#39;0&#39;)
+            self.AddKeyBinding(&#39;h&#39;,&#39;Toggle Help&#39;,self.ToggleHelpCallback, &#39;0&#39;)
+            self.AddKeyBinding(&#39;+&#39;,&#39;Increase Opacity&#39;,self.IncSurfaceOpacityCallback, &#39;0&#39;)
+            self.AddKeyBinding(&#39;-&#39;,&#39;Decrease Opacity&#39;,self.DecSurfaceOpacityCallback, &#39;0&#39;)
+
+            self.TextActor = vtk.vtkTextActor()
+            self.TextActor.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
+            self.TextActor.GetPosition2Coordinate().SetCoordinateSystemToNormalizedViewport()
+            self.TextActor.SetPosition([0.005, 0.1])
+            self.TextActor.GetTextProperty().SetFontSize(15)
+            self.TextActor.GetTextProperty().SetFontFamilyToCourier()
+            self.TextActor.GetTextProperty().SetColor(0.6,0.6,0.6)
+
+            self.ShowHelpText()
+            self.vtkRenderer.AddActor(self.TextActor)
+
+            self.TextInputActor = vtk.vtkTextActor()
+            self.TextInputActor.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
+            self.TextInputActor.GetPosition2Coordinate().SetCoordinateSystemToNormalizedViewport()
+            self.TextInputActor.SetPosition([0.25, 0.1])
+
+            self.vtkRenderer.AddActor(self.TextInputActor)
+
+            self.ShowKnownTypeHelp()
+
+
+        # create a text actor
+        self.Text = vtk.vtkTextActor()
+        self.Text.SetInput(self.GetText())
+        txtprop=self.Text.GetTextProperty()
+        txtprop.SetFontFamilyToArial()
+        txtprop.SetFontSize(15)
+        #txtprop.SetColor(0.8,0.9,0.3)
+        txtprop.SetColor(0.9,0.9,0.9)
+        self.Text.SetDisplayPosition(20,10)
+        self.vtkRenderer.AddActor(self.Text)
+
+        #surfaceMapper = vtk.vtkPolyDataMapper()
+
+        #surfaceMapper.SetInputData(self._Surface)
+        #surfaceMapper.ScalarVisibilityOff()
+
+        surfaceMapper = vtk.vtkDataSetMapper()
+        if vtk.VTK_MAJOR_VERSION &lt;= 5:
+            surfaceMapper.SetInputConnection(self._Surface.GetProducerPort())
+        else:
+            surfaceMapper.SetInputData(self._Surface)
+
+
+        self.surfaceActor = vtk.vtkActor()
+        self.surfaceActor.SetMapper(surfaceMapper)
+        self.surfaceActor.GetProperty().SetOpacity(1.0)
+        self.surfaceActor.GetProperty().SetEdgeColor(0.0, 0.2, 0.6)
+
+        self.vtkRenderer.AddActor(self.surfaceActor)
+
+        if self.selectedActor:
+            self.vtkRenderer.AddActor(self.selectedActor)
+            self.vtkRenderer.AddActor(self.gylphactor)
+
+        self.InitializeSeeds()
+        
+        self.RenderWindowInteractor.Initialize()
+        self.RenderWindow.Render()
+
+        self.RenderWindowInteractor.Start()
+
+        #self.PickedSeedIds.GetNumberOfIds()
+
+        self._TargetSeedIds.DeepCopy(self.PickedSeedIds)
+
+        self.RenderWindowInteractor = None
+        self.RenderWindow = None
+        self.vtkRenderer = None </code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.AddKeyBinding"><code class="name flex">
+<span>def <span class="ident">AddKeyBinding</span></span>(<span>self, key, text, callback=None, group='1')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def AddKeyBinding(self, key, text, callback=None, group=&#39;1&#39;):
+    self.KeyBindings[key] = {&#39;text&#39;: text, &#39;callback&#39;: callback, &#39;group&#39;: group}</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.CleanUp"><code class="name flex">
+<span>def <span class="ident">CleanUp</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def CleanUp(self):
+    self.vtkRenderer.RemoveActor(self.TextActor)
+    self.vtkRenderer.RemoveActor(self.TextInputActor)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.DecSurfaceOpacityCallback"><code class="name flex">
+<span>def <span class="ident">DecSurfaceOpacityCallback</span></span>(<span>self, obj)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def DecSurfaceOpacityCallback(self, obj):
+    self.surfaceOpacity -= 0.1
+    if self.surfaceOpacity &lt; 0:
+        self.surfaceOpacity = 0
+    self.surfaceActor.GetProperty().SetOpacity(self.surfaceOpacity)
+    self.RenderWindow.Render()</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.Execute"><code class="name flex">
+<span>def <span class="ident">Execute</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def Execute(self):
+
+    if (self._Surface == None):
+        print(&#39;Error: No input Surface set.&#39;)
+        return
+
+    self._TargetSeedIds.Initialize()
+
+    if not self.vtkRenderer:
+        self.vtkRenderer = vtk.vtkRenderer()
+        self.vtkRenderer.SetBackground(0.15, 0.49, 0.37) #0.37, 0.49)
+        if self.selectedCellsCount &gt; 0:
+            self.vtkRenderer.SetBackground(0.15, 0.25, 0.27) #0.37, 0.49)
+        
+        self.RenderWindow = vtk.vtkRenderWindow()
+        self.updateTitle()
+        self.RenderWindow.AddRenderer(self.vtkRenderer)
+        self.RenderWindow.SetSize(800,600)
+        self.RenderWindow.SetPosition(10,10)
+        self.RenderWindow.SetPointSmoothing(1)
+        self.RenderWindow.SetLineSmoothing(1)
+        self.RenderWindow.SetPolygonSmoothing(0)
+        self.RenderWindowInteractor = vtk.vtkRenderWindowInteractor()
+        self.RenderWindow.SetInteractor(self.RenderWindowInteractor)
+        self.RenderWindowInteractor.SetInteractorStyle(vtk.vtkInteractorStyleTrackballCamera())
+        self.RenderWindowInteractor.GetInteractorStyle().KeyPressActivationOff()
+        self.RenderWindowInteractor.GetInteractorStyle().AddObserver(&#34;KeyPressEvent&#34;,self.KeyPressCallback)
+
+        self.AddKeyBinding(&#39;x&#39;,&#39;Take Screenshot&#39;,self.ScreenshotCallback,&#39;0&#39;)
+        self.AddKeyBinding(&#39;r&#39;,&#39;Reset Camera&#39;,self.ResetCameraCallback,&#39;0&#39;)
+        self.AddKeyBinding(&#39;w&#39;,&#39;Wireframe Mode&#39;,self.WireframeModeCallback,&#39;0&#39;)
+        self.AddKeyBinding(&#39;s&#39;,&#39;Solid Mode&#39;, self.SolidModeCallback,&#39;0&#39;)
+        self.AddKeyBinding(&#39;a&#39;,&#39;Solid+Edge Mode&#39;, self.SolidEdgeModeCallback,&#39;0&#39;)
+        self.AddKeyBinding(&#39;q&#39;,&#39;Quit/Ignore&#39;,self.QuitRendererCallback,&#39;0&#39;)
+        self.AddKeyBinding(&#39;c&#39;,&#39;Toggle Odd Cells&#39;,self.ToggleSelectedCellsCallback,&#39;0&#39;)
+        self.AddKeyBinding(&#39;g&#39;,&#39;Toggle Geometry&#39;,self.ToggleSurfaceCallback, &#39;0&#39;)
+        self.AddKeyBinding(&#39;m&#39;,&#39;Toggle Markers&#39;,self.ToggleGylphSelectedCellsCallback, &#39;0&#39;)
+        self.AddKeyBinding(&#39;h&#39;,&#39;Toggle Help&#39;,self.ToggleHelpCallback, &#39;0&#39;)
+        self.AddKeyBinding(&#39;+&#39;,&#39;Increase Opacity&#39;,self.IncSurfaceOpacityCallback, &#39;0&#39;)
+        self.AddKeyBinding(&#39;-&#39;,&#39;Decrease Opacity&#39;,self.DecSurfaceOpacityCallback, &#39;0&#39;)
+
+        self.TextActor = vtk.vtkTextActor()
+        self.TextActor.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
+        self.TextActor.GetPosition2Coordinate().SetCoordinateSystemToNormalizedViewport()
+        self.TextActor.SetPosition([0.005, 0.1])
+        self.TextActor.GetTextProperty().SetFontSize(15)
+        self.TextActor.GetTextProperty().SetFontFamilyToCourier()
+        self.TextActor.GetTextProperty().SetColor(0.6,0.6,0.6)
+
+        self.ShowHelpText()
+        self.vtkRenderer.AddActor(self.TextActor)
+
+        self.TextInputActor = vtk.vtkTextActor()
+        self.TextInputActor.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
+        self.TextInputActor.GetPosition2Coordinate().SetCoordinateSystemToNormalizedViewport()
+        self.TextInputActor.SetPosition([0.25, 0.1])
+
+        self.vtkRenderer.AddActor(self.TextInputActor)
+
+        self.ShowKnownTypeHelp()
+
+
+    # create a text actor
+    self.Text = vtk.vtkTextActor()
+    self.Text.SetInput(self.GetText())
+    txtprop=self.Text.GetTextProperty()
+    txtprop.SetFontFamilyToArial()
+    txtprop.SetFontSize(15)
+    #txtprop.SetColor(0.8,0.9,0.3)
+    txtprop.SetColor(0.9,0.9,0.9)
+    self.Text.SetDisplayPosition(20,10)
+    self.vtkRenderer.AddActor(self.Text)
+
+    #surfaceMapper = vtk.vtkPolyDataMapper()
+
+    #surfaceMapper.SetInputData(self._Surface)
+    #surfaceMapper.ScalarVisibilityOff()
+
+    surfaceMapper = vtk.vtkDataSetMapper()
+    if vtk.VTK_MAJOR_VERSION &lt;= 5:
+        surfaceMapper.SetInputConnection(self._Surface.GetProducerPort())
+    else:
+        surfaceMapper.SetInputData(self._Surface)
+
+
+    self.surfaceActor = vtk.vtkActor()
+    self.surfaceActor.SetMapper(surfaceMapper)
+    self.surfaceActor.GetProperty().SetOpacity(1.0)
+    self.surfaceActor.GetProperty().SetEdgeColor(0.0, 0.2, 0.6)
+
+    self.vtkRenderer.AddActor(self.surfaceActor)
+
+    if self.selectedActor:
+        self.vtkRenderer.AddActor(self.selectedActor)
+        self.vtkRenderer.AddActor(self.gylphactor)
+
+    self.InitializeSeeds()
+    
+    self.RenderWindowInteractor.Initialize()
+    self.RenderWindow.Render()
+
+    self.RenderWindowInteractor.Start()
+
+    #self.PickedSeedIds.GetNumberOfIds()
+
+    self._TargetSeedIds.DeepCopy(self.PickedSeedIds)
+
+    self.RenderWindowInteractor = None
+    self.RenderWindow = None
+    self.vtkRenderer = None </code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.GetSurface"><code class="name flex">
+<span>def <span class="ident">GetSurface</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetSurface(self):
+    return self._Surface</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.GetTargetSeedIds"><code class="name flex">
+<span>def <span class="ident">GetTargetSeedIds</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetTargetSeedIds(self):
+    return self._TargetSeedIds</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.GetText"><code class="name flex">
+<span>def <span class="ident">GetText</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def GetText(self):
+    if self.selectedCellsCount&gt;0:
+        if self.selectedCellsCount == 1:
+            text = &#39;Please rotate the model to observe a cell with difficulties.&#39;
+        else:
+            text = &#39;Please rotate the model to observe %d cells with difficulties.&#39;%(self.selectedCellsCount)
+    else:
+        text = &#39;The model looks fine. You may press \&#39;q\&#39; to quit.&#39;
+    return text</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.HighlightCells"><code class="name flex">
+<span>def <span class="ident">HighlightCells</span></span>(<span>self, lstCells)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def HighlightCells(self, lstCells):
+    ids = vtk.vtkIdTypeArray()
+    ids.SetNumberOfComponents(1)
+    for id in lstCells:
+        ids.InsertNextValue(id)
+
+    selectionNode = vtk.vtkSelectionNode()
+    selectionNode.SetFieldType(vtk.vtkSelectionNode.CELL)
+    selectionNode.SetContentType(vtk.vtkSelectionNode.INDICES)
+    selectionNode.SetSelectionList(ids)
+
+    selection = vtk.vtkSelection()
+    selection.AddNode(selectionNode)
+
+    extractSelection = vtk.vtkExtractSelection()
+    if vtk.VTK_MAJOR_VERSION &lt;= 5:
+        extractSelection.SetInput(0, self.Data)
+        extractSelection.SetInput(1, selection)
+    else:
+        extractSelection.SetInputData(0, self.Data)
+        extractSelection.SetInputData(1, selection)
+    extractSelection.Update()
+
+    # In selection
+    selected = vtk.vtkUnstructuredGrid()
+    selected.ShallowCopy(extractSelection.GetOutput())
+
+    self.selectedMapper = vtk.vtkDataSetMapper()
+    if vtk.VTK_MAJOR_VERSION &lt;= 5:
+        self.selectedMapper.SetInputConnection(selected.GetProducerPort())
+    else:
+        self.selectedMapper.SetInputData(selected)
+
+    self.selectedActor = vtk.vtkActor()
+    self.selectedActor.SetMapper(self.selectedMapper)
+    self.selectedActor.GetProperty().EdgeVisibilityOn()
+    self.selectedActor.GetProperty().SetEdgeColor(1.0, 0.6, 0.0)
+    self.selectedActor.GetProperty().SetLineWidth(2)
+    #self.selectedActor.GetProperty().SetVertexColor(0.8, 0.48, 0.0)
+
+    self.glyph = vtk.vtkGlyph3D()
+    glyphSource = vtk.vtkArrowSource()
+    glyphSource.InvertOn()
+    self.glyph.SetSourceConnection(glyphSource.GetOutputPort())
+    self.glyph.SetInputData(selected)
+    #self.glyph.SetColorModeToColorByScalar()
+    #self.glyph.SetScaleModeToDataScalingOff() 
+    #self.glyph.SetVectorModeToUseVector()
+    self.glyph.SetScaleFactor(self._Surface.GetLength()*0.012)
+    self.glyph.Update()
+
+    self.gylphmapper = vtk.vtkPolyDataMapper()
+    self.gylphmapper.SetInputData(self.glyph.GetOutput())
+    
+    self.gylphactor = vtk.vtkActor()
+    self.gylphactor.SetMapper(self.gylphmapper)
+    self.gylphactor.VisibilityOff()
+    self.gylphactor.GetProperty().SetOpacity(0.15)
+    self.gylphactor.GetProperty().SetColor(0.8, 0.48, 0.0)
+
+    self.selectedCellsCount = len(lstCells)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.IncSurfaceOpacityCallback"><code class="name flex">
+<span>def <span class="ident">IncSurfaceOpacityCallback</span></span>(<span>self, obj)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def IncSurfaceOpacityCallback(self, obj):
+    self.surfaceOpacity += 0.1
+    if self.surfaceOpacity &gt; 1:
+        self.surfaceOpacity = 1
+    self.surfaceActor.GetProperty().SetOpacity(self.surfaceOpacity)
+    self.RenderWindow.Render()</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.InitializeSeeds"><code class="name flex">
+<span>def <span class="ident">InitializeSeeds</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def InitializeSeeds(self):
+    self.PickedSeedIds.Initialize()
+    self.PickedSeeds.Initialize()
+    seedPoints = vtk.vtkPoints()
+    self.PickedSeeds.SetPoints(seedPoints)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.KeyPressCallback"><code class="name flex">
+<span>def <span class="ident">KeyPressCallback</span></span>(<span>self, obj, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def KeyPressCallback(self, obj, event):
+    key = self.RenderWindowInteractor.GetKeySym()
+    if key ==&#39;Escape&#39;:
+        if self.TextInputMode:
+            self.TextInputMode = 0
+        else:
+            self.TextInputMode = 1
+    if self.TextInputMode:
+        if key in [&#39;Return&#39;,&#39;Enter&#39;]:
+            self.ExitTextInputMode()
+            return
+        if key.startswith(&#39;KP_&#39;):
+            key = key[3:]
+        if key == &#39;space&#39;:
+            key = &#39; &#39;
+        elif key in [&#39;minus&#39;,&#39;Subtract&#39;]:
+            key = &#39;-&#39;
+        elif key in [&#39;period&#39;,&#39;Decimal&#39;]:
+            key = &#39;.&#39;
+        elif len(key) &gt; 1 and key not in [&#39;Backspace&#39;,&#39;BackSpace&#39;]:
+            key = None
+        if key in [&#39;Backspace&#39;,&#39;BackSpace&#39;]:
+            textInput = self.CurrentTextInput
+            if len(textInput) &gt; 0:
+                self.CurrentTextInput = textInput[:-1]
+        elif key:
+            self.CurrentTextInput += key
+        self.UpdateTextInput()
+        return
+
+    if key in self.KeyBindings and self.KeyBindings[key][&#39;callback&#39;] != None:
+        self.KeyBindings[key][&#39;callback&#39;](obj)
+    else:
+        if key == &#39;plus&#39;:
+            key = &#39;+&#39;
+        if key == &#39;minus&#39;:
+            key = &#39;-&#39;
+        if key == &#39;equal&#39;:
+            key = &#39;=&#39;
+        if key in self.KeyBindings and self.KeyBindings[key][&#39;callback&#39;] != None:
+            self.KeyBindings[key][&#39;callback&#39;](obj)</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.QuitRendererCallback"><code class="name flex">
+<span>def <span class="ident">QuitRendererCallback</span></span>(<span>self, obj)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def QuitRendererCallback(self, obj):
+    #print(&#39;User quit request - 3D View terminated.&#39;)
+    self.CleanUp()
+    self.RenderWindowInteractor.ExitCallback()</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.RemoveKeyBinding"><code class="name flex">
+<span>def <span class="ident">RemoveKeyBinding</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def RemoveKeyBinding(self, key):
+    if key in self.KeyBindings:   
+        del self.KeyBindings[key]</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.ResetCameraCallback"><code class="name flex">
+<span>def <span class="ident">ResetCameraCallback</span></span>(<span>self, obj)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ResetCameraCallback(self, obj):
+    self.vtkRenderer.ResetCamera()
+    self.RenderWindow.Render()</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.ScreenshotCallback"><code class="name flex">
+<span>def <span class="ident">ScreenshotCallback</span></span>(<span>self, obj)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ScreenshotCallback(self, obj):
+    self.ShowAllText(False)
+    filePrefix = self._CaseName+&#39;-meshquality-screenshot&#39;
+    fileNumber = 0
+    fileName = &#34;%s-%d.png&#34; % (filePrefix,fileNumber)
+    existingFiles = os.listdir(os.path.dirname(self._CaseName))
+    while fileName in existingFiles:
+        fileNumber += 1
+        fileName = &#34;%s-%d.png&#34; % (filePrefix,fileNumber)
+    #fileName = self._path + fileName
+    print(&#39;Saving screenshot to &#39; + fileName)
+    windowToImage = vtk.vtkWindowToImageFilter()
+    windowToImage.SetInput(self.RenderWindow)
+    windowToImage.SetMagnification(4)
+    windowToImage.Update()
+    writer = vtk.vtkPNGWriter()
+    writer.SetInputConnection(windowToImage.GetOutputPort())
+    writer.SetFileName(fileName)
+    writer.Write()
+    self.ShowAllText()</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.SetSurface"><code class="name flex">
+<span>def <span class="ident">SetSurface</span></span>(<span>self, surface, casename)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SetSurface(self, surface, casename):
+    self._Surface = surface
+    self._CaseName = casename
+    self.Data = self._Surface</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.ShowAllText"><code class="name flex">
+<span>def <span class="ident">ShowAllText</span></span>(<span>self, on=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ShowAllText(self, on=True):
+    self.Text.SetVisibility(on)
+    self.TextInputActor.SetVisibility(on)
+    self.TextActor.SetVisibility(on)
+    self.RenderWindow.Render()</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.ShowHelpText"><code class="name flex">
+<span>def <span class="ident">ShowHelpText</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ShowHelpText(self):
+    groups = list(set([self.KeyBindings[el][&#39;group&#39;] for el in self.KeyBindings]))
+    #groups.sort(reverse=True)
+    textActorInputsList = []
+    for group in groups:
+        sortedKeys = [key for key in self.KeyBindings.keys() if self.KeyBindings[key][&#39;group&#39;] == group]
+        sortedKeys.sort()
+        textActorInputs = [&#39;[%s]: %s&#39; % (key, self.KeyBindings[key][&#39;text&#39;]) for key in sortedKeys]
+        textActorInputsList.append(&#39;\n&#39;.join(textActorInputs))
+    self.TextActor.SetInput(&#39;\n\n&#39;.join(textActorInputsList))</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.ShowKnownTypeHelp"><code class="name flex">
+<span>def <span class="ident">ShowKnownTypeHelp</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ShowKnownTypeHelp(self):
+    self.ShowHelpText()
+    self.updateTitle() </code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.SolidEdgeModeCallback"><code class="name flex">
+<span>def <span class="ident">SolidEdgeModeCallback</span></span>(<span>self, obj)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SolidEdgeModeCallback(self, obj):
+    self.surfaceActor.GetProperty().SetRepresentationToSurface()
+    self.surfaceActor.GetProperty().EdgeVisibilityOn()#(1-self.surfaceActor.GetProperty().GetEdgeVisibility())
+    self.RenderWindow.Render()</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.SolidModeCallback"><code class="name flex">
+<span>def <span class="ident">SolidModeCallback</span></span>(<span>self, obj)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SolidModeCallback(self, obj):
+    self.surfaceActor.GetProperty().SetRepresentationToSurface()
+    self.surfaceActor.GetProperty().EdgeVisibilityOff()
+    self.RenderWindow.Render()</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.ToggleGylphSelectedCellsCallback"><code class="name flex">
+<span>def <span class="ident">ToggleGylphSelectedCellsCallback</span></span>(<span>self, obj)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ToggleGylphSelectedCellsCallback(self, obj):
+    self.gylphactor.SetVisibility(1-self.gylphactor.GetVisibility())
+    self.RenderWindow.Render()</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.ToggleHelpCallback"><code class="name flex">
+<span>def <span class="ident">ToggleHelpCallback</span></span>(<span>self, obj)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ToggleHelpCallback(self, obj):
+    self.Text.SetVisibility(1-self.Text.GetVisibility())
+    self.TextActor.SetVisibility(1-self.TextActor.GetVisibility())
+    self.TextInputActor.SetVisibility(1-self.TextInputActor.GetVisibility())
+    self.RenderWindow.Render()</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.ToggleSelectedCellsCallback"><code class="name flex">
+<span>def <span class="ident">ToggleSelectedCellsCallback</span></span>(<span>self, obj)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ToggleSelectedCellsCallback(self, obj):
+    self.selectedActor.SetVisibility(1-self.selectedActor.GetVisibility())
+    self.RenderWindow.Render()</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.ToggleSurfaceCallback"><code class="name flex">
+<span>def <span class="ident">ToggleSurfaceCallback</span></span>(<span>self, obj)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ToggleSurfaceCallback(self, obj):
+    self.surfaceActor.SetVisibility(1-self.surfaceActor.GetVisibility())
+    self.RenderWindow.Render()</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.UpdateTextInput"><code class="name flex">
+<span>def <span class="ident">UpdateTextInput</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def UpdateTextInput(self):
+    if self.TextInputQuery:
+        if self.CurrentTextInput or self.CurrentTextInput == &#39;&#39;:
+            self.TextInputActor.SetInput(self.TextInputQuery+self.CurrentTextInput+&#39;_&#39;)
+        else:
+            self.TextInputActor.SetInput(self.TextInputQuery)
+        self.vtkRenderer.AddActor(self.TextInputActor)
+    else:
+        self.vtkRenderer.RemoveActor(self.TextInputActor)
+    self.RenderWindow.Render()</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.WireframeModeCallback"><code class="name flex">
+<span>def <span class="ident">WireframeModeCallback</span></span>(<span>self, obj)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def WireframeModeCallback(self, obj):
+    self.surfaceActor.GetProperty().SetRepresentationToWireframe()
+    self.surfaceActor.GetProperty().EdgeVisibilityOff()
+    self.RenderWindow.Render()</code></pre>
+</details>
+</dd>
+<dt id="geometry_tools.scripts.meshquality.MeshDisplay3D.updateTitle"><code class="name flex">
+<span>def <span class="ident">updateTitle</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def updateTitle(self):
+    prefix = self._CaseName
+    self.RenderWindow.SetWindowName(prefix + &#34; - Mesh Inspection Tool :: BioMedical Simulations Lab&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="geometry_tools.scripts" href="index.html">geometry_tools.scripts</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="geometry_tools.scripts.meshquality.MeshQualityMeasures" href="#geometry_tools.scripts.meshquality.MeshQualityMeasures">MeshQualityMeasures</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.check" href="#geometry_tools.scripts.meshquality.check">check</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.getNominalA" href="#geometry_tools.scripts.meshquality.getNominalA">getNominalA</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="geometry_tools.scripts.meshquality.Logger" href="#geometry_tools.scripts.meshquality.Logger">Logger</a></code></h4>
+<ul class="">
+<li><code><a title="geometry_tools.scripts.meshquality.Logger.flush" href="#geometry_tools.scripts.meshquality.Logger.flush">flush</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.Logger.write" href="#geometry_tools.scripts.meshquality.Logger.write">write</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D" href="#geometry_tools.scripts.meshquality.MeshDisplay3D">MeshDisplay3D</a></code></h4>
+<ul class="">
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.AddKeyBinding" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.AddKeyBinding">AddKeyBinding</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.CleanUp" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.CleanUp">CleanUp</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.DecSurfaceOpacityCallback" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.DecSurfaceOpacityCallback">DecSurfaceOpacityCallback</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.Execute" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.Execute">Execute</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.GetSurface" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.GetSurface">GetSurface</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.GetTargetSeedIds" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.GetTargetSeedIds">GetTargetSeedIds</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.GetText" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.GetText">GetText</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.HighlightCells" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.HighlightCells">HighlightCells</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.IncSurfaceOpacityCallback" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.IncSurfaceOpacityCallback">IncSurfaceOpacityCallback</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.InitializeSeeds" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.InitializeSeeds">InitializeSeeds</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.KeyPressCallback" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.KeyPressCallback">KeyPressCallback</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.QuitRendererCallback" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.QuitRendererCallback">QuitRendererCallback</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.RemoveKeyBinding" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.RemoveKeyBinding">RemoveKeyBinding</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.ResetCameraCallback" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.ResetCameraCallback">ResetCameraCallback</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.ScreenshotCallback" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.ScreenshotCallback">ScreenshotCallback</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.SetSurface" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.SetSurface">SetSurface</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.ShowAllText" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.ShowAllText">ShowAllText</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.ShowHelpText" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.ShowHelpText">ShowHelpText</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.ShowKnownTypeHelp" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.ShowKnownTypeHelp">ShowKnownTypeHelp</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.SolidEdgeModeCallback" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.SolidEdgeModeCallback">SolidEdgeModeCallback</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.SolidModeCallback" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.SolidModeCallback">SolidModeCallback</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.ToggleGylphSelectedCellsCallback" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.ToggleGylphSelectedCellsCallback">ToggleGylphSelectedCellsCallback</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.ToggleHelpCallback" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.ToggleHelpCallback">ToggleHelpCallback</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.ToggleSelectedCellsCallback" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.ToggleSelectedCellsCallback">ToggleSelectedCellsCallback</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.ToggleSurfaceCallback" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.ToggleSurfaceCallback">ToggleSurfaceCallback</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.UpdateTextInput" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.UpdateTextInput">UpdateTextInput</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.WireframeModeCallback" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.WireframeModeCallback">WireframeModeCallback</a></code></li>
+<li><code><a title="geometry_tools.scripts.meshquality.MeshDisplay3D.updateTitle" href="#geometry_tools.scripts.meshquality.MeshDisplay3D.updateTitle">updateTitle</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

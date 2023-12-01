@@ -12,6 +12,8 @@ Moving forward, it would be nice to re-write this using `vtkvmtk` and `PyVista` 
 
 VMTK has a lot of out-of-date requirements, so `surface`, `meshing`, and `vmtk_wrapper` rely on VMTK, but `common` and `resample_surface` may have different requirements. 
 
+The `Scripts` directory contains a number of useful scripts and information on how to call them.
+
 Requirements:
 - vtk
 - numpy
@@ -23,6 +25,7 @@ Requirements:
 - networkx
 - matplotlib
 - TubeClipper (https://github.com/Biomedical-Simulation-Lab/tubeclipper)
+- pygeodesic
 
 # Environment
 First, conda env as here: http://www.vmtk.org/download/
@@ -36,3 +39,30 @@ When installing on workstation (ubuntu), also had to `conda install llvm=3.3` an
 
 # Meshing
 For an example of using this for meshing, see the `meshing_example.sh` file in `scripts`.
+
+# To install with VMTK 1.5 on ubuntu 
+(WARNING: There are issues with the rendering)
+
+1) clean up tarballs and unused packages
+`conda clean -a`
+
+2) create conda environment for vmtk=1.5.0 (NOTE: IT IS VERY IMPORTANT THAT THE PACKAGES ARE INSTALLED IN THE ORDER 1) ITK, 2) VTK, 3) VMTK otherwise the viewers might not work!!)
+`conda create -n vmtk15 -c conda-forge python=3.7 itk vtk`  
+`conda activate vmtk15`
+`conda install -c conda-forge vmtk`
+
+3) install some packages
+`conda install -c conda-forge scipy ipython pyvista=0.34.0 networkx matplotlib`
+`pip install pygeodesic`
+
+4) install tubeclipper
+`cd /path/to/tubeclipper`
+`pip install -e .`
+
+5) install geometry_tools
+`cd /path/to/geometry_tools/`
+`pip install -e .`
+
+# Warning
+There are newer versions of pyvista that have more functionality. Do not be tempted! This will have to be updated at some point in the near future.
+

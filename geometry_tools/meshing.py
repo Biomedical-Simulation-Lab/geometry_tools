@@ -20,7 +20,7 @@ class Mesher(Surfer):
         centerlines_branched : PolyData centerlines of surf with branch IDs
     """
 
-    def __init__(self, surf=None, mesh=None, inlet_points=None, outlet_points=None, aneurysm_points=None):
+    def __init__(self, surf=None, mesh=None, inlet_points=None, outlet_points=None, aneurysm_points=None, include_aneurysms=False):
         """ Init the mesher instance.
 
         Either surf or mesh must be given. If mesh, surf will be extracted 
@@ -30,15 +30,16 @@ class Mesher(Surfer):
         super().__init__(surf=surf, 
             inlet_points=inlet_points, 
             outlet_points=outlet_points, 
-            aneurysm_points=aneurysm_points)
+            aneurysm_points=aneurysm_points,
+            include_aneurysms=include_aneurysms)
 
         if (self.mesh is not None) and (self.surf is None):
             # Extract surface using entity ids
-            surf_mask = self.mesh.cell_arrays['CellEntityIds'] == 1
+            surf_mask = self.mesh.cell_data['CellEntityIds'] == 1
             surf = self.mesh.extract_cells(surf_mask)
-            surf_pt_ids = surf.point_arrays['vtkOriginalPointIds']
+            surf_pt_ids = surf.point_data['vtkOriginalPointIds']
             surf = pv.PolyData(surf.points, surf.cells)
-            surf.point_arrays['vtkOriginalPointIds'] = surf_pt_ids
+            surf.point_data['vtkOriginalPointIds'] = surf_pt_ids
             self.surf = surf.compute_normals()
 
     def set_inlets_outlets(self):
@@ -72,9 +73,9 @@ class Mesher(Surfer):
             outlet_entity_ids : list of outlet entity ids
 
         """
-        entity_ids = np.unique(self.mesh.cell_arrays['CellEntityIds'])
+        entity_ids = np.unique(self.mesh.cell_data['CellEntityIds'])
         valid_entity_ids = sorted(set(entity_ids) - set([0, 1]))
-        entity_masks = [self.mesh.cell_arrays['CellEntityIds'] == i for i in valid_entity_ids]
+        entity_masks = [self.mesh.cell_data['CellEntityIds'] == i for i in valid_entity_ids]
         caps = [self.mesh.extract_cells(em) for em in entity_masks]
         cap_centers = [c.points.mean(axis=0) for c in caps]
 
@@ -99,12 +100,12 @@ class Mesher(Surfer):
             tree = KDTree(c_branch.points)
             ii = tree.query(cap_centers)[1]
 
-            group_ids = [c_branch.point_arrays['GroupIds'][i] for i in ii]
+            group_ids = [c_branch.point_data['GroupIds'][i] for i in ii]
 
             self.inlet_group_ids = [group_ids[x] for x in inlet_temp_ids]
             self.outlet_group_ids = [group_ids[x] for x in outlet_temp_ids]
             
-    def surface_preparation(self, neck_points=None, min_edge_size=0.15, max_edge_size=0.4, sac_size=0.15, misr_min=0.5, misr_max=2.5):
+    def surface_preparation(self, proj_dir, multi_inlets, ref, ND, fix_centerline, neck_points=None, min_edge_size=0.1, max_edge_size=0.4, sac_size=0.15, misr_min=0.1, misr_max=2.5):
         """ Refine surface, add flow extensions. 
 
         Remeshes surface, clips endpoints normal to centerlines,
@@ -116,21 +117,59 @@ class Mesher(Surfer):
         # array "Mask" though.
         surf_og = pv.PolyData()
         surf_og.copy_structure(self.surf)
-        surf_og.point_arrays['Mask'] = self.surf.point_arrays['Mask']
-        # surf_og.point_arrays['GroupIds'] = self.surf.point_arrays['GroupIds']
+
+        if neck_points is not None: 
+            surf_og.point_data['Mask'] = self.surf.point_data['Mask']
+        elif (ND == 'nd') and (ref == 'refine'):
+            surf_og.point_data['RefinementPoints'] = self.surf.point_data['RefinementPoints']
+            surf_og.point_data['Enlarge_Cells'] = self.surf.point_data['Enlarge_Cells']
+        elif ND == 'nd':
+            surf_og.point_data['Enlarge_Cells'] = self.surf.point_data['Enlarge_Cells']
+        elif ref == 'refine':
+            surf_og.point_data['RefinementPoints'] = self.surf.point_data['RefinementPoints']
+
+        # surf_og.point_data['GroupIds'] = self.surf.point_data['GroupIds']
 
         surf = pv.PolyData(self.surf.points, self.surf.faces)
-        surf.point_arrays['Mask'] = surf_og.point_arrays['Mask'].copy()
+        if neck_points is not None: 
+            surf.point_data['Mask'] = surf_og.point_data['Mask'].copy()
+        elif (ref == 'refine') and (ND == 'nd'):
+            surf.point_data['RefinementPoints'] = surf_og.point_data['RefinementPoints']
+            surf.point_data['Enlarge_Cells'] = surf_og.point_data['Enlarge_Cells']        
+        elif ND == 'nd':
+            surf.point_data['Enlarge_Cells'] = surf_og.point_data['Enlarge_Cells']
+        elif ref == 'refine':
+            surf.point_data['RefinementPoints'] = surf_og.point_data['RefinementPoints']
+        surf = surf.clean()
+        
+        # Use centerlines without aneurysm
+        centerlines1 = self.centerlines
+        centerlines1.save(proj_dir / ('network_centerlines0.vtp'))
+        
+        surf, centerlines1 = vmtk.distance_to_centerlines(surf, centerlines1)
         surf = surf.clean()
 
-        # Use centerlines without aneurysm
-        centerlines = self.centerlines
+        #AH's implementation of Dan's solution to the off-centre centrelines. There is no use for this atm
+        if (fix_centerline == 'fix'):
+            surf.point_data['centerline_map']=np.array(surf.n_points)
+            surf.point_data['misr']=np.array(surf.n_points)
+            tree = KDTree(centerlines1.points)
+            pt, idx_c = tree.query(surf.points)
+            #this assigns the closest centerline point id to each point on the surf
+            surf.point_data['centerline_map']=idx_c 
+            #this assigns the misr associated with the centerline to each point
+            surf.point_data['misr']=centerlines1.point_data['MaximumInscribedSphereRadius'][idx_c] 
+            #fix around the ends
+            _, idx_d = tree.query(surf.points[surf.point_data['misr']==0], k=10)
+            max_neigh_misr = np.amax(centerlines1.point_data['MaximumInscribedSphereRadius'][idx_d], axis=1)
+            surf.point_data['misr'][surf.point_data['misr']==0]=max_neigh_misr
 
-        surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
+            
         # surf = cc.create_edge_size_array(surf, max_size=max_size, min_size=min_size, sac_size=sac_size, misr_min=misr_min, misr_max=misr_max)
-        surf = cc.create_edge_size_array(surf, min_edge_size=min_edge_size, max_edge_size=max_edge_size, sac_size=sac_size, 
-            misr_min=misr_min, misr_max=misr_max, name='Size',)
+        surf = cc.create_edge_size_array(surf, fix_centerline, min_edge_size=min_edge_size, max_edge_size=max_edge_size, sac_size=sac_size, 
+            misr_min=misr_min, misr_max=misr_max, name='Size', ref_edge_ratio=0.5)
         surf = vmtk.surface_remeshing(surf, element_size_mode='edgelengtharray', edgearray='Size')
+        #print(surf.point_data)
         
         # DM 22 02 22
         # NOTE
@@ -141,13 +180,18 @@ class Mesher(Surfer):
         # if smooth:
         #     surf = cc.vtk_taubin_smooth(surf, pass_band=0.05, iterations=100)
 
-        surf, centerlines = vmtk.flow_extensions(surf, centerlines)
+        #moved the flow extensions to surface_prep!!
         surf = surf.clean()
 
         self.surf = surf
         self.update_inlets_outlets()
-        self.generate_centerlines(include_aneurysms=False)
-        centerlines = self.centerlines
+        if multi_inlets == 'multi':    
+            #self.generate_centerlines_multi(proj_dir)
+            centerlines1 = self.centerlines
+            #centerlines1.save(proj_dir / ('network_centerlines.vtp'))
+        else:
+            self.generate_centerlines(include_aneurysms=False)
+            centerlines1 = self.centerlines
 
         if neck_points is not None:
             s = cc.SelectGeodesic(surf, scalars='Mask')
@@ -155,38 +199,67 @@ class Mesher(Surfer):
             s.use_stored_points(neck_points)
             surf = s.mesh
         else:
-            surf = surf.interpolate(surf_og, n_points=1) #radius=0.5, strategy='null_value', null_value=0)
+            surf = surf.interpolate(surf_og, n_points=1, pass_point_data=True) #radius=0.5, strategy='null_value', null_value=0)
+        #surf.save(proj_dir/'after_interp0.vtp')
+        
+        #print(surf.point_data)
+        surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines1)
+        surf = surf.clean()
 
-        surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
-        surf = cc.create_edge_size_array(surf, min_edge_size=min_edge_size, max_edge_size=max_edge_size, sac_size=sac_size, 
-            misr_min=misr_min, misr_max=misr_max, name='Size',)
+        if (fix_centerline == 'fix') or (fix_centerline == 'network_fix'):
+            surf.point_data['centerline_map']=np.array(surf.n_points)
+            surf.point_data['misr']=np.array(surf.n_points)
+            tree = KDTree(centerlines1.points)
+            pt, idx_c = tree.query(surf.points)
+            #this assigns the closest centerline point id to each point on the surf
+            surf.point_data['centerline_map']=idx_c 
+            #this assigns the misr associated with the centerline to each point
+            surf.point_data['misr']=centerlines1.point_data['MaximumInscribedSphereRadius'][idx_c] 
+            #fix around the ends
+            _, idx_d = tree.query(surf.points[surf.point_data['misr']==0], k=10)
+            max_neigh_misr = np.amax(centerlines1.point_data['MaximumInscribedSphereRadius'][idx_d], axis=1)
+            surf.point_data['misr'][surf.point_data['misr']==0]=max_neigh_misr
+
+        surf = cc.create_edge_size_array(surf, fix_centerline, min_edge_size=min_edge_size, max_edge_size=max_edge_size, sac_size=sac_size, 
+            misr_min=misr_min, misr_max=misr_max, name='Size', ref_edge_ratio=0.5)
             
         surf, _ = cc.smooth_mesh_data_local(surf, 'Size', np.mean, 
-            iterations=2, 
+            iterations=5, 
             )
-        
+
         surf_rm = vmtk.surface_remeshing(surf, element_size_mode='edgelengtharray', edgearray='Size')
 
         surf_rm = surf_rm.clean()
         surf_rm = surf_rm.triangulate()
-
+        surf_rm = surf_rm.clean()
         # surf_rm = surf_rm.interpolate(surf_og, radius=0.5)
         # surf_rm = surf_rm.interpolate(surf, radius=0.5)
 
         if neck_points is not None:
             s = cc.SelectGeodesic(surf_rm, scalars='Mask')
             s.use_stored_points(neck_points)
-            surf_rm = s.mesh
+            surf_rm = s.mesh 
+        #Interpolation here seems to add little artifacts to the mesh where the is Size=0
+        #in the point array. Still needed for the refinement points and mask points. 
+        #Must re-calculate the size array for when the meshgenerator needs it, though...
         else:
-            surf_rm = surf_rm.interpolate(surf_og, n_points=1) #radius=0.5, strategy='null_value', null_value=0)
+            surf_rm = surf_rm.interpolate(surf_og, n_points=1, pass_point_data=True) #radius=0.5, strategy='null_value', null_value=0)
+            surf_rm = surf_rm.clean()
+        #surf_rm.save(proj_dir/'after_interp1.vtp')
+        surf_rm = surf_rm.interpolate(surf, radius=0.7, pass_point_data=True)
+        #surf_rm.save(proj_dir/'after_interp2.vtp')    
+        surf_rm = cc.create_edge_size_array(surf_rm, fix_centerline, min_edge_size=min_edge_size, max_edge_size=max_edge_size, sac_size=sac_size, 
+            misr_min=misr_min, misr_max=misr_max, name='Size', ref_edge_ratio=0.5)
+            
+        surf_rm, _ = cc.smooth_mesh_data_local(surf_rm, 'Size', np.mean, 
+            iterations=5, 
+            )
 
-        surf_rm = surf_rm.interpolate(surf, radius=0.5)
-
+        surf_rm = surf_rm.clean()
         # print('*'*50)
-        # print(surf.point_arrays)
+        # print(surf.point_data)
         # print('*'*50)
-        # print(surf_og.point_arrays)
-
+        # print(surf_og.point_data)
         self.surf = surf_rm 
         self.centerlines = centerlines
 
@@ -194,6 +267,7 @@ class Mesher(Surfer):
         """ Interactively choose refinement region.
 
         See docs of geometry_tools.common.SacSelectTool for more info.
+        This is not used!!
         """
         select = cc.SacSelectTool(self.surf)
         select.select()
@@ -203,10 +277,10 @@ class Mesher(Surfer):
         """ Automatically mark refinement region based on GroupIds.
         To mark manually, use select_refinement_regions.
         """
-        self.surf.point_arrays['Mask'] = np.zeros(self.surf.n_points)
+        self.surf.point_data['Mask'] = np.zeros(self.surf.n_points)
         for an_id in self.aneurysm_group_ids:
-            mask = self.surf.point_arrays['GroupIds'] == an_id
-            self.surf.point_arrays['Mask'][mask] = 1
+            mask = self.surf.point_data['GroupIds'] == an_id
+            self.surf.point_data['Mask'][mask] = 1
 
     def refine_picked_regions(self):
         """ Update point array "Size" of surf using chosen refinement regions.
@@ -216,8 +290,8 @@ class Mesher(Surfer):
 
         surf, centerlines = vmtk.distance_to_centerlines(surf, centerlines)
         surf = cc.create_edge_size_array(surf, max_size=0.4, min_size=0.18,)
-        surf.point_arrays['Size'][surf.point_arrays['Mask'] > 0.99] = 0.18
-        # surf.point_arrays['Size'] = cc.smooth_mesh_data(surf.point_arrays['Size'], surf.points, 1.0, func=np.mean)
+        surf.point_data['Size'][surf.point_data['Mask'] > 0.99] = 0.18
+        # surf.point_data['Size'] = cc.smooth_mesh_data(surf.point_data['Size'], surf.points, 1.0, func=np.mean)
         surf = vmtk.surface_array_smoothing(surf, array_name='Size', iterations=5)
         surf.set_active_scalars('Mask')
         
@@ -254,22 +328,25 @@ class Mesher(Surfer):
         new_centerlines = pv.wrap(centerlinesBranches)
 
         for b in betas.keys():
-            mask = new_centerlines.cell_arrays['GroupIds'] == b 
+            mask = new_centerlines.cell_data['GroupIds'] == b 
             branch_segments = new_centerlines.extract_cells(mask)
             branch = branch_segments.split_bodies()[0]
-            radius = branch.point_arrays['MaximumInscribedSphereRadius']
+            radius = branch.point_data['MaximumInscribedSphereRadius']
 
     def generate_flow_rates(self):
         """ Get flow rates based on Christophe method.
 
         Gives equivalent values as legacy call, just rewritten.
         The centerlines should be passed before calling centerline branch ids.
-
+        NOTE: does not work for multiple inlets!!
         """ 
         self.get_group_adjacency()
-
-        nodes = [x for x in self.G_no_aneurysm.nodes] 
-        print(nodes)
+        if self.include_aneurysms==True:
+            nodes = [x for x in self.G_no_aneurysm.nodes] 
+            print(nodes)
+        else:
+            nodes = [x for x in self.G.nodes] 
+            print(nodes)
 
         centerlines_branched = vmtk.centerline_branches_ids(self.centerlines)
         self.centerlines_branched = centerlines_branched
@@ -304,13 +381,13 @@ class Mesher(Surfer):
         out_flow_div_values = [outlet_flow_divisions[x] for x in out_flow_keys]
 
         # print('*****dan*******'*5)
-        # print(out_flow_div_values)
+        #print(out_flow_div_values)
         # print('*****dan*******'*5)
 
         self.outlet_flow_divisions = dict(zip(new_out_flow_keys, out_flow_div_values))
 
-    def generate_volume_mesh(self):
-        mesh = vmtk.volume_meshing(self.surf)
+    def generate_volume_mesh(self, SkipRemeshing=0):
+        mesh = vmtk.volume_meshing(self.surf, SkipRemeshing=SkipRemeshing)
         self.mesh = mesh
 
 
@@ -328,44 +405,49 @@ class Mesher(Surfer):
 
         NOTE unexpected behaviour observed 2022-02-28:
         Is the wall being appended to the mesh?
+        NOTE I don't observe this behaviour, cellentityid=0 is all tetrahedrons for me. 
+        I will comment this out - AH
         """
         case_name = outfile.stem
 
         # Quads only
-        mesh_quad = vmtk.assert_all_quads(self.mesh)
+        #mesh_quad = vmtk.assert_all_quads(self.mesh)
+        mesh_volume = self.mesh.cell_data['CellEntityIds'] == 0
+        mesh_quad = self.mesh.extract_cells(mesh_volume)
 
         # Get surf
-        surf_mask = self.mesh.cell_arrays['CellEntityIds'] == 1
+        surf_mask = self.mesh.cell_data['CellEntityIds'] == 1
         surf = self.mesh.extract_cells(surf_mask)
-        surf_pt_ids = surf.point_arrays['vtkOriginalPointIds']
+        surf_pt_ids = surf.point_data['vtkOriginalPointIds']
         surf = pv.PolyData(surf.points, surf.cells)
-        surf.point_arrays['vtkOriginalPointIds'] = surf_pt_ids
+        surf.point_data['vtkOriginalPointIds'] = surf_pt_ids
         surf = surf.compute_normals()
 
         # Wall points
         wall_coordinates = surf.points 
-        wall_pointIds = surf.point_arrays['vtkOriginalPointIds']
+        wall_pointIds = surf.point_data['vtkOriginalPointIds']
         wall_topology = surf.faces.reshape(-1,4)[:,1:]
         wall_cellIds = wall_pointIds[wall_topology]
-        wall_normals = surf.point_arrays['Normals']
+        wall_normals = surf.point_data['Normals']
         
         # Extract caps        
-        entity_ids = np.unique(self.mesh.cell_arrays['CellEntityIds'])
+        entity_ids = np.unique(self.mesh.cell_data['CellEntityIds'])
         valid_entity_ids = sorted(set(entity_ids) - set([0, 1]))
-        entity_masks = [self.mesh.cell_arrays['CellEntityIds'] == i for i in valid_entity_ids]
+        entity_masks = [self.mesh.cell_data['CellEntityIds'] == i for i in valid_entity_ids]
         caps = [self.mesh.extract_cells(em) for em in entity_masks]
 
         # Make sure points are duplicate
+        '''
         tree = KDTree(mesh_quad.points)
         inds = [tree.query(c.points, k=1)[1] == 0 for c in caps]
         dists = np.all([np.all(tree.query(c.points, k=1)[0] == 0) for c in caps])
         assert dists, 'Cap points are not in quad mesh'
-
+        '''
         # Get relevant cap quantities
         caps_coordinates = [c.points for c in caps]
-        caps_pointIds = [c.point_arrays['vtkOriginalPointIds'] for c in caps]
+        caps_pointIds = [c.point_data['vtkOriginalPointIds'] for c in caps]
         caps_topology = [c.cells.reshape(-1,4)[:,1:] for c in caps]
-        caps_cellIds = [c.point_arrays['vtkOriginalPointIds'][c.cells.reshape(-1,4)[:,1:]] for c in caps]
+        caps_cellIds = [c.point_data['vtkOriginalPointIds'][c.cells.reshape(-1,4)[:,1:]] for c in caps]
 
         # Now create dataset
         f = h5py.File(outfile, "w")
@@ -431,37 +513,51 @@ class Mesher(Surfer):
 
         f.close()
 
-    def generate_info_file(self, outfile, inlet_vel=0.27, waveform='FC_MCA_10'):
+    def generate_info_file(self, outfile, fcoeffsfile, multi_inlets, inlet_vel, inlet_flowrates, waveform='FC_MCA_10'):
         """ Generate lab-specific info file.
 
         Formats a bunch of values into strings, including 
         area, radius, flow divisions, etc of inlet/outlet
+
+        Outflow divisions for PT are based on a Di^2/sum(Di^2) approximation
         """
+
+        #Print FC_VENOUS file
+        if waveform == 'FC_VENOUS':
+            fcoeffsfile = open(fcoeffsfile, "w")
+            fcoeffsfile.write("# Qavg_mls= 6.7 period_ms= 915\n")
+            fcoeffsfile.write('1 0\n-0.146846 0.079431\n-0.129927 0.015974')
+            fcoeffsfile.close()
         # # Get branch center, normal, rad, area
         center_points = vmtk.branch_center_normal_rad_area(self.mesh)
-     
+        
+        #only used for the pt outlet divisions
+        outlet_area = 0
+        for cdx, entity_id in enumerate(self.caps):
+            if entity_id in self.outlet_entity_ids:
+                outlet_area += center_points[entity_id].point_data['Area'][0]
         # # Match GroupIds from self.centerlines_branched to CellEntityIds
         # # Or match GroupIds with inlet points, inlets points is matched with entity ids
 
         # # Extract caps   
-        # entity_ids = np.unique(self.mesh.cell_arrays['CellEntityIds'])
+        # entity_ids = np.unique(self.mesh.cell_data['CellEntityIds'])
         # valid_entity_ids = sorted(set(entity_ids) - set([0, 1]))
-        # entity_masks = [self.mesh.cell_arrays['CellEntityIds'] == i for i in valid_entity_ids]
+        # entity_masks = [self.mesh.cell_data['CellEntityIds'] == i for i in valid_entity_ids]
         # caps = [self.mesh.extract_cells(em) for em in entity_masks]
 
         info_data = {}
 
         # entity_id_group_id_matcher = dict(zip(self.outlet_entity_ids, self.outlet_group_ids))
         # entity_id_group_id_matcher = dict(zip(self.outlet_group_ids, self.outlet_entity_ids))
-
+        inlet_FR_id=0
         for cdx, entity_id in enumerate(self.caps):
             #     entity_id = valid_entity_ids[cdx]
             center = center_points[entity_id]
 
             c = center.points[0]
-            normal = center.point_arrays['Normal'][0]
-            rad = center.point_arrays['Radius'][0]
-            area_ = center.point_arrays['Area'][0]
+            normal = center.point_data['Normal'][0]
+            rad = center.point_data['Radius'][0]
+            area_ = center.point_data['Area'][0]
 
             c = (','.join("{:.12f}".format(x) for x in c))
             c = '(' + c + ')'
@@ -473,20 +569,35 @@ class Mesher(Surfer):
             dataline = [str(cdx + 1), str(None), c, normal, rad, area]
 
             if entity_id in self.inlet_entity_ids:
-                inflowrate = inlet_vel * area_
+                if inlet_vel != False:
+                    inflowrate = inlet_vel * area_
+                else:
+                    inflowrate = inlet_flowrates[inlet_FR_id]
+                    inlet_FR_id+=1
                 dataline[1] = waveform
                 dataline.append("{:.12f}".format(inflowrate))
 
-            elif entity_id in self.outlet_entity_ids:
+            elif (entity_id in self.outlet_entity_ids) and multi_inlets=='single':
                 # FIX! Need to match GroupIds with CellEntityIds
-                flow_division = self.outlet_flow_divisions[entity_id]
+                if len(self.outlet_flow_divisions) != 0: #ie. if there is more than one outlet and this is an arterial mesh
+                    flow_division = self.outlet_flow_divisions[entity_id]
+                    dataline.append("{:.12f}".format(flow_division))
+                elif len(self.outlet_entity_ids) == 1: #if only one outlet
+                    flow_division = 1.00
+                    dataline.append("{:.12f}".format(flow_division))
+                else: #if single inlet, multiple outlets
+                    flow_division = area_/outlet_area
+                    dataline.append("{:.12f}".format(flow_division))
+            elif (entity_id in self.outlet_entity_ids) and multi_inlets!='single':
+                #WARNING: Not the greatest!
+                flow_division = area_/outlet_area
                 dataline.append("{:.12f}".format(flow_division))
-
             else:
                 print('Check inlets outlets')
 
             info_data[entity_id] = dataline
-
+        if waveform=='FC_VENOUS':
+            print('Double-check the flowrates in Paraview before running!')
         infofile = open(outfile, "w")
         header = "# id, wave, center, normal, radius, area, FR(inlet)/AR(outlet)"
         infofile.write(header + 2*"\n")
