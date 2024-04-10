@@ -1,11 +1,17 @@
 {
 	"folders": [
-		{
-			"path": "geometry_tools"
-		},
-		{
-			"path": "../../geometry_test/NewCases"
-		}
-	],
+        {
+            "path": "geometry_tools"
+        },
+        {
+            "path": "../../geometry_test/NewCases"
+        },
+        {
+            "path": "../../geometry_test/validate_WERP"
+        },
+        {
+            "path": "../../geometry_test/test_ForresterLabbe"
+        }
+    ],
     "settings": {}
 }
