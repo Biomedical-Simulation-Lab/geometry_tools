@@ -19,6 +19,7 @@ Where
 defaults to one flow rate for the whole geometry, which is 6.816019219 for peak systolic Superior Sinus inflow
 
 This will produce a number of useful attributes, including the boundary layer width to get y+<1
+NOTE: if you delete planes, you will have to delete the mapped surface and run this a second time :)
 
 """
 import numpy as np
@@ -32,6 +33,8 @@ import matplotlib as plt
 from matplotlib import pyplot
 from pathlib import Path
 import sys
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 size = 10
 plt.rc('font', size=size) #controls default text size
@@ -183,7 +186,7 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, trol, emissary, condylar, plot
             if ("Block-0{}".format(i) in planes.keys()) or ("Block-{}".format(i) in planes.keys()):
                 usable_planes.append(planes[i])
                 usable_ids.append(i)
-        usable_planes.save(out_dir/(surf_file.stem + '_usable_planes.vtm'))
+        #usable_planes.save(out_dir/(surf_file.stem + '_usable_planes.vtm'))
         merged_usable_planes=usable_planes.combine()   
         planes_points = merged_usable_planes.points
         tree = KDTree(planes_points) #only include usable planes
@@ -335,6 +338,7 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, trol, emissary, condylar, plot
         np.savez(out_dir/(surf_file.stem + '_' + str(int(float(sss))) + 'p' + dec + 'Pressuredrop_1D.npz'), x=x, dP_main=dP_main, dP_average = dP_cycleaverage) #save the data for later
 
     usable_ids0 = np.asarray(np.where(m.centerlines.point_data['unusable']==0))[0]
+    #usable_planes = pv.MultiBlock()
     usable_ids = []
     #print(usable_ids)
     for i in usable_ids0:
@@ -344,6 +348,7 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, trol, emissary, condylar, plot
     merged_usable_planes=usable_planes.combine()      
     planes_points = merged_usable_planes.points
     usable_CL_flowrate=m.centerlines.point_data['flowrate'][m.centerlines.point_data['unusable']==0]
+    usable_planes.save(out_dir/(surf_file.stem + '_usable_planes.vtm'))
 
     tree3 = KDTree(planes_points) #only include usable planes
     _, idx_p3 = tree3.query(m.surf.points)
