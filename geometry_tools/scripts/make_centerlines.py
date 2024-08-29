@@ -20,6 +20,180 @@ from scipy.spatial import cKDTree as KDTree
 from pathlib import Path
 import sys
 
+def polyline_from_points(points):
+        poly = pv.PolyData()
+        poly.points = points
+        the_cell = np.arange(0, len(points), dtype=np.int_)
+        the_cell = np.insert(the_cell, 0, len(points))
+        poly.lines = the_cell
+        return poly
+
+def cleanup_lines(surf, poly, centerlines, graph):
+    graph_pts=graph.points
+    p = pv.Plotter()
+    p.add_mesh(surf, opacity=0.3)
+    p.add_mesh(centerlines.points, color='b', render_points_as_spheres=True, point_size = 20)
+    ids=range(0,len(poly.points))
+    #gids = range(0,len(graph_pts))
+    p.add_mesh(poly, color='r')
+    p.add_point_labels(poly.points, ids, point_color='r', render_points_as_spheres=True, point_size=20, font_size=18)
+    #p.add_point_labels(graph_pts, gids, point_color='g', render_points_as_spheres=True, point_size=30, font_size=18)
+    p.add_title('Inspect for bad points and record ids!')
+    p.show()
+    info = input('Any bad points[y/n]?')
+    if info == 'y':
+        lst = []
+        n = int(input("Enter number of bad points: "))
+        for i in range(0, n):
+            ele = int(input('Enter id of bad point:'))
+            lst.append(ele)
+        points = np.delete(poly.points, lst, axis=0)
+        poly = polyline_from_points(points)
+    '''
+    end = input('Does the endpoint need to be reset [y/n]?')
+    if end == 'y':
+        gpt = input('Enter the graph point id you want to reset to:')
+        poly.points[0]=graph_pts[int(gpt)]
+    beg = input('Does the start point need to be reset [y/n]?')
+    if beg == 'y':
+        gpt = input('Enter the graph point id you want to reset to:')
+        poly.points[-1]=graph_pts[int(gpt)]
+    '''
+    return poly
+
+def fenest(tree2, surf, graph, centerline, centerlines, origin):
+    print('There is a fenestration present! ')
+    '''
+    select = cc.ClickDragSelect(graph_lines, title = 'Select first side of fenestration')
+    graph_lines.cell_data['fen1'] = select.mesh.cell_data['PickedMask']
+    select = cc.ClickDragSelect(graph_lines, title = 'Select second side of fenestration')
+    graph_lines.cell_data['fen2'] = select.mesh.cell_data['PickedMask']
+    graph_lines = graph_lines.cell_data_to_point_data()
+    line1 = polyline_from_points(graph_lines.points[graph_lines.point_data['fen1']==1])
+    line2 = polyline_from_points(graph_lines.points[graph_lines.point_data['fen2']==1])
+    return line1+line2
+    '''
+    val_out1 = input("What is the point of the fenestration that meets with the SS?")
+    centerlines_seg1, out_id = one_branch(tree2, surf, graph, centerline, origin, val_out1, ss_or_sss=True, fen = True)
+    centerline_seg1 = cleanup_lines(surf, centerlines_seg1, centerlines, graph)
+    val_out2 = input("\nWhat is the point of the fenestration that meets with the SSS?")
+    centerlines_seg2, out_id = one_branch(tree2, surf, graph, centerline, origin, val_out2, ss_or_sss=True, fen = True)
+    centerline_seg2 = cleanup_lines(surf, centerlines_seg2, centerlines, graph)
+    ss_ept = centerline_seg1.points[0]
+    sss_ept = centerline_seg2.points[0]
+    val_out = input("\nWhat is the patient left point of the fenestration?")
+    centerlines_seg3, out_id = one_branch(tree2, surf, graph, centerline, ss_ept, val_out, ipt_given=True)
+    centerline_seg3 = cleanup_lines(surf, centerlines_seg3, centerlines+centerlines_seg1, graph)
+    centerlines_seg4, out_id = one_branch(tree2, surf, graph, centerline, sss_ept, val_out, ipt_given=True)
+    centerline_seg4 = cleanup_lines(surf, centerlines_seg4, centerlines+centerlines_seg2, graph)
+    return centerlines_seg1+centerlines_seg2+centerlines_seg3+centerlines_seg4, ss_ept, sss_ept
+
+def one_branch(tree2, surf, graph, centerline, val_in, val_out, ss_or_sss=False, fen = False, ipt_given=False, ept_given=False):
+    if fen == False:
+        if ipt_given==True:
+            inlet_point=val_in
+        else:    
+            inlet_point = graph.points[int(val_in)]
+    else:
+        in_id = val_in
+        inlet_point = centerline.points[in_id]
+    if ss_or_sss == True: #set this point equal to the graph point, not the centerline point!
+        out_point = graph.points[int(val_out)]
+        outlet_point = out_point
+        out_id = None
+    else:    
+        if ept_given==True:
+            outlet_point = val_out
+            out_id = None
+        else:
+            out_point = graph.points[int(val_out)]
+            out_id=tree2.query(out_point, k=1)[1]
+            outlet_point = centerline.points[out_id]
+
+    surf_capped = pv.PolyData()
+    surf_capped.copy_structure(vmtk.surface_capper(surf))
+    tree = KDTree(surf_capped.points)
+    inlet_ids = tree.query(inlet_point, k=1)[1]
+    
+    outlet_ids = tree.query(outlet_point, k=1)[1]
+    centerlines_seg = vmtk.centerlines(
+        surf_capped, 
+        seed_selector='idlist', 
+        resampling_step_length = 1,
+        src_ids=[inlet_ids],
+        target_ids=[outlet_ids]
+        )
+    #make sure to set the first and last points to the inlet and outlet points
+    if ept_given==True:
+        centerlines_seg.points[0]=outlet_point
+    else:
+        centerlines_seg.points[0]=centerline.points[tree2.query(outlet_point, k=1)[1]]
+    centerlines_seg.points[-1]=inlet_point
+
+    return centerlines_seg, out_id
+
+
+def iter_branches(surf, graph, centerline, fen='n'):
+    tree2 = KDTree(centerline.points)
+    nbranches = input('\nHow many branches? NOTE: In bilateral models, the SS is not counted as a branch!')
+    if fen=='y':
+        nb = input('How many branches up from the patient right outlet before the fenestration?')
+        i_seg = input('Is there a main branch segment below it [y/n]?')
+        if i_seg == 'y':
+            fb_p1 = input('What is the lower id of the main branch segment below it?')
+            fb_p2 = input('What is the upper id of the main branch segment below it?')
+        o_seg = input('Is there a main branch segment above it (if only the left outlet, say n) [y/n]?')
+        if o_seg == 'y':
+            fa_p1 = input('What is the lower id of the main branch segment above it?')
+            fa_p2 = input('What is the upper id of the main branch segment above it?')
+    #Branches are ordered from the bottom up!!
+    for b in range(int(nbranches)):
+        val_in = input("What is the inlet point id of branch {}?".format(b))
+        val_out = input("What is the outlet point id of branch {}?".format(b))
+        centerlines_seg, out_id = one_branch(tree2, surf, graph, centerline, val_in, val_out)
+        ss_ept=None
+        sss_ept=None
+        if b == 0:
+            #The branch segment
+            centerlines = centerlines_seg
+            #From the outlet to the last branch
+            old_outid = 0
+        else:
+            #The branch segment
+            centerlines += centerlines_seg
+        #The segment in between two branches
+        if (fen == 'y' and b == int(nb)):
+            print('Building pre-fen centerline')
+            if i_seg == 'y':
+                inlet_point = graph.points[int(fb_p1)]
+                out_point = graph.points[int(fb_p2)]
+                out_id=tree2.query(out_point, k=1)[1]
+                inlet_id = tree2.query(inlet_point, k=1)[1]
+                p = centerline.points[inlet_id:out_id]
+                centerline_segfb = polyline_from_points(p)
+
+                centerlines += centerline_segfb
+            print('Building fenestration centerline')
+            fc, ss_ept, sss_ept = fenest(tree2, surf, graph, centerline, centerlines, origin = out_id)
+            centerlines +=fc
+
+            print('Building post-fen centerline')
+            if o_seg == 'y':
+                inlet_point = graph.points[int(fa_p1)]
+                out_point = graph.points[int(fa_p2)]
+                out_id=tree2.query(out_point, k=1)[1]
+                inlet_id = tree2.query(inlet_point, k=1)[1]
+                p = centerline.points[inlet_id:out_id]
+                centerline_segfa = polyline_from_points(p)
+
+                centerlines += centerline_segfa
+        else:
+            points = centerline.points[old_outid:out_id]
+            line = polyline_from_points(points)
+            centerlines +=line
+        old_outid = out_id
+    return centerlines, out_id, ss_ept, sss_ept
+
 def make_cl(proj_dir, case_name):
     out_dir = proj_dir
     surf_file = sorted(proj_dir.glob('*cl.vtp'))[0]
@@ -32,14 +206,6 @@ def make_cl(proj_dir, case_name):
     #m.set_inlets_outlets()
     #m.generate_centerlines(include_aneurysms=False, endpoints=1)
     
-    centers = m.get_open_profiles()
-    inlet_id = m._pick_points(pv.wrap(centers), 'Pick Major Inlet')
-    outlet_id = m._pick_points(pv.wrap(centers), 'Pick Major Outlet')
-    m.inlet_ids = [inlet_id]
-    m.inlet_points = centers[inlet_id]
-    m.outlet_ids = [outlet_id]
-    m.outlet_points = centers[outlet_id]
-    m.generate_centerlines(include_aneurysms=False, endpoints=1)
     graph_lines , graph = vmtk.network_extractor(surf, ratio = 1.01)
     #graph.save(out_dir/('graph.vtp'))
     p = pv.Plotter()
@@ -47,67 +213,76 @@ def make_cl(proj_dir, case_name):
     labels = [str(i) for i in range(len(graph.points))]
     p.add_point_labels(graph.points, labels, point_size=30, font_size=20, always_visible=True, render_points_as_spheres=True)
     p.add_mesh(graph_lines)
-    p.add_text("Look for inlet and outlet labels for branches",position='upper_left', font_size = 14)
+    p.add_text("Look for inlet and outlet labels for branches and fenestration, if present",position='upper_left', font_size = 14)
     p.add_text("Note: graph points in the main branch will have multiple values, Choose one.",position='lower_left', font_size = 12)
     p.show()
-
-    def polyline_from_points(points):
-        poly = pv.PolyData()
-        poly.points = points
-        the_cell = np.arange(0, len(points), dtype=np.int_)
-        the_cell = np.insert(the_cell, 0, len(points))
-        poly.lines = the_cell
-        return poly
     
     centerlines = pv.PolyData()
-    nbranches = input('How many little branches?')
-    #Branches are ordered from the bottom up!!
-    for b in range(int(nbranches)):
-        val_in = input("What is the inlet point id of branch {}?".format(b))
-        val_out = input("What is the outlet point id of branch {}?".format(b))
-        inlet_point = graph.points[int(val_in)]
-        tree2 = KDTree(m.centerlines.points)
-        out_point = graph.points[int(val_out)]
-        out_id=tree2.query(out_point, k=1)[1]
-        outlet_point = m.centerlines.points[out_id]
+    bilat = input('Is this a bilateral model [y/n]?')
+    torc = input('Is there a fenestration at the torcula [y/n]?')
+    fen = input('Is there a fenestration somewhere else [y/n]?')
+    if fen =='y':
+        print('Fenestrations not at the torcula not currently supported! Use centerlines_fixed and resample the line.')
+        exit(1)
+    centers = m.get_open_profiles()
+    if bilat == 'n':
+        inlet_id = m._pick_points(pv.wrap(centers), 'Pick Major Inlet')
+        outlet_id = m._pick_points(pv.wrap(centers), 'Pick Major Outlet')
+        m.inlet_ids = [inlet_id]
+        m.inlet_points = centers[inlet_id]
+        m.outlet_ids = [outlet_id]
+        m.outlet_points = centers[outlet_id]
+        m.generate_centerlines(include_aneurysms=False, endpoints=1)
+        centerlines, out_id, _, _ = iter_branches(surf, graph, m.centerlines, fen=fen, torc=torc)
 
-        surf_capped = pv.PolyData()
-        surf_capped.copy_structure(vmtk.surface_capper(surf))
-        tree = KDTree(surf_capped.points)
-        inlet_ids = tree.query(inlet_point, k=1)[1]
-        
-        outlet_ids = tree.query(outlet_point, k=1)[1]
-        centerlines_seg = vmtk.centerlines(
-            surf_capped, 
-            seed_selector='idlist', 
-            resampling_step_length = 1,
-            src_ids=[inlet_ids],
-            target_ids=[outlet_ids]
-            )
-        #make sure to set the first and last points to the inlet and outlet points
-        centerlines_seg.points[0]=m.centerlines.points[tree2.query(outlet_point, k=1)[1]]
-        centerlines_seg.points[-1]=inlet_point
-
-        if b == 0:
-            #The branch segment
-            centerlines = centerlines_seg
-            #From the outlet to the last branch
-            points = m.centerlines.points[0:out_id]
-            line = polyline_from_points(points)
-            centerlines +=line
-        else:
-            #The branch segment
+        #from the last branch to the inlet
+        points2 = m.centerlines.points[out_id:]
+        line2 = polyline_from_points(points2)
+        centerlines +=line2
+        if torc == 'y':
+            ss = input('Is there an SS [y/n]?')
+            if ss =='y':
+                val_in = input("What is the inlet point id of the SS?")
+                val_out = input("What is the outlet point id of the SS?")
+                centerlines_seg, _ = one_branch(tree2, surf, graph, val_in, val_out)
+                centerlines += centerlines_seg
+                
+    else:
+        inlet_id = m._pick_points(pv.wrap(centers), 'Pick Patient Left Outlet')
+        outlet_id = m._pick_points(pv.wrap(centers), 'Pick Patient Right Outlet')
+        m.inlet_ids = [inlet_id]
+        m.inlet_points = centers[inlet_id]
+        m.outlet_ids = [outlet_id]
+        m.outlet_points = centers[outlet_id]
+        m.generate_centerlines(include_aneurysms=False, endpoints=1)
+        if torc == 'y':
+            fen = 'y'
+        centerlines, out_id, ss_ept, sss_ept = iter_branches(surf, graph, m.centerlines, fen=fen)
+        #from the last branch to the inlet
+        points2 = m.centerlines.points[out_id:]
+        line2 = polyline_from_points(points2)
+        centerlines +=line2
+        ss = input('Is there an SS [y/n]?')
+        if ss =='y':
+            val_in = input("What is the inlet point id of the SS?")
+            if torc == 'y':
+                tree2 = KDTree(m.centerlines.points)
+                centerlines_seg, _ = one_branch(tree2, surf, graph, m.centerlines, val_in, ss_ept, ept_given=True)
+                centerlines_seg  = cleanup_lines(surf, centerlines_seg, centerlines, graph)
+            else:
+                val_out = input("What is the outlet point id of the SS?")
+                centerlines_seg, _ = one_branch(tree2, surf, graph, m.centerlines, val_in, val_out)
             centerlines += centerlines_seg
-            #The segment in between two branches
-            points = m.centerlines.points[old_outid:out_id]
-            line = polyline_from_points(points)
-            centerlines +=line
-        old_outid = out_id
+        #There has to be an SSS
+        val_in = input("What is the inlet point id of the SSS?")
+        if torc == 'y':
+            centerlines_seg, _ = one_branch(tree2, surf, graph, m.centerlines, val_in, sss_ept, ept_given=True)
+            centerlines_seg  = cleanup_lines(surf, centerlines_seg, centerlines, graph)
+        else:
+            val_out = input("What is the outlet point id of the SSS?")
+            centerlines_seg, _ = one_branch(tree2, surf, graph, m.centerlines, val_in, val_out)
+        centerlines += centerlines_seg
 
-    #from the last branch to the inlet
-    points2 = m.centerlines.points[out_id:]
-    line2 = polyline_from_points(points2)
-    centerlines +=line2
     centerlines = vmtk.centerline_geometry(centerlines)
     '''
     m.centerlines, _ = vmtk.network_extractor(m.surf)
