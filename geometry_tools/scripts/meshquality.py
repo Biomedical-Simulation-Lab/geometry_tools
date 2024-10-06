@@ -448,7 +448,7 @@ class MeshDisplay3D:
 
 # ----------------------------------------------------------------------
 def check(value):
-    if abs(value) < 1E-5 or abs(value) > 1E2:
+    if abs(value) < 1E-6 or abs(value) > 1E2:
         return False
     return True
 

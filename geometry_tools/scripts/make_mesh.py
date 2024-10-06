@@ -122,8 +122,8 @@ def make_mesh(proj_dir, proj_name, min_el, max_el, multi_inlets,ref):
 
     # Create submission file
     min_EL = np.min(m.surf.point_data['Size'])
-    max_vel = 3*np.max(m.surf.point_data['mean_velocity'])
-    tstep_per_cycle = int(60*np.round((max_vel*915/min_EL)/60)) #round to nearest multiple of 60
+    max_vel = 3*np.max(m.surf.point_data['mean_velocity']) #factor of safety 3
+    tstep_per_cycle = 5*int(60*np.round((max_vel*915/min_EL)/60)) #round to nearest multiple of 60 with a factor of safety here of 5
     s = SubmissionTemplate(proj_name, timesteps_per_cycle=tstep_per_cycle, save_frequency=1)
     s.save_script(proj_dir)
 
