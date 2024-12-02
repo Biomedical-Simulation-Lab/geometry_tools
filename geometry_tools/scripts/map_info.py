@@ -61,6 +61,8 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, trol, emissary, condylar, plot
     cent_graph_vmtk = out_dir/(surf_file.stem +'_centerline_graph_vmtk.vtp')
     if not cent_graph_vmtk.exists(): #if not using centerlines_fixed but rather make_centerlines
         cent_graph_vmtk = prep_dir/(surf_file.stem +'_centerline.vtp')
+    if not cent_graph_vmtk.exists(): #if custom
+        cent_graph_vmtk = out_dir/(surf_file.stem +'_centerline.vtp')
     cent_file = out_dir/(surf_file.stem + '__' + str(int(float(sss))) + 'p' + dec + 'centerline_mapped.vtp')
     mapped_file = out_dir/(surf_file.stem + '_' + str(int(float(sss))) + 'p' + dec + '_mappedsys.vtp')
     planes_files = out_dir/(surf_file.stem + '_planes_' + str(int(float(sss))) + 'p' + dec + '.vtm')
@@ -101,6 +103,7 @@ def mapped_info(prep_dir, sss, ss, lab, fen, syl, trol, emissary, condylar, plot
             m.centerlines = centerline
             '''
             m.centerlines = vmtk.resample_cl(m.centerlines, length=1.5) #so we don't have as many planes and points are equispaced
+            m.centerlines.save('cl.vtp')
             #Use the centerline points to create planes
             planes = pv.MultiBlock()
             m.centerlines.point_data['CSA']=np.array(m.centerlines.n_points)

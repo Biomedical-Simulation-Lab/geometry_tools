@@ -718,5 +718,5 @@ if __name__ == "__main__":
 
         outputfilename = os.path.splitext(sys.argv[1])[0]+'_mesh_quality.txt'
 
-        if MeshQualityMeasures(fileName, polyData, outputfilename, surface_check_only, True) < 0:
+        if MeshQualityMeasures(fileName, polyData, outputfilename, surface_check_only, False) < 0:
             print ('NOT a good mesh! Be careful.')

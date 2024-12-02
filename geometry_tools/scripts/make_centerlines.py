@@ -233,7 +233,7 @@ def make_cl(proj_dir, case_name):
         m.outlet_ids = [outlet_id]
         m.outlet_points = centers[outlet_id]
         m.generate_centerlines(include_aneurysms=False, endpoints=1)
-        centerlines, out_id, _, _ = iter_branches(surf, graph, m.centerlines, fen=fen, torc=torc)
+        centerlines, out_id, _, _ = iter_branches(surf, graph, m.centerlines, fen=fen)
 
         #from the last branch to the inlet
         points2 = m.centerlines.points[out_id:]

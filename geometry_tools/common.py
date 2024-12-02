@@ -180,7 +180,7 @@ def smooth_mesh_data_local(surf, array='GroupIds',
     if neighbour_pt_ids == None:
         neighbour_pt_ids = get_neighbour_map(surf) 
     
-    neighbour_pt_ids = np.array(neighbour_pt_ids)
+    neighbour_pt_ids = np.array(neighbour_pt_ids).astype(int)
 
     surf = surf.copy()
     new_array = surf.point_data[array].copy()

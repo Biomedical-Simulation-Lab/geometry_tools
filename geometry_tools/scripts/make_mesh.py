@@ -39,7 +39,7 @@ def create_size_array(surf, min_el=0.2, max_el=0.7, ref='False'):
         )
     surf.point_data['Size'] = interp(surf.point_data['taylor_len'])
     print('Smoothing array...')
-    surf, neighbour_pts = cc.smooth_mesh_data_local_alt(surf, array='Size', iterations = 10)
+    surf, neighbour_pts = cc.smooth_mesh_data_local_alt(surf, array='Size', iterations = 20)
     if ref !='False':
         if float(ref) < 1:
             surf.point_data['Size'][surf.point_data['ref']==1]=float(ref)*surf.point_data['Size'][surf.point_data['ref']==1]
@@ -86,7 +86,7 @@ def make_mesh(proj_dir, proj_name, min_el, max_el, multi_inlets,ref):
             m.surf = create_size_array(m.surf, min_el=float(min_el), max_el=float(max_el), ref=ref)
             m.surf.clean()
             m.surf.save(mapped_file) #add size array to file
-        surf = vmtk.surface_remeshing(m.surf, element_size_mode='edgelengtharray', edgearray='Size', iterations=11)
+        surf = vmtk.surface_remeshing(m.surf, element_size_mode='edgelengtharray', edgearray='Size', iterations=10)
         projection = vmtkscripts.vmtkSurfaceProjection()
         projection.Surface = surf
         projection.ReferenceSurface = m.surf
