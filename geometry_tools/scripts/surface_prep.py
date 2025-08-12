@@ -83,6 +83,11 @@ def surface_prep(surf_file, proj_dir, surf_type):
                 m.surf.save(clipped_surf)
                 m.set_inlets_outlets()
                 m.generate_centerlines_multi(proj_dir)  
+                p=pv.Plotter()
+                p.add_mesh(m.surf,opacity=0.3)
+                p.add_points(m.centerlines.points, color='red', render_points_as_spheres=True)
+                p.add_axes()
+                p.show()
                 surf = vmtk.flow_ext(m.surf, m.centerlines, m.inlet_ids)
                 extender = cc.Flow_Extender(pv.wrap(surf), m.centerlines,inlet_points=m.inlet_points, outlet_points=m.outlet_points)
                 accept = extender.accept
