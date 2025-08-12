@@ -23,11 +23,11 @@ import sys
 
 def make_spectro(proj_dir, step, rad):
     out_dir = proj_dir
-    surf_file = sorted(proj_dir.glob('*_cl_mapped.vtp'))[0]
-    cl_file = sorted(proj_dir.glob('*_centerline.vtp'))[0]
-    point_file = surf_file.stem + '_spectrospheres.vtm'
+    surf_file = sorted(proj_dir.glob('*_mappedsys.vtp'))[0]
+    #cl_file = sorted(proj_dir.glob('*_centerline.vtp'))[0]
+    #point_file = surf_file.stem + '_spectrospheres.vtm'
     surf = pv.read(surf_file)
-    cent = pv.read(proj_dir.parent / cl_file)
+    #cent = pv.read(proj_dir.parent / cl_file)
 
     select = cc.RefinementSelection_OLD(surf, title = 'Select region for spectrograms')
     newsurf = select.temprefsurf

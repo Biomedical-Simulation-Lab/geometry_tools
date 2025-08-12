@@ -371,7 +371,7 @@ class Surfer():
         """
         Generate centerlines using the network extractor. This won't cause merging issues.
         """
-        self.centerlines, _ = vmtk.network_extractor(self.surf)
+        self.centerlines, _ = vmtk.network_extractor(self.surf, ratio=1.01)
         self.centerlines = vmtk.centerline_geometry(self.centerlines)
 
         return self         

@@ -1459,4 +1459,5 @@ class Flow_Extender():
         pl2.add_text('r+q: reject and redo', position=(0.05, 25), font_size=12)
         pl2.add_text('q: accept', position=(0.05, 50), font_size=12)
         pl2.add_key_event('r',_reject)
+        pl2.add_axes()
         pl2.show()
