@@ -41,11 +41,9 @@ def make_cl(prep_dir, case_name):
         graph.save(out_dir/(case_name+'_graph.vtp'))
         val = input("Is there a fenestration in this case? [y/n]: ")
         centerlines = vmtk.centerline_geometry(centerlines)
+        centerlines.save(out_dir/(case_name+'_centerline_graph_vmtk.vtp'))
         if val == 'y':
-            centerlines.save(out_dir/(case_name+'_centerline_graph_vmtk.vtp'))
             sys.exit()
-        else:
-            centerlines.save(out_dir/(case_name+'_centerline_graph.vtp'))
         
         #use vmtk for each segment
         m.centerlines = pv.PolyData()
@@ -84,7 +82,15 @@ def make_cl(prep_dir, case_name):
         m.centerlines =  pv.read(graphed_cl_file)
         centerline_resampled = vmtk.resample_cl(m.centerlines, length=1.5)
         centerline_resampled.save(resampled_file)
+
 if __name__ == "__main__":
     prep_dir = Path(sys.argv[1])
     case_name = sys.argv[2] 
     make_cl(prep_dir=prep_dir, case_name=case_name)
+    print("Completed centerline generation")
+    print("Next step: Map info")
+    print("Usage: Gives parameters that can be looked at in Paraview")
+    print("Scripts:\nmap_info_direct.py: For simpler cases - extracts metrics directly from the centerlines\t-->\tif this doesn't work go to map_info")
+    print("map_info.py: For more complicated geometries with intersecting planes - Creates planes and extracts metrics based on the planes")
+    print("map_info_bilateral.py: For cases with bilateral geometry")
+    print("Command: map_info_direct.py [path/to/clipped/folder] [flowrate_at_inlet_1] [flowrate_at_inlet_2] False False False False False")
