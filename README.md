@@ -1,5 +1,45 @@
 # Geometry tools 
 
+## Install Instructions (Sept 2026)
+**NOTE: This is only supported by Python 3.12+**
+
+VMTK now has a PyPi install command! Therefore, you can do this directly from a `venv`, which arguably is much easier to work with then `conda`.
+
+To create a venv environment,
+```shell
+python3 -m venv geometry_tools_venv
+```
+
+To start the environment,
+
+**macOS/Linux**
+```shell
+source geometry_tools_venv/bin/activate                # Linux/macOS
+```
+
+**PowerShell**
+```shell
+.\geometry_tools_venv\Scripts\Activate.ps1
+```
+
+**Windows Command Shell**
+```shell
+.\geometry_tools_venv\Scripts\activate.bat
+```
+
+To install the required dependencies, run
+```shell
+cd geometry_tools               # If not in geometry_tools directory already
+pip install -r requirements.txt
+```
+
+Then, install GeometryTools (this library) using
+```shell
+pip install -e .
+```
+
+# Old README
+
 The module `vmtk_wrapper` is largely a wrapper for `vmtkscripts`, incorporating the ease-of-use of `PyVista`. 
 
 Moving forward, it would be nice to re-write this using `vtkvmtk` and `PyVista` directly, but wrapping `vmtkscripts` works for now. 

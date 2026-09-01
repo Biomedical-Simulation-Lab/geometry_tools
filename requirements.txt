@@ -1,0 +1,11 @@
+vtk
+numpy
+pyvista
+scipy
+h5py
+pymeshfix
+vmtk
+networkx
+matplotlib
+pygeodesic
+TubeClipper @ git+https://github.com/Biomedical-Simulation-Lab/tubeclipper.git
