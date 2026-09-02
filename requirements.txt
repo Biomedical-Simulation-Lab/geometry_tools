@@ -1,11 +1,11 @@
-vtk
-numpy
-pyvista
-scipy
-h5py
-pymeshfix
-vmtk
-networkx
-matplotlib
-pygeodesic
+vtk<=9.6.2
+numpy<=2.5.2
+pyvista<=0.48.4
+scipy<=1.18.1
+h5py<=3.16.0
+pymeshfix<=0.18.1
+vmtk<=1.5.0
+networkx<=3.6.1
+matplotlib<=3.11.1
+pygeodesic<=0.1.11
 TubeClipper @ git+https://github.com/Biomedical-Simulation-Lab/tubeclipper.git
